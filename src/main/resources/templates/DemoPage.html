@@ -1,0 +1,136 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <style>
+
+        h1 {
+            text-align: center;
+        }
+
+        h2 {
+            padding-top: 15px;
+        }
+
+        #server-link-status-widget {
+            height: 15px;
+            width: 15px;
+            border-radius: 50%;
+            border: 0 solid #000;
+            background-color: lightgray;
+            margin-left: 18px;
+            margin-right: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h1>Wica 2 Demo Page</h1>
+
+<div>
+    <h2>Connection Status</h2>
+    <span>Link Status: </span> <button id="server-link-status-widget" class="led-widget"></button>
+</div>
+
+<div>
+    <h2>Stream Data</h2>
+    <span>Received Data 1: </span> <span id="data-display-widget1"></span> <br>
+    <span>Received Data 2: </span> <span id="data-display-widget2"></span> <br>
+    <span>Received Data 3: </span> <span id="data-display-widget3"></span> <br>
+    <span>Received Data 4: </span> <span id="data-display-widget4"></span> <br>
+    <span>Received Data 5: </span> <span id="data-display-widget5"></span>
+</div>
+
+<script th:inline="javascript" >
+
+    var linkStatusWidget = document.getElementById('server-link-status-widget');
+    var dataDisplayWidget1 = document.getElementById('data-display-widget1');
+    var dataDisplayWidget2 = document.getElementById('data-display-widget2');
+    var dataDisplayWidget3 = document.getElementById('data-display-widget3');
+    var dataDisplayWidget4 = document.getElementById('data-display-widget4');
+    var dataDisplayWidget5 = document.getElementById('data-display-widget5');
+
+    function set_server_link_status_indicator( ok ) {
+        if ( ok ) {
+            linkStatusWidget.style.backgroundColor = "limegreen";
+        }
+        else {
+            linkStatusWidget.style.backgroundColor = "red";
+        }
+    }
+
+    function connect_statistics_stream( ev_callback )
+    {
+        var url = "../stream";
+        var eventSource = new EventSource(url);
+
+        eventSource.addEventListener('message', function (e) {
+
+            // Perform recommended security check
+            var expectedOrigin = location.origin;
+            if ( e.origin !== expectedOrigin )
+            {
+                console.warn( "Event source: 'stream' unexpected event origin." );
+                return false;
+            }
+
+            ev_callback();
+
+            var eventData = JSON.parse( e.data );
+            dataDisplayWidget1.textContent = eventData;
+            dataDisplayWidget2.textContent = eventData;
+            dataDisplayWidget3.textContent = eventData;
+            dataDisplayWidget4.textContent = eventData;
+            dataDisplayWidget5.textContent = eventData;
+        }, false);
+
+        eventSource.addEventListener( 'open', function() {
+            console.log( "Event source: 'stream' - open event." );
+            set_server_link_status_indicator( true );
+        }, false );
+
+        eventSource.addEventListener( 'error', function() {
+            console.log( "Event source: 'stream'  - error event. Closing event source." );
+            eventSource.close();
+            set_server_link_status_indicator( false );
+        }, false );
+
+        return true;
+    }
+
+    function manage_stream() {
+
+        var ONE_SECOND_IN_TIMER_UNITS = 1000;
+        var STREAM_TIMEOUT_INTERVAL =   10;
+        var STREAM_RECONNECT_INTERVAL = 10;
+
+        var countdownInSeconds = 0;
+        setInterval( function () {
+            if (countdownInSeconds === 0) {
+                console.warn("Event source: 'stream' trying to connect...");
+                if( connect_statistics_stream( gotActivity ) ) {
+                    console.log("Event source: 'stream' - OK: connection task started" );
+                }
+                else {
+                    console.warn("Event source: 'stream' - FAILED: connection task startup failed" );
+                }
+                countdownInSeconds = STREAM_RECONNECT_INTERVAL;
+            }
+            countdownInSeconds--;
+        }, ONE_SECOND_IN_TIMER_UNITS );
+
+        function gotActivity() {
+            console.log( "Event source: 'stream' has activity" );
+            countdownInSeconds = STREAM_TIMEOUT_INTERVAL;
+        }
+    }
+
+    manage_stream();
+
+</script>
+
+</body>
+</html>
