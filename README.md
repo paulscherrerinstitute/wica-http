@@ -1,10 +1,10 @@
 # Overview
 
-This project is intended (eventually) to be a successor to the so-called 
-ch.psi.wica project that will leverage off up-and-coming technologies
-gaining currency within PSI's Controls Section.
+This project is intended (eventually) to be a successor to PSI's earlier 
+[wica](ch.psi.wica) project that will leverage off up-and-coming technologies
+gaining currency within PSI's GFA Controls Section.
 
-More concretely the main changes are as follows:
+More concretely the main technology changes are as follows:
 
    * Glassfish Application Server -> Spring Boot
    * EPICS JCA/CAJ CA library -> PSI's in-house EPICS CA library
