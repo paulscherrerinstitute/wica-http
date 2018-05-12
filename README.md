@@ -1,18 +1,20 @@
 # Overview
 
-This project is intended (eventually) to be a successor to PSI's earlier 
+This project is intended (eventually ! to be a successor to PSI's earlier 
 [wica](ch.psi.wica) project that will leverage off up-and-coming technologies
-gaining currency within PSI's GFA Controls Section.
+which are currently gaining currency within PSI's GFA Controls Section.
 
 More concretely the main technology changes are as follows:
 
    * Glassfish Application Server -> Spring Boot
    * EPICS JCA/CAJ CA library -> PSI's in-house EPICS CA library
+   * Standalone server -> runs in Docker container
    
 # API
 
-The API has not changed. The following  description was taken from the
-ch.psi.wica predecessor project...
+The API has not changed with respect to the [wica](ch.psi.wica) predecessor 
+project. The following API description has been "stolen" (= copy and pasted) 
+directly.
 
 Get value of a channel
 
