@@ -16,7 +16,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'ch.psi'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1-RELEASE'
 sourceCompatibility = 9
 
 repositories {
