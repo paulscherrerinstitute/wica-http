@@ -1,51 +1,57 @@
+**Note: the information below is still under construction and still evolving !**
+
+
 # Overview
 
-This project is intended (eventually ! to be a successor to PSI's earlier 
-[wica](ch.psi.wica) project that will leverage off up-and-coming technologies
-which are currently gaining currency within PSI's GFA Controls Section.
+This project is intended (eventually !) to be a successor to PSI's earlier [wica](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica)
+project whose stated goal was to provide for the EPICS collaboration a:
 
-More concretely the main technology changes are as follows:
+> *very simple, but powerful, Channel Access to REST service*
 
-   * Glassfish Application Server -> Spring Boot
-   * EPICS JCA/CAJ CA library -> PSI's in-house EPICS CA library
-   * Standalone server -> runs in Docker container
-   
-# API
+This new project aims to provide similar functionality but to leverage off up-and-coming
+technologies of growing strategic importance within PSI's GFA Controls Section.
 
-The API has not changed with respect to the [wica](ch.psi.wica) predecessor 
-project. The following API description has been "stolen" (= copy and pasted) 
-directly.
+The main vision of wica2 is to
 
-Get value of a channel
+> _**create a mechanism to enable an end-user to easily put together a webpage which
+monitors the live status of some EPICS channel of interest**_
 
+More concretely the main technology differences between wica and wica2 are as follows:
+
+| ch.psi.wica project                  | ch.psi.wica2 project                       |
+| :----------------------------------- | :----------------------------------------- |
+| Runs on Glassfish Application Server | Uses Spring Boot containers (tomcat/netty) |
+| Runs directly on linux host          | Runs in Docker container                   |
+| No direct support for HTML           | Uses HTML5 features eg Server Sent Events (SSE) and Global Data (data-*) attributes.
+| Uses EPICS JCA/CAJ CA library        | Uses PSI's EPICS CA client library         |
+
+
+# Old Wica API
+
+For reference purposes the old Wica API is available [here](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica/blob/master/Readme.md#API)
+
+
+# Wica2 HTML5 Webpage
+
+The simplest Wica2 webpage would look something like this:
 ```
-GET /ca/channels/<channel>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8"/>
+   <title>My Awesome Epics Channel Viewer</title>
+   <script type="text/javascript" src="gfa-wica2.psi.ch/js"></script>
+</head>
+
+<body>
+   <div data-epics-ca="abc:def:some_channel_of_interest"></div>
+</body>
+
+</html>
 ```
 
-Set value of channel
+When the page is loaded the wica server will create a monitor on
+the EPICS channel of interest and send evolving updates which will be
+rendered as the text content of the div.
 
-```
-PUT /ca/channels/<channel>
-Content-Type: application/json or text/plain
-
-somevalue
-```
-
-
-Register new stream (register channels to monitor)
-
-```
-POST ca/streams
-Content-Type: application/json
-
-["channel1", "channel2", "channnel3"]
-```
-
-Subscribe for stream
-
-```
-GET ca/streams/<id>
-``` 
-
-It is a two step process because SSE streams seems to be just only fully supported (Server/Browser side) for GET requests.
-Once the stream connection closes the also the channels are destroyed.
+# Wica 2 Endpoints
