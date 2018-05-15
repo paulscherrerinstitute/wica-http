@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.ReplayProcessor;
@@ -36,7 +37,7 @@ class EventStreamController
 
    private final ReplayProcessor<ServerSentEvent<String>> replayProcessor;
    private final Flux<ServerSentEvent<String>> heartBeatFlux;
-   EpicsChannelMonitor epicsChannelMonitor;
+   private final EpicsChannelMonitor<String> epicsChannelMonitor;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -50,35 +51,46 @@ class EventStreamController
       this.heartBeatFlux = Flux.interval( Duration.ofSeconds( eventStreamHeartBeatInterval ) )
                                .map( l -> getHeartbeatMessage( l ) );
 
-      epicsChannelMonitor = new EpicsChannelMonitor();
-      epicsChannelMonitor.connect( d -> replayProcessor.onNext( getMessage( String.valueOf( d )) ));
+      this.epicsChannelMonitor = new EpicsChannelMonitor();
+
+      //epicsChannelMonitor.connect( d -> replayProcessor.onNext( getMessage( String.valueOf( d )) ));
    }
 
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   @GetMapping( value="/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE )
-   public Flux<ServerSentEvent<String>> getServerSentEventStream()
+   @GetMapping( value="/stream/{channel}", produces = MediaType.TEXT_EVENT_STREAM_VALUE )
+   public Flux<ServerSentEvent<String>> getServerSentEventStream( @PathVariable( "channel" ) String channelName )
    {
+      final ReplayProcessor<ServerSentEvent<String>> processor = ReplayProcessor.create( 1 );
+      epicsChannelMonitor.connect( channelName, String.class, v -> publishEvent( processor, v ) );
 
-      //replayProcessor.onNext( getMessage() );
-      //replayProcessor.onNext( getMessage() );
+      return processor;
 
       // The returned stream will generate a heartbeat event every N seconds. If the client
       // does not see the heartbeat it can then re-subscribe to the event stream. This
       // potentially facilitates reconnection on server outages.
-      return replayProcessor.mergeWith( heartBeatFlux );
+      // return replayProcessor.mergeWith( heartBeatFlux );
    }
 
 
 /*- Private methods ----------------------------------------------------------*/
+
+   private void publishEvent( ReplayProcessor<ServerSentEvent<String>> processor, String value )
+   {
+      final ServerSentEvent<String> message = getMessage( value );
+      processor.onNext( message );
+   }
+
 
    private ServerSentEvent<String> getMessage( String s )
    {
       //logger.info( "Getting SSE...");
       return ServerSentEvent.builder( s ).event( "message" ).build();
    }
+
+
 
    private ServerSentEvent<String> getHeartbeatMessage( Long l )
    {

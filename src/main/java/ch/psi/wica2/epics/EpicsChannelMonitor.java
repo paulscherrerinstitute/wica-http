@@ -30,12 +30,7 @@ public class EpicsChannelMonitor<T>
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger( EpicsChannelMonitor.class );
-   private Monitor<Double> mon1;
-   private Monitor<Double> mon2;
-   private Channel<Double> chan;
-
-   private Context caContext;
-
+   private final Context caContext;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -43,42 +38,39 @@ public class EpicsChannelMonitor<T>
    public EpicsChannelMonitor()
    {
       logger.info( "Constructing: ************* EpicsChannelMonitor" );
+      caContext = new Context();
    }
 
 /*- Class methods ------------------------------------------------------------*/
+/*- Public methods -----------------------------------------------------------*/
 
-
-
-   /*- Public methods -----------------------------------------------------------*/
-
-   public void connect( Consumer<Double> handler  ) {
+   public void connect( String channelName, Class<T> channelType, Consumer<T> handler  ) {
 
       logger.info( "Constructing: ************* CONNECTING" );
       try
       {
-         caContext = new Context();
          logger.info( "Constructing: ************* CONTEXT CREATED" );
-         Channel<Double> adc = caContext.createChannel("simon:counter", Double.class);
-         Listener cl = adc.addConnectionListener((channel, state) -> System.out.println(channel.getName() + " is connected? " + state));
+         final Channel<T> channel = caContext.createChannel( channelName, channelType );
+
+         final Listener cl1 = channel.addConnectionListener((chan, state) -> System.out.println(chan.getName() + " is connected? " + state));
          // remove listener, or use try-catch-resources
          //cl.close();
 
-         Listener cl2 = adc.addAccessRightListener((channel, rights) -> System.out.println(channel.getName() + " is rights? " + rights));
-
+         final Listener cl2 = channel.addAccessRightListener((chan, rights) -> System.out.println(chan.getName() + " is rights? " + rights));
          logger.info( "Constructing: ************* CHANNEL CREATED" );
 
          // wait until connected
-         chan  = adc.connect();
+         final Channel<T> chan  = channel.connect();
 
          logger.info( "Constructing: ************* CHANNEL CONNECTED" );
          logger.info( "Initial value is: {}", chan.get() );
 
-         //mon1 = adc.addValueMonitor(value -> System.out.println(value));
-         mon2 = adc.addValueMonitor( v -> handler.accept( v ) );
+         final Monitor mon = channel.addValueMonitor( v -> handler.accept( v ) );
 
          logger.info( "Constructing: ************* MONITOR CREATED" );
       }
-      catch ( Exception ex ) {
+      catch ( Exception ex )
+      {
          logger.info( "Constructing: ************* EXCEPTION" );
       }
    }

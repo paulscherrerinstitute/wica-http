@@ -55,3 +55,20 @@ the EPICS channel of interest and send evolving updates which will be
 rendered as the text content of the div.
 
 # Wica 2 Endpoints
+
+
+# Notes on performance limits
+
+Tomcat:
+Default seems to be 6
+Edit with:
+about:config ->
+network.http.max-persistent-connections-per-server
+
+Chrome:
+Default seems to be 6
+Edit with (Windows only):
+Registry Editor ->
+HKEY_CURRENT_USER ->
+Software\Microsoft\Windows\CurrentVersion\Internet Settings ->
+MaxConnectionsPerServer
