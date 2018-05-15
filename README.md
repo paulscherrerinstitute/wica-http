@@ -72,3 +72,10 @@ Registry Editor ->
 HKEY_CURRENT_USER ->
 Software\Microsoft\Windows\CurrentVersion\Internet Settings ->
 MaxConnectionsPerServer
+
+# Bugs and Limitations
+The code is not even pre-production quality. It's really just a
+quick hack to demonstrate the porrof-of-principle.
+
+Note: the EPICS CA library does not seem to work on EPICS 7.
+
