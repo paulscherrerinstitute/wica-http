@@ -51,8 +51,5 @@ module ch.psi.wica
    // This list is to explicitly enable reflection.
    // Probably these lists can be reduced in scope when the dependencies
    // are better understood.
-   //exports ch.psi.wica.controllers;
-   //exports ch.psi.wica.epics;
-   //exports ch.psi.wica.controllers;
 
 }
