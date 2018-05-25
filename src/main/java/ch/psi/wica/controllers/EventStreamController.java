@@ -50,14 +50,13 @@ class EventStreamController
 /*- Main ---------------------------------------------------------------------*/
 
    @Autowired
-   public EventStreamController(@Value( "${wica2.heartbeat_interval}" ) int eventStreamHeartBeatInterval,  EpicsChannelMonitor epicsChannelMonitor )
+   public EventStreamController(@Value( "${wica.heartbeat_interval}" ) int eventStreamHeartBeatInterval,  EpicsChannelMonitor epicsChannelMonitor )
    {
       logger.info( "Created new event stream with heartbeat interval of {} seconds.", eventStreamHeartBeatInterval );
 
       this.eventStreamHeartBeatInterval = eventStreamHeartBeatInterval;
       this.eventStreamFluxMap = new ConcurrentHashMap<>();
       this.eventStreamMonitorMap = new ConcurrentHashMap<>();
-
    }
 
 /*- Class methods ------------------------------------------------------------*/

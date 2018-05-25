@@ -77,7 +77,7 @@ function connect_event_stream( id, ev_callback )
 function manage_event_stream() {
 
     var ONE_SECOND_IN_TIMER_UNITS = 1000;
-    var STREAM_TIMEOUT_INTERVAL =   70;
+    var STREAM_TIMEOUT_INTERVAL =   20;
     var STREAM_RECONNECT_INTERVAL = 15;
 
     var countdownInSeconds = 0;
