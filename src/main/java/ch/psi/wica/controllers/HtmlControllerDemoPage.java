@@ -1,6 +1,6 @@
 /*- Package Declaration ------------------------------------------------------*/
 
-package ch.psi.wica2.controllers;
+package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 

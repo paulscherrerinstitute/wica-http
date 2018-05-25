@@ -1,12 +1,12 @@
-package ch.psi.wica2;
+package ch.psi.wica;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Wica2Application {
+public class WicaApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Wica2Application.class, args);
+		SpringApplication.run(WicaApplication.class, args);
 	}
 }
