@@ -9,16 +9,16 @@ project whose stated goal was to provide for the EPICS collaboration a:
 > *very simple, but powerful, Channel Access to REST service*
 
 This new project aims to provide similar functionality but to leverage off up-and-coming
-technologies of growing strategic importance within PSI's GFA Controls Section.
+technologies of increasing strategic importance within PSI's GFA Controls Section.
 
 The main vision of wica2 is to
 
 > _**create a mechanism to enable an end-user to easily put together a webpage which
-monitors the live status of some EPICS channel of interest**_
+monitors the live status of one or more EPICS channels of interest**_
 
 More concretely the main technology differences between wica and wica2 are as follows:
 
-| ch.psi.wica project                  | ch.psi.wica2 project                       |
+| Original WICA Project                | WICA2 project                              |
 | :----------------------------------- | :----------------------------------------- |
 | Runs on Glassfish Application Server | Uses Spring Boot containers (tomcat/netty) |
 | Runs directly on linux host          | Runs in Docker container                   |
@@ -40,7 +40,7 @@ The simplest Wica2 webpage would look something like this:
 <head>
    <meta charset="UTF-8"/>
    <title>My Awesome Epics Channel Viewer</title>
-   <script type="text/javascript" src="gfa-wica2.psi.ch/js"></script>
+   <script type="text/javascript" src="gfa-wica.psi.ch/js"></script>
 </head>
 
 <body>
@@ -56,8 +56,23 @@ rendered as the text content of the div.
 
 # Wica 2 Endpoints
 
+Register new stream (register channels to monitor)
 
-# Notes on performance limits
+```
+POST ca/streams
+Content-Type: application/json
+
+["channel1", "channel2", "channnel3"]
+```
+
+Subscribe for stream updates
+
+```
+GET ca/streams/<id>
+```
+
+
+# Notes on browser simultaneous connection limits
 
 Tomcat:
 Default seems to be 6
@@ -73,9 +88,6 @@ HKEY_CURRENT_USER ->
 Software\Microsoft\Windows\CurrentVersion\Internet Settings ->
 MaxConnectionsPerServer
 
-# Bugs and Limitations
-The code is not even pre-production quality. It's really just a
-quick hack to demonstrate the porrof-of-principle.
+# Notes on reactive streams back propagation
 
-Note: the EPICS CA library does not seem to work on EPICS 7.
-
+See the unit tests

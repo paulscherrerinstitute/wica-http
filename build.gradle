@@ -1,52 +1,64 @@
 buildscript {
 	ext {
-		springBootVersion = '2.0.1.RELEASE'
+		springBootVersion = '2.0.2.RELEASE'
 	}
 	repositories {
 		mavenCentral()
+		maven {
+			url 'https://repo.spring.io/libs-snapshot'
+		}
+		maven {
+			url 'http://oss.sonatype.org/content/repositories/snapshots'
+		}
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 	}
 }
 
+plugins {
+	id "com.dua3.gradle.jpms" version "0.4.0"
+}
+
+apply plugin: 'com.dua3.gradle.jpms'
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'ch.psi'
-version = '0.2.0-RELEASE'
-sourceCompatibility = 9
+version = '0.3.0-RELEASE'
+sourceCompatibility = 10
 
 repositories {
 	mavenCentral()
 }
 
+test {
+	exclude 'module-info.class'
+}
 
 dependencies {
 
 	compile('org.springframework.boot:spring-boot-starter-webflux')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
-
-
-	compile( 'javax.xml.bind:jaxb-api:2.3.0')
-
+	compile('org.apache.commons:commons-lang3')
 	compile('org.epics:ca:1.0.0')
 
 	// Sometimes useful for debugging
 	// compile('org.springframework.boot:spring-boot-starter-actuator')
 
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+	// Required due to transitive dependency issues in 'spring-boot-starter-test'/
+	// It's a known problem that will hopefully be cleaned up in a later
+	// Spring Framework release.
+	testCompile('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'com.vaadin.external.google', module: 'android-json'
+		exclude group: 'org.hamcrest', module: 'hamcrest-library'
+	}
+
 	testCompile('io.projectreactor:reactor-test')
 
-	testCompile 'org.epics:caj:1.1.16-SNAPSHOT'
-	testCompile 'org.epics:jca:2.3.6'
-}
-
-repositories {
-	maven {
-		url 'http://oss.sonatype.org/content/repositories/snapshots'
-	}
+	//testCompile 'org.epics:caj:1.1.16-SNAPSHOT'
+	//testCompile 'org.epics:jca:2.3.6'
 }
