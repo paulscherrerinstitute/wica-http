@@ -1,0 +1,35 @@
+record( calc, "simon:counter1" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+ 
+record( calc, "simon:counter2" ) {
+  field( SCAN,".2 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "simon:counter3" ) {
+  field( SCAN,".5 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "simon:counter4" ) {
+  field( SCAN,"1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "simon:counter5" ) {
+  field( SCAN,"2 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "simon:counter6" ) {
+  field( SCAN,"5 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "simon:counter7" ) {
+  field( SCAN,"10 second")
+  field( CALC,"VAL+1")
+}
+
