@@ -1,11 +1,12 @@
 # Overview
 
 These notes present the results of testing PSI's in-house commissioned [Java ca library](https://github.com/channelaccess/ca_matlab) 
-(ie the one developed by CosyLab). The library has been tested using the the tests in the 'src/test/java/epics' test 
-directory. Each test attempts to answer one or more questions which I had about the library before I wrote the test.
+(ie the one developed by CosyLab). The library has been tested using the tests in the 'src/test/java/epics' test 
+directory. The main focus of thet tests was to discover how the library works so that it can be used optimally for
+Wica. Each test attempts to answer one or more questions which I had about the library before I wrote the test.
 
-The tests rely on the availability of a softIOC 'epics_tests.db' which can be found in the 'src/test/resources' 
-directory. It is started like this: 
+The tests rely on the network availability of a running softIOC. (See the 'epics_tests.db' in the 'src/test/resources' 
+directory). The IOC can be started like this: 
 ```
    softIoc -d epics_tests.db
 ```
@@ -31,9 +32,10 @@ Caveat Emptor: maybe there are bugs in my tests which would completely invalidat
 1. Although useful information is given in the CA library README file there is currently no Javadoc for the methods 
    offered by the CA library. This means there is no real contract of behaviour and the developer must guess the costs 
    of the various operations (or make tests like I did). For example it would be useful to know which operations result 
-   in a network round-trip and which do not ? Also what thread-safety guarantees does the library offer ? Since 
-   nothing is really tied down the performance and behaviour of the implementation is free to vary hugely from one 
-   release to another. This makes it difficult for users of the library to operate from a stable base.
+   in a network round-trip and which do not ? Also what thread-safety guarantees does the library offer ? And what 
+   threads will be used when performing notifications via the asynchronous method interfaces ? Since nothing is really 
+   tied down the performance and behaviour of the implementation is free to vary hugely from one release to another. 
+   This makes it difficult for users of the library to operate from a stable base.
 
 1. Creating contexts is relatively expensive and the performance drops off quite quickly as the number of contexts 
    increases (from < 10ms/context to over 100ms/context). With the resources on my machine there was was limit of just 
