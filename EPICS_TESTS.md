@@ -27,7 +27,7 @@ the application.
 
 # Main "Take Home" Points
 
-Caveat Emptor: maybe there are bugs in my tests which would completely invalidate some of the points below !!
+Caveat Emptor: maybe there are/were bugs in my tests which would completely invalidate some of the points below !!
 
 1. Although useful information is given in the CA library README file there is currently no Javadoc for the methods 
    offered by the CA library. This means there is no real contract of behaviour and the developer must guess the costs 
