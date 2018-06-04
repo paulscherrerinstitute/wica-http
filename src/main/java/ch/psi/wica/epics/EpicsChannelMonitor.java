@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 /*- Class Declaration --------------------------------------------------------*/
 
 @Controller
-public class EpicsChannelMonitor<T>
+public class EpicsChannelMonitor
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -41,8 +41,8 @@ public class EpicsChannelMonitor<T>
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public void connect( String channelName, Class<T> channelType, Consumer<T> handler ) {
-
+   public <T> void connect( String channelName, Class<T> channelType, Consumer<T> handler )
+   {
       logger.info( "************* CONNECTING" );
       try
       {
@@ -64,7 +64,7 @@ public class EpicsChannelMonitor<T>
 
          completableFuture.thenRunAsync( () -> {
                                                   logger.info( "************* CHANNEL CONNECTED" );
-                                                  channel.addValueMonitor( v -> handler.accept( v ) );
+                                                  channel.addValueMonitor( handler );
                                                   logger.info( "************* MONITOR CREATED" );
                                                } );
       }
@@ -76,6 +76,7 @@ public class EpicsChannelMonitor<T>
 
    public void destroy()
    {
+      logger.info( "************* CONTEXT DESTROYED" );
       caContext.close();
    }
 
