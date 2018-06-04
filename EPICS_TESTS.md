@@ -1,7 +1,7 @@
 # Overview
 
 These notes present the results of testing PSI's in-house commissioned [Java ca library](https://github.com/channelaccess/ca_matlab) 
-(ie the one developed by CosyLab). The library has been tested using the tests in the 'src/test/java/epics' test 
+(ie the one developed by CosyLab). The library has been tested using the resources in the 'src/test/java/epics' test 
 directory. The main focus of the tests was to discover how the library works so that it can be used optimally for
 Wica. Each test attempts to answer one or more questions which I had about the library before I wrote the test.
 
