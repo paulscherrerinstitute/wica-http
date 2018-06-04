@@ -1,0 +1,512 @@
+record( calc, "test:db_ok" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter00" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter01" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter02" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter03" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter04" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter05" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter06" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter07" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter08" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter09" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+ 
+
+record( calc, "test:counter10" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter11" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter12" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter13" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter14" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter15" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter16" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter17" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter18" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter19" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter20" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter21" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter22" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter23" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter24" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter25" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter26" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter27" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter28" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter29" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+ 
+record( calc, "test:counter30" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter31" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter32" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter33" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter34" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter35" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter36" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter37" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter38" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter39" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+ 
+record( calc, "test:counter40" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter41" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter42" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter43" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter44" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter45" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter46" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter47" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter48" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter49" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter50" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter51" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter52" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter53" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter54" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter55" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter56" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter57" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter58" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter59" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter60" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter61" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter62" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter63" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter64" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter65" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter66" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter67" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter68" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter69" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+ 
+record( calc, "test:counter70" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter71" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter72" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter73" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter74" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter75" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter76" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter77" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter78" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter79" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter80" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter81" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter82" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter83" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter84" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter85" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter86" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter87" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter88" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter89" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+ 
+record( calc, "test:counter90" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter91" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter92" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter93" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter94" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter95" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter96" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter97" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter98" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:counter99" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+}
+
+record(waveform, "test:rawdata") {
+  field(NELM, "10000000")
+  field(FTVL, "LONG")
+}
+
+
