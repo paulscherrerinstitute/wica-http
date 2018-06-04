@@ -35,7 +35,7 @@ Caveat Emptor: maybe there are/were bugs in the test software which would comple
    in a network round-trip and which do not ? Also what thread-safety guarantees does the library offer ? And what 
    threads will be used when performing notifications via the asynchronous method interfaces ? Since nothing is really 
    tied down the performance and behaviour of the implementation is free to vary hugely from one release to another. 
-   This makes it difficult for users of the library to operate from a stable base.
+   In my opinion this makes it difficult for users of the library to feel they are operating from a stable base.
 
 1. Creating contexts is relatively expensive and the performance drops off quite quickly as the number of contexts 
    increases (from < 10ms/context to over 100ms/context). With the resources on my machine there was was limit of just 
