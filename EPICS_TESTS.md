@@ -20,7 +20,7 @@ Two test scenarios were used:
 
 
 During this work to find out what was happening "on the wire" at times I made use of Michael Davidsaver's ca.lua plugin 
-for Wireshark available [here](https://github.com/mdavidsaver/cashark) 
+for Wireshark available [here](https://github.com/mdavidsaver/cashark).
 
 I also used the [jvisualvm](https://visualvm.github.io/) tool to gain some insight into the threads that are started by 
 the application.
@@ -29,8 +29,8 @@ the application.
 
 Caveat Emptor: maybe there are/were bugs in the test software which would completely invalidate some of the points below !!
 
-1. Although useful information is given in the CA library README file there is currently no Javadoc for the methods 
-   offered by the CA library. This means there is no real contract of behaviour and the developer must guess the costs 
+1. Although useful information is given in the ca library README file there is currently no Javadoc for the methods 
+   offered by the ca library. This means there is no real contract of behaviour and the developer must guess the costs 
    of the various operations (or make tests like I did). For example it would be useful to know which operations result 
    in a network round-trip and which do not ? Also what thread-safety guarantees does the library offer ? And what 
    threads will be used when performing notifications via the asynchronous method interfaces ? Since nothing is really 
