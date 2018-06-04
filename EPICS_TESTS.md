@@ -64,8 +64,9 @@ Caveat Emptor: maybe there are/were bugs in the test software which would comple
    pool used for callbacks.
 
 1. There seem to be **some stability issues** with the library. Sometimes it emits WARNING messages which hint that the
-   underlying library is under stress. By putting busy-wait loops into the tests I was able to wokround these problems
-   and still get good performance. Below is an example of a message that is sometimes emitted:   
+   underlying library is under stress. I speculated that there was some buffer overflow in the underlying TCP network
+   stack. By putting a 10us busy-wait loop (yuk !) into the tests I was able to workaround these problems and get good 
+   performance. Below is an example of a message that is sometimes emitted:   
 ```   
 Jun 01, 2018 12:35:40 AM org.epics.ca.impl.ResponseHandlers handleResponse
 WARNING: Invalid response message (command = 13876) received from: /192.168.0.25:5064
