@@ -2,7 +2,7 @@
 
 These notes present the results of testing PSI's in-house commissioned [Java ca library](https://github.com/channelaccess/ca_matlab) 
 (ie the one developed by CosyLab). The library has been tested using the tests in the 'src/test/java/epics' test 
-directory. The main focus of thet tests was to discover how the library works so that it can be used optimally for
+directory. The main focus of the tests was to discover how the library works so that it can be used optimally for
 Wica. Each test attempts to answer one or more questions which I had about the library before I wrote the test.
 
 The tests rely on the network availability of a running softIOC. (See the 'epics_tests.db' in the 'src/test/resources' 
@@ -11,7 +11,7 @@ directory). The IOC can be started like this:
    softIoc -d epics_tests.db
 ```
 
-The softIoc was run using an EPICS base distribution from both R3.14.12.7 and 3.15.5. So far I did not detect any
+The softIoc was run using an EPICS base distribution from both R3.14.12.7 and R3.15.5. So far I did not detect any
 significant differences in the results.  
 
 Two test scenarios were used:
