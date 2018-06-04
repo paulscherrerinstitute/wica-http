@@ -60,7 +60,8 @@ Caveat Emptor: maybe there are/were bugs in the test software which would comple
    creation of a separate Thread and after a few thousand my machine ran out of resources. (I read somewhere that
    a typical stack size for a thread is ~1MB).  I never managed to create monitors on more than about 4000 channels.
    A possible improvement might be to **provide a method signature which allows the library user to specify the 
-   Executor** to be used for the callback.
+   Executor** to be used for the callback. This would give the user some control over the behaviour of the thread
+   pool used for callbacks.
 
 1. There seem to be **some stability issues** with the library. Sometimes it emits WARNING messages which hint that the
    underlying library is under stress. By putting busy-wait loops into the tests I was able to wokround these problems
