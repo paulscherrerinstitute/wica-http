@@ -15,8 +15,8 @@ The softIoc was run using an EPICS base distribution from both R3.14.12.7 and R3
 significant differences in the results.  
 
 Two test scenarios were used:
-1. Test Series 1 (EPICS source and CA library test process were co-located on the SAME physical machine)
-1. Test Series 2 (EPICS source and CA library test process were located on DIFFERENT physical machines)
+1. Test Series 1 (EPICS SoftIoc and CA library test process were co-located on the SAME physical machine)
+1. Test Series 2 (EPICS SoftIoc and CA library test process were located on DIFFERENT physical machines)
 
 
 During this work to find out what was happening "on the wire" at times I made use of Michael Davidsaver's ca.lua plugin 
