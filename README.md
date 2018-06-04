@@ -1,22 +1,20 @@
-**Note: the information below is still under construction and still evolving !**
+**Note: the information below is under construction and still evolving !**
 
 
 # Overview
 
-This project is intended (eventually !) to be a successor to PSI's earlier [wica](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica)
-project whose stated goal was to provide for the EPICS collaboration a:
+This project is intended to be a successor to PSI's earlier [Wica](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica)
+project whose stated goal was to provide:
 
-> *very simple, but powerful, Channel Access to REST service*
+> *a very simple, but powerful, Channel Access to REST service*
 
-This new project aims to provide similar functionality but to leverage off up-and-coming
-technologies of increasing strategic importance within PSI's GFA Controls Section.
-
-The main vision of wica2 is to
+Wica2 aims to provide similar functionality but the vision of the project is stated in rather more abstract terms:
 
 > _**create a mechanism to enable an end-user to easily put together a webpage which
 monitors the live status of one or more EPICS channels of interest**_
 
-More concretely the main technology differences between wica and wica2 are as follows:
+Wica2 will leverage off up-and-coming technologies within PSI's GFA Controls Section. More concretely the main 
+technology differences between Wica and Wica2 are as follows:
 
 | Original WICA Project                | WICA2 project                              |
 | :----------------------------------- | :----------------------------------------- |
@@ -26,21 +24,16 @@ More concretely the main technology differences between wica and wica2 are as fo
 | Uses EPICS JCA/CAJ CA library        | Uses PSI's EPICS CA client library         |
 
 
-# Old Wica API
+# Wica Webpage
 
-For reference purposes the old Wica API is available [here](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica/blob/master/Readme.md#API)
-
-
-# Wica2 HTML5 Webpage
-
-The simplest Wica2 webpage would look something like this:
+The simplest Wica webpage would look something like this:
 ```
 <!DOCTYPE html>
 <html lang="en">
 <head>
    <meta charset="UTF-8"/>
    <title>My Awesome Epics Channel Viewer</title>
-   <script type="text/javascript" src="gfa-wica.psi.ch/js"></script>
+   <script type="text/javascript" src="gfa-wica.psi.ch/wica.js"></script>
 </head>
 
 <body>
@@ -50,28 +43,51 @@ The simplest Wica2 webpage would look something like this:
 </html>
 ```
 
-When the page is loaded the wica server will create a monitor on
-the EPICS channel of interest and send evolving updates which will be
-rendered as the text content of the div.
+When the page is loaded the underlying Javascript library will analyse the page for elements whose 'data-epics-ca' 
+attribute indicates an interest in some EPICS channel. The library then communicates with the wica server which will 
+use EPICS Channel Access (CA) technology to monitor the relevant channels and send value updates using the HTML5 Server 
+Sent Event (SSE) feature. 
 
-# Wica 2 Endpoints
 
-Register new stream (register channels to monitor)
+# Wica REST API (Endpoints)
 
+"Underneath the hood" the Wica javascript library communicates with Wica HTTP Server using a series of REST endpoints.
+In the short to medium term it is anticipated that the Wica2 server will use an API that is functionally identical to 
+the old Wica server whose API is documented [here](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica/blob/master/Readme.md#API)
+
+Currently (2018-05-21) only the following feature subset is supported:
+
+
+##### Register new stream (register channels to monitor):
 ```
-POST ca/streams
+POST /ca/streams
 Content-Type: application/json
 
 ["channel1", "channel2", "channnel3"]
 ```
 
-Subscribe for stream updates
-
+##### Subscribe for stream (Server Sent Event) updates:
 ```
-GET ca/streams/<id>
+GET /ca/streams/<id>
 ```
 
+##### Download the Wica javascript library:
+```
+GET /wica.js
+```
 
+# Notes on EPICS CA Testing
+
+Wica2 leverages off PSI's in-house commissioned Java Channel Access (ca) library. This is publicly available via 
+Github at [this](https://github.com/channelaccess/ca_matlab) location.
+
+Wica2 tries to optimise its use of the library to keep the costs (eg CPU and memory consumption) reasonable. 
+To do so the library was tested to assess the cost of various operations. The results are discussed on 
+[this page](EPICS_TESTS). 
+ 
+Following this test program the following design decisions have been made:
+   * creating contexts is expensive. Therefore everything will be shared
+ 
 # Notes on browser simultaneous connection limits
 
 Tomcat:
