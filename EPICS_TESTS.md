@@ -43,7 +43,7 @@ Caveat Emptor: maybe there are/were bugs in the test software which would comple
 
 1. It is quick and easy to create a huge number of channels (eg a million in ~2 seconds).
 
-1. Synchronously connecting channels seems to be quite slow. With the resources on my machine the connection time 
+1. Synchronously connecting channels seems to be "quite slow". With the resources on my machine the connection time 
    was around 10ms/channel. So to connect eg 10,000 channels would around 100 seconds. For bulk operations you
    probably wouldn't want to do that.
 
