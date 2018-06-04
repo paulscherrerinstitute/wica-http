@@ -51,9 +51,8 @@ Caveat Emptor: maybe there are/were bugs in the test software which would comple
 
 1. Once a channels is connected the synchronous GET performance was faster than I initially expected. One can acquire 
    the value from 10,000 channels in less than a second. Using wireshark I verified that the GET call really does 
-   result in a network round trip rather than returning some cached value. (Since there is no javadoc - that's to 
-   say contract for the behaviour of the method - the developer currently has to guess; I am naturally suspicious, 
-   I guess ;-) ).
+   result in a network round trip rather than returning some cached value. (Since there is no javadoc ie documented
+   contract for the behaviour offered by the method - the developer currently has to guess).
 
 1. Performing an asynchronous GET on multiple channels is maybe 5-10 times faster than the synchronous GET.
 
