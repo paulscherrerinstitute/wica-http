@@ -30,9 +30,9 @@ public class ReactiveTests {
    @Test
    public void reactorTest_check_cancel_back_propagation()
    {
-      final AtomicBoolean flux1Cancelled= new AtomicBoolean( false);
-      final AtomicBoolean flux2Cancelled= new AtomicBoolean( false);
-      final AtomicBoolean flux3Cancelled= new AtomicBoolean( false);
+      final AtomicBoolean flux1Cancelled= new AtomicBoolean( false );
+      final AtomicBoolean flux2Cancelled= new AtomicBoolean( false );
+      final AtomicBoolean flux3Cancelled= new AtomicBoolean( false );
 
       // These sources allow us to inject signals into the flux under test
       final ReplayProcessor<Long> src1 = ReplayProcessor.create();
@@ -60,9 +60,9 @@ public class ReactiveTests {
    @Test
    public void reactorTest_check_cancel_back_propagation_threaded() throws InterruptedException
    {
-      final AtomicBoolean flux1Cancelled= new AtomicBoolean( false);
-      final AtomicBoolean flux2Cancelled= new AtomicBoolean( false);
-      final AtomicBoolean flux3Cancelled= new AtomicBoolean( false);
+      final AtomicBoolean flux1Cancelled= new AtomicBoolean( false );
+      final AtomicBoolean flux2Cancelled= new AtomicBoolean( false );
+      final AtomicBoolean flux3Cancelled= new AtomicBoolean( false );
 
       // These sources allow us to inject signals into the flux under test
       final ReplayProcessor<Long> src1 = ReplayProcessor.create();
@@ -105,7 +105,7 @@ public class ReactiveTests {
    //   (c) the two upstream subscribers (flux1 and flux2) are NOT cancelled.
    //
    // Currently (2018-05-22) there is very little about this in the discussion forums. But I did
-   // find the following (which relates to the Rx library on Windows0 but which seems to descrbe
+   // find the following (which relates to the Rx library on Windows0 but which seems to describe
    // the behaviour that I have seen.
    // https://stackoverflow.com/questions/19309417/what-should-happen-if-i-throw-an-exception-in-my-subscribe-callback-for-an-obser
    // https://social.msdn.microsoft.com/Forums/en-US/6ea06e08-6d26-49b4-a3fa-276d1efef780/what-if-an-exception-is-thrown-by-the-observer-in-onnext?forum=rx
