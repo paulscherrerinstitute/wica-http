@@ -1,8 +1,8 @@
 # Overview
 
-These notes present the results of testing PSI's in-house commissioned [Java ca library](https://github.com/channelaccess/ca_matlab) 
+These notes present the results of testing PSI's in-house commissioned [Java CA library](https://github.com/channelaccess/ca_matlab) 
 (ie the one developed by CosyLab). The library has been tested using the tests in the 'src/test/java/epics' test 
-directory. The main focus of thet tests was to discover how the library works so that it can be used optimally for
+directory. The main focus of the tests was to discover how the library works so that it can be used optimally for
 Wica. Each test attempts to answer one or more questions which I had about the library before I wrote the test.
 
 The tests rely on the network availability of a running softIOC. (See the 'epics_tests.db' in the 'src/test/resources' 
@@ -43,8 +43,8 @@ Caveat Emptor: maybe there are bugs in my tests which would completely invalidat
 
 1. It is quick and easy to create a huge number of channels (eg a million in ~2 seconds).
 
-1. Synchronously connecting channels seems to be quite slow. With the resources on my machine the connection time 
-   was around 10ms/channel. So to connect eg 10,000 channels would around 100 seconds. For bulk operations you
+1. Synchronously connecting channels seems to be "quite slow". With the resources on my machine the connection time 
+   was around 10ms/channel. So to connect eg 10,000 channels would take around 100 seconds. For bulk operations you
    probably wouldn't want to do that.
 
 1. Asynchronous channel connection is MUCH (eg 100x) faster. Connecting 10,000 channels takes less than a second.
