@@ -1,5 +1,5 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.epics;
+package ch.psi.wica.ca;
 
 /*- Imported packages --------------------------------------------------------*/
 
@@ -7,20 +7,23 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.epics.ca.Channel;
 import org.epics.ca.ConnectionState;
 import org.epics.ca.Context;
-import org.junit.Assert;
 import org.junit.FixMethodOrder;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ContextTests
+class ContextTests
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -38,53 +41,59 @@ public class ContextTests
     * Q1: Can the context manual close feature be relied on to cleanup the created channels ?
     */
    @Test
-   public void q01()
+   void q01()
    {
       logger.info( "Performing Q1 Test: please wait...");
 
-      final Context caContext = new Context();
-      final Channel caChannel = caContext.createChannel("test:counter01", String.class);
-      caChannel.connect();
-      Assert.assertEquals( ConnectionState.CONNECTED, caChannel.getConnectionState() );
-      caContext.close();
-      Assert.assertEquals( ConnectionState.CLOSED, caChannel.getConnectionState() );
+      assertTimeoutPreemptively( Duration.ofSeconds( 5L ), () ->
+      {
+         final Context caContext = new Context();
+         final Channel caChannel = caContext.createChannel("test:counter01", String.class);
+         caChannel.connect();
+         Assertions.assertEquals(ConnectionState.CONNECTED, caChannel.getConnectionState());
+         caContext.close();
+         Assertions.assertEquals(ConnectionState.CLOSED, caChannel.getConnectionState());
 
-      logger.info( "RESULTS:" );
-      logger.info( "Q1: Can the context manual close feature be relied on to cleanup the created channels ? Answer: **YES**" );
+         logger.info("RESULTS:");
+         logger.info("Q1: Can the context manual close feature be relied on to cleanup the created channels ? Answer: **YES**" );
+      } );
    }
 
    /**
     * Q2: Can the context autoclose feature be relied on to cleanup the created channels ?
     */
    @Test
-   public void q02()
+   void q02()
    {
       logger.info( "Performing Q2 Test: please wait...");
 
-      final Context caContext = new Context();
-      final Channel caChannel;
-      try (caContext)
+      assertTimeoutPreemptively( Duration.ofSeconds( 5L ), () ->
       {
-         caChannel = caContext.createChannel("test:counter01", String.class);
-         caChannel.connect();
-         Assert.assertEquals(ConnectionState.CONNECTED, caChannel.getConnectionState());
-      }
+         final Context caContext = new Context();
+         final Channel caChannel;
+         try ( caContext )
+         {
+            caChannel = caContext.createChannel("test:counter01", String.class);
+            caChannel.connect();
+            Assertions.assertEquals(ConnectionState.CONNECTED, caChannel.getConnectionState());
+         }
 
-      // After the try-with-resources statment the context should have closed
-      // the channel
-      Assert.assertEquals(ConnectionState.CLOSED, caChannel.getConnectionState());
+         // After the try-with-resources statement the context should have closed
+         // the channel
+         Assertions.assertEquals(ConnectionState.CLOSED, caChannel.getConnectionState());
 
-      // And it should no longer be possible to create new channels
-      try
-      {
-         caContext.createChannel("test:counter01", String.class);
-      }
-      catch (Throwable t)
-      {
-         Assert.assertTrue(t instanceof RuntimeException);
-      }
-      logger.info( "RESULTS:" );
-      logger.info( "Q2: Can the context autoclose feature be relied on to cleanup the created channels ? Answer: **YES**" );
+         // And it should no longer be possible to createNext new channels
+         try
+         {
+            caContext.createChannel("test:counter01", String.class);
+         }
+         catch ( Throwable t )
+         {
+            Assertions.assertTrue( t instanceof RuntimeException);
+         }
+         logger.info( "RESULTS:");
+         logger.info( "Q2: Can the context autoclose feature be relied on to cleanup the created channels ? Answer: **YES**");
+      } );
    }
 
    /**
@@ -93,11 +102,15 @@ public class ContextTests
     * Q5: Do all contexts share the same returned object ?
     */
    @Test
-   public void q03q04q05()
+   void q03q04q05()
    {
       logger.info( "Performing Q3/Q4/Q5 Tests: please wait...");
 
-      final List<Integer> samplePoint = Arrays.asList( 1, 10, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750 );
+      // With default behaviour of ca-1.1.0 release we can only createNext ~200 contexts (as
+      // each context starts 10 threads)
+      // With default behaviour of ca-1.2.0 release we can only createNext ~100 contexts (as
+      // each context starts 16 threads)
+      final List<Integer> samplePoint = Arrays.asList( 1, 10, 50, 100 );
       final Map<Integer,Long> resultMap = new LinkedHashMap<>();
       final Map<Integer,Context> contextObjectMap = new LinkedHashMap<>();
       final List<Context> contextList = new ArrayList<>();

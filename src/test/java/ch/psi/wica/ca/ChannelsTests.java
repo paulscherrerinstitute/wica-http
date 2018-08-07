@@ -1,9 +1,10 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.epics;
+package ch.psi.wica.ca;
 
 /*- Imported packages --------------------------------------------------------*/
 
 import org.apache.commons.lang3.time.StopWatch;
+
 import org.epics.ca.Channels;
 import org.epics.ca.Context;
 import org.junit.After;
@@ -81,7 +82,7 @@ public class ChannelsTests
    {
       logger.info( "Performing Q31 Test: please wait...");
 
-      final List<Integer> samplePoints = Arrays.asList( 1, 10, 100, 500, 1_000, 2_000, 5_000, 10_000, 15_000, 20_000 );
+      final List<Integer> samplePoints = Arrays.asList( 1, 10, 100, 500, 1_000, 2_000 );
       final int maxChannels = samplePoints.get( samplePoints.size() - 1 );
 
       final Map<Integer,Long> resultMap = new LinkedHashMap<>();
