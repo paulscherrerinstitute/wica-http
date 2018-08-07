@@ -11,22 +11,26 @@ This log describes the functionality of tagged versions within the repository.
   Created separate Javascript "library". Can now create epics links according to
   data-epics-channel attribute appended to html elements.
   Each link is on a separate SSE channel so solution is not in any way scalable !
-<<<<<<< HEAD
   !! EVERYTHING IS STILL A TOTAL HACK WHICH NEEDS CLEANING UP !!
-=======
 
 * [0.3.0](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.3.0)
   A cleanup of the first version. Each SSE contains a map of channels with their
-  corresponding values. Now supports POST to create a stream and GT to subscribe to it.
+  corresponding values. Now supports POST to create a stream and GET to subscribe to it.
   Many clients can therefore subscribe to the same event stream.
   Each stream has its own CA context - this prevents sharing of channels between
   different streams.
 
-    CTRLIT-6622: Add HTML page to demonstrate features.
-    CTRLIT-6619: Add first support for unit tests.
-    CTRLIT-6624: Rename wica2 to wica.
-    CTRLIT-6618: Upgrade to JDK10.
-    CTRLIT-6623: Clean up application properties file.
+   - CTRLIT-6622: Add HTML page to demonstrate features.
+   - CTRLIT-6619: Add first support for unit tests.
+   - CTRLIT-6624: Rename wica2 to wica.
+   - CTRLIT-6618: Upgrade to JDK10.
+   - CTRLIT-6623: Clean up application properties file.
+
+* [0.4.0](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.4.0)
+
+   - [CTRLIT-XXXX](https://jira.psi.ch/browse/CTRLIT-XXXX): Xxx 
+   - [CTRLIT-XXXX](https://jira.psi.ch/browse/CTRLIT-XXXX): xxx
+
 
 
 # Project Ideas Backlog
