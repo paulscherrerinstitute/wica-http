@@ -13,7 +13,7 @@
             padding-top: 15px;
         }
 
-        #server-link-status-widget {
+        #wica-server-link-status-widget {
             height: 15px;
             width: 15px;
             border-radius: 50%;
@@ -33,18 +33,18 @@
 
 <div>
     <h2>Connection Status</h2>
-    <span>Link Status: </span> <button id="server-link-status-widget" class="led-widget"></button>
+    <span>Wica Server Link Status: </span> <button id="wica-server-link-status-widget" class="led-widget"></button>
 </div>
 
 <div>
     <h2>Stream Data</h2>
-    <span>Received Data 0.1s: </span> <span data-epics-channel="simon:counter1"></span> <br>
-    <span>Received Data 0.2s: </span> <span data-epics-channel="simon:counter2"></span> <br>
-    <span>Received Data 0.5s: </span> <span data-epics-channel="simon:counter3"></span> <br>
-    <span>Received Data 1.0s: </span> <span data-epics-channel="simon:counter4"></span> <br>
-    <span>Received Data 2.0s: </span> <span data-epics-channel="simon:counter5"></span> <br>
-    <span>Received Data 5.0s: </span> <span data-epics-channel="simon:counter6"></span> <br>
-    <span>Received Data 10s:  </span> <span data-epics-channel="simon:counter7"></span> <br>
+    <span>Received Data 0.1s: </span> <span data-epics-channel="wica:test:counter01"></span> <br>
+    <span>Received Data 0.2s: </span> <span data-epics-channel="wica:test:counter02"></span> <br>
+    <span>Received Data 0.5s: </span> <span data-epics-channel="wica:test:counter03"></span> <br>
+    <span>Received Data 1.0s: </span> <span data-epics-channel="wica:test:counter04"></span> <br>
+    <span>Received Data 2.0s: </span> <span data-epics-channel="wica:test:counter05"></span> <br>
+    <span>Received Data 5.0s: </span> <span data-epics-channel="wica:test:counter06"></span> <br>
+    <span>Received Data 10s:  </span> <span data-epics-channel="wica:test:counter07"></span> <br>
 </div>
 </body>
 </html>

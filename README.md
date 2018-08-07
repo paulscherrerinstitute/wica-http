@@ -55,8 +55,7 @@ Sent Event (SSE) feature.
 In the short to medium term it is anticipated that the Wica2 server will use an API that is functionally identical to 
 the old Wica server whose API is documented [here](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica/blob/master/Readme.md#API)
 
-Currently (2018-05-21) only the following feature subset is supported:
-
+## Currently Supported Features (status: 2018-08-02)
 
 ##### Register new stream (register channels to monitor):
 ```
@@ -68,12 +67,27 @@ Content-Type: application/json
 
 ##### Subscribe for stream (Server Sent Event) updates:
 ```
-GET /ca/streams/<id>
+GET /ca/streams/<channelName>
 ```
 
 ##### Download the Wica javascript library:
 ```
 GET /wica.js
+```
+
+## New Features Coming Soon (status: 2018-08-02)
+
+##### Get value of a channel
+```
+GET /ca/channels/<channel>
+```
+
+#####  Set value of channel
+```
+PUT /ca/channels/<channel>
+Content-Type: application/json or text/plain
+
+somevalue
 ```
 
 # Notes on EPICS CA Testing
@@ -82,8 +96,9 @@ Wica2 leverages off PSI's in-house commissioned Java Channel Access (ca) library
 Github at [this](https://github.com/channelaccess/ca_matlab) location.
 
 Wica2 tries to optimise its use of the library to keep the costs (eg CPU and memory consumption) reasonable. 
-To do so the library was tested to assess the cost of various operations. The results are discussed on 
-[this page](EPICS_TESTS). 
+To do so the library was tested to assess the cost of various operations. The results were originally discussed 
+on [this page](EPICS_TESTS). Subsequently a new CA library release has been made and the results will now and
+in the future be published on the project's [Github site](https://github.com/channelaccess/ca/blob/master/MONITOR_INFO.md)
  
 Following this test program the following design decisions have been made:
    * creating contexts is expensive. Therefore everything will be shared
@@ -107,3 +122,9 @@ MaxConnectionsPerServer
 # Notes on reactive streams back propagation
 
 See the unit tests
+
+# Project Changes and Tagged Releases
+
+* See the [CHANGELOG.md](CHANGELOG.md) file for further information.
+* See also the project's [Jira Kanban Board](https://jira.psi.ch/secure/RapidBoard.jspa?rapidView=1729)
+
