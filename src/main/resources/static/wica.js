@@ -1,4 +1,4 @@
-var linkStatusWidget = document.getElementById('server-link-status-widget');
+var linkStatusWidget = document.getElementById('wica-server-link-status-widget');
 
 function set_server_link_status_indicator( ok ) {
     if ( ok ) {
@@ -46,7 +46,7 @@ function connect_event_stream( id, ev_callback )
     var eventStreamUrl = EVENT_STREAM_URL_BASE + id;
 
     var eventSource = new EventSource( eventStreamUrl );
-    eventSource.addEventListener('message', function(e) {
+    eventSource.addEventListener( 'message', function(e) {
 
         // Perform recommended security check
         var expectedOrigin = location.origin;
@@ -65,11 +65,13 @@ function connect_event_stream( id, ev_callback )
     eventSource.addEventListener( 'open', function() {
         console.log( "Event source: 'stream' - open event." );
         set_server_link_status_indicator( true );
+        process_wica_server_connect();
     }, false );
 
     eventSource.addEventListener( 'error', function() {
         console.log( "Event source: 'stream'  - error event. Closing event source." );
         eventSource.close();
+        process_wica_server_disconnect();
         set_server_link_status_indicator( false );
     }, false );
 }
@@ -85,7 +87,7 @@ function manage_event_stream() {
         if (countdownInSeconds === 0) {
             console.warn("Event source 'stream': creating new..." );
             create_event_stream( gotActivity );
-            console.log("Event source: 'stream' - OK: create even stream task started" );
+            console.log("Event source: 'stream' - OK: create event stream task started" );
             countdownInSeconds = STREAM_RECONNECT_INTERVAL;
         }
         countdownInSeconds--;
@@ -104,10 +106,29 @@ function process_event_stream_update( eventData )
 
         var channelName = widget.getAttribute( "data-epics-channel");
         var channelValue= eventData[ channelName ];
-        if (channelValue != null ) {
+        if (channelValue == null ) {
+            widget.textContent= "Channel Disconnected"
+        }
+        else {
             widget.textContent= channelValue;
         }
-    });
+    } );
+}
+
+function process_wica_server_connect()
+{
+    find_epics_aware_widgets().forEach( function( widget ) {
+        var channelName = widget.getAttribute( "data-epics-channel");
+        widget.textContent= "Server Link Up"
+    } );
+}
+
+function process_wica_server_disconnect()
+{
+    find_epics_aware_widgets().forEach( function( widget ) {
+        var channelName = widget.getAttribute( "data-epics-channel");
+        widget.textContent= "Server Link Down"
+    } );
 }
 
 manage_event_stream();
