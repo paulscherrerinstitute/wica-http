@@ -7,10 +7,8 @@ import org.apache.commons.lang3.time.StopWatch;
 
 import org.epics.ca.Channels;
 import org.epics.ca.Context;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +20,8 @@ import java.util.concurrent.TimeoutException;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+@Ignore
+@Disabled
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ChannelsTests
 {

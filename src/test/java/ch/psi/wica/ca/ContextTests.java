@@ -8,7 +8,9 @@ import org.epics.ca.Channel;
 import org.epics.ca.ConnectionState;
 import org.epics.ca.Context;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
@@ -22,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+@Ignore
+@Disabled
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class ContextTests
 {

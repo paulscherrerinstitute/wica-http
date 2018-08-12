@@ -7,12 +7,10 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.epics.ca.Channel;
 import org.epics.ca.ConnectionState;
 import org.epics.ca.Context;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.runners.MethodSorters;
@@ -27,6 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+@Ignore
+@Disabled
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ChannelTests
 {
