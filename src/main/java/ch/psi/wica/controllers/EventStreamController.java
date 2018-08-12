@@ -8,6 +8,9 @@ import ch.psi.wica.model.ChannelName;
 import ch.psi.wica.model.StreamId;
 import ch.psi.wica.services.EpicsChannelMonitorService;
 import org.apache.commons.lang3.Validate;
+import org.epics.ca.data.Graphic;
+import org.epics.ca.data.Metadata;
+import org.epics.ca.data.Timestamped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,25 +109,27 @@ class EventStreamController
       // receive notification of the last known values of all the channels supported by the stream.
       // Republication will occur every time any of the monitored channels undergoes an update.
       final ReplayProcessor<ServerSentEvent<Map<ChannelName,String>>> replayProcessor = ReplayProcessor.cacheLast();
-      final Flux<ServerSentEvent<Map<ChannelName,String>>> replayFlux = replayProcessor.doOnCancel( () -> logger.warn( "replayFlux was cancelled" ) ).log();
+      final Flux<ServerSentEvent<Map<ChannelName,String>>> replayFlux = replayProcessor.doOnCancel( () -> logger.warn( "replayFlux was cancelled" ) );
+            //.log();
 
       // The heartbeat flux runs periodically to keep the connection alive even if none of the
       // monitored channels are changing. This facilitates a client reconnect policy if the
       // server goes down.
       final Flux<ServerSentEvent<Map<ChannelName,String>>> heartbeatFlux = Flux.interval( Duration.ofSeconds( eventStreamHeartBeatInterval ) )
                                                                           .map( l -> {
-                                                                             logger.info( "heartbeatFlux is publishing new SSE..." );
+                                                                             logger.trace( "heartbeatFlux is publishing new SSE..." );
                                                                              return buildServerSentMessageEvent( streamId, "heartbeat", lastValueMap );
                                                                           } )
-                                                                          .doOnCancel( () -> logger.warn( "heartbeatFlux was cancelled" ) ).log();
+                                                                          .doOnCancel( () -> logger.warn( "heartbeatFlux was cancelled" ) );
+                                                                          //.log();
 
       // Store it in the stream map
       final Flux<ServerSentEvent<Map<ChannelName,String>>> eventStreamFlux = replayFlux.mergeWith( heartbeatFlux )
                                                                                   .doOnCancel( () -> {
                                                                                      logger.warn( "evenStreamFlux was cancelled" );
                                                                                      handleErrors( streamId );
-                                                                                  } )
-                                                                                  .log();
+                                                                                  } );
+                                                                                  //.log();
 
       // Note: this generates an IntelliJ warning about unassigned flux.
       // It's true the flux isn't assignd here so nothing will yet happen.
@@ -139,8 +144,8 @@ class EventStreamController
          final ChannelName channelName = new ChannelName( channelNameAsString );
          logger.info( "subscribing to: '{}'", channelName );
          final Consumer<Boolean> stateChangedHandler = b -> stateChanged( streamId, channelName, b, lastValueMap, replayProcessor );
-         final Consumer<String> valueChangedHandler = v -> valueChanged( streamId, channelName, v, lastValueMap, replayProcessor );
-         epicsChannelMonitorService.startMonitoring( channelName, String.class, stateChangedHandler, valueChangedHandler );
+         final Consumer<String> valueChangedHandler =  v -> valueChanged( streamId, channelName, v, lastValueMap, replayProcessor );
+         epicsChannelMonitorService.startMonitoring( channelName, stateChangedHandler, valueChangedHandler );
       }
       logger.info( "POST: allocated stream with id: '{}'" , streamId.asString() );
       return new ResponseEntity<>( streamId.asString(), HttpStatus.OK );
@@ -176,7 +181,7 @@ class EventStreamController
    @ExceptionHandler( Exception.class )
    public void handleException( Exception ex)
    {
-      logger.info( "************* MY EXCEPTION HANDLER WAS CALLED with exception '{}'", ex.toString() );
+      logger.info( "SSE Exception handler called with exception '{}'", ex.toString() );
    }
 
 /*- Private methods ----------------------------------------------------------*/
@@ -212,12 +217,11 @@ class EventStreamController
 
       if ( ! isConnected )
       {
-         logger.info( "'{}' - value changed to NULL to indicate the connection was lost.", channelName );
+         logger.debug( "'{}' - value changed to NULL to indicate the connection was lost.", channelName );
          lastValueMap.put( channelName, null );
          publish( streamId,"channel disconnected", lastValueMap, replayProcessor );
       }
    }
-
 
    /**
     * Handles a value change on the underlying EPICS channel monitor.
@@ -241,8 +245,8 @@ class EventStreamController
       Validate.notNull( lastValueMap,"The 'lastValueMap' argument was null");
       Validate.notNull( replayProcessor,"The 'replayProcessor' argument was null");
 
-      logger.debug( "'{}' - value changed to: '{}'", channelName, newValue );
-      lastValueMap.put(channelName, newValue);
+      logger.trace( "'{}' - value changed to: '{}'", channelName, newValue );
+      lastValueMap.put(channelName, newValue );
       publish( streamId,"value changed", lastValueMap, replayProcessor );
    }
 
@@ -263,7 +267,7 @@ class EventStreamController
 
       if ( replayProcessor.downstreamCount() == 0 )
       {
-         logger.info( "ReplayProcessor - aborted publication because the stream has no subscribers ! " );
+         logger.trace( "ReplayProcessor - aborted publication because the stream has no subscribers ! " );
          return;
       }
 
@@ -271,7 +275,7 @@ class EventStreamController
       final ServerSentEvent<Map<ChannelName,String>> sse = buildServerSentMessageEvent( streamId, comment, lastValueMap );
       try
       {
-         logger.info( "ReplayProcessor - is publishing new SSE: '{}'", sse );
+         logger.trace( "ReplayProcessor - is publishing new SSE: '{}'", sse );
 
          // Synchronization is required here to enforce the requirement that multiple
          // threads can only generate events on a subscriber when they are externally

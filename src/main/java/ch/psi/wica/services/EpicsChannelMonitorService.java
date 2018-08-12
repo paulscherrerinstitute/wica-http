@@ -7,10 +7,17 @@ package ch.psi.wica.services;
 import ch.psi.wica.model.ChannelName;
 import org.epics.ca.Channel;
 import org.epics.ca.Context;
+import org.epics.ca.Monitor;
+import org.epics.ca.data.Control;
+import org.epics.ca.data.Graphic;
+import org.epics.ca.data.Metadata;
+import org.epics.ca.data.Timestamped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -37,14 +44,22 @@ public class EpicsChannelMonitorService implements AutoCloseable
    private final Logger logger = LoggerFactory.getLogger( EpicsChannelMonitorService.class );
    private final Context caContext;
 
+   private static final List<Channel> channels = new ArrayList<>();
+   private static final List<Monitor> monitors = new ArrayList<>();
+
+
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    public EpicsChannelMonitorService()
    {
       logger.debug( "'{}' - constructing new EpicsChannelMonitorService instance...", this );
+
+      // Setup a context that does no buffering. This is good enough
+      // for most human display purposes.
+      System.setProperty( "CA_MONITOR_NOTIFIER_IMPL", "BlockingQueueMultipleWorkerMonitorNotificationServiceImpl,16,1" );
       caContext = new Context();
-      logger.debug( "'{}' - service instance constrcuted ok.", this );
+      logger.debug( "'{}' - service instance constructed ok.", this );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -56,38 +71,65 @@ public class EpicsChannelMonitorService implements AutoCloseable
     * the supplied state and value change handlers.
     *
     * @param channelName the name of the channel to be monitored.
-    * @param channelType the type of the channel that is to be created.
     * @param valueChangeHandler the handler to be informed of value changes.
     *
-    * @param <T> the type to be used for the underlying connection to
-    *            the remote PV.
     */
-   public <T> void startMonitoring( ChannelName channelName, Class<T> channelType, Consumer<Boolean> stateChangeHandler, Consumer<T> valueChangeHandler )
+   public void startMonitoring( ChannelName channelName, Consumer<Boolean> stateChangeHandler, Consumer<String> valueChangeHandler )
    {
       logger.debug( "'{}' - starting to monitor... ", channelName );
 
       try
       {
-         logger.debug( "'{}' - creating channel of type '{}'...", channelName, channelType );
+         logger.debug( "'{}' - creating channel of type '{}'...", channelName, "generic" );
 
-         final Channel<T> channel = caContext.createChannel( channelName.toString(), channelType ) ;
+         final Channel<Object> channel = caContext.createChannel( channelName.toString(), Object.class ) ;
+         channels.add( channel );
+
          logger.debug( "'{}' - channel created ok.", channelName );
 
          logger.debug( "'{}' - adding connection listener... ", channelName );
          channel.addConnectionListener(( chan, isConnected ) -> {
-            stateChangeHandler.accept(isConnected);
+            stateChangeHandler.accept( isConnected );
          } );
          logger.debug( "'{}' - connection listener created ok.", channelName );
 
 
          logger.debug( "'{}' - connecting asynchronously to... ", channelName );
-         final CompletableFuture<Channel<T>> completableFuture = channel.connectAsync();
+         final CompletableFuture<Channel<Object>> completableFuture = channel.connectAsync();
          logger.debug( "'{}' - asynchronous connect completed ok.", channelName );
 
-         completableFuture.thenRunAsync(() -> {
+         completableFuture.thenRunAsync( () -> {
             logger.debug( "'{}' - channel connected ok.", channelName );
             logger.debug( "'{}' - adding value change monitor...", channelName );
-            channel.addValueMonitor(valueChangeHandler);
+
+            final Object firstValue = channel.get();
+            if ( firstValue instanceof Double )
+            {
+               final Monitor<Graphic<Object,Integer>> monitor = channel.addMonitor( Graphic.class, v -> {
+                  final int precision = v.getPrecision();
+                  final String formatExpr = "%." + precision + "f" + " %s";
+                  valueChangeHandler.accept( String.format( formatExpr, (Double) v.getValue(), v.getUnits() ) );
+               } );
+               monitors.add( monitor );
+            }
+            else if ( firstValue instanceof Integer )
+            {
+               final Monitor<Graphic<Object,Integer>> monitor = channel.addMonitor( Graphic.class, v -> {
+                  final String formatExpr = "%d" + "%s";
+                  valueChangeHandler.accept( String.format( formatExpr, (Integer) v.getValue(), v.getUnits() ) );
+               } );
+               monitors.add( monitor );
+            }
+            else if ( firstValue instanceof String )
+            {
+               final Monitor<Object> monitor = channel.addValueMonitor( v -> {
+                  valueChangeHandler.accept( (String) v ) ;
+               } );
+               monitors.add( monitor );
+            }
+            else {
+               logger.warn( "'{}' - this channel was of a type that is not currently supported ", channelName );
+            }
             logger.debug( "'{}' - value change monitor added ok.", channelName );
          });
       }
@@ -106,7 +148,11 @@ public class EpicsChannelMonitorService implements AutoCloseable
    }
 
 /*- Private methods ----------------------------------------------------------*/
+
+
+
 /*- Nested Classes -----------------------------------------------------------*/
+
 
 }
 
