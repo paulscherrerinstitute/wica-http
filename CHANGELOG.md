@@ -28,6 +28,8 @@ This log describes the functionality of tagged versions within the repository.
 
 * [0.4.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.4.0-RELEASE)
   Continued code organisation cleanup, improved testing etc. 
+  Build system switched to maven for consistency with autodeploy project.
+  Added support for deployment as a service in docker container on gfa-autodeploy.psi.ch.
   Added support for PROSCAN Status Display demo.
   Can now extract metadata (eg units, precision) from monitored channels.
    - [CTRLIT-6752](https://jira.psi.ch/browse/CTRLIT-6752): Create Release 0.4.0. 
@@ -36,7 +38,7 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-6756](https://jira.psi.ch/browse/CTRLIT-6756): Switch to maven build system.
    - [CTRLIT-6757](https://jira.psi.ch/browse/CTRLIT-6757): Add support for docker deployment.
    - [CTRLIT-6758](https://jira.psi.ch/browse/CTRLIT-6758): Create demo page: PROSCAN Status Display.
-   
+   - [CTRLIT-6759](https://jira.psi.ch/browse/CTRLIT-6759): Add support for CORS. 
    
 # Project Ideas Backlog
 
