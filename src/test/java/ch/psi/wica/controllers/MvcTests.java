@@ -59,8 +59,8 @@ public class MvcTests
    @Before
    public void buildJsonNotificationBody() throws IOException
    {
-      epicsChannelListOk = new String(Files.readAllBytes(Paths.get("src/test/resources/epics_channel_list_ok.json") ), StandardCharsets.UTF_8) ;
-      epicsChannelListEmpty = new String(Files.readAllBytes(Paths.get("src/test/resources/epics_channel_list_empty.json") ), StandardCharsets.UTF_8) ;
+      epicsChannelListOk = new String(Files.readAllBytes(Paths.get("src/test/resources/epics/epics_channel_list_ok.json") ), StandardCharsets.UTF_8) ;
+      epicsChannelListEmpty = new String(Files.readAllBytes(Paths.get("src/test/resources/epics/epics_channel_list_empty.json") ), StandardCharsets.UTF_8) ;
       StreamId.resetAllocationSequencer();
    }
 
