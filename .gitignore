@@ -40,7 +40,7 @@ buildNumber.properties
 .idea/**/libraries
 
 # CMake
-cmake-build-debug/
+cmake-build-info/
 
 # Mongo Explorer plugin:
 .idea/**/mongoSettings.xml
