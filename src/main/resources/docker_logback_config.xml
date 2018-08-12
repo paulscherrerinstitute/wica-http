@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Logback Configuration File -for the Wica Server Application -->
+<configuration>
+
+    <appender name="APP_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>log/application.log</file>
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <!-- we just need the timestamp and the message in the deployment log -->
+            <pattern>%date %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="DEBUG_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>log/debug.log</file>
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>log/error.log</file>
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Configure the APP appender to receive input from the whole application -->
+    <logger name="ch.psi.wica">
+        <appender-ref ref="APP_LOG" />
+    </logger>
+
+    <!-- Configure the DEBUG appender to receive input from the whole application -->
+    <logger name="ch.psi.wica">
+        <appender-ref ref="DEBUG_LOG" />
+    </logger>
+
+    <!-- Configure the ERROR appender to receive input from the whole application -->
+    <logger name="ch.psi.wica">
+        <appender-ref ref="ERROR_LOG" />
+    </logger>
+
+    <!-- Configure the default level for all loggers that are not explicitly setup elsewhere -->
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+</configuration>
