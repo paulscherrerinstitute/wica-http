@@ -126,5 +126,5 @@ See the unit tests
 # Project Changes and Tagged Releases
 
 * See the [CHANGELOG.md](CHANGELOG.md) file for further information.
-* See also the project's [Jira Kanban Board](https://jira.psi.ch/secure/RapidBoard.jspa?rapidView=1729)
+* See also the project's [Jira Kanban Board](https://jira.psi.ch/secure/RapidBoard.jspa?rapidView=1631)
 
