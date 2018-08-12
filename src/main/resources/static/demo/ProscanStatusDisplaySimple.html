@@ -1,0 +1,109 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <style>
+
+        h1 {
+            text-align: center;
+        }
+
+        h2 {
+            padding-top: 15px;
+        }
+
+        #wica-server-link-status-widget {
+            height: 15px;
+            width: 15px;
+            border-radius: 50%;
+            border: 0 solid #000;
+            background-color: lightgray;
+            margin-left: 18px;
+            margin-right: 10px;
+        }
+
+    </style>
+    <script type="text/javascript" src="../wica.js" defer></script>
+</head>
+
+<body>
+
+<h1>Wica Demo Page - PROSCAN Status Display</h1>
+
+<div>
+    <h2>Connection Status</h2>
+    <span>Wica Server Link Status: </span> <button id="wica-server-link-status-widget" class="led-widget"></button>
+</div>
+
+<div>
+    <h2>Stream Data</h2>
+
+
+    <span>MMAC3 (nA)             </span> <span data-epics-channel="MMAC3:STR:2">     </span> <br>
+    <span>Green Box              </span> <span data-epics-channel="MMAV6:IST:2">     </span> <br>
+    <span>SOL   (nA)             </span> <span data-epics-channel="MMAC:SOL:2">      </span> <br>
+
+    <span>Vdef.   (kV)           </span> <span data-epics-channel="EMJCYV:IST:2">    </span> <br>
+    <span>Degr.   (MeV)          </span> <span data-epics-channel="DMAD1:IST:2">     </span> <br>
+
+    <span>Kicker (A)             </span> <span data-epics-channel="AMAKI1:IST:2">    </span> <br>
+    <span>HF (KW)                </span> <span data-epics-channel="CMJSEV:PWRF:2">   </span> <br>
+    <span>HF (V)                 </span> <span data-epics-channel="CMJLL:SOLA:2">    </span> <br>
+    <span>Extractor 1 (kV)       </span> <span data-epics-channel="EMJEC1V:IST:2">   </span> <br>
+    <span>Extractor 2 (kV)       </span> <span data-epics-channel="EMJEC2V:IST:2">   </span> <br>
+    <span>Hauptmagnet (A)        </span> <span data-epics-channel="AMJHS-I:IADC:2">  </span> <br>
+    <span>Phase (Grad)           </span> <span data-epics-channel="MMJF:IST:2">      </span> <br>
+
+
+    <span>Ionenquelle 1 (kV)     </span> <span data-epics-channel="IMJV:IST:2">      </span> <br>
+    <span>Ionenquelle 2 (mA)     </span> <span data-epics-channel="IMJI:IST:2">      </span> <br>
+    <span>Ionenquelle 3 (cc/min) </span> <span data-epics-channel="IMJGF:IST:2">     </span> <br>
+    <span>Ionenquelle 4 (%)      </span> <span data-epics-channel="XPROIONS:IST1:2"> </span> <br>
+
+    <span>QMA1/2/3 1 (A)         </span> <span data-epics-channel="QMA1:IST:2">      </span> <br>
+    <span>QMA1/2/3 2 (A)         </span> <span data-epics-channel="QMA2:IST:2">      </span> <br>
+    <span>QMA1/2/3 3 (A)         </span> <span data-epics-channel="QMA3:IST:2">      </span> <br>
+
+    <span>SMj1x2y 1 (A)          </span> <span data-epics-channel="SMJ1X:IST:2">     </span> <br>
+    <span>SMj1x2y 2 (A)          </span> <span data-epics-channel="SMJ2Y:IST:2">     </span> <br>
+
+    <span>SMA1x1y 1 (A)          </span> <span data-epics-channel="SMA1X:IST:2">     </span> <br>
+    <span>SMA1x1y 2 (A)          </span> <span data-epics-channel="SMA1Y:IST:2">     </span> <br>
+
+    <span>Ph>Spalt 1/2 1 (nA)    </span> <span data-epics-channel="MMJP2:IST1:2">    </span> <br>
+    <span>Ph>Spalt 1/2 2 (mm)    </span> <span data-epics-channel="FMJEPI:POS:2">    </span> <br>
+    <span>Ph>Spalt 1/2 3 (mm)    </span> <span data-epics-channel="FMJEPI:BREI:2">   </span> <br>
+    <span>Ph>Spalt 1/2 4 (nA)    </span> <span data-epics-channel="MMJP2:IST2:2">    </span> <br>
+    <span>Ph>Spalt 1/2 5 (mm)    </span> <span data-epics-channel="FMJIPI:POS:2">    </span> <br>
+    <span>Ph>Spalt 1/2 6 (mm)    </span> <span data-epics-channel="FMJIPI:BREI:2">   </span> <br>
+
+    <span>BMA1                   </span> <span data-epics-channel="BMA1:STA:2">      </span> <br>
+    <span>RPS  Bew. OK           </span> <span data-epics-channel="BMA1:STAR:2">     </span> <br>
+    <span>PaSS Bew. OK           </span> <span data-epics-channel="BMA1:STAP:2">     </span> <br>
+
+    <span>BMC1                   </span> <span data-epics-channel="BMC1:STA:2">      </span> <br>
+    <span>RPS  Bew. OK           </span> <span data-epics-channel="BMC1:STAR:2">     </span> <br>
+    <span>PaSS Bew. OK           </span> <span data-epics-channel="BMC1:STAP:2">     </span> <br>
+
+    <span>BME1                   </span> <span data-epics-channel="BME1:STA:2">      </span> <br>
+    <span>RPS  Bew. OK           </span> <span data-epics-channel="BME1:STAR:2">     </span> <br>
+    <span>PaSS Bew. OK           </span> <span data-epics-channel="BME1:STAP:2">     </span> <br>
+
+    <span>BMD1 Pif               </span> <span data-epics-channel="BMD1:STA:2">      </span> <br>
+    <span>RPS  Bew. OK           </span> <span data-epics-channel="BMD1:STAR:2">     </span> <br>
+
+    <span>BMB1 Gantry2           </span> <span data-epics-channel="BMB1:STA:2">      </span> <br>
+    <span>RPS  Bew. OK           </span> <span data-epics-channel="BMB1:STAR:2">     </span> <br>
+    <span>PaSS Bew. OK           </span> <span data-epics-channel="BMB1:STAP:2">     </span> <br>
+
+    <span>BMD2 Gantry3           </span> <span data-epics-channel="BMD2:STA:2">      </span> <br>
+    <span>RPS  Bew. OK           </span> <span data-epics-channel="BMD2:STAR:2">     </span> <br>
+    <span>PaSS Bew. OK           </span> <span data-epics-channel="BMD2:STAP:2">     </span> <br>
+
+    <span>Mastership             </span> <span data-epics-channel="XPROSCAN:STAB:2"> </span> <br>
+
+</div>
+</body>
+</html>

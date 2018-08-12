@@ -1,0 +1,387 @@
+<!doctype html>
+<html>
+<head>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+    <style>
+
+
+        html {
+            background-color: darkgrey;
+        }
+
+        #main {
+            background-color: darkgrey;
+        }
+
+        .mainplot {
+            margin-bottom: 10px;
+        }
+
+        .headline {
+            margin: 10px;
+        }
+
+        .headline-label {
+            color: black;
+            font-size: 4rem;
+        }
+
+        .headline-value {
+            background-color: lightgray;
+            color:black;
+            font-size: 4rem;
+            border: 3px solid firebrick;
+        }
+
+        .card {
+            border: 0;
+        }
+
+        .card-header {
+            background-color: darkgrey;
+            padding: 0;
+            color: darkblue;
+            font-size: 2.32rem;
+        }
+
+        .card-text {
+            border: 10px;
+            color: #00d700;
+            background-color: black;
+            font-size: 2.32rem;
+        }
+
+        .card.stopper {
+            margin-bottom: 10px;
+            border: 3px solid black;
+            background-color: lightgrey;
+        }
+
+        .card-header.stopper {
+            padding: 0;
+            color: darkblue;
+            background-color: lightgrey;
+            font-size: 1.5rem;
+        }
+
+        .card-text.stopper {
+            color:black;
+            background-color: lightgrey;
+            font-family: "Lucida Grande";
+            font-size: 1.5rem;
+        }
+
+        .card-text.stopper.status {
+            margin: 10px;
+            border: 4px solid firebrick;
+        }
+
+        .hvpsu {
+            margin: 10px;
+            height: 2rem;
+            width: 2rem;
+            background-color: #00ff00;
+        }
+
+        .hvpsu-na {
+            margin: 10px;
+            height: 2rem;
+            width: 2rem;
+            visibility: hidden;
+        }
+
+        .ilk-ok-widget {
+            margin: 10px;
+            height: 2rem;
+            width: 2rem;
+            background-color: #00ff00;
+        }
+
+        .ilk-na-widget {
+            margin: 10px;
+            height: 2rem;
+            width: 2rem;
+            background-color: lightgray;
+        }
+
+        .card-text.mastership {
+            background-color: darkgray;
+            color:black;
+        }
+
+        h1 {
+            font-size: 4rem;
+            color: darkblue;
+            text-align: center;
+            font-family: sans-serif;
+        }
+
+        h2 {
+            padding-top: 15px;
+        }
+
+    </style>
+    <script type="text/javascript" src="https://gfa-autodeploy.psi.ch:8443/wica.js" defer></script>
+
+</head>
+
+<body>
+
+<div class="container-fluid" id="main">
+
+    <h1>PROSCAN Status</h1>
+
+    <div class="row">
+        <div class="col-sm-10">
+            <div class="row headline">
+                <label class="col-sm-2 headline-label text-right">MMAC3 </label>
+                <img class="hvpsu" data-epics-channel="MMAV6:IST:2"/>
+                <span  class="col-sm headline-value text-right" data-epics-channel="MMAC3:STR:2"> </span>
+                <label class="col-sm-2 headline-label text-right">Vdef. </label>
+                <span  class="col-sm headline-value text-right" data-epics-channel="EMJCYV:IST:2"> </span>
+            </div>
+            <div class="row headline">
+                <label class="col-sm-2 headline-label text-right">SOL </label>
+                <img class="hvpsu-na"/>
+                <span  class="col-sm headline-value text-right" data-epics-channel="MMAC:SOL:2"> </span>
+                <label class="col-sm-2 headline-label text-right">Degr.</label>
+                <span  class="col-sm headline-value text-right" data-epics-channel="DMAD1:IST:2">   </span>
+            </div>
+        </div>
+
+        <div class="col-sm-2">
+            <div class="card">
+                <div class="card-header ">QMA1/2/3</div>
+                <div class="card-text text-right" data-epics-channel="QMA1:IST:2"></div>
+                <div class="card-text text-right" data-epics-channel="QMA2:IST:2"></div>
+                <div class="card-text text-right" data-epics-channel="QMA3:IST:2"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-2">
+            <div class="card">
+                <div class="card-header ">Kicker</div>
+                <div class="card-text text-right" data-epics-channel="AMAKI1:IST:2"></div>
+            </div>
+            <div class="card">
+                <div class="card-header ">HF</div>
+                <div class="card-text text-right" data-epics-channel="CMJSEV:PWRF:2"></div>
+                <div class="card-text text-right" data-epics-channel="CMJLL:SOLA:2"></div>
+            </div>
+            <div class="card">
+                <div class="card-header ">Extractor</div>
+                <div class="card-text text-right" data-epics-channel="EMJEC1V:IST:2"></div>
+                <div class="card-text text-right" data-epics-channel="EMJEC2V:IST:2"></div>
+            </div>
+            <div class="card">
+                <div class="card-header ">Hauptmagnet</div>
+                <div class="card-text text-right" data-epics-channel="AMJHS-I:IADC:2"></div>
+            </div>
+            <div class="card">
+                <div class="card-header ">Phase</div>
+                <div class="card-text text-right" data-epics-channel="MMJF:IST:2"></div>
+            </div>
+            <div class="card">
+                <div class="card-header ">Ionenquelle</div>
+                <div class="card-text text-right" data-epics-channel="IMJV:IST:2"></div>
+                <div class="card-text text-right" data-epics-channel="IMJI:IST:2"></div>
+                <div class="card-text text-right" data-epics-channel="IMJGF:IST:2"></div>
+                <div class="card-text text-right" data-epics-channel="XPROIONS:IST1:2"></div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="card">
+                <div class="card-header ">QMA1/2/3</div>
+                <div class="card-text text-right" data-epics-channel="QMA1:IST:2"></div>
+                <div class="card-text text-right" data-epics-channel="QMA2:IST:2"></div>
+                <div class="card-text text-right" data-epics-channel="QMA3:IST:2"></div>
+            </div>
+            <div class="card">
+                <div class="card-header ">SMj1x/2y</div>
+                <div class="card-text text-right" data-epics-channel="SMJ1X:IST:2"></div>
+                <div class="card-text text-right" data-epics-channel="SMJ2Y:IST:2"></div>
+            </div>
+            <div class="card">
+                <div class="card-header ">SMA1x/1y</div>
+                <div class="card-text text-right" data-epics-channel="SMA1X:IST:2"></div>
+                <div class="card-text text-right" data-epics-channel="SMA1Y:IST:2"></div>
+            </div>
+            <div class="card">
+                <div class="card-header ">Ph.Spalt 1/2</div>
+                <div class="card-text text-right" data-epics-channel="MMJP2:IST1:2"></div>
+                <div class="card-text text-right" data-epics-channel="FMJEPI:POS:2"></div>
+                <div class="card-text text-right" data-epics-channel="FMJEPI:BREI:2"></div>
+                <div class="card-text text-right" data-epics-channel="MMJP2:IST2:2"></div>
+                <div class="card-text text-right" data-epics-channel="FMJIPI:POS:2"></div>
+                <div class="card-text text-right" data-epics-channel="FMJIPI:BREI:2"></div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm">
+                    <div class="card mainplot">
+                        <div style="height: 500px; background-color: lightgray" class="card-header">This is the main plotting area</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm">
+                    <div class="card stopper">
+                        <div class="card-header stopper">BMA1</div>
+                        <div class="card-text stopper status" data-epics-channel="BMA1:STA:2" onchange="update_stopper_status( event );"></div>
+                        <div class="card-text stopper">
+                            <img class="ilk-ok-widget" data-epics-channel="BMA1:STAR:2" onchange="update_ilk_status( event );"/>
+                            <label data-epics-channel="BMA1:STAR:2"></label>
+                        </div>
+                        <div class="card-text stopper">
+                            <img class="ilk-ok-widget" data-epics-channel="BMA1:STAP:2" onchange="update_ilk_status( event );"/>
+                            <label data-epics-channel="BMA1:STAP:2"></label>
+                        </div>
+                    </div>
+
+                    <div class="card stopper">
+                        <div class="card-header stopper">BMC1 OPTIS2</div>
+                        <div class="card-text stopper status" data-epics-channel="BMC1:STA:2" onchange="update_stopper_status( event );"></div>
+                        <div class="card-text stopper">
+                            <img class="ilk-ok-widget" data-epics-channel="BMC1:STAR:2" onchange="update_ilk_status( event );"/>
+                            <label data-epics-channel="BMC1:STAR:2"></label>
+                        </div>
+                        <div class="card-text stopper">
+                            <img class="ilk-ok-widget" data-epics-channel="BMC1:STAP:2" onchange="update_ilk_status( event );"/>
+                            <label data-epics-channel="BMC1:STAP:2"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm">
+                    <div class="card stopper">
+                        <div class="card-header stopper">BME1 Gantry1</div>
+                        <div class="card-text stopper status" data-epics-channel="BME1:STA:2" onchange="update_stopper_status( event );"></div>
+                        <div class="card-text stopper">
+                            <img class="ilk-ok-widget" data-epics-channel="BME1:STAR:2" onchange="update_ilk_status( event );"/>
+                            <label data-epics-channel="BME1:STAR:2"></label>
+                        </div>
+                        <div class="card-text stopper">
+                            <img class="ilk-ok-widget" data-epics-channel="BME1:STAP:2" onchange="update_ilk_status( event );"/>
+                            <label data-epics-channel="BME1:STAP:2"></label>
+                        </div>
+                    </div>
+
+                    <div class="card stopper">
+                        <div class="card-header stopper">BMD1 PIF</div>
+                        <div class="card-text stopper status" data-epics-channel="BMD1:STA:2" onchange="update_stopper_status( event );"></div>
+                        <div class="card-text stopper">
+                            <img class="ilk-ok-widget" data-epics-channel="BMD1:STAR:2" onchange="update_ilk_status( event );"/>
+                            <label data-epics-channel="BMD1:STAR:2"></label>
+                        </div>
+                        <div class="card-text stopper">
+                            <img class="ilk-na-widget"/>
+                            <label>PaSS N/A</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm">
+                    <div class="card stopper">
+                        <div class="card-header stopper">BMB1 Gantry2</div>
+                        <div class="card-text stopper status" data-epics-channel="BMB1:STA:2" onchange="update_stopper_status( event );"></div>
+                        <div class="card-text stopper">
+                            <img class="ilk-ok-widget" data-epics-channel="BMB1:STAR:2" onchange="update_ilk_status( event );"/>
+                            <label data-epics-channel="BMB1:STAR:2"></label>
+                        </div>
+                        <div class="card-text stopper">
+                            <img class="ilk-ok-widget" data-epics-channel="BMB1:STAP:2" onchange="update_ilk_status( event );"/>
+                            <label data-epics-channel="BMB1:STAP:2"></label>
+                        </div>
+                    </div>
+
+                    <div class="card stopper">
+                        <div class="card-header stopper">BMD1 Gantry3</div>
+                        <div class="card-text stopper status" data-epics-channel="BMD2:STA:2" onchange="update_stopper_status( event );"></div>
+                        <div class="card-text stopper">
+                            <img class="ilk-ok-widget" data-epics-channel="BMD2:STAR:2" onchange="update_ilk_status( event );"/>
+                            <label data-epics-channel="BMD2:STAR:2"></label>
+                        </div>
+                        <div class="card-text stopper">
+                            <img class="ilk-ok-widget" data-epics-channel="BMD2:STAP:2" onchange="update_ilk_status( event );"/>
+                            <label data-epics-channel="BMD2:STAP:2"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card flex-row">
+                        <div class="card-header col-sm-4">Mastership:</div>
+                        <div class="card-text col-sm-8 mastership" data-epics-channel="XPROSCAN:STAB:2"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-sm-2">
+            <div class="card">
+                <div class="card-header ">SMA1x/1y</div>
+                <div class="card-text" data-epics-channel="SMA1X:IST:2"></div>
+                <div class="card-text" data-epics-channel="SMA1Y:IST:2"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header ">SMA1x/1y</div>
+                <div class="card-text" data-epics-channel="SMA1X:IST:2"></div>
+                <div class="card-text" data-epics-channel="SMA1Y:IST:2"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header ">SMA1x/1y</div>
+                <div class="card-text" data-epics-channel="SMA1X:IST:2"></div>
+                <div class="card-text" data-epics-channel="SMA1Y:IST:2"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header ">SMA1x/1y</div>
+                <div class="card-text" data-epics-channel="SMA1X:IST:2"></div>
+                <div class="card-text" data-epics-channel="SMA1Y:IST:2"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    function update_ilk_status( event ) {
+        var element = event.target;
+        var channelValue = element.textContent;
+        if ( channelValue.includes( "NOK" ) ) {
+            element.style.backgroundColor = "red";
+        }
+        else {
+            element.style.backgroundColor = "lime";
+        }
+    }
+
+    function update_stopper_status( event ) {
+        var element = event.target;
+        var channelValue = element.textContent;
+        if ( channelValue.includes( "Offen" ) ) {
+            element.style.borderColor = "lime";
+        }
+        else {
+            element.style.borderColor = "red";
+        }
+    }
+
+</script>
+
+</body>
+</html>
