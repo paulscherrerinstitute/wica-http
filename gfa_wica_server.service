@@ -1,0 +1,19 @@
+[Unit]
+Description=GFA Wica Service
+After=docker.service
+Requires=docker.service
+
+[Install]
+WantedBy=default.target
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill gfa_wica_server
+ExecStartPre=-/usr/bin/docker rm gfa_wica_server
+ExecStartPre=/usr/bin/docker pull docker.psi.ch:5000/gfa_wica_server:0.4.0-RELEASE
+# Enable the following line whilst still in test:
+# ExecStart=/usr/bin/docker run --name gfa_wica_server -t --rm -p 8443:8443 -e KEYSTORE_PASS=!Mandach2018$ -v /root/wica/log:/root/log  -v /root/.ssh:/root/.ssh -v /root/wica/config:/root/config docker.psi.ch:5000/gfa_wica_server:0.4.0-RELEASE
+# Enable the following line for production:
+ExecStart=/usr/bin/docker run --name gfa_wica_server -t --rm -p 8443:8443  -e KEYSTORE_PASS=!Mandach2018$ -v /root/wica/log:/root/log  -v /root/.ssh:/root/.ssh -v /root/wica/config:/root/config docker.psi.ch:5000/gfa_wica_server:0.4.0-RELEASE
+ExecStop=/usr/bin/docker stop gfa_wica_server
+Restart=always
+
