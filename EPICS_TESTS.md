@@ -1,7 +1,7 @@
 # Overview
 
-These notes present the results of testing PSI's in-house commissioned [Java CA library](https://github.com/channelaccess/ca_matlab) 
-(ie the one developed by CosyLab). The library has been tested using the tests in the 'src/test/java/epics' test 
+These notes present the results of testing PSI's in-house commissioned [Java ca library](https://github.com/channelaccess/ca_matlab) 
+(ie the one developed by CosyLab). The library has been tested using the resources in the 'src/test/java/epics' test 
 directory. The main focus of the tests was to discover how the library works so that it can be used optimally for
 Wica. Each test attempts to answer one or more questions which I had about the library before I wrote the test.
 
@@ -11,31 +11,31 @@ directory). The IOC can be started like this:
    softIoc -d epics_tests.db
 ```
 
-The softIoc was run using an EPICS base distribution from both R3.14.12.7 and 3.15.5. So far I did not detect any
+The softIoc was run using an EPICS base distribution from both R3.14.12.7 and R3.15.5. So far I did not detect any
 significant differences in the results.  
 
 Two test scenarios were used:
-1. Test Series 1 (EPICS source and CA library test process were co-located on the SAME physical machine)
-1. Test Series 2 (EPICS source and CA library test process were located on DIFFERENT physical machines)
+1. Test Series 1 (EPICS SoftIoc and CA library test process were co-located on the SAME physical machine)
+1. Test Series 2 (EPICS SoftIoc and CA library test process were located on DIFFERENT physical machines)
 
 
 During this work to find out what was happening "on the wire" at times I made use of Michael Davidsaver's ca.lua plugin 
-for Wireshark available [here](https://github.com/mdavidsaver/cashark) 
+for Wireshark available [here](https://github.com/mdavidsaver/cashark).
 
 I also used the [jvisualvm](https://visualvm.github.io/) tool to gain some insight into the threads that are started by 
 the application.
 
 # Main "Take Home" Points
 
-Caveat Emptor: maybe there are bugs in my tests which would completely invalidate some of the points below !!
+Caveat Emptor: maybe there are/were bugs in the test software which would completely invalidate some of the points below !!
 
-1. Although useful information is given in the CA library README file there is currently no Javadoc for the methods 
-   offered by the CA library. This means there is no real contract of behaviour and the developer must guess the costs 
+1. Although useful information is given in the ca library README file there is currently no Javadoc for the methods 
+   offered by the ca library. This means there is no real contract of behaviour and the developer must guess the costs 
    of the various operations (or make tests like I did). For example it would be useful to know which operations result 
    in a network round-trip and which do not ? Also what thread-safety guarantees does the library offer ? And what 
    threads will be used when performing notifications via the asynchronous method interfaces ? Since nothing is really 
    tied down the performance and behaviour of the implementation is free to vary hugely from one release to another. 
-   This makes it difficult for users of the library to operate from a stable base.
+   In my opinion this makes it difficult for users of the library to feel they are operating from a stable base.
 
 1. Creating contexts is relatively expensive and the performance drops off quite quickly as the number of contexts 
    increases (from < 10ms/context to over 100ms/context). With the resources on my machine there was was limit of just 
@@ -44,15 +44,15 @@ Caveat Emptor: maybe there are bugs in my tests which would completely invalidat
 1. It is quick and easy to create a huge number of channels (eg a million in ~2 seconds).
 
 1. Synchronously connecting channels seems to be "quite slow". With the resources on my machine the connection time 
-   was around 10ms/channel. So to connect eg 10,000 channels would take around 100 seconds. For bulk operations you
+   was around 10ms/channel. So to connect eg 10,000 channels would around 100 seconds. For bulk operations you
    probably wouldn't want to do that.
 
 1. Asynchronous channel connection is MUCH (eg 100x) faster. Connecting 10,000 channels takes less than a second.
 
 1. Once a channels is connected the synchronous GET performance was faster than I initially expected. One can acquire 
    the value from 10,000 channels in less than a second. Using wireshark I verified that the GET call really does 
-   result in a network round trip rather than returning some cached value. (Since there is no javadoc the developer 
-   currently has to guess; I am naturally suspicious, I guess ;-) ).
+   result in a network round trip rather than returning some cached value. Since there is no javadoc (ie documented
+   contract for the behaviour offered by the method) the developer currently has to guess.
 
 1. Performing an asynchronous GET on multiple channels is maybe 5-10 times faster than the synchronous GET.
 
@@ -60,11 +60,13 @@ Caveat Emptor: maybe there are bugs in my tests which would completely invalidat
    creation of a separate Thread and after a few thousand my machine ran out of resources. (I read somewhere that
    a typical stack size for a thread is ~1MB).  I never managed to create monitors on more than about 4000 channels.
    A possible improvement might be to **provide a method signature which allows the library user to specify the 
-   Executor** to be used for the callback.
+   Executor** to be used for the callback. This would give the user some control over the behaviour of the thread
+   pool used for callbacks.
 
 1. There seem to be **some stability issues** with the library. Sometimes it emits WARNING messages which hint that the
-   underlying library is under stress. By putting busy-wait loops into the tests I was able to wokround these problems
-   and still get good performance. Below is an example of a message that is sometimes emitted:   
+   underlying library is under stress. I speculated that there was some buffer overflow in the underlying TCP network
+   stack. By putting a 10us busy-wait loop (yuk !) into the tests I was able to workaround these problems and get good 
+   performance. Below is an example of a message that is sometimes emitted:   
 ```   
 Jun 01, 2018 12:35:40 AM org.epics.ca.impl.ResponseHandlers handleResponse
 WARNING: Invalid response message (command = 13876) received from: /192.168.0.25:5064
