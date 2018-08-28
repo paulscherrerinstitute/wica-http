@@ -141,8 +141,14 @@ class EventStreamController
       // Lastly set up monitors on all the channels of interest.
       for ( String channelNameAsString : channelNames )
       {
+
          final ChannelName channelName = new ChannelName( channelNameAsString );
+
+         // See the initial state of the channel to disconnected
+         lastValueMap.put( channelName, null );
          logger.info( "subscribing to: '{}'", channelName );
+
+         // Now subscribe
          final Consumer<Boolean> stateChangedHandler = b -> stateChanged( streamId, channelName, b, lastValueMap, replayProcessor );
          final Consumer<String> valueChangedHandler =  v -> valueChanged( streamId, channelName, v, lastValueMap, replayProcessor );
          epicsChannelMonitorService.startMonitoring( channelName, stateChangedHandler, valueChangedHandler );
