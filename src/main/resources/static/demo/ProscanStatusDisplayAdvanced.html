@@ -981,7 +981,7 @@
                 that.yAxisDataObj = JSON.parse( e.channelValue );
             };
 
-            setInterval( PlotVerticalDeflector.update_plot, 1000, that );
+            setInterval( PlotVerticalDeflector.update_plot, 2000, that );
         }
 
         static update_plot( that )
@@ -1047,7 +1047,7 @@
                 that.yAxisDataObj = JSON.parse( e.channelValue );
             };
 
-            setInterval( this.update_plot, 1000, that );
+            setInterval( this.update_plot, 2000, that );
         }
 
         update_plot( that )
