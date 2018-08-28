@@ -3,7 +3,7 @@
 ###############################################################################
 
 # Start with the Standard OpenJDK release
-FROM openjdk:9-jdk as builder
+FROM openjdk:9-jdk as build_jdk
 
 WORKDIR /app
 
@@ -22,9 +22,36 @@ RUN jlink --module-path $JAVA_HOME/jmods \
           --no-header-files \
           --no-man-pages
 
+###############################################################################
+# 2.0 Get support for EPICS
+###############################################################################
+
+##
+## Enable the following block when EPICS is needed in the container for eg
+## debugging purposes.
+##
+## FROM debian:stable-slim as build_epics
+##
+## WORKDIR /epics
+##
+#
+# RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+#     apt-get install -y wget &&  \
+#     apt-get install -y perl &&  \
+#     apt-get install -y gcc &&  \
+#     apt-get install -y make &&  \
+#     apt-get install -y g++ &&  \
+#     apt-get install -y libreadline-dev &&  \
+#     rm -rf /var/lib/apt/lists/* /tmp/*
+#
+# RUN wget https://epics.anl.gov/download/base/baseR3.14.12.7.tar.gz && \
+#     tar xvf baseR3.14.12.7.tar.gz
+#
+# RUN cd base-3.14.12.7 ; make
+#
 
 ###############################################################################
-# 2.0 Now create a second image for deploying the application
+# 3.0 Now create a debian image for deploying the application
 ###############################################################################
 
 FROM debian:stable-slim
@@ -38,7 +65,34 @@ ARG JAR_FILE
 ENV JAVA_HOME=/opt/jdk \
     PATH=${PATH}:/opt/jdk/bin
 
-COPY --from=builder /app/my_java/ $JAVA_HOME
+COPY --from=build_jdk /app/my_java/ $JAVA_HOME
+
+
+##
+## Enable the following block when EPICS is needed in the container for eg
+## debugging purposes.
+##
+#
+#ENV EPICS_HOME=/epics
+#COPY --from=build_epics /epics/base-3.14.12.7/ $EPICS_HOME
+#
+#RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+#    apt-get install -y libreadline-dev
+
+
+# This port must be open for TCP and UDP when the connection
+# is via a channel access gateway.
+EXPOSE 5062
+
+# This port must be open for TCP and UDP when the connection
+# is va normal IOC
+EXPOSE 5064
+
+# This port must be open for UDP to ensure that the EPICS client
+# application sees the beacon messages sent to the local
+# CA repeater.
+EXPOSE 5065
+
 
 # The keystore password must be supplied as an argument to the Docker
 # run command. The keystore itself must be provided in the config
@@ -47,6 +101,7 @@ ENV KEYSTORE_PASS "XXXXXX"
 
 # Document the ports that will be exposed by the Spring Boot Application
 # 8443 is the production port.
+EXPOSE 8080
 EXPOSE 8443
 
 # Setup the container so that it defaults to the timezone of PSI. This can
@@ -64,7 +119,7 @@ WORKDIR /root
 
 
 ###############################################################################
-# Install any additional applications
+# 4.0 Install any additional applications
 ###############################################################################
 
 # Add the dependencies of the deploy scripts, including python and git
@@ -75,7 +130,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/*
 
 ###############################################################################
-# Set up the application project structure
+# 5.0 Set up the application project structure
 ###############################################################################
 
 # Create the directories needed by this application
@@ -90,7 +145,7 @@ COPY ./src/main/resources/docker_logback_config.xml config
 
 
 ###############################################################################
-# Define the exposed volumes
+# 6.0 Define the exposed volumes
 ###############################################################################
 
 VOLUME /root/.ssh
@@ -99,7 +154,7 @@ VOLUME /root/config
 
 
 ###############################################################################
-# Define the ENTRYPOINT
+# 7.0 Define the ENTRYPOINT
 ###############################################################################
 
 # Run the application on the Java 9 module path invoking the docker-run configuration profile
