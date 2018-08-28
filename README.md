@@ -128,3 +128,28 @@ See the unit tests
 * See the [CHANGELOG.md](CHANGELOG.md) file for further information.
 * See also the project's [Jira Kanban Board](https://jira.psi.ch/secure/RapidBoard.jspa?rapidView=1631)
 
+
+#Notes on WICA Compression
+
+This can be enabled in SpringBoot via the following settings:
+
+server.compression.enabled=true
+server.compression.min-response-size=2048
+server.compression.mime-types=application/json,application/xml,text/html,text/xml,text/plain,text/event-stream
+
+The SSE data is VERY compressible.
+
+When looking at the PROSCAN Vertical Deflector plot the following compression
+was observed (introspection via Wireshark):
+
+Without compression:
+Event Stream sent 2.3MB in 300s
+
+With compression:
+Wics Event Stream sent 54KB in 300s
+
+Compression factor was 45.
+
+
+
+
