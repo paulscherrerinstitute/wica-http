@@ -1,31 +1,39 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="https://gfa-autodeploy.psi.ch:8443/wica.js" defer></script>
 
     <style>
+
+        * {
+            font-family: "Helvetica Neue",sans-serif;
+        }
+
+        body {
+            background-color: darkgrey;
+        }
 
         h1 {
             text-align: center;
         }
 
-        h2 {
-            padding-top: 15px;
+        label {
+            display: inline-block;
+            background-color: lightblue;
+            margin-bottom: 1rem;
+            width: 8rem;
         }
 
-        #wica-server-link-status-widget {
-            height: 15px;
-            width: 15px;
-            border-radius: 50%;
-            border: 0 solid #000;
-            background-color: lightgray;
-            margin-left: 18px;
-            margin-right: 10px;
+        .statusWidget {
+            height: 1.2rem;
+            width:  1.5rem;
+            background-color: lime;
         }
 
     </style>
-    <script type="text/javascript" src="http://localhost:8080/wica.js" defer></script>
+
 </head>
 
 <body>
@@ -34,18 +42,37 @@
 
 <div>
     <h2>Connection Status</h2>
-    <span>Wica Server Link Status: </span> <button id="wica-server-link-status-widget" class="led-widget"></button>
+    <!-- Just pick any channel that can be representative of the status of the EPICS IOC and Wica Server -->
+    <div class="statusWidget" data-epics-channel="wica:test:counter01" onchange="updateStatusWidget( event )">NC</div>
 </div>
 
 <div>
     <h2>Stream Data</h2>
-    <span>Received Data 0.1s: </span> <span data-epics-channel="wica:test:counter01"></span> <br>
-    <span>Received Data 0.2s: </span> <span data-epics-channel="wica:test:counter02"></span> <br>
-    <span>Received Data 0.5s: </span> <span data-epics-channel="wica:test:counter03"></span> <br>
-    <span>Received Data 1.0s: </span> <span data-epics-channel="wica:test:counter04"></span> <br>
-    <span>Received Data 2.0s: </span> <span data-epics-channel="wica:test:counter05"></span> <br>
-    <span>Received Data 5.0s: </span> <span data-epics-channel="wica:test:counter06"></span> <br>
-    <span>Received Data 10s:  </span> <span data-epics-channel="wica:test:counter07"></span> <br>
+    <label>Counter 0.1s </label> <label data-epics-channel="wica:test:counter01">NC</label><br>
+    <label>Counter 0.2s </label> <label data-epics-channel="wica:test:counter02">NC</label><br>
+    <label>Counter 0.5s </label> <label data-epics-channel="wica:test:counter03">NC</label><br>
+    <label>Counter 1.0s </label> <label data-epics-channel="wica:test:counter04">NC</label><br>
+    <label>Counter 2.0s </label> <label data-epics-channel="wica:test:counter05">NC</label><br>
+    <label>Counter 5.0s </label> <label data-epics-channel="wica:test:counter06">NC</label><br>
+    <label>Counter 10s  </label> <label data-epics-channel="wica:test:counter07">NC</label><br>
 </div>
 </body>
+
+<script>
+
+    function updateStatusWidget( event )  {
+
+        let widget = event.target;
+        let value = event.channelValue;
+
+        if ( value === null ) {
+            widget.textContent = "NC";
+        }
+        else {
+            widget.textContent = "OK";
+        }
+    }
+
+</script>
+
 </html>
