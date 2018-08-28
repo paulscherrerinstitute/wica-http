@@ -1,109 +1,204 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script type="text/javascript" src="https://gfa-autodeploy.psi.ch:8443/wica.js" defer></script>
 
     <style>
 
+        * {
+            font-family: "Helvetica Neue",sans-serif;
+        }
+
+        body {
+            background-color: darkgrey;
+        }
+
         h1 {
+            margin: 1rem;
             text-align: center;
         }
 
-        h2 {
-            padding-top: 15px;
+        label {
+            display: inline-block;
+            width: 15rem;
+            text-align: right;
         }
 
-        #wica-server-link-status-widget {
-            height: 15px;
-            width: 15px;
-            border-radius: 50%;
-            border: 0 solid #000;
-            background-color: lightgray;
-            margin-left: 18px;
-            margin-right: 10px;
+        .statusWidget {
+            height: 1.2rem;
+            width:  1.5rem;
+            background-color: lime;
         }
 
     </style>
-    <script type="text/javascript" src="../wica.js" defer></script>
+
 </head>
 
 <body>
 
-<h1>Wica Demo Page - PROSCAN Status Display</h1>
+    <h1>Wica Demo Page - PROSCAN Status Display</h1>
 
-<div>
-    <h2>Connection Status</h2>
-    <span>Wica Server Link Status: </span> <button id="wica-server-link-status-widget" class="led-widget"></button>
-</div>
+    <div>
+        <h2>Connection Status</h2>
+        <div class="statusWidget" data-epics-channel="XPROSCAN:TIME:2" onchange="updateStatusItem()">NC</div>
+    </div>
 
-<div>
-    <h2>Stream Data</h2>
+    <div>
+        <h2>Stream Data</h2>
 
+        <label>PROSCAN Time    </label> <label data-epics-channel="XPROSCAN:TIME:2">NC </label> <br>
+        <label>MMAC3           </label> <label data-epics-channel="MMAC3:STR:2">NC     </label> <br>
+        <label>Green Box       </label> <label data-epics-channel="MMAV6:IST:2">NC     </label> <br>
+        <label>SOL             </label> <label data-epics-channel="MMAC:SOL:2">NC      </label> <br>
 
-    <span>MMAC3 (nA)             </span> <span data-epics-channel="MMAC3:STR:2">     </span> <br>
-    <span>Green Box              </span> <span data-epics-channel="MMAV6:IST:2">     </span> <br>
-    <span>SOL   (nA)             </span> <span data-epics-channel="MMAC:SOL:2">      </span> <br>
+        <label>Vdef.           </label> <label data-epics-channel="EMJCYV:IST:2">NC    </label> <br>
+        <label>Vdef. Plus Sign </label> <label data-epics-channel="EMJCYV:STAW:1">NC   </label> <br>
+        <!-- A=0x0021||A=0x0022-->
 
-    <span>Vdef.   (kV)           </span> <span data-epics-channel="EMJCYV:IST:2">    </span> <br>
-    <span>Degr.   (MeV)          </span> <span data-epics-channel="DMAD1:IST:2">     </span> <br>
+        <label>Degr.           </label> <label data-epics-channel="DMAD1:IST:2">NC    </label> <br>
 
-    <span>Kicker (A)             </span> <span data-epics-channel="AMAKI1:IST:2">    </span> <br>
-    <span>HF (KW)                </span> <span data-epics-channel="CMJSEV:PWRF:2">   </span> <br>
-    <span>HF (V)                 </span> <span data-epics-channel="CMJLL:SOLA:2">    </span> <br>
-    <span>Extractor 1 (kV)       </span> <span data-epics-channel="EMJEC1V:IST:2">   </span> <br>
-    <span>Extractor 2 (kV)       </span> <span data-epics-channel="EMJEC2V:IST:2">   </span> <br>
-    <span>Hauptmagnet (A)        </span> <span data-epics-channel="AMJHS-I:IADC:2">  </span> <br>
-    <span>Phase (Grad)           </span> <span data-epics-channel="MMJF:IST:2">      </span> <br>
+        <label>Kicker          </label> <label data-epics-channel="AMAKI1:IST:2">NC    </label> <br>
+        <label>HF              </label> <label data-epics-channel="CMJSEV:PWRF:2">NC   </label> <br>
+        <label>HF              </label> <label data-epics-channel="CMJLL:SOLA:2">NC    </label> <br>
+        <label>Extractor 1     </label> <label data-epics-channel="EMJEC1V:IST:2">NC   </label> <br>
+        <label>Extractor 2     </label> <label data-epics-channel="EMJEC2V:IST:2">NC   </label> <br>
+        <label>Hauptmagnet     </label> <label data-epics-channel="AMJHS-I:IADC:2">NC  </label> <br>
+        <label>Phase           </label> <label data-epics-channel="MMJF:IST:2">NC      </label> <br>
 
+        <label>Ionenquelle 1   </label> <label data-epics-channel="IMJV:IST:2">NC      </label> <br>
+        <label>Ionenquelle 2   </label> <label data-epics-channel="IMJI:IST:2">NC      </label> <br>
+        <label>Ionenquelle 3   </label> <label data-epics-channel="IMJGF:IST:2">NC     </label> <br>
+        <label>Ionenquelle 4   </label> <label data-epics-channel="XPROIONS:IST1:2">NC </label> <br>
 
-    <span>Ionenquelle 1 (kV)     </span> <span data-epics-channel="IMJV:IST:2">      </span> <br>
-    <span>Ionenquelle 2 (mA)     </span> <span data-epics-channel="IMJI:IST:2">      </span> <br>
-    <span>Ionenquelle 3 (cc/min) </span> <span data-epics-channel="IMJGF:IST:2">     </span> <br>
-    <span>Ionenquelle 4 (%)      </span> <span data-epics-channel="XPROIONS:IST1:2"> </span> <br>
+        <label>QMA1/2/3 1      </label> <label data-epics-channel="QMA1:IST:2">NC      </label> <br>
+        <label>QMA1/2/3 2      </label> <label data-epics-channel="QMA2:IST:2">NC      </label> <br>
+        <label>QMA1/2/3 3      </label> <label data-epics-channel="QMA3:IST:2">NC      </label> <br>
 
-    <span>QMA1/2/3 1 (A)         </span> <span data-epics-channel="QMA1:IST:2">      </span> <br>
-    <span>QMA1/2/3 2 (A)         </span> <span data-epics-channel="QMA2:IST:2">      </span> <br>
-    <span>QMA1/2/3 3 (A)         </span> <span data-epics-channel="QMA3:IST:2">      </span> <br>
+        <label>SMj1x2y 1       </label> <label data-epics-channel="SMJ1X:IST:2">NC     </label> <br>
+        <label>SMj1x2y 2       </label> <label data-epics-channel="SMJ2Y:IST:2">NC     </label> <br>
 
-    <span>SMj1x2y 1 (A)          </span> <span data-epics-channel="SMJ1X:IST:2">     </span> <br>
-    <span>SMj1x2y 2 (A)          </span> <span data-epics-channel="SMJ2Y:IST:2">     </span> <br>
+        <label>SMA1x1y 1       </label> <label data-epics-channel="SMA1X:IST:2">NC     </label> <br>
+        <label>SMA1x1y 2       </label> <label data-epics-channel="SMA1Y:IST:2">NC     </label> <br>
 
-    <span>SMA1x1y 1 (A)          </span> <span data-epics-channel="SMA1X:IST:2">     </span> <br>
-    <span>SMA1x1y 2 (A)          </span> <span data-epics-channel="SMA1Y:IST:2">     </span> <br>
+        <label>Ph Spalt 1/2 1  </label> <label data-epics-channel="MMJP2:IST1:2">NC    </label> <br>
+        <label>Ph Spalt 1/2 2  </label> <label data-epics-channel="FMJEPI:POS:2">NC    </label> <br>
+        <label>Ph Spalt 1/2 3  </label> <label data-epics-channel="FMJEPI:BREI:2">NC   </label> <br>
+        <label>Ph Spalt 1/2 4  </label> <label data-epics-channel="MMJP2:IST2:2">NC    </label> <br>
+        <label>Ph Spalt 1/2 5  </label> <label data-epics-channel="FMJIPI:POS:2">NC    </label> <br>
+        <label>Ph Spalt 1/2 6  </label> <label data-epics-channel="FMJIPI:BREI:2">NC   </label> <br>
 
-    <span>Ph>Spalt 1/2 1 (nA)    </span> <span data-epics-channel="MMJP2:IST1:2">    </span> <br>
-    <span>Ph>Spalt 1/2 2 (mm)    </span> <span data-epics-channel="FMJEPI:POS:2">    </span> <br>
-    <span>Ph>Spalt 1/2 3 (mm)    </span> <span data-epics-channel="FMJEPI:BREI:2">   </span> <br>
-    <span>Ph>Spalt 1/2 4 (nA)    </span> <span data-epics-channel="MMJP2:IST2:2">    </span> <br>
-    <span>Ph>Spalt 1/2 5 (mm)    </span> <span data-epics-channel="FMJIPI:POS:2">    </span> <br>
-    <span>Ph>Spalt 1/2 6 (mm)    </span> <span data-epics-channel="FMJIPI:BREI:2">   </span> <br>
+        <label>BMA1            </label> <label data-epics-channel="BMA1:STA:2">NC      </label> <br>
+        <label>RPS  Bew. OK    </label> <label data-epics-channel="BMA1:STAR:2">NC     </label> <br>
+        <label>PaSS Bew. OK    </label> <label data-epics-channel="BMA1:STAP:2">NC     </label> <br>
 
-    <span>BMA1                   </span> <span data-epics-channel="BMA1:STA:2">      </span> <br>
-    <span>RPS  Bew. OK           </span> <span data-epics-channel="BMA1:STAR:2">     </span> <br>
-    <span>PaSS Bew. OK           </span> <span data-epics-channel="BMA1:STAP:2">     </span> <br>
+        <label>BMC1            </label> <label data-epics-channel="BMC1:STA:2">NC      </label> <br>
+        <label>RPS  Bew. OK    </label> <label data-epics-channel="BMC1:STAR:2">NC     </label> <br>
+        <label>PaSS Bew. OK    </label> <label data-epics-channel="BMC1:STAP:2">NC     </label> <br>
 
-    <span>BMC1                   </span> <span data-epics-channel="BMC1:STA:2">      </span> <br>
-    <span>RPS  Bew. OK           </span> <span data-epics-channel="BMC1:STAR:2">     </span> <br>
-    <span>PaSS Bew. OK           </span> <span data-epics-channel="BMC1:STAP:2">     </span> <br>
+        <label>BME1            </label> <label data-epics-channel="BME1:STA:2">NC      </label> <br>
+        <label>RPS  Bew. OK    </label> <label data-epics-channel="BME1:STAR:2">NC     </label> <br>
+        <label>PaSS Bew. OK    </label> <label data-epics-channel="BME1:STAP:2">NC     </label> <br>
 
-    <span>BME1                   </span> <span data-epics-channel="BME1:STA:2">      </span> <br>
-    <span>RPS  Bew. OK           </span> <span data-epics-channel="BME1:STAR:2">     </span> <br>
-    <span>PaSS Bew. OK           </span> <span data-epics-channel="BME1:STAP:2">     </span> <br>
+        <label>BMD1 Pif        </label> <label data-epics-channel="BMD1:STA:2">NC     </label> <br>
+        <label>RPS  Bew. OK    </label> <label data-epics-channel="BMD1:STAR:2">NC     </label> <br>
 
-    <span>BMD1 Pif               </span> <span data-epics-channel="BMD1:STA:2">      </span> <br>
-    <span>RPS  Bew. OK           </span> <span data-epics-channel="BMD1:STAR:2">     </span> <br>
+        <label>BMB1 Gantry2    </label> <label data-epics-channel="BMB1:STA:2">NC      </label> <br>
+        <label>RPS  Bew. OK    </label> <label data-epics-channel="BMB1:STAR:2">NC     </label> <br>
+        <label>PaSS Bew. OK    </label> <label data-epics-channel="BMB1:STAP:2">NC     </label> <br>
 
-    <span>BMB1 Gantry2           </span> <span data-epics-channel="BMB1:STA:2">      </span> <br>
-    <span>RPS  Bew. OK           </span> <span data-epics-channel="BMB1:STAR:2">     </span> <br>
-    <span>PaSS Bew. OK           </span> <span data-epics-channel="BMB1:STAP:2">     </span> <br>
+        <label>BMD2 Gantry3    </label> <label data-epics-channel="BMD2:STA:2">NC      </label> <br>
+        <label>RPS  Bew. OK    </label> <label data-epics-channel="BMD2:STAR:2">NC     </label> <br>
+        <label>PaSS Bew. OK    </label> <label data-epics-channel="BMD2:STAP:2">NC     </label> <br>
 
-    <span>BMD2 Gantry3           </span> <span data-epics-channel="BMD2:STA:2">      </span> <br>
-    <span>RPS  Bew. OK           </span> <span data-epics-channel="BMD2:STAR:2">     </span> <br>
-    <span>PaSS Bew. OK           </span> <span data-epics-channel="BMD2:STAP:2">     </span> <br>
+        <label>Mastership      </label> <label data-epics-channel="XPROSCAN:STAB:2">NC </label> <br>
 
-    <span>Mastership             </span> <span data-epics-channel="XPROSCAN:STAB:2"> </span> <br>
+        <!-- <label>MMAP6Y-X        </label> <label data-epics-channel="MMAP6Y:PROF:2:P">NC </label> <br>
+        <label>MMAP6Y          </label> <label data-epics-channel="MMAP6Y:SPB:2">NC    </label> <br>
 
-</div>
+        <label>MMAP5X-X        </label> <label data-epics-channel="MMAP5X:PROF:2:P">NC </label> <br>
+        <label>MMAP5X          </label> <label data-epics-channel="MMAP5X:SPB:2">NC    </label> <br>
+
+        <label>Deflector Curve </label> <label data-epics-channel="PRO:REG2D:X:1">NC    </label> <br>
+        <label>Deflector Curve </label> <label data-epics-channel="PRO:REG2D:Y:1">NC    </label> <br>
+        -->
+
+        <label>Schildku 1      </label> <label data-epics-channel="YMJCS1K:IST:2">NC   </label> <br>
+        <label>Schildku 2      </label> <label data-epics-channel="YMJCS2K:IST:2">NC   </label> <br>
+
+        <label>Heizleist. A    </label> <label id = "hzLeistungDataChannelA" data-epics-channel="YMJHH:SPARB:2">NC</label> <br>
+        <label>Heizleist. B    </label> <label id = "hzLeistungDataChannelB" data-epics-channel="YMJHH:STR:2">NC</label> <br>
+        <label>Heizleist. Calc </label> <label id = "hzLeistungCalculator">NC</label> <br>
+
+        <label>He Level        </label> <label data-epics-channel="YMJHL:IST:2">NC     </label> <br>
+        <label>He Druck        </label> <label data-epics-channel="YMJHG:IST:2">NC     </label> <br>
+        <label>Bunker-Temp     </label> <label data-epics-channel="YMJKKRT:IST:2">NC   </label> <br>
+
+        <label>Ionenquelle 1   </label> <label data-epics-channel="RPS-IQ:STA:1">NC    </label> <br>
+        <label>Ionenquelle 2   </label> <label data-epics-channel="UMJSSB:BIQX:1">NC   </label> <br>
+
+        <label>HF reduziert 1  </label> <label data-epics-channel="RPS-HFRD:STA:1">NC  </label> <br>
+        <label>HF reduziert 2  </label> <label data-epics-channel="UMJSSB:BHRX:1">NC   </label> <br>
+
+        <label>HF              </label> <label data-epics-channel="RPS-HF:STA:1">NC    </label> <br>
+        <label>HF              </label> <label data-epics-channel="UMJSSB:BHFX:1">NC   </label> <br>
+
+        <label>Ablenkplatte    </label> <label data-epics-channel="UMJSSB:BDEX:1">NC   </label> <br>
+
+        <label>No Beam - A     </label> <label data-epics-channel="PRO:CURRENTALARM:1">NC </label> <br>
+        <label>No Beam - B     </label> <label data-epics-channel="PRO:COUNT:1">NC       </label> <br>
+
+    </div>
+
 </body>
+
+ <script>
+
+
+    function updateStatusItem( event ) { }
+
+    class CalculateHeizLeistung
+    {
+        constructor( calcDivId, channel1DataId, channel2DataId )
+        {
+            this.calculationOutputElement = document.getElementById( calcDivId );
+            this.channel1DataElement = document.getElementById( channel1DataId );
+            this.channel2DataElement = document.getElementById( channel2DataId );
+            this.heizleistungChannel1 = 0.0;
+            this.heizleistungChannel2 = 0.0;
+
+            // Required to overcome Javascript's strange variable scoping rules
+            let that = this;
+
+            this.channel1DataElement.onchange = function( e )
+            {
+                that.heizleistungChannel1 = parseFloat( e.channelValue);
+            };
+
+            this.channel2DataElement.onchange = function( e )
+            {
+                that.heizleistungChannel2 = parseFloat( e.channelValue);
+            };
+
+            // Trigger a task to calculate the Heizlestung every second
+            setInterval( CalculateHeizLeistung.updateOutputElement, 1000, that );
+        }
+
+        static updateOutputElement( that )
+        {
+            if ( ( that.heizleistungChannel1 === undefined ) || ( that.heizleistungChannel2 === undefined ) )
+            {
+                return;
+            }
+            that.calculationOutputElement.textContent = ( that.heizleistungChannel1 * that.heizleistungChannel2).toFixed( 2 ) + "W";
+        }
+    }
+
+    let heizLeistungCalc;
+    heizLeistungCalc = new CalculateHeizLeistung( "hzLeistungCalculator", "hzLeistungDataChannelA", "hzLeistungDataChannelB" );
+
+
+ </script>
+
 </html>
