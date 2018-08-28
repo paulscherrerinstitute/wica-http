@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -92,8 +93,6 @@ public class EpicsChannelMonitorService implements AutoCloseable
             stateChangeHandler.accept( isConnected );
          } );
          logger.debug( "'{}' - connection listener created ok.", channelName );
-
-
          logger.debug( "'{}' - connecting asynchronously to... ", channelName );
          final CompletableFuture<Channel<Object>> completableFuture = channel.connectAsync();
          logger.debug( "'{}' - asynchronous connect completed ok.", channelName );
@@ -112,11 +111,30 @@ public class EpicsChannelMonitorService implements AutoCloseable
                } );
                monitors.add( monitor );
             }
+            else if ( firstValue instanceof double[] )
+            {
+               final Monitor<Graphic<Object,Integer>> monitor = channel.addMonitor( Graphic.class, v -> {
+                  final int precision = v.getPrecision();
+                  final String units = v.getUnits();
+                  final double[] arr = (double[]) v.getValue();
+                  final String valueString = Arrays.toString( arr );
+                  valueChangeHandler.accept( String.format( "{ \"data\" : \"%s\", \"units\": \"%s\", \"precision\": \"%d\" }", valueString, units, precision ) );
+               } );
+               monitors.add( monitor );
+            }
             else if ( firstValue instanceof Integer )
             {
                final Monitor<Graphic<Object,Integer>> monitor = channel.addMonitor( Graphic.class, v -> {
                   final String formatExpr = "%d" + "%s";
                   valueChangeHandler.accept( String.format( formatExpr, (Integer) v.getValue(), v.getUnits() ) );
+               } );
+               monitors.add( monitor );
+            }
+            else if ( firstValue instanceof int[] )
+            {
+               final Monitor<Graphic<Object,Integer>> monitor = channel.addMonitor( Graphic.class, v -> {
+                  final String formatExpr = "%d" + "%s";
+                  valueChangeHandler.accept( String.format( formatExpr, (int[]) v.getValue(), v.getUnits() ) );
                } );
                monitors.add( monitor );
             }
@@ -127,8 +145,16 @@ public class EpicsChannelMonitorService implements AutoCloseable
                } );
                monitors.add( monitor );
             }
+            else if ( firstValue instanceof String[] )
+            {
+               final Monitor<Object> monitor = channel.addValueMonitor( v -> {
+                  final String formatExpr = "%s";
+                  valueChangeHandler.accept( String.format( formatExpr, (String[]) v ) );
+               } );
+               monitors.add( monitor );
+            }
             else {
-               logger.warn( "'{}' - this channel was of a type that is not currently supported ", channelName );
+               logger.warn( "'{}' - this channel was of a type '{}' that is not currently supported ", channelName, firstValue.getClass() );
             }
             logger.debug( "'{}' - value change monitor added ok.", channelName );
          });
@@ -148,11 +174,7 @@ public class EpicsChannelMonitorService implements AutoCloseable
    }
 
 /*- Private methods ----------------------------------------------------------*/
-
-
-
 /*- Nested Classes -----------------------------------------------------------*/
-
 
 }
 
