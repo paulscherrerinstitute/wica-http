@@ -81,5 +81,6 @@ It would be far more efficient if EPICS channels were cached and shared between 
 1. Infrastructure Enhancement: Apply for gfa-wica web certificate.
 1. Bug Fix: sometimes the Wica Server sends disconnect messages but afterwards the monitor continues to send updates
 so one is left with a screen with lost of pink background (pink = the Wica server disconnected).
-
+1. Feature Enhancement: enhance PROSCAN display so that the design is fully responsive (currently it only works well on 
+a desktop monitor).
 
