@@ -903,7 +903,7 @@
             that.vdefVoltageArray.push( that.vdefVoltage );
             that.hfPowerArray.push( that.hfPower );
 
-            // keep the last 1800 points which roughly corresponds to 30 minutes
+            // keep the last 900 points which roughly corresponds to 30 minutes at 2 seconds per update
             if ( that.nPoints++ === 900 ) {
                  that.timeArray.shift();
                  that.beamCurrentArray.shift();
