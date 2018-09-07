@@ -101,6 +101,11 @@ function process_event_stream_update( eventData )
         let channelName = element.getAttribute( "data-epics-channel");
         let channelValue= eventData[ channelName ];
 
+        // If no value was sent for this element then there is nothing to do
+        if ( channelValue === undefined ) {
+            return;
+        }
+
         // The WICA server sends a null event on the CA stream if the
         // underlying channel disconnects. Update the html element to indicate this.
         if ( channelValue === null ) {
@@ -120,13 +125,13 @@ function process_event_stream_update( eventData )
         // of the event (typically rendering) to the defined method.
         if ( element.onchange !== null) {
             let event = new Event( 'change' );
-            event.channelValue= channelValue;
+            event.channelValue = channelValue.val;
             element.dispatchEvent( event );
         }
         // If an onchange event handler is NOT defined then simply update
         // the textContent field with the latest value.
         else {
-            element.textContent = channelValue;
+            element.textContent = channelValue.val;
         }
 
     } );

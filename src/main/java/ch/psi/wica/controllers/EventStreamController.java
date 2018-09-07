@@ -4,13 +4,12 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.ChannelName;
+import ch.psi.wica.model.EpicsChannelName;
+import ch.psi.wica.model.EpicsChannelValue;
+import ch.psi.wica.model.EpicsChannelValueStream;
+import ch.psi.wica.services.EpicsChannelValueService;
 import ch.psi.wica.model.StreamId;
-import ch.psi.wica.services.EpicsChannelMonitorService;
 import org.apache.commons.lang3.Validate;
-import org.epics.ca.data.Graphic;
-import org.epics.ca.data.Metadata;
-import org.epics.ca.data.Timestamped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +23,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.ReplayProcessor;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -44,17 +41,24 @@ class EventStreamController
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
+
    private final Logger logger = LoggerFactory.getLogger( EventStreamController.class );
 
+   private final EpicsChannelValueService epicsChannelValueService;
+
+   private final int updateStreamHeartBeatInterval;
    private final int eventStreamHeartBeatInterval;
-   private final Map<StreamId, Flux<ServerSentEvent<Map<ChannelName,String>>>> eventStreamFluxMap = new ConcurrentHashMap<>();
-   private final EpicsChannelMonitorService epicsChannelMonitorService;
+
+   private final Map<StreamId, Flux<ServerSentEvent<Map<EpicsChannelName,EpicsChannelValue>>>> eventStreamFluxMap = new ConcurrentHashMap<>();
+
+   private LocalDateTime lastUpdateTime = LocalDateTime.MAX;
+
 
 /*- Main ---------------------------------------------------------------------*/
 
    /**
-    * Constructs a new controller which to handle all REST operations
-    * associated with EPICS event streams.
+    * Constructs a new controller which to handle all REST operations associated with EPICS event streams.
+    *
     *
     * @param eventStreamHeartBeatInterval the interval in seconds with which a
     *                                     heartbeat event will be sent from the
@@ -62,14 +66,15 @@ class EventStreamController
     *                                     handler.
     */
    @Autowired
-   private EventStreamController( EpicsChannelMonitorService epicsChannelMonitorService,
-                                  @Value( "${wica.heartbeat_interval}" ) int eventStreamHeartBeatInterval )
+   private EventStreamController( @Autowired EpicsChannelValueService epicsChannelValueService,
+                                  @Value( "${wica.heartbeat_interval}" ) int eventStreamHeartBeatInterval,
+                                  @Value( "${wica.update_interval}" ) int updateStreamHeartBeatInterval)
    {
-      this.epicsChannelMonitorService = Validate.notNull( epicsChannelMonitorService );
-
       logger.info( "Created new event stream with heartbeat interval of {} seconds.", eventStreamHeartBeatInterval );
 
+      this.epicsChannelValueService = epicsChannelValueService;
       this.eventStreamHeartBeatInterval = eventStreamHeartBeatInterval;
+      this.updateStreamHeartBeatInterval = updateStreamHeartBeatInterval;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -90,7 +95,7 @@ class EventStreamController
    public ResponseEntity<String> createStream( @RequestBody List<String> channelNames )
    {
       // Check that the Spring framework gives us something in the channelNames field.
-      Validate.notNull( channelNames, " The 'channelNames' information was null" );
+      Validate.notNull( channelNames," The 'channelNames' information was null" );
 
       logger.info( "POST: Handling create stream request. Monitored channels: '{}'", channelNames );
 
@@ -100,59 +105,66 @@ class EventStreamController
          return new ResponseEntity<>( "The channel list cannot be empty.", HttpStatus.BAD_REQUEST );
       }
 
-      final StreamId streamId = StreamId.createNext();
+      // Create a set of channels of interest from the request
+      final Set<EpicsChannelName> channels = channelNames.stream()
+                                                         .map( EpicsChannelName::new )
+                                                         .collect( Collectors.toSet() );
+
+      // Create a new stream
+      final EpicsChannelValueStream stream = new EpicsChannelValueStream( channels );
+      final StreamId streamId = stream.getStreamId();
 
       // Create a new concurrent hash map to hold the value of any channels that are reported
-      final Map<ChannelName,String> lastValueMap = Collections.synchronizedMap( new HashMap<>());
+      //final Map<EpicsChannelName,String> lastValueMap = Collections.synchronizedMap( new HashMap<>());
 
       // The replay processor is intended to ensure that clients can connect at any time and always
       // receive notification of the last known values of all the channels supported by the stream.
       // Republication will occur every time any of the monitored channels undergoes an update.
-      final ReplayProcessor<ServerSentEvent<Map<ChannelName,String>>> replayProcessor = ReplayProcessor.cacheLast();
-      final Flux<ServerSentEvent<Map<ChannelName,String>>> replayFlux = replayProcessor.doOnCancel( () -> logger.warn( "replayFlux was cancelled" ) );
+      //final ReplayProcessor<ServerSentEvent<Map<EpicsChannelName,String>>> replayProcessor = ReplayProcessor.cacheLast();
+      //final Flux<ServerSentEvent<Map<EpicsChannelName,String>>> replayFlux = replayProcessor.doOnCancel(() -> logger.warn("replayFlux was cancelled" ) );
             //.log();
 
       // The heartbeat flux runs periodically to keep the connection alive even if none of the
       // monitored channels are changing. This facilitates a client reconnect policy if the
       // server goes down.
-      final Flux<ServerSentEvent<Map<ChannelName,String>>> heartbeatFlux = Flux.interval( Duration.ofSeconds( eventStreamHeartBeatInterval ) )
+      final Flux<ServerSentEvent<Map<EpicsChannelName,EpicsChannelValue>>> heartbeatFlux = Flux.interval( Duration.ofMillis( eventStreamHeartBeatInterval ) )
                                                                           .map( l -> {
                                                                              logger.trace( "heartbeatFlux is publishing new SSE..." );
-                                                                             return buildServerSentMessageEvent( streamId, "heartbeat", lastValueMap );
+                                                                             final Map<EpicsChannelName, EpicsChannelValue> map = epicsChannelValueService.getChannelValues(stream );
+                                                                             return buildServerSentMessageEvent( streamId, "heartbeat", map );
                                                                           } )
                                                                           .doOnCancel( () -> logger.warn( "heartbeatFlux was cancelled" ) );
                                                                           //.log();
 
+
+      final Flux<ServerSentEvent<Map<EpicsChannelName,EpicsChannelValue>>> updateFlux = Flux.interval( Duration.ofMillis( updateStreamHeartBeatInterval ) )
+                                                                                            .map( l -> {
+                                                                                                logger.trace( "heartbeatFlux is publishing new SSE..." );
+                                                                                                final Map<EpicsChannelName,EpicsChannelValue> updateMap = epicsChannelValueService.getChannelValuesUpdatedSince(stream, getLastUpdateTime() );
+                                                                                                setLastUpdateTime();
+                                                                                                return buildServerSentMessageEvent( streamId, "update", updateMap );
+                                                                                            } )
+                                                                                            .doOnCancel( () -> logger.warn( "updateFlux was cancelled" ) );
+      //.log();
+
       // Store it in the stream map
-      final Flux<ServerSentEvent<Map<ChannelName,String>>> eventStreamFlux = replayFlux.mergeWith( heartbeatFlux )
-                                                                                  .doOnCancel( () -> {
-                                                                                     logger.warn( "evenStreamFlux was cancelled" );
-                                                                                     handleErrors( streamId );
-                                                                                  } );
+      final Flux<ServerSentEvent<Map<EpicsChannelName,EpicsChannelValue>>> eventStreamFlux = updateFlux.mergeWith( heartbeatFlux )
+                                                                                                       .doOnCancel( () -> {
+                                                                                                          logger.warn( "evenStreamFlux was cancelled" );
+                                                                                                          handleErrors( streamId );
+                                                                                                       } );
                                                                                   //.log();
 
       // Note: this generates an IntelliJ warning about unassigned flux.
-      // It's true the flux isn't assignd here so nothing will yet happen.
+      // It's true the flux isn't assigned here so nothing will yet happen.
       // But eventually in the GET method the map entry will be retrieved
       // and the flux will be subscribed.
       // noinspection UnassignedFluxMonoInstance
       eventStreamFluxMap.put( streamId, eventStreamFlux );
 
       // Lastly set up monitors on all the channels of interest.
-      for ( String channelNameAsString : channelNames )
-      {
+      epicsChannelValueService.startMonitoring(stream );
 
-         final ChannelName channelName = new ChannelName( channelNameAsString );
-
-         // See the initial state of the channel to disconnected
-         lastValueMap.put( channelName, null );
-         logger.info( "subscribing to: '{}'", channelName );
-
-         // Now subscribe
-         final Consumer<Boolean> stateChangedHandler = b -> stateChanged( streamId, channelName, b, lastValueMap, replayProcessor );
-         final Consumer<String> valueChangedHandler =  v -> valueChanged( streamId, channelName, v, lastValueMap, replayProcessor );
-         epicsChannelMonitorService.startMonitoring( channelName, stateChangedHandler, valueChangedHandler );
-      }
       logger.info( "POST: allocated stream with id: '{}'" , streamId.asString() );
       return new ResponseEntity<>( streamId.asString(), HttpStatus.OK );
    }
@@ -160,11 +172,11 @@ class EventStreamController
    /**
     * Handles an HTTP GET request to return the event stream associated with the specified ID.
     *
-    * @param id the ID of the event stream to subscribe to.
+    * @param id the ID of the event stream to startMonitoring to.
     * @return the returned event stream.
     */
    @GetMapping( value="/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE )
-   public ResponseEntity<Flux<ServerSentEvent<Map<ChannelName,String>>>> getServerSentEventStream( @PathVariable String id )
+   public ResponseEntity<Flux<ServerSentEvent<Map<EpicsChannelName,EpicsChannelValue>>>> getServerSentEventStream( @PathVariable String id )
    {
       // Check that the Spring framework gives us something in the channelNames field.
       Validate.notNull( id, "The event stream 'id' field was empty." );
@@ -184,6 +196,35 @@ class EventStreamController
    }
 
 
+   @DeleteMapping( value="/{id}", produces=MediaType.TEXT_PLAIN_VALUE )
+   public ResponseEntity<String> deleteServerSentEventStream( @PathVariable String id )
+   {
+      // Check that the Spring framework gives us something in the channelNames field.
+      Validate.notNull( id, "The event stream 'id' field was empty." );
+
+      logger.info( "DELETE: Handling get stream request for ID: '{}'", id );
+
+      // Handle the situation where an unknown StreamId is given
+      final StreamId streamId = StreamId.of( id );
+      if ( ! eventStreamFluxMap.containsKey( streamId ) )
+      {
+         logger.info( "GET: Rejected request because the event stream 'id' was not recognised." );
+         return new ResponseEntity<>( HttpStatus.BAD_REQUEST );
+      }
+
+      // Handle the normal case
+      // Remove all monitors on all the channels of interest.
+      // TODO: work out best way of getting stream back from Id
+      //epicsChannelValueStashService.stopMonitoring( eventStreamFluxMap.get( streamId ) );
+
+      // Note: this generates an IntelliJ warning about unassigned flux. But it is ok.
+      eventStreamFluxMap.remove( streamId );
+
+      logger.info( "DELETE: deleted stream with id: '{}'" , id.toString() );
+      return new ResponseEntity<>( id, HttpStatus.OK );
+   }
+
+
    @ExceptionHandler( Exception.class )
    public void handleException( Exception ex)
    {
@@ -198,63 +239,6 @@ class EventStreamController
       logger.info( "Probably the client navigated away from the webpage and the eventsource was closed by the browser !! " );
    }
 
-   /**
-    * Handles a connection state change on the underlying EPICS channel monitor.
-    *
-    * @param streamId the streamId associated with this update.
-    * @param channelName the name of the channel whose connection state changed.
-    * @param isConnected the new connection state.
-    * @param lastValueMap reference to a map which can be used to hold the new value.
-    * @param replayProcessor reference to the flux which can be triggered to republish
-    *                        the updated event map.
-    */
-   private void stateChanged( StreamId streamId,
-                              ChannelName channelName,
-                              Boolean isConnected,
-                              Map<ChannelName,String> lastValueMap,
-                              ReplayProcessor<ServerSentEvent<Map<ChannelName,String>>> replayProcessor )
-   {
-      Validate.notNull( channelName,"The 'channelName' argument was null" );
-      Validate.notNull( isConnected, "The 'isConnected' argument was null"  );
-      Validate.notNull( lastValueMap, "The 'lastValueMap' argument was null" );
-      Validate.notNull( replayProcessor, "The 'replayProcessor' argument was null" );
-
-      logger.info( "'{}' - connection state changed to '{}'.", channelName,  isConnected);
-
-      if ( ! isConnected )
-      {
-         logger.debug( "'{}' - value changed to NULL to indicate the connection was lost.", channelName );
-         lastValueMap.put( channelName, null );
-         publish( streamId,"channel disconnected", lastValueMap, replayProcessor );
-      }
-   }
-
-   /**
-    * Handles a value change on the underlying EPICS channel monitor.
-    *
-    * @param streamId the streamId associated with this update.
-    * @param channelName the name of the channel whose monitor changed.
-    * @param newValue the new value
-    * @param lastValueMap reference to a map which can be used to hold the new value.
-    * @param replayProcessor reference to the flux which can be triggered to republish
-    *                        the updated event map.
-    */
-   private void valueChanged( StreamId streamId,
-                              ChannelName channelName,
-                              String newValue,
-                              Map<ChannelName,String> lastValueMap,
-                              ReplayProcessor<ServerSentEvent<Map<ChannelName,String>>> replayProcessor )
-   {
-      Validate.notNull( streamId,"The 'streamId' argument was null");
-      Validate.notNull( channelName,"The 'channelName' argument was null");
-      Validate.notNull( newValue,"The 'newValue' argument was null");
-      Validate.notNull( lastValueMap,"The 'lastValueMap' argument was null");
-      Validate.notNull( replayProcessor,"The 'replayProcessor' argument was null");
-
-      logger.trace( "'{}' - value changed to: '{}'", channelName, newValue );
-      lastValueMap.put(channelName, newValue );
-      publish( streamId,"value changed", lastValueMap, replayProcessor );
-   }
 
    /**
     * Publishes the state of the supplied map as a ServerSentEvent on the supplied
@@ -265,8 +249,8 @@ class EventStreamController
     */
    private void publish( StreamId streamId,
                          String comment,
-                         Map<ChannelName,String> lastValueMap,
-                         ReplayProcessor<ServerSentEvent<Map<ChannelName,String>>> replayProcessor )
+                         Map<EpicsChannelName,EpicsChannelValue> lastValueMap,
+                         ReplayProcessor<ServerSentEvent<Map<EpicsChannelName,EpicsChannelValue>>> replayProcessor )
    {
       Validate.notNull( lastValueMap );
       Validate.notNull( replayProcessor );
@@ -278,7 +262,7 @@ class EventStreamController
       }
 
       // Catch and log any exceptions that arise during publication.
-      final ServerSentEvent<Map<ChannelName,String>> sse = buildServerSentMessageEvent( streamId, comment, lastValueMap );
+      final ServerSentEvent<Map<EpicsChannelName,EpicsChannelValue>> sse = buildServerSentMessageEvent(streamId, comment, lastValueMap );
       try
       {
          logger.trace( "ReplayProcessor - is publishing new SSE: '{}'", sse );
@@ -307,10 +291,22 @@ class EventStreamController
     * @param valueMap the map of values that are to be transformed.
     * @return the generated SSE.
     */
-   private ServerSentEvent<Map<ChannelName,String>> buildServerSentMessageEvent( StreamId id, String comment, Map<ChannelName,String> valueMap )
+   private ServerSentEvent<Map<EpicsChannelName,EpicsChannelValue>> buildServerSentMessageEvent( StreamId id, String comment, Map<EpicsChannelName,EpicsChannelValue> valueMap )
    {
       Validate.notNull( valueMap,"The valueMap field was null ");
+
       return ServerSentEvent.builder( valueMap ).id( id.asString() ).comment( comment ).event( "message" ).build();
+   }
+
+
+   private LocalDateTime getLastUpdateTime()
+   {
+      return lastUpdateTime;
+   }
+
+   private void setLastUpdateTime()
+   {
+      lastUpdateTime = LocalDateTime.now();
    }
 
 
