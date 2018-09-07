@@ -44,7 +44,9 @@ public class StreamId
       nextAllocationId = 0;
    }
 
-/*- Public methods -----------------------------------------------------------*/
+   public static int getCreationCount() { return nextAllocationId; }
+
+   /*- Public methods -----------------------------------------------------------*/
 
    @Override
    public boolean equals( Object o )
