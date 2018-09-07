@@ -3,7 +3,8 @@
 ###############################################################################
 
 # Start with the Standard OpenJDK release
-FROM openjdk:9-jdk as build_jdk
+# FROM openjdk:9-jdk as build_jdk
+FROM openjdk:10-jdk as build_jdk
 
 WORKDIR /app
 
