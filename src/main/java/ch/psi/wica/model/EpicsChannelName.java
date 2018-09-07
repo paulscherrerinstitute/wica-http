@@ -10,7 +10,7 @@ import java.util.Objects;
 /*- Class Declaration --------------------------------------------------------*/
 
 
-public class ChannelName
+public class EpicsChannelName
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -21,7 +21,7 @@ public class ChannelName
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public ChannelName( String channelName )
+   public EpicsChannelName( String channelName )
    {
       this.channelName = Validate.notBlank( channelName );
    }
@@ -34,7 +34,7 @@ public class ChannelName
    {
       if ( this == o ) return true;
       if ( o == null || getClass() != o.getClass() ) return false;
-      ChannelName that = (ChannelName) o;
+      EpicsChannelName that = (EpicsChannelName) o;
       return Objects.equals(channelName, that.channelName);
    }
 
