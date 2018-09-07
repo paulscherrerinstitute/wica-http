@@ -63,7 +63,7 @@ public class WicaApplication implements DisposableBean
 		{
 			SpringApplication.run( WicaApplication.class, args );
 		}
-		catch ( Exception ex )
+		catch( Exception ex )
 		{
 			logger.error( "An Unexpected problem prevented the service from starting up." );
 			logger.error( "Further details are as follows:\n\n " + ex.getMessage() );
@@ -106,7 +106,14 @@ public class WicaApplication implements DisposableBean
 
 
 /*- Class methods ------------------------------------------------------------*/
-/*- Public methods -----------------------------------------------------------*/
+
+	public static LocalDateTime getServerStartTime()
+	{
+		return serverStartTime;
+	}
+
+
+	/*- Public methods -----------------------------------------------------------*/
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
