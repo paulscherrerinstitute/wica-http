@@ -21,7 +21,7 @@ class CorsConfigurer implements WebMvcConfigurer
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(EventStreamController.class );
+   private final Logger logger = LoggerFactory.getLogger( CorsConfigurer.class );
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
