@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- Load the Wica library last of all as it will generate events which interact with the page -->
     <script src="https://gfa-autodeploy.psi.ch:8443/wica.js" defer></script>
 
     <style>
@@ -43,18 +45,18 @@
 <div>
     <h2>Connection Status</h2>
     <!-- Just pick any channel that can be representative of the status of the EPICS IOC and Wica Server -->
-    <div class="statusWidget" data-epics-channel="wica:test:counter01" onchange="updateStatusWidget( event )">NC</div>
+    <div class="statusWidget" data-wica-channel-name="wica:test:counter01" onchange="updateStatusWidget( event )">NC</div>
 </div>
 
 <div>
     <h2>Stream Data</h2>
-    <label>Counter 0.1s </label> <label data-epics-channel="wica:test:counter01">NC</label><br>
-    <label>Counter 0.2s </label> <label data-epics-channel="wica:test:counter02">NC</label><br>
-    <label>Counter 0.5s </label> <label data-epics-channel="wica:test:counter03">NC</label><br>
-    <label>Counter 1.0s </label> <label data-epics-channel="wica:test:counter04">NC</label><br>
-    <label>Counter 2.0s </label> <label data-epics-channel="wica:test:counter05">NC</label><br>
-    <label>Counter 5.0s </label> <label data-epics-channel="wica:test:counter06">NC</label><br>
-    <label>Counter 10s  </label> <label data-epics-channel="wica:test:counter07">NC</label><br>
+    <label>Counter 0.1s </label> <label data-wica-channel-name="wica:test:counter01">NC</label><br>
+    <label>Counter 0.2s </label> <label data-wica-channel-name="wica:test:counter02">NC</label><br>
+    <label>Counter 0.5s </label> <label data-wica-channel-name="wica:test:counter03">NC</label><br>
+    <label>Counter 1.0s </label> <label data-wica-channel-name="wica:test:counter04">NC</label><br>
+    <label>Counter 2.0s </label> <label data-wica-channel-name="wica:test:counter05">NC</label><br>
+    <label>Counter 5.0s </label> <label data-wica-channel-name="wica:test:counter06">NC</label><br>
+    <label>Counter 10s  </label> <label data-wica-channel-name="wica:test:counter07">NC</label><br>
 </div>
 </body>
 
@@ -63,7 +65,7 @@
     function updateStatusWidget( event )  {
 
         let widget = event.target;
-        let value = event.channelValue;
+        let value = event.channelValue.val;
 
         if ( value === null ) {
             widget.textContent = "NC";
