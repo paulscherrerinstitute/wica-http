@@ -3,9 +3,10 @@ package ch.psi.wica.services;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.EpicsChannelMetadata;
 import ch.psi.wica.model.EpicsChannelName;
 import ch.psi.wica.model.EpicsChannelValue;
-import ch.psi.wica.model.EpicsChannelValueStream;
+import ch.psi.wica.model.EpicsChannelDataStream;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -23,16 +24,17 @@ import java.util.stream.Collectors;
 
 @ThreadSafe
 @Service
-public class EpicsChannelValueService
+public class EpicsChannelDataService
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger (EpicsChannelValueService.class );
+   private final Logger logger = LoggerFactory.getLogger (EpicsChannelDataService.class );
 
    private static final Map<EpicsChannelName,Integer> channelInterestMap = Collections.synchronizedMap(new HashMap<>() );
    private static final Map<EpicsChannelName, EpicsChannelValue> channelValueStash = Collections.synchronizedMap(new HashMap<>() );
+   private static final Map<EpicsChannelName, EpicsChannelMetadata> channelMetadataStash = Collections.synchronizedMap(new HashMap<>() );
 
    private EpicsChannelMonitorService epicsChannelMonitorService;
 
@@ -40,7 +42,7 @@ public class EpicsChannelValueService
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   private EpicsChannelValueService( EpicsChannelMonitorService epicsChannelMonitorService )
+   private EpicsChannelDataService( EpicsChannelMonitorService epicsChannelMonitorService )
    {
       Validate.notNull ( epicsChannelMonitorService );
       this.epicsChannelMonitorService = new EpicsChannelMonitorService();
@@ -49,11 +51,11 @@ public class EpicsChannelValueService
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public void startMonitoring( EpicsChannelValueStream epicsChannelValueStream )
+   public void startMonitoring( EpicsChannelDataStream epicsChannelDataStream )
    {
-      Validate.notNull( epicsChannelValueStream );
+      Validate.notNull(epicsChannelDataStream);
 
-      for ( EpicsChannelName channelName : epicsChannelValueStream.getChannels() )
+      for ( EpicsChannelName channelName : epicsChannelDataStream.getChannels() )
       {
          // If the channel is already being monitored increment the interest count.
          if ( channelInterestMap.containsKey( channelName ) )
@@ -67,17 +69,18 @@ public class EpicsChannelValueService
             // Now startMonitoring
             final Consumer<Boolean> stateChangedHandler = b -> stateChanged( channelName, b );
             final Consumer<EpicsChannelValue> valueChangedHandler =  v -> valueChanged( channelName, v );
-            epicsChannelMonitorService.startMonitoring( channelName, stateChangedHandler, valueChangedHandler );
+            final Consumer<EpicsChannelMetadata> metadataChangedHandler =  v -> metadataChanged( channelName, v );
+            epicsChannelMonitorService.startMonitoring( channelName, stateChangedHandler, metadataChangedHandler, valueChangedHandler );
             channelInterestMap.put( channelName, 1 );
          }
       }
    }
 
-   public void stopMonitoring( EpicsChannelValueStream epicsChannelValueStream )
+   public void stopMonitoring( EpicsChannelDataStream epicsChannelDataStream )
    {
-      Validate.notNull( epicsChannelValueStream );
+      Validate.notNull(epicsChannelDataStream);
 
-      for ( EpicsChannelName channelName : epicsChannelValueStream.getChannels() )
+      for ( EpicsChannelName channelName : epicsChannelDataStream.getChannels() )
       {
          // Validate the precondition that
          Validate.isTrue( channelInterestMap.containsKey( channelName ) );
@@ -93,28 +96,37 @@ public class EpicsChannelValueService
    }
 
 
-   public Map<EpicsChannelName,EpicsChannelValue> getChannelValues( EpicsChannelValueStream epicsChannelValueStream )
+   public Map<EpicsChannelName,EpicsChannelValue> getChannelValues( EpicsChannelDataStream epicsChannelDataStream )
    {
-      Validate.notNull( epicsChannelValueStream );
+      Validate.notNull(epicsChannelDataStream);
 
-      return epicsChannelValueStream.getChannels().stream()
+      return epicsChannelDataStream.getChannels().stream()
                                                   .filter( channelValueStash::containsKey )
                                                   .collect( Collectors.toMap( Function.identity(), channelValueStash::get ) );
    }
 
 
-   public Map<EpicsChannelName,EpicsChannelValue> getChannelValuesUpdatedSince( EpicsChannelValueStream epicsChannelValueStream, LocalDateTime sinceDateTime )
+   public Map<EpicsChannelName,EpicsChannelValue> getChannelValuesUpdatedSince( EpicsChannelDataStream epicsChannelDataStream, LocalDateTime sinceDateTime )
    {
-      Validate.notNull( epicsChannelValueStream );
+      Validate.notNull(epicsChannelDataStream);
 
-      return epicsChannelValueStream.getChannels().stream()
+      return epicsChannelDataStream.getChannels().stream()
                                                   .filter( channelValueStash::containsKey )
                                                   .filter( c -> channelValueStash.get( c ).getTimestamp().isAfter( sinceDateTime ) )
                                                   .collect( Collectors.toMap( Function.identity(), channelValueStash::get ) );
    }
 
+   public Map<EpicsChannelName,EpicsChannelMetadata> getChannelMetadata( EpicsChannelDataStream epicsChannelDataStream )
+   {
+      Validate.notNull(epicsChannelDataStream);
 
-/*- Private methods ----------------------------------------------------------*/
+      return epicsChannelDataStream.getChannels().stream()
+            .filter( channelMetadataStash::containsKey )
+            .collect( Collectors.toMap( Function.identity(), channelMetadataStash::get ) );
+   }
+
+
+   /*- Private methods ----------------------------------------------------------*/
 
    /**
     * Handles a connection state change on the underlying EPICS channel monitor.
@@ -151,7 +163,22 @@ public class EpicsChannelValueService
       channelValueStash.put( epicsChannelName,  epicsChannelValue );
    }
 
+   /**
+    * Handles a value change on the metadata associated with an EPICS channel.
+    *
+    * @param epicsChannelName the name of the channel for whom metadata is now available
+    * @param epicsChannelMetadata the metadata
+    */
+   private void metadataChanged( EpicsChannelName epicsChannelName, EpicsChannelMetadata epicsChannelMetadata )
+   {
+      Validate.notNull( epicsChannelName, "The 'epicsChannelName' argument was null");
+      Validate.notNull( epicsChannelMetadata,"The 'epicsChannelMetadata' argument was null");
 
-/*- Nested Classes -----------------------------------------------------------*/
+      logger.trace("'{}' - metadata changed to: '{}'", epicsChannelName, epicsChannelMetadata );
+      channelMetadataStash.put( epicsChannelName,  epicsChannelMetadata );
+   }
+
+
+   /*- Nested Classes -----------------------------------------------------------*/
 
 }

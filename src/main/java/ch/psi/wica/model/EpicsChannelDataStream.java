@@ -5,8 +5,6 @@ package ch.psi.wica.model;
 
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
@@ -14,7 +12,7 @@ import java.util.Set;
 /*- Class Declaration --------------------------------------------------------*/
 
 @Immutable
-public class EpicsChannelValueStream
+public class EpicsChannelDataStream
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -32,7 +30,7 @@ public class EpicsChannelValueStream
     *
     * @param channels the channels of interest
     */
-   public EpicsChannelValueStream( Set<EpicsChannelName> channels )
+   public EpicsChannelDataStream( Set<EpicsChannelName> channels )
    {
       this.channels = Validate.notNull ( channels );
       this.streamId = StreamId.createNext();
