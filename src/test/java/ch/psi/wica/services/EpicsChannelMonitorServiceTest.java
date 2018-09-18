@@ -4,6 +4,7 @@ package ch.psi.wica.services;
 /*- Imported packages --------------------------------------------------------*/
 
 
+import ch.psi.wica.model.EpicsChannelMetadata;
 import ch.psi.wica.model.EpicsChannelName;
 import ch.psi.wica.model.EpicsChannelValue;
 import org.junit.jupiter.api.AfterEach;
@@ -31,6 +32,7 @@ class EpicsChannelMonitorServiceTest
    private EpicsChannelMonitorService epicsChannelMonitorService = new EpicsChannelMonitorService();
 
    private Consumer<Boolean> stateChangeHandler = ( bool ) -> {};
+   private Consumer<EpicsChannelMetadata> metadataChangeHandler = ( string ) -> {};
    private Consumer<EpicsChannelValue> valueChangeHandler = ( string ) -> {};
 
 
@@ -56,30 +58,36 @@ class EpicsChannelMonitorServiceTest
    @Test
    void testStartMonitoring_ThrowsNullPointerExceptionWhenEpicsChannelNamesIsNull()
    {
-      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring(null, stateChangeHandler, valueChangeHandler ) );
+      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring(null, stateChangeHandler, metadataChangeHandler, valueChangeHandler ) );
    }
 
    @Test
-   void testStartMonitoring_ThrowsNullPointerExceptionWhenStateChangedHandlerIsNull()
+   void testStartMonitoring_ThrowsNullPointerExceptionWhenStateChangeHandlerIsNull()
    {
-      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "abcd" ), null, valueChangeHandler ) );
+      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "abcd" ), null, metadataChangeHandler, valueChangeHandler ) );
    }
 
    @Test
-   void testStartMonitoring_ThrowsNullPointerExceptionWhenValueChangedHandlerIsNull()
+   void testStartMonitoring_ThrowsNullPointerExceptionWhenMetadataChangeHandlerIsNull()
    {
-      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "abcd" ), stateChangeHandler, null ) );
+      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "abcd" ), stateChangeHandler, null, valueChangeHandler ) );
+   }
+
+   @Test
+   void testStartMonitoring_ThrowsNullPointerExceptionWhenValueChangeHandlerIsNull()
+   {
+      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "abcd" ), stateChangeHandler, metadataChangeHandler, null ) );
    }
 
    @Test
    void testGetChannelCreationCount()
    {
       assertEquals( 0, EpicsChannelMonitorService.getChannelCreationCount() );
-      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 1" ), stateChangeHandler, valueChangeHandler );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 1" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
       assertEquals( 1, EpicsChannelMonitorService.getChannelCreationCount() );
-      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 1" ), stateChangeHandler, valueChangeHandler );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 1" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
       assertEquals( 2, EpicsChannelMonitorService.getChannelCreationCount());
-      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 2" ), stateChangeHandler, valueChangeHandler );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 2" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
       assertEquals( 3, EpicsChannelMonitorService.getChannelCreationCount() );
       epicsChannelMonitorService.close();
       assertEquals( 0, EpicsChannelMonitorService.getChannelCreationCount() );
@@ -89,9 +97,9 @@ class EpicsChannelMonitorServiceTest
    void testGetMonitorCreationCount()
    {
       assertEquals( 0, EpicsChannelMonitorService.getMonitorCreationCount() );
-      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 1" ), stateChangeHandler, valueChangeHandler );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 1" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
       assertEquals( 0, EpicsChannelMonitorService.getMonitorCreationCount() );
-      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 2" ), stateChangeHandler, valueChangeHandler );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 2" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
       assertEquals( 0, EpicsChannelMonitorService.getMonitorCreationCount() );
       epicsChannelMonitorService.close();
       assertEquals( 0, EpicsChannelMonitorService.getMonitorCreationCount());
@@ -101,7 +109,7 @@ class EpicsChannelMonitorServiceTest
    void testGetChannelConnectionCount() throws InterruptedException
    {
       assertEquals( 0, EpicsChannelMonitorService.getChannelConnectionCount());
-      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "test:db_ok" ), stateChangeHandler, valueChangeHandler );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
       Thread.sleep( 1_000 );
       assertEquals( 1, EpicsChannelMonitorService.getChannelConnectionCount());
       epicsChannelMonitorService.close();
@@ -115,7 +123,7 @@ class EpicsChannelMonitorServiceTest
       assertEquals( 0, EpicsChannelMonitorService.getChannelCreationCount() );
       final Consumer<Boolean> stateChangeHandlerMock = Mockito.mock( BooleanConsumer.class );
       final Consumer<EpicsChannelValue> valueChangeHandlerMock = Mockito.mock( EpicsChannelValueConsumer.class );
-      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel" ), stateChangeHandlerMock, valueChangeHandlerMock );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel" ), stateChangeHandlerMock, metadataChangeHandler, valueChangeHandlerMock );
       Thread.sleep( 1_000 );
       Mockito.verify( stateChangeHandlerMock, never() ).accept( anyBoolean() );
       Mockito.verify( valueChangeHandlerMock, never() ).accept( any() );
@@ -127,7 +135,7 @@ class EpicsChannelMonitorServiceTest
       assertEquals( 0, EpicsChannelMonitorService.getChannelCreationCount() );
       final Consumer<Boolean> stateChangeHandlerMock = Mockito.mock( BooleanConsumer.class );
       final Consumer<EpicsChannelValue> valueChangeHandlerMock = Mockito.mock( EpicsChannelValueConsumer.class );
-      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "test:db_ok" ), stateChangeHandlerMock, valueChangeHandlerMock );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "test:db_ok" ), stateChangeHandlerMock, metadataChangeHandler, valueChangeHandlerMock );
       Thread.sleep( 1_000 );
       final InOrder inOrder = inOrder( stateChangeHandlerMock, valueChangeHandlerMock );
       inOrder.verify( stateChangeHandlerMock ).accept(true );
@@ -149,7 +157,7 @@ class EpicsChannelMonitorServiceTest
    void testStopMonitoring_verifyConnectionCountChanges() throws InterruptedException
    {
       assertEquals( 0, EpicsChannelMonitorService.getChannelConnectionCount() );
-      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "test:db_ok" ), stateChangeHandler, valueChangeHandler );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
       Thread.sleep( 1_000 );
       assertEquals( 1, EpicsChannelMonitorService.getChannelConnectionCount() );
       epicsChannelMonitorService.stopMonitoring( new EpicsChannelName( "test:db_ok" ) );
@@ -159,7 +167,7 @@ class EpicsChannelMonitorServiceTest
    @Test
    void testStopMonitoring_verifyIllegalArgumentExceptionWhenChannelNotRecognised() throws InterruptedException
    {
-      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "test:db_ok" ), stateChangeHandler, valueChangeHandler );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
       Thread.sleep( 1_000 );
       assertEquals( 1, EpicsChannelMonitorService.getChannelConnectionCount() );
       assertThrows( IllegalArgumentException.class, () ->  epicsChannelMonitorService.stopMonitoring( new EpicsChannelName( "XXXXX" ) ) );
