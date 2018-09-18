@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- Load the Wica library last of all as it will generate events which interact with the page -->
     <script type="text/javascript" src="https://gfa-autodeploy.psi.ch:8443/wica.js" defer></script>
 
     <style>
@@ -39,9 +41,9 @@
     <h1>Wica Demo: SwissFEL Magnet Page</h1>
 
     <div>
-        <label>SINEG01-MBND300:I-READ</label> <span data-epics-channel="SINEG01-MBND300:I-READ"></span> <br>
-        <label>SINLH02-MBND100:I-READ</label> <span data-epics-channel="SINLH02-MBND100:I-READ"></span> <br>
-        <label>SINBC02-MBND100:I-READ</label> <span data-epics-channel="SINBC02-MBND100:I-READ"></span> <br>
+        <label>SINEG01-MBND300:I-READ</label> <span data-wica-channel-name="SINEG01-MBND300:I-READ"></span> <br>
+        <label>SINLH02-MBND100:I-READ</label> <span data-wica-channel-name="SINLH02-MBND100:I-READ"></span> <br>
+        <label>SINBC02-MBND100:I-READ</label> <span data-wica-channel-name="SINBC02-MBND100:I-READ"></span> <br>
     </div>
 </body>
 

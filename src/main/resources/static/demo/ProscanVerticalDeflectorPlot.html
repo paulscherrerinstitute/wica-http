@@ -4,9 +4,11 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>PROSCAN Vdef</title>
-    <!-- <script type="text/javascript" src="http://localhost:8080/wica.js" defer></script> -->
-    <script type="text/javascript" src="https://gfa-autodeploy.psi.ch:8443/wica.js" defer></script>
-    <script src="https://gfa-autodeploy.psi.ch:8443/plotly-latest.min.js"></script>
+
+    <!-- Load the Plotly library after the rest of this HTML page has loaded -->
+    <script src="https://gfa-autodeploy.psi.ch:8443/plotly-latest.min.js" defer></script>
+    <!-- Load the Wica library last of all as it will generate events which interact with the page -->
+    <script src="https://gfa-autodeploy.psi.ch:8443/wica.js" defer></script>
 
     <!-- CSS Reset and General Styling -->
     <style>
@@ -179,12 +181,12 @@
     let a = undefined;
     let b = undefined;
     function runCalcA( event ) {
-        a = parseFloat( event.channelValue );
+        a = parseFloat( event.channelValue.val );
         event.target.textContent = a;
     }
 
     function runCalcB( event ) {
-        b = parseFloat( event.channelValue );
+        b = parseFloat( event.channelValue.val );
 
         if ( a !== undefined ) {
             event.target.textContent = a * b + "W";
@@ -198,9 +200,9 @@
     <div class="grid-container">
         <h1 class="header">PROSCAN Vertical Deflector Curve </h1>
         <!-- Note: Confusingly, at PROSCAN the thing that is controlled - traditionally the 'X' axis - has been assigned to the 'Y' channel -->
-        <div class="xAxisDiv" data-epics-channel="PRO:REG2D:Y:1" onchange="update_vdef_xdata_plot_status( event );">NC</div> <br>
+        <div class="xAxisDiv" data-wica-channel-name="PRO:REG2D:Y:1" onchange="update_vdef_xdata_plot_status( event );">NC</div> <br>
         <!-- Note: Confusingly, at PROSCAN the thing that is affected - traditionally the 'Y' axis - has been assigned to the 'X' channel -->
-        <div class="yAxisDiv" data-epics-channel="PRO:REG2D:X:1" onchange="update_vdef_ydata_plot_status( event );">NC</div> <br>
+        <div class="yAxisDiv" data-wica-channel-name="PRO:REG2D:X:1" onchange="update_vdef_ydata_plot_status( event );">NC</div> <br>
         <div class="plotDiv" id="plot" onresize="relayout();"></div>
     </div>
 
@@ -220,14 +222,14 @@
 
         function update_vdef_xdata_plot_status( event ) {
 
-            event.target.textContent = event.channelValue;
-            xAxisDataObj = JSON.parse( event.channelValue );
+            event.target.textContent = event.channelValue.val;
+            xAxisDataObj = JSON.parse( event.channelValue.val );
         }
 
         function update_vdef_ydata_plot_status( event ) {
 
-            event.target.textContent = event.channelValue;
-            yAxisDataObj = JSON.parse(event.channelValue);
+            event.target.textContent = event.channelValue.val;
+            yAxisDataObj = JSON.parse(event.channelValue.val);
 
             if ( (xAxisDataObj !== null ) && ( yAxisDataObj !== null ) )
             {
@@ -239,8 +241,8 @@
 
 
             let trace = {
-                x: JSON.parse(xAxisDataObj.data),
-                y: JSON.parse(yAxisDataObj.data),
+                x: xAxisDataObj,
+                y: yAxisDataObj,
                 type: 'scatter',
                 mode: 'lines+markers',
                 marker: {size: 6, symbol: 'circle'}

@@ -6,8 +6,10 @@
 
     <title>PROSCAN Status Display</title>
 
+    <!-- Load the Plotly library after the rest of this HTML page has loaded -->
+    <script src="https://gfa-autodeploy.psi.ch:8443/plotly-latest.min.js" defer async=0></script>
+    <!-- Load the Wica library last of all as it will generate events which interact with the page -->
     <script src="https://gfa-autodeploy.psi.ch:8443/wica.js" defer></script>
-    <script src="https://gfa-autodeploy.psi.ch:8443/plotly-latest.min.js"></script>
 
 </head>
 <body>
@@ -459,7 +461,7 @@
 
     <div class="TimeNow">
         <div class="timeNowContainer">
-            <div class="timeNow" data-epics-channel="XPROSCAN:TIME:2">NC</div>
+            <div class="timeNow" data-wica-channel-name="XPROSCAN:TIME:2">NC</div>
         </div>
     </div>
 
@@ -472,92 +474,92 @@
     <div class="Regulation">
         <div class="regulationContainer">
             <div class="regulationStatusItemLabel">Regelung:</div>
-            <div class="statusWidget" data-epics-channel="XPROREG:STAB:1" onchange="updateRegulationStatusWidget( event )"></div>
-            <div class="regulationStatusItemValue" data-epics-channel="EMJCYV:STA3:2">NC</div>
-            <div class="regulationStatusItemValue" data-epics-channel="EMJCYV:CTRL:1">NC</div>
+            <div class="statusWidget" data-wica-channel-name="XPROREG:STAB:1" onchange="updateRegulationStatusWidget( event )"></div>
+            <div class="regulationStatusItemValue" data-wica-channel-name="EMJCYV:STA3:2">NC</div>
+            <div class="regulationStatusItemValue" data-wica-channel-name="EMJCYV:CTRL:1">NC</div>
         </div>
     </div>
 
     <div class="MainStatus1">
         <div class="mainStatusItemContainer">
             <div class="mainStatusItemLabel">MMAC3</div>
-            <div class="statusWidget" data-epics-channel="MMAV6:IST:2" onchange="updateHvpsuOkWidget( event )"></div>
-            <div class="mainStatusItemValue" data-epics-channel="MMAC3:STR:2">NC</div>
+            <div class="statusWidget" data-wica-channel-name="MMAV6:IST:2" onchange="updateHvpsuOkWidget( event )"></div>
+            <div class="mainStatusItemValue" data-wica-channel-name="MMAC3:STR:2">NC</div>
             <div class="mainStatusItemLabel">Vdef.</div>
-            <div class="mainStatusItemValue" data-epics-channel="EMJCYV:IST:2">NC</div>
+            <div class="mainStatusItemValue" data-wica-channel-name="EMJCYV:IST:2">NC</div>
         </div>
     </div>
     <div class="MainStatus2">
         <div class="mainStatusItemContainer">
             <div class="mainStatusItemLabel">SOL</div>
             <div class="statusWidget"></div>
-            <div class="mainStatusItemValue" data-epics-channel="MMAC:SOL:2">NC</div>
+            <div class="mainStatusItemValue" data-wica-channel-name="MMAC:SOL:2">NC</div>
             <div class="mainStatusItemLabel">Degr.</div>
-            <div class="mainStatusItemValue" data-epics-channel="DMAD1:IST:2">NC</div>
+            <div class="mainStatusItemValue" data-wica-channel-name="DMAD1:IST:2">NC</div>
         </div>
     </div>
 
     <div class="VDefCurve">
         <div class="vdefPlotContainer" id="vdefPlot">
-            <div id="vdefPlotDataX" data-epics-channel="PRO:REG2D:X:1"></div>
-            <div id="vdefPlotDataY" data-epics-channel="PRO:REG2D:Y:1"></div>
+            <div id="vdefPlotDataX" data-wica-channel-name="PRO:REG2D:X:1"></div>
+            <div id="vdefPlotDataY" data-wica-channel-name="PRO:REG2D:Y:1"></div>
         </div>
     </div>
 
     <div class="OtherStatus1">
         <div class="otherStatusItemContainer">
             <div class="otherStatusItemLabel">Kicker</div>
-            <div class="otherStatusItemValue" data-epics-channel="AMAKI1:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="AMAKI1:IST:2">NC</div>
             <div class="otherStatusItemLabel">HF</div>
-            <div class="otherStatusItemValue" data-epics-channel="CMJSEV:PWRF:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="CMJLL:SOLA:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="CMJSEV:PWRF:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="CMJLL:SOLA:2">NC</div>
             <div class="otherStatusItemLabel">Extractor</div>
-            <div class="otherStatusItemValue" data-epics-channel="EMJEC1V:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="EMJEC2V:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="EMJEC1V:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="EMJEC2V:IST:2">NC</div>
             <div class="otherStatusItemLabel">Hauptmagnet</div>
-            <div class="otherStatusItemValue" data-epics-channel="AMJHS-I:IADC:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="AMJHS-I:IADC:2">NC</div>
             <div class="otherStatusItemLabel">Phase</div>
-            <div class="otherStatusItemValue" data-epics-channel="MMJF:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="MMJF:IST:2">NC</div>
             <div class="otherStatusItemLabel">Ionenquelle</div>
-            <div class="otherStatusItemValue" data-epics-channel="IMJV:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="IMJI:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="IMJGF:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="XPROIONS:IST1:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="IMJV:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="IMJI:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="IMJGF:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="XPROIONS:IST1:2">NC</div>
         </div>
     </div>
 
     <div class="OtherStatus2">
         <div class="otherStatusItemContainer">
             <div class="otherStatusItemLabel">QMA1/2/3</div>
-            <div class="otherStatusItemValue" data-epics-channel="QMA1:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="QMA2:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="QMA3:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="QMA1:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="QMA2:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="QMA3:IST:2">NC</div>
             <div class="otherStatusItemLabel">SMJ1x/2y</div>
-            <div class="otherStatusItemValue" data-epics-channel="SMJ1X:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="SMJ2Y:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="SMJ1X:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="SMJ2Y:IST:2">NC</div>
             <div class="otherStatusItemLabel">SMA1x/1y</div>
-            <div class="otherStatusItemValue" data-epics-channel="SMA1X:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="SMA1Y:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="SMA1X:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="SMA1Y:IST:2">NC</div>
             <div class="otherStatusItemLabel">Ph.Spalt 1/2</div>
-            <div class="otherStatusItemValue" data-epics-channel="MMJP2:IST1:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="FMJEPI:POS:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="FMJEPI:BREI:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="MMJP2:IST2:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="FMJIPI:POS:2">NC</div>
-            <div class="otherStatusItemValue" data-epics-channel="FMJIPI:BREI:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="MMJP2:IST1:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="FMJEPI:POS:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="FMJEPI:BREI:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="MMJP2:IST2:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="FMJIPI:POS:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="FMJIPI:BREI:2">NC</div>
         </div>
     </div>
 
     <div class="MainPlot">
         <div class = "mainPlotContainer">
             <div id="mainPlotContainerAlarmWidgetHolder">
-                <div id="alarmWidget" data-epics-channel="PRO:CURRENTALARM:1" onchange="updateNoBeamAlarmWidget( event )">NC</div>
+                <div id="alarmWidget" data-wica-channel-name="PRO:CURRENTALARM:1" onchange="updateNoBeamAlarmWidget( event )">NC</div>
             </div>
             <div id="mainPlotContainerMainPlotHolder">
                 <div id="mainPlot">
-                    <div id="mainPlotBeamCurrentData" data-epics-channel="MMAC3:STR:2"></div>
-                    <div id="mainPlotVDefVoltageData" data-epics-channel="EMJCYV:IST:2"></div>
-                    <div id="mainPlotHFPowerData" data-epics-channel="CMJSEV:PWRF:2"></div>
+                    <div id="mainPlotBeamCurrentData" data-wica-channel-name="MMAC3:STR:2"></div>
+                    <div id="mainPlotVDefVoltageData" data-wica-channel-name="EMJCYV:IST:2"></div>
+                    <div id="mainPlotHFPowerData" data-wica-channel-name="CMJSEV:PWRF:2"></div>
                 </div>
             </div>
         </div>
@@ -567,60 +569,60 @@
         <div class="blockerStatusItemGridContainer">
             <div class="blockerStatusItemContainer">
                 <div class="blockerStatusItemHeader">BMA1</div>
-                <div class="blockerStatusItemOpenState" data-epics-channel="BMA1:STA:2" onchange="updateStopperStatusWidget( event )">NC</div>
+                <div class="blockerStatusItemOpenState" data-wica-channel-name="BMA1:STA:2" onchange="updateStopperStatusWidget( event )">NC</div>
                 <div class="blockerStatusItemPermissionContainer">
-                    <div class="blockerStatusItemPermissionWidget" data-epics-channel="BMA1:STAR:2" onchange="updateRpsStopperPermissionWidget( event )"></div>
-                    <div class="blockerStatusItemPermissionLabel" data-epics-channel="BMA1:STAR:2">RPS OK</div>
+                    <div class="blockerStatusItemPermissionWidget" data-wica-channel-name="BMA1:STAR:2" onchange="updateRpsStopperPermissionWidget( event )"></div>
+                    <div class="blockerStatusItemPermissionLabel" data-wica-channel-name="BMA1:STAR:2">RPS OK</div>
                 </div>
                 <div class="blockerStatusItemPermissionContainer">
-                    <div class="blockerStatusItemPermissionWidget" data-epics-channel="BMA1:STAP:2" onchange="updatePassStopperPermissionWidget( event )"></div>
-                    <div class="blockerStatusItemPermissionLabel" data-epics-channel="BMA1:STAP:2">PaSS OK</div>
+                    <div class="blockerStatusItemPermissionWidget" data-wica-channel-name="BMA1:STAP:2" onchange="updatePassStopperPermissionWidget( event )"></div>
+                    <div class="blockerStatusItemPermissionLabel" data-wica-channel-name="BMA1:STAP:2">PaSS OK</div>
                 </div>
             </div>
             <div class="blockerStatusItemContainer">
                 <div class="blockerStatusItemHeader">BME1 Gantry 1</div>
-                <div class="blockerStatusItemOpenState" data-epics-channel="BME1:STA:2" onchange="updateStopperStatusWidget( event )">NC</div>
+                <div class="blockerStatusItemOpenState" data-wica-channel-name="BME1:STA:2" onchange="updateStopperStatusWidget( event )">NC</div>
                 <div class="blockerStatusItemPermissionContainer">
-                    <div class="blockerStatusItemPermissionWidget" data-epics-channel="BME1:STAR:2" onchange="updateRpsStopperPermissionWidget( event )"></div>
-                    <div class="blockerStatusItemPermissionLabel" data-epics-channel="BME1:STAR:2">RPS OK</div>
+                    <div class="blockerStatusItemPermissionWidget" data-wica-channel-name="BME1:STAR:2" onchange="updateRpsStopperPermissionWidget( event )"></div>
+                    <div class="blockerStatusItemPermissionLabel" data-wica-channel-name="BME1:STAR:2">RPS OK</div>
                 </div>
                 <div class="blockerStatusItemPermissionContainer">
-                    <div class="blockerStatusItemPermissionWidget" data-epics-channel="BME1:STAP:2" onchange="updatePassStopperPermissionWidget( event )"></div>
-                    <div class="blockerStatusItemPermissionLabel" data-epics-channel="BME1:STAP:2">PaSS OK</div>
+                    <div class="blockerStatusItemPermissionWidget" data-wica-channel-name="BME1:STAP:2" onchange="updatePassStopperPermissionWidget( event )"></div>
+                    <div class="blockerStatusItemPermissionLabel" data-wica-channel-name="BME1:STAP:2">PaSS OK</div>
                 </div>
             </div>
             <div class="blockerStatusItemContainer">
                 <div class="blockerStatusItemHeader">BMB1 Gantry 2</div>
-                <div class="blockerStatusItemOpenState" data-epics-channel="BMB1:STA:2" onchange="updateStopperStatusWidget( event )">NC</div>
+                <div class="blockerStatusItemOpenState" data-wica-channel-name="BMB1:STA:2" onchange="updateStopperStatusWidget( event )">NC</div>
                 <div class="blockerStatusItemPermissionContainer">
-                    <div class="blockerStatusItemPermissionWidget" data-epics-channel="BMB1:STAR:2" onchange="updateRpsStopperPermissionWidget( event )"></div>
-                    <div class="blockerStatusItemPermissionLabel" data-epics-channel="BMB1:STAR:2">RPS OK</div>
+                    <div class="blockerStatusItemPermissionWidget" data-wica-channel-name="BMB1:STAR:2" onchange="updateRpsStopperPermissionWidget( event )"></div>
+                    <div class="blockerStatusItemPermissionLabel" data-wica-channel-name="BMB1:STAR:2">RPS OK</div>
                 </div>
                 <div class="blockerStatusItemPermissionContainer">
-                    <div class="blockerStatusItemPermissionWidget" data-epics-channel="BMB1:STAP:2" onchange="updatePassStopperPermissionWidget( event )"></div>
-                    <div class="blockerStatusItemPermissionLabel" data-epics-channel="BMB1:STAP:2">PaSS OK</div>
+                    <div class="blockerStatusItemPermissionWidget" data-wica-channel-name="BMB1:STAP:2" onchange="updatePassStopperPermissionWidget( event )"></div>
+                    <div class="blockerStatusItemPermissionLabel" data-wica-channel-name="BMB1:STAP:2">PaSS OK</div>
                 </div>
             </div>
             <div class="flex-new-row">
             </div>
             <div class="blockerStatusItemContainer">
                 <div class="blockerStatusItemHeader">BMC1 OPTIS 2</div>
-                <div class="blockerStatusItemOpenState" data-epics-channel="BMC1:STA:2" onchange="updateStopperStatusWidget( event )">NC</div>
+                <div class="blockerStatusItemOpenState" data-wica-channel-name="BMC1:STA:2" onchange="updateStopperStatusWidget( event )">NC</div>
                 <div class="blockerStatusItemPermissionContainer">
-                    <div class="blockerStatusItemPermissionWidget" data-epics-channel="BMC1:STAR:2" onchange="updateRpsStopperPermissionWidget( event )"></div>
-                    <div class="blockerStatusItemPermissionLabel" data-epics-channel="BMC1:STAR:2">RPS OK</div>
+                    <div class="blockerStatusItemPermissionWidget" data-wica-channel-name="BMC1:STAR:2" onchange="updateRpsStopperPermissionWidget( event )"></div>
+                    <div class="blockerStatusItemPermissionLabel" data-wica-channel-name="BMC1:STAR:2">RPS OK</div>
                 </div>
                 <div class="blockerStatusItemPermissionContainer">
-                    <div class="blockerStatusItemPermissionWidget" data-epics-channel="BMC1:STAP:2" onchange="updatePassStopperPermissionWidget( event )"></div>
-                    <div class="blockerStatusItemPermissionLabel" data-epics-channel="BMC1:STAP:2">PaSS OK</div>
+                    <div class="blockerStatusItemPermissionWidget" data-wica-channel-name="BMC1:STAP:2" onchange="updatePassStopperPermissionWidget( event )"></div>
+                    <div class="blockerStatusItemPermissionLabel" data-wica-channel-name="BMC1:STAP:2">PaSS OK</div>
                 </div>
             </div>
             <div class="blockerStatusItemContainer">
                 <div class="blockerStatusItemHeader">BMD1 PIF</div>
-                <div class="blockerStatusItemOpenState" data-epics-channel="BMD1:STA:2" onchange="updateStopperStatusWidget( event )">NC</div>
+                <div class="blockerStatusItemOpenState" data-wica-channel-name="BMD1:STA:2" onchange="updateStopperStatusWidget( event )">NC</div>
                 <div class="blockerStatusItemPermissionContainer">
-                    <div class="blockerStatusItemPermissionWidget" data-epics-channel="BMD1:STAR:2" onchange="updateRpsStopperPermissionWidget( event )"></div>
-                    <div class="blockerStatusItemPermissionLabel" data-epics-channel="BMD1:STAR:2">RPS OK</div>
+                    <div class="blockerStatusItemPermissionWidget" data-wica-channel-name="BMD1:STAR:2" onchange="updateRpsStopperPermissionWidget( event )"></div>
+                    <div class="blockerStatusItemPermissionLabel" data-wica-channel-name="BMD1:STAR:2">RPS OK</div>
                 </div>
                 <div class="blockerStatusItemPermissionContainer">
                     <div class="blockerStatusItemPermissionWidget"></div>
@@ -628,14 +630,14 @@
             </div>
             <div class="blockerStatusItemContainer">
                 <div class="blockerStatusItemHeader">BMD2 Gantry 3</div>
-                <div class="blockerStatusItemOpenState" data-epics-channel="BMD2:STA:2" onchange="updateStopperStatusWidget( event )">NC</div>
+                <div class="blockerStatusItemOpenState" data-wica-channel-name="BMD2:STA:2" onchange="updateStopperStatusWidget( event )">NC</div>
                 <div class="blockerStatusItemPermissionContainer">
-                    <div class="blockerStatusItemPermissionWidget" data-epics-channel="BMD2:STAR:2" onchange="updateRpsStopperPermissionWidget( event )"></div>
-                    <div class="blockerStatusItemPermissionLabel" data-epics-channel="BMD2:STAR:2">RPS OK</div>
+                    <div class="blockerStatusItemPermissionWidget" data-wica-channel-name="BMD2:STAR:2" onchange="updateRpsStopperPermissionWidget( event )"></div>
+                    <div class="blockerStatusItemPermissionLabel" data-wica-channel-name="BMD2:STAR:2">RPS OK</div>
                 </div>
                 <div class="blockerStatusItemPermissionContainer">
-                    <div class="blockerStatusItemPermissionWidget" data-epics-channel="BMD2:STAP:2" onchange="updatePassStopperPermissionWidget( event )"></div>
-                    <div class="blockerStatusItemPermissionLabel" data-epics-channel="BMD2:STAP:2">PaSS OK</div>
+                    <div class="blockerStatusItemPermissionWidget" data-wica-channel-name="BMD2:STAP:2" onchange="updatePassStopperPermissionWidget( event )"></div>
+                    <div class="blockerStatusItemPermissionLabel" data-wica-channel-name="BMD2:STAP:2">PaSS OK</div>
                 </div>
             </div>
         </div>
@@ -644,38 +646,38 @@
     <div class="MMAP5X">
         <div class="mmap5xPlotContainer">
             <div id="mmap5xPlot">
-                <div id="mmap5xPlotDataX" data-epics-channel="MMAP5X:PROF:2:P"></div>
-                <div id="mmap5xPlotDataY" data-epics-channel="MMAP5X:PROF:2"></div>
+                <div id="mmap5xPlotDataX" data-wica-channel-name="MMAP5X:PROF:2:P"></div>
+                <div id="mmap5xPlotDataY" data-wica-channel-name="MMAP5X:PROF:2"></div>
             </div>
-            <div class="mmap5xLabel" data-epics-channel="MMAP5X:SPB:2">NC</div>
+            <div class="mmap5xLabel" data-wica-channel-name="MMAP5X:SPB:2">NC</div>
         </div>
     </div>
 
     <div class="MMAP6Y">
         <div class="mmap6yPlotContainer">
             <div id="mmap6yPlot">
-                <div id="mmap6yPlotDataX" data-epics-channel="MMAP6Y:PROF:2:P"></div>
-                <div id="mmap6yPlotDataY" data-epics-channel="MMAP6Y:PROF:2"></div>
+                <div id="mmap6yPlotDataX" data-wica-channel-name="MMAP6Y:PROF:2:P"></div>
+                <div id="mmap6yPlotDataY" data-wica-channel-name="MMAP6Y:PROF:2"></div>
             </div>
-            <div class="mmap6yLabel" data-epics-channel="MMAP6Y:SPB:2">NC</div>
+            <div class="mmap6yLabel" data-wica-channel-name="MMAP6Y:SPB:2">NC</div>
         </div>
     </div>
 
     <div class="Environment">
         <div class="envStatusItemContainer">
-            <div id="heizleistungDataId1" data-epics-channel="YMJHH:SPARB:2"></div>
-            <div id="heizleistungDataId2" data-epics-channel="YMJHH:STR:2"></div>
-            <div class="envStatusItemLabel">Schildkü 1:</div><div class="envStatusItemValue" data-epics-channel="YMJCS1K:IST:2">NC</div>
+            <div id="heizleistungDataId1" data-wica-channel-name="YMJHH:SPARB:2"></div>
+            <div id="heizleistungDataId2" data-wica-channel-name="YMJHH:STR:2"></div>
+            <div class="envStatusItemLabel">Schildkü 1:</div><div class="envStatusItemValue" data-wica-channel-name="YMJCS1K:IST:2">NC</div>
             <div class="flex-new-row"></div>
-            <div class="envStatusItemLabel">Schildkü 2:</div><div class="envStatusItemValue" data-epics-channel="YMJCS2K:IST:2">NC</div>
+            <div class="envStatusItemLabel">Schildkü 2:</div><div class="envStatusItemValue" data-wica-channel-name="YMJCS2K:IST:2">NC</div>
             <div class="flex-new-row"></div>
             <div class="envStatusItemLabel">Heizleist.</div><div id="heizLeistungCalculator" class="envStatusItemValue">NC</div>
             <div class="flex-new-row"></div>
-            <div class="envStatusItemLabel">He Level:  </div><div class="envStatusItemValue" data-epics-channel="YMJHL:IST:2">NC</div>
+            <div class="envStatusItemLabel">He Level:  </div><div class="envStatusItemValue" data-wica-channel-name="YMJHL:IST:2">NC</div>
             <div class="flex-new-row"></div>
-            <div class="envStatusItemLabel">He Druck:  </div><div class="envStatusItemValue" data-epics-channel="YMJHG:IST:2">NC</div>
+            <div class="envStatusItemLabel">He Druck:  </div><div class="envStatusItemValue" data-wica-channel-name="YMJHG:IST:2">NC</div>
             <div class="flex-new-row"></div>
-            <div class="envStatusItemLabel">Bunker:    </div><div class="envStatusItemValue" data-epics-channel="YMJKKRT:IST:2">NC</div>
+            <div class="envStatusItemLabel">Bunker:    </div><div class="envStatusItemValue" data-wica-channel-name="YMJKKRT:IST:2">NC</div>
         </div>
     </div>
 
@@ -683,20 +685,20 @@
         <div class="rpsSsbStatusItemContainer">
             <div class="rpsSsbStatusItemHeader">RPS / Safety Switch Box</div>
             <div class="flex-new-row"></div>
-            <div class="statusWidget" data-epics-channel="RPS-IQ:STA:1"  onchange="updateRunPermitSystemStatusWidget( event )"></div>
-            <div class="statusWidget" data-epics-channel="UMJSSB:BIQX:1" onchange="updateSafetySwitchBoxStatusWidget( event )"></div>
+            <div class="statusWidget" data-wica-channel-name="RPS-IQ:STA:1"  onchange="updateRunPermitSystemStatusWidget( event )"></div>
+            <div class="statusWidget" data-wica-channel-name="UMJSSB:BIQX:1" onchange="updateSafetySwitchBoxStatusWidget( event )"></div>
             <div class="rpsSsbStatusItemLabel">Ionenquelle</div>
             <div class="flex-new-row"></div>
-            <div class="statusWidget" data-epics-channel="RPS-HFRD:STA:1" onchange="updateRunPermitSystemStatusWidget( event )"></div>
-            <div class="statusWidget" data-epics-channel="UMJSSB:BHRX:1"  onchange="updateSafetySwitchBoxStatusWidget( event )"></div>
+            <div class="statusWidget" data-wica-channel-name="RPS-HFRD:STA:1" onchange="updateRunPermitSystemStatusWidget( event )"></div>
+            <div class="statusWidget" data-wica-channel-name="UMJSSB:BHRX:1"  onchange="updateSafetySwitchBoxStatusWidget( event )"></div>
             <div class="rpsSsbStatusItemLabel">HF reduziert</div>
             <div class="flex-new-row"></div>
-            <div class="statusWidget" data-epics-channel="RPS-HF:STA:1"  onchange="updateRunPermitSystemStatusWidget( event )"></div>
-            <div class="statusWidget" data-epics-channel="UMJSSB:BHFX:1" onchange="updateSafetySwitchBoxStatusWidget( event )"></div>
+            <div class="statusWidget" data-wica-channel-name="RPS-HF:STA:1"  onchange="updateRunPermitSystemStatusWidget( event )"></div>
+            <div class="statusWidget" data-wica-channel-name="UMJSSB:BHFX:1" onchange="updateSafetySwitchBoxStatusWidget( event )"></div>
             <div class="rpsSsbStatusItemLabel">HF</div>
             <div class="flex-new-row"></div>
             <div class="statusWidget"></div>
-            <div class="statusWidget" data-epics-channel="UMJSSB:BDEX:1" onchange="updateSafetySwitchBoxStatusWidget( event )"></div>
+            <div class="statusWidget" data-wica-channel-name="UMJSSB:BDEX:1" onchange="updateSafetySwitchBoxStatusWidget( event )"></div>
             <div class="rpsSsbStatusItemLabel">Ablenkplatte</div>
         </div>
     </div>
@@ -704,7 +706,7 @@
     <div class="Mastership">
         <div class="mastershipStatusItemContainer">
             <div class="mastershipStatusItemLabel">Mastership:</div>
-            <div class="mastershipStatusItemValue" data-epics-channel="XPROSCAN:STAB:2">NC</div>
+            <div class="mastershipStatusItemValue" data-wica-channel-name="XPROSCAN:STAB:2">NC</div>
         </div>
     </div>
 
@@ -715,7 +717,7 @@
     function updateNoBeamAlarmWidget( event )
     {
         let widget = event.target;
-        let channelValue = event.channelValue;
+        let channelValue = event.channelValue.val;
 
         // This test was taken from the caQtDm PROSCAN status display
         if ( parseFloat(channelValue) < 0.5 )
@@ -731,16 +733,16 @@
 
     function updateHvpsuOkWidget( event ) {
         // This test was taken from the caQtDm PROSCAN status display
-        update_status_widget( event.target, parseFloat( event.channelValue ) > 0.9 * 1000  );
+        update_status_widget( event.target, parseFloat( event.channelValue.val ) > 0.9 * 1000  );
     }
 
     function updateRegulationStatusWidget( event ) {
-        update_status_widget( event.target, parseInt( event.channelValue ) !== 0);
+        update_status_widget( event.target, parseInt( event.channelValue.val ) !== 0);
     }
 
     function updateStopperStatusWidget( event ) {
         let widget = event.target;
-        let channelValue = event.channelValue;
+        let channelValue = event.channelValue.val;
 
         if ( channelValue.includes( "Offen" )) {
             widget.style.borderColor = "lime";
@@ -752,15 +754,15 @@
     }
 
     function updateRpsStopperPermissionWidget( event )  {
-        update_status_widget( event.target, ! event.channelValue.includes( "NOK" ) );
+        update_status_widget( event.target, ! event.channelValue.val.includes( "NOK" ) );
     }
 
     function updatePassStopperPermissionWidget( event )  {
-        update_status_widget( event.target, ! event.channelValue.includes( "NOK" ) );
+        update_status_widget( event.target, ! event.channelValue.val.includes( "NOK" ) );
     }
 
     function updateRunPermitSystemStatusWidget( event )  {
-        let status = parseInt( event.channelValue );
+        let status = parseInt( event.channelValue.val );
 
         // This test was taken from the caQtDm PROSCAN status display
         let bit0Set = ( status & (1 << 0) ) === (1 << 0);
@@ -768,7 +770,7 @@
     }
 
     function updateSafetySwitchBoxStatusWidget( event )  {
-        let status = parseInt( event.channelValue );
+        let status = parseInt( event.channelValue.val );
 
         // This test was taken from the caQtDm PROSCAN status display
         let bit3Set = ( status & (1 << 3) ) === (1 << 3);
@@ -799,12 +801,12 @@
 
             this.channel1DataElement.onchange = function( e )
             {
-                that.heizleistungChannel1 = parseFloat( e.channelValue);
+                that.heizleistungChannel1 = parseFloat( e.channelValue.val);
             };
 
             this.channel2DataElement.onchange = function( e )
             {
-                that.heizleistungChannel2 = parseFloat( e.channelValue);
+                that.heizleistungChannel2 = parseFloat( e.channelValue.val);
             };
 
             // Trigger a task to calculate the Heizlestung every second
@@ -856,7 +858,7 @@
 
             this.beamCurrentDataElement.onchange = function( e )
             {
-                that.beamCurrent = parseFloat( e.channelValue );
+                that.beamCurrent = parseFloat( e.channelValue.val );
             };
 
             this.vdefVoltageDataElement.onchange = function( e )
@@ -864,7 +866,7 @@
                 // The goal of the scaling below is to convert the input value which
                 // may go up to 2.2KV to a number that will fit in a sensible place
                 // on the Y axis (which currently goes up to 850).
-                that.vdefVoltage = parseFloat( e.channelValue ) * 1000 * (850 / 2200);
+                that.vdefVoltage = parseFloat( e.channelValue.val ) * 1000 * (850 / 2200);
             };
 
             this.hfPowerDataElement.onchange = function( e )
@@ -872,7 +874,7 @@
                 // The goal of the scaling below is to convert the input value which
                 // may go up to 130KW  to a number that will fit in a sensible place
                 // on the Y axis (which currently goes up to 850).
-                that.hfPower = parseFloat( e.channelValue) * (850 / 130);
+                that.hfPower = parseFloat( e.channelValue.val) * (850 / 130);
             };
 
             this.timeArray = [];
@@ -975,10 +977,10 @@
             let that = this;
 
             this.xDataElement.onchange = function ( e ) {
-                that.xAxisDataObj = JSON.parse( e.channelValue );
+                that.xAxisDataObj = e.channelValue.val;
             };
             this.yDataElement.onchange = function ( e ) {
-                that.yAxisDataObj = JSON.parse( e.channelValue );
+                that.yAxisDataObj = e.channelValue.val;
             };
 
             setInterval( PlotVerticalDeflector.update_plot, 2000, that );
@@ -992,8 +994,8 @@
             }
 
             let trace = {
-                y: JSON.parse( that.xAxisDataObj.data ),
-                x: JSON.parse( that.yAxisDataObj.data ),
+                y: that.xAxisDataObj,
+                x: that.yAxisDataObj,
                 type: 'scatter',
                 mode: 'lines+markers',
                 marker: {size: 6, symbol: 'circle'}
@@ -1040,11 +1042,11 @@
             let that = this;
 
             this.xDataElement.onchange = function ( e ) {
-                that.xAxisDataObj = JSON.parse( e.channelValue );
+                that.xAxisDataObj = e.channelValue.val;
             };
 
             this.yDataElement.onchange = function ( e ) {
-                that.yAxisDataObj = JSON.parse( e.channelValue );
+                that.yAxisDataObj = e.channelValue.val;
             };
 
             setInterval( this.update_plot, 2000, that );
@@ -1058,8 +1060,8 @@
             }
 
             let trace = {
-                x: JSON.parse( that.xAxisDataObj.data ),
-                y: JSON.parse( that.yAxisDataObj.data ),
+                x: that.xAxisDataObj,
+                y: that.yAxisDataObj,
                 type: 'scatter',
                 mode: 'lines+markers',
                 fill: 'tozeroy',
