@@ -62,7 +62,7 @@ the old Wica server whose API is documented [here](https://git.psi.ch/controls_h
 POST /ca/streams
 Content-Type: application/json
 
-["channel1", "channel2", "channnel3"]
+["channel1", "channel2", "channel3"]
 ```
 
 ##### Subscribe for stream (Server Sent Event) updates:
