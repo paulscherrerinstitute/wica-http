@@ -9,7 +9,7 @@ This log describes the functionality of tagged versions within the repository.
 
 * [0.2.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.2.0-RELEASE)
   Created separate Javascript "library". Can now create epics links according to
-  data-epics-channel attribute appended to html elements.
+  data-wica-channel-name attribute appended to html elements.
   Each link is on a separate SSE channel so solution is not in any way scalable !
   !! EVERYTHING IS STILL A TOTAL HACK WHICH NEEDS CLEANING UP !!
 
@@ -40,7 +40,7 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-6758](https://jira.psi.ch/browse/CTRLIT-6758): Create demo page: PROSCAN Status Display.
    - [CTRLIT-6759](https://jira.psi.ch/browse/CTRLIT-6759): Add support for CORS. 
 
-* [0.5.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.4.0-RELEASE)
+* [0.5.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.5.0-RELEASE)
   This release supports the first example of a working facility display. The PROSCAN Status display
   - current production version [here](http://gfa-status.web.psi.ch/pro-status.html) - was chosen as an example to 
   see what the issues would be in making a Wica-based html version. The result is [here](https://gfa-autodeploy.psi.ch:8443/demo/ProscanStatusDisplayAdvanced.html) 
@@ -56,31 +56,49 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-6779](https://jira.psi.ch/browse/CTRLIT-6779): Add support for sending PV precision and units in SSE Stream.   
    - [CTRLIT-6780](https://jira.psi.ch/browse/CTRLIT-6780): Add support for visually communicating between various types of communication failure.      
 
-
+* [0.6.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.6.0-RELEASE)
+  The project starts to mature but is not yet fully stable with various new features in something of an experimental state.
+  Main changes are: EPICS channels are now cached, support for delivering metadata to front end, support for rendering
+  alarm information, experimental support for http2, now supports deployment at URL: 'https://gfa-wica.psi.ch', initial
+  support for delivering value changes.
+   - [CTRLIT-6784](https://jira.psi.ch/browse/CTRLIT-6784): Add support for server main page with basic statistics. 
+   - [CTRLIT-6785](https://jira.psi.ch/browse/CTRLIT-6785): Add further support for compression of returned content (eg javascript).
+   - [CTRLIT-6786](https://jira.psi.ch/browse/CTRLIT-6786): Add support for sharing EPICS channels between streams.
+   - [CTRLIT-6787](https://jira.psi.ch/browse/CTRLIT-6787): Create update to openjdk10.
+   - [CTRLIT-6801](https://jira.psi.ch/browse/CTRLIT-6801): Add support for http2.
+   - [CTRLIT-6802](https://jira.psi.ch/browse/CTRLIT-6802): Add support for sending channel metadata, alarm and timestamp information.
+   - [CTRLIT-6803](https://jira.psi.ch/browse/CTRLIT-6803): Create Release 0.6.0. 
+   - [CTRLIT-6805](https://jira.psi.ch/browse/CTRLIT-6805): Switch deployment to 'gfa-wica.psi.ch'.
+   
 # Project Ideas Completed
 
 1. Consider refactoring so that the app only uses one context (channels can then be cached and shared between 
 different streams). DONE.
 1. Add support for different types. DONE.
-1. Add support for CA metadata (timestamps, graphics, alarms etc) DONE (but not yet alarms)
+1. Add support for CA metadata (timestamps, graphics, alarms etc) DONE 
 1. Add support for array data. DONE.
 1. Add support for plotting using eg plotly. DONE.
+1. Optimisation: Currently each time a WICA-supported web page is opened the page will be scanned for data-wica-channel-name
+entries and a new monitor will be established for each item. On the PROSCAN status display page there are 88 items.
+It would be far more efficient if EPICS channels were cached and shared between the various streams. DONE.
+1. Feature Enhancement: add support for displaying alarm values in different colours. DONE.
+1. Infrastructure Enhancement: Apply for 'gfa-wica web' certificate. DONE.
+1. Bug Fix: sometimes the Wica Server sends disconnect messages but afterwards the monitor continues to send updates
+so one is left with a screen with lost of pink background (pink = the Wica server disconnected). DONE.
 
 # Project Ideas Backlog
 
 When an idea is under serious consideration and a candidate for
 implementation it will be placed on the project's [Jira Kanban Board](https://jira.psi.ch/secure/RapidBoard.jspa?rapidView=1631)
-
 1. Create end-to-end tests to measure performance.
 1. Optimisation: WICA clients that connect for the first time should receive the full list of channels with current 
 values. They should then only be advised of CHANGES to the value.
-1. Optimisation: Currently each time a WICA-supported web page is opened the page will be scanned for data-epics-channel
-entries and a new monitor will be established for each item. On the PROSCAN status display page there are 88 items.
-It would be far more efficient if EPICS channels were cached and shared between the various streams.
-1. Feature Enhancement: add support for displaying alarm values in different colours.
-1. Infrastructure Enhancement: Apply for gfa-wica web certificate.
-1. Bug Fix: sometimes the Wica Server sends disconnect messages but afterwards the monitor continues to send updates
-so one is left with a screen with lost of pink background (pink = the Wica server disconnected).
 1. Feature Enhancement: enhance PROSCAN display so that the design is fully responsive (currently it only works well on 
 a desktop monitor).
-
+1. Provide some example displays for Hubert.
+1. Cleanup message id's to support the following:
+   - metadata-stream: Sends all values with SLOW periodicity. 
+   - value-snapshot-stream: Sends all values with SLOW periodicity. 
+   - value-change-stream: Sends only changed values but with fast periodicity.
+1. Render changes to serevr and epics channel connection state using CSS.   
+   
