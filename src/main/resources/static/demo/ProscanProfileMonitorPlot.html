@@ -6,9 +6,9 @@
     <title>PROSCAN Profile Monitor Plot</title>
 
     <!-- Load the Plotly library after the rest of this HTML page has loaded -->
-    <script src="https://gfa-autodeploy.psi.ch:8443/plotly-latest.min.js" defer></script>
+    <script src="https://gfa-wica.psi.ch/plotly-latest.min.js" defer></script>
     <!-- Load the Wica library last of all as it will generate events which interact with the page -->
-    <script src="https://gfa-autodeploy.psi.ch:8443/wica.js" defer></script>
+    <script src="https://gfa-wica.psi.ch/wica.js" defer></script>
 
     <!-- CSS Reset and General Styling -->
     <style>
@@ -176,6 +176,7 @@
             font-size: 0.25rem;
             background-color: lightgray;
             overflow:hidden;
+            overflow-wrap: break-word;
         }
 
         .plotDiv1, .plotDiv2 {
@@ -250,11 +251,11 @@
                 let outer = this;
                 this.xDivElement.onchange = function ( e )  {
                     this.textContent = e.channelValue.val;
-                    outer.xAxisDataObj = JSON.parse( e.channelValue.val );
+                    outer.xAxisDataObj = e.channelValue.val;
                 };
                 this.yDivElement.onchange = function ( e )  {
                     this.textContent = e.channelValue.val;
-                    outer.yAxisDataObj = JSON.parse( e.channelValue.val );
+                    outer.yAxisDataObj = e.channelValue.val;
                     if ( ( outer.xAxisDataObj !== null ) && ( outer.yAxisDataObj !== null ) )
                     {
                         outer.update_plot();
@@ -265,8 +266,8 @@
             update_plot()
             {
                 let trace = {
-                    x: JSON.parse( this.xAxisDataObj ),
-                    y: JSON.parse( this.yAxisDataObj ),
+                    x: this.xAxisDataObj,
+                    y: this.yAxisDataObj,
                     type: 'scatter',
                     mode: 'lines+markers',
                     fill: 'tozeroy',

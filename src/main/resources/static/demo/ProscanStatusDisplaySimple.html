@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
     <!-- Load the Wica library last of all as it will generate events which interact with the page -->
-    <script type="text/javascript" src="https://gfa-autodeploy.psi.ch:8443/wica.js" defer></script>
+    <script type="text/javascript" src="https://gfa-wica.psi.ch/wica.js" defer></script>
 
     <style>
 
@@ -44,7 +44,7 @@
 
     <div>
         <h2>Connection Status</h2>
-        <div class="statusWidget" data-wica-channel-name="XPROSCAN:TIME:2" onchange="updateStatusItem()">NC</div>
+        <div class="statusWidget" data-wica-channel-name="XPROSCAN:TIME:2" onchange="dummy()">NC</div>
     </div>
 
     <div>
@@ -116,16 +116,6 @@
 
         <label>Mastership      </label> <label data-wica-channel-name="XPROSCAN:STAB:2">NC </label> <br>
 
-        <!-- <label>MMAP6Y-X        </label> <label data-wica-channel-name="MMAP6Y:PROF:2:P">NC </label> <br>
-        <label>MMAP6Y          </label> <label data-wica-channel-name="MMAP6Y:SPB:2">NC    </label> <br>
-
-        <label>MMAP5X-X        </label> <label data-wica-channel-name="MMAP5X:PROF:2:P">NC </label> <br>
-        <label>MMAP5X          </label> <label data-wica-channel-name="MMAP5X:SPB:2">NC    </label> <br>
-
-        <label>Deflector Curve </label> <label data-wica-channel-name="PRO:REG2D:X:1">NC    </label> <br>
-        <label>Deflector Curve </label> <label data-wica-channel-name="PRO:REG2D:Y:1">NC    </label> <br>
-        -->
-
         <label>Schildku 1      </label> <label data-wica-channel-name="YMJCS1K:IST:2">NC   </label> <br>
         <label>Schildku 2      </label> <label data-wica-channel-name="YMJCS2K:IST:2">NC   </label> <br>
 
@@ -157,31 +147,18 @@
 
  <script>
 
-
-    function updateStatusItem( event ) { }
+    function dummy( event ) { }
 
     class CalculateHeizLeistung
     {
         constructor( calcDivId, channel1DataId, channel2DataId )
         {
-            this.calculationOutputElement = document.getElementById( calcDivId );
-            this.channel1DataElement = document.getElementById( channel1DataId );
-            this.channel2DataElement = document.getElementById( channel2DataId );
-            this.heizleistungChannel1 = 0.0;
-            this.heizleistungChannel2 = 0.0;
+            this.calculationOutputElement = CalculateHeizLeistung.validateNotNull( document.getElementById( calcDivId ) );
+            this.channel1DataElement = CalculateHeizLeistung.validateNotNull( document.getElementById( channel1DataId ) );
+            this.channel2DataElement = CalculateHeizLeistung.validateNotNull( document.getElementById( channel2DataId ) );
 
             // Required to overcome Javascript's strange variable scoping rules
             let that = this;
-
-            this.channel1DataElement.onchange = function( e )
-            {
-                that.heizleistungChannel1 = parseFloat( e.channelValue.val );
-            };
-
-            this.channel2DataElement.onchange = function( e )
-            {
-                that.heizleistungChannel2 = parseFloat( e.channelValue.val );
-            };
 
             // Trigger a task to calculate the Heizlestung every second
             setInterval( CalculateHeizLeistung.updateOutputElement, 1000, that );
@@ -189,17 +166,30 @@
 
         static updateOutputElement( that )
         {
-            if ( ( that.heizleistungChannel1 === undefined ) || ( that.heizleistungChannel2 === undefined ) )
+            if ( ( that.channel1DataElement.dataset.wicaChannelValue === undefined ) ||
+                 ( that.channel2DataElement.dataset.wicaChannelValue === undefined ) )
             {
                 return;
             }
-            that.calculationOutputElement.textContent = ( that.heizleistungChannel1 * that.heizleistungChannel2).toFixed( 2 ) + "W";
+
+            let channel1Value = JSON.parse( that.channel1DataElement.dataset.wicaChannelValue ).val;
+            let channel2Value = JSON.parse( that.channel2DataElement.dataset.wicaChannelValue ).val;
+            let calcResult = channel1Value * channel2Value;
+            that.calculationOutputElement.textContent = ( calcResult ).toFixed( 2 ) + " W";
+        }
+
+        static validateNotNull( arg )
+        {
+            if ( arg === null )
+            {
+                throw "is Null";
+            }
+            else { return arg; }
         }
     }
 
     let heizLeistungCalc;
     heizLeistungCalc = new CalculateHeizLeistung( "hzLeistungCalculator", "hzLeistungDataChannelA", "hzLeistungDataChannelB" );
-
 
  </script>
 
