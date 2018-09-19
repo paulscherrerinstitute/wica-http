@@ -9,9 +9,9 @@ WantedBy=default.target
 [Service]
 ExecStartPre=-/usr/bin/docker kill gfa_wica_server
 ExecStartPre=-/usr/bin/docker rm gfa_wica_server
-ExecStartPre=/usr/bin/docker pull docker.psi.ch:5000/gfa_wica_server:0.5.0-RELEASE
+ExecStartPre=/usr/bin/docker pull docker.psi.ch:5000/gfa_wica_server:0.6.0-RELEASE
 Environment= 'GATEWAYS=proscan-cagw:5062 hipa-cagw:5062 sf-cagw:5062 sls-cagw:5062 gfalc:5064'
 ExecStart=/usr/bin/docker run --name gfa_wica_server -t --rm -p 443:8443 -p 5062:5062/udp -p 5062:5062/tcp -p 5064:5064/udp -p 5064:5064/tcp -p 5065:5065/udp \
--e KEYSTORE_PASS=!Boettstein2018$ -e EPICS_CA_ADDR_LIST=${GATEWAYS} -v /root/wica/log:/root/log  -v /root/.ssh:/root/.ssh -v /root/wica/config:/root/config docker.psi.ch:5000/gfa_wica_server:0.5.0-RELEASE
+-e KEYSTORE_PASS=!Boettstein2018$ -e EPICS_CA_ADDR_LIST=${GATEWAYS} -v /root/wica/prod/log:/root/log  -v /root/.ssh:/root/.ssh -v /root/wica/prod/config:/root/config docker.psi.ch:5000/gfa_wica_server:0.6.0-RELEASE
 ExecStop=/usr/bin/docker stop gfa_wica_server
 Restart=always

@@ -60,7 +60,7 @@ This log describes the functionality of tagged versions within the repository.
   The project starts to mature but is not yet fully stable with various new features in something of an experimental state.
   Main changes are: EPICS channels are now cached, support for delivering metadata to front end, support for rendering
   alarm information, experimental support for http2, now supports deployment at URL: 'https://gfa-wica.psi.ch', initial
-  support for delivering value changes.
+  support for delivering value changes. Initial 
    - [CTRLIT-6784](https://jira.psi.ch/browse/CTRLIT-6784): Add support for server main page with basic statistics. 
    - [CTRLIT-6785](https://jira.psi.ch/browse/CTRLIT-6785): Add further support for compression of returned content (eg javascript).
    - [CTRLIT-6786](https://jira.psi.ch/browse/CTRLIT-6786): Add support for sharing EPICS channels between streams.
@@ -69,6 +69,7 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-6802](https://jira.psi.ch/browse/CTRLIT-6802): Add support for sending channel metadata, alarm and timestamp information.
    - [CTRLIT-6803](https://jira.psi.ch/browse/CTRLIT-6803): Create Release 0.6.0. 
    - [CTRLIT-6805](https://jira.psi.ch/browse/CTRLIT-6805): Switch deployment to 'gfa-wica.psi.ch'.
+   - [CTRLIT-6806](https://jira.psi.ch/browse/CTRLIT-6806): Create Initial Display Page for HIPA.
    
 # Project Ideas Completed
 

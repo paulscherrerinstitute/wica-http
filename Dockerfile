@@ -100,8 +100,6 @@ EXPOSE 5065
 ENV KEYSTORE_PASS "XXXXXX"
 
 # Document the ports that will be exposed by the Spring Boot Application
-# 8443 is the production port.
-EXPOSE 8080
 EXPOSE 8443
 
 # Setup the container so that it defaults to the timezone of PSI. This can
@@ -157,7 +155,7 @@ VOLUME /root/config
 # 7.0 Define the ENTRYPOINT
 ###############################################################################
 
-# Run the application on the Java 9 module path invoking the docker-run configuration profile
+# Run the application on the Java 10 module path invoking the docker-run configuration profile
 # and passing the contents of the SSH Deploy Key
 ENTRYPOINT java -Dspring.config.location=config/application-docker-run.properties \
            -p lib/jarfile.jar \
