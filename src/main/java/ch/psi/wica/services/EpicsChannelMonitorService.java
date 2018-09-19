@@ -4,20 +4,25 @@ package ch.psi.wica.services;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.EpicsChannelAlarmSeverity;
+import ch.psi.wica.model.EpicsChannelMetadata;
 import ch.psi.wica.model.EpicsChannelName;
 import ch.psi.wica.model.EpicsChannelValue;
+import io.netty.channel.ChannelMetadata;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
 import org.epics.ca.ConnectionState;
 import org.epics.ca.Context;
 import org.epics.ca.Monitor;
-import org.epics.ca.data.Graphic;
+import org.epics.ca.data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -41,6 +46,18 @@ public class EpicsChannelMonitorService implements AutoCloseable
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
+
+   private static final LocalDateTime javaEpoch;
+   private static final LocalDateTime epicsEpoch;
+   private static final long secondsBetweenEpochs;
+
+   // Note: The EPICS epoch is currently January 1, 1990. The Java LocalDateTimeEpoch is 1970-01-01T00:00:00Z.
+   static
+   {
+      javaEpoch  = LocalDateTime.of( 1970, 1, 1, 1, 0, 0, 0 );
+      epicsEpoch = LocalDateTime.of( 1990, 1, 1, 1, 0, 0, 0 );
+      secondsBetweenEpochs = Duration.between( javaEpoch, epicsEpoch ).toSeconds();
+   }
 
    private final Logger logger = LoggerFactory.getLogger( EpicsChannelMonitorService.class );
    private final Context caContext;
@@ -86,13 +103,16 @@ public class EpicsChannelMonitorService implements AutoCloseable
     * @param epicsChannelName the name of the channel to be monitored.
     * @param connectionStateChangeHandler the handler to be informed of changes
     *        to the channel's connection state.
+    * @param metadataChangeHandler the handler to be informed of metadata changes.
     * @param valueChangeHandler the handler to be informed of value changes.
     *
     */
-   public void startMonitoring( EpicsChannelName epicsChannelName, Consumer<Boolean> connectionStateChangeHandler, Consumer<EpicsChannelValue> valueChangeHandler )
+   public void startMonitoring( EpicsChannelName epicsChannelName, Consumer<Boolean> connectionStateChangeHandler,
+                                Consumer<EpicsChannelMetadata> metadataChangeHandler, Consumer<EpicsChannelValue> valueChangeHandler  )
    {
       Validate.notNull( epicsChannelName );
       Validate.notNull( connectionStateChangeHandler );
+      Validate.notNull( metadataChangeHandler );
       Validate.notNull( valueChangeHandler );
 
       logger.debug("'{}' - starting to monitor... ", epicsChannelName);
@@ -107,7 +127,7 @@ public class EpicsChannelMonitorService implements AutoCloseable
          logger.debug("'{}' - channel created ok.", epicsChannelName);
 
          logger.debug("'{}' - adding connection listener... ", epicsChannelName);
-         channel.addConnectionListener(( chan, isConnected ) -> connectionStateChangeHandler.accept( isConnected ) );
+         channel.addConnectionListener( ( chan, isConnected ) -> connectionStateChangeHandler.accept( isConnected ) );
          logger.debug("'{}' - connection listener added ok.", epicsChannelName);
 
          logger.debug("'{}' - connecting asynchronously to... ", epicsChannelName);
@@ -116,62 +136,55 @@ public class EpicsChannelMonitorService implements AutoCloseable
 
          completableFuture.thenRunAsync( () -> {
             logger.debug("'{}' - channel connected ok.", epicsChannelName);
-            logger.debug("'{}' - adding value change monitor...", epicsChannelName);
+            logger.debug("'{}' - getting first value...", epicsChannelName);
 
-            final Object firstValue = channel.get();
-            if ( firstValue instanceof Double )
+            final Object firstGet = channel.get();
+            logger.debug("'{}' - first value received.", epicsChannelName );
+
+            logger.debug( "'{}' - publishing metadata...", epicsChannelName );
+            if ( ( firstGet instanceof String ) || ( firstGet instanceof String[] ) )
             {
-               final Monitor<Graphic<Object,Integer>> monitor = channel.addMonitor( Graphic.class, v -> {
-                  final int precision = v.getPrecision();
-                  final String formatExpr = "%." + precision + "f" + " %s";
-                  valueChangeHandler.accept( new EpicsChannelValue( String.format( formatExpr, (Double) v.getValue(), v.getUnits() ) ) );
-               } );
-               monitors.add( monitor );
+               logger.debug("'{}' - first value was STRING.", epicsChannelName );
+               publishStringMetadata( metadataChangeHandler );
             }
-            else if ( firstValue instanceof double[] )
+            else if ( ( firstGet instanceof Integer ) || ( firstGet instanceof int[] ) )
             {
-               final Monitor<Graphic<Object,Integer>> monitor = channel.addMonitor( Graphic.class, v -> {
-                  final int precision = v.getPrecision();
-                  final String units = v.getUnits();
-                  final double[] arr = (double[]) v.getValue();
-                  final String valueString = Arrays.toString( arr );
-                  valueChangeHandler.accept( new EpicsChannelValue( String.format( "{ \"data\" : \"%s\", \"units\": \"%s\", \"precision\": \"%d\" }", valueString, units, precision ) ) );
-               } );
-               monitors.add( monitor );
+               logger.debug("'{}' - first value was INTEGER.", epicsChannelName );
+               publishIntegerMetadata( metadataChangeHandler );
             }
-            else if ( firstValue instanceof Integer )
+            else if ( ( firstGet instanceof Double ) || ( firstGet instanceof double[] ) )
             {
-               final Monitor<Graphic<Object,Integer>> monitor = channel.addMonitor( Graphic.class, v -> {
-                  final String formatExpr = "%d" + "%s";
-                  valueChangeHandler.accept( new EpicsChannelValue( String.format( formatExpr, (Integer) v.getValue(), v.getUnits() ) ) );
-               } );
-               monitors.add( monitor );
+               logger.debug( "'{}' - first value was DOUBLE.", epicsChannelName );
+               // Request the initial value of the channel with the widest possible
+               // set of metadata. In EPICS this is the DBR_CTRL_xxx type which is
+               // supported in PSI's CA library via the Metadata<Control> class.
+               logger.debug("'{}' - getting epics CTRL metadata...", epicsChannelName );
+               final Control metadataObject = channel.get( Control.class );
+               logger.debug("'{}' - EPICS CTRL metadata received.", epicsChannelName );
+
+               // Publish the metadata obtained from the first value.
+               logger.trace("'{}' - publishing metadata...", epicsChannelName );
+               publishNumericMetadata( metadataObject, metadataChangeHandler );
             }
-            else if ( firstValue instanceof int[] )
+            else
             {
-               final Monitor<Graphic<Object,Integer>> monitor = channel.addMonitor( Graphic.class, v -> {
-                  final String formatExpr = "%d" + "%s";
-                  valueChangeHandler.accept( new EpicsChannelValue( String.format( formatExpr, (int[]) v.getValue(), v.getUnits() ) ) );
-               } );
-               monitors.add( monitor );
+               logger.warn( "'{}' - first value was of unsupported type", epicsChannelName );
+               return;
             }
-            else if ( firstValue instanceof String )
-            {
-               final Monitor<Object> monitor = channel.addValueMonitor( v -> valueChangeHandler.accept( new EpicsChannelValue( (String) v ) ) );
-               monitors.add( monitor );
-            }
-            else if ( firstValue instanceof String[] )
-            {
-               final Monitor<Object> monitor = channel.addValueMonitor( v -> {
-                  final String formatExpr = "%s";
-                  valueChangeHandler.accept( new EpicsChannelValue( String.format( formatExpr, (String[]) v ) ) );
-               } );
-               monitors.add( monitor );
-            }
-            else {
-               logger.warn("'{}' - this channel was of a type '{}' that is not currently supported ", epicsChannelName, firstValue.getClass() );
-            }
-            logger.debug("'{}' - value change monitor added ok.", epicsChannelName);
+            logger.debug( "'{}' - metadata published.", epicsChannelName );
+
+            // Establish a monitor on the most dynamic properties of the channel.
+            // These include the timestamp, the alarm information and value itself.
+            // In EPICS this is the DBR_TIME_xxx type which is supported in PSI's
+            // CA library via the Metadata<Timestamped> class.
+            logger.debug("'{}' - adding monitor...", epicsChannelName );
+            final Monitor<Timestamped<Object>> monitor = channel.addMonitor( Timestamped.class, valueObj -> {
+               logger.trace("'{}' - publishing new value...", epicsChannelName );
+               publishValue( valueObj, valueChangeHandler);
+               logger.trace("'{}' - new value published.", epicsChannelName );
+            } );
+            logger.debug("'{}' - monitor added.", epicsChannelName );
+            monitors.add( monitor );
          } );
       }
       catch ( Exception ex )
@@ -191,7 +204,6 @@ public class EpicsChannelMonitorService implements AutoCloseable
 
       final boolean channelNameIsRecognised = channels.stream()
                                                       .anyMatch( c -> c.getName().equals(epicsChannelName.toString() ) );
-
 
       Validate.isTrue( channelNameIsRecognised, "channel name not recognised" );
 
@@ -251,6 +263,56 @@ public class EpicsChannelMonitorService implements AutoCloseable
 
 
 /*- Private methods ----------------------------------------------------------*/
+
+   private void publishStringMetadata( Consumer<EpicsChannelMetadata> metadataChangeHandler )
+   {
+      final EpicsChannelMetadata epicsChannelMetadata = EpicsChannelMetadata.createStringInstance();
+      metadataChangeHandler.accept( epicsChannelMetadata );
+   }
+
+   private void publishIntegerMetadata( Consumer<EpicsChannelMetadata> metadataChangeHandler )
+   {
+      final EpicsChannelMetadata epicsChannelMetadata = EpicsChannelMetadata.createIntegerInstance();
+      metadataChangeHandler.accept( epicsChannelMetadata );
+   }
+
+   private <T,ST> void publishNumericMetadata( Control<T,ST> metadataObject, Consumer<EpicsChannelMetadata> metadataChangeHandler )
+   {
+      final String units    = metadataObject.getUnits();
+      final int precision   = metadataObject.getPrecision();
+      final double upperDisplay = (double) metadataObject.getUpperDisplay();
+      final double lowerDisplay = (double) metadataObject.getLowerDisplay();
+      final double upperControl = (double) metadataObject.getUpperControl();
+      final double lowerControl = (double) metadataObject.getLowerControl();
+      final double upperAlarm   = (double) metadataObject.getUpperAlarm();
+      final double lowerAlarm   = (double) metadataObject.getLowerAlarm();
+      final double upperWarning = (double) metadataObject.getUpperWarning();
+      final double lowerWarning = (double) metadataObject.getLowerWarning();
+
+      final EpicsChannelMetadata epicsChannelMetadata = EpicsChannelMetadata.createRealInstance( units, precision, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
+      metadataChangeHandler.accept( epicsChannelMetadata );
+   }
+
+   private <T> void publishValue( Timestamped<T> valueObj, Consumer<EpicsChannelValue> valueChangeHandler )
+   {
+      final T value =  valueObj.getValue();
+      final int alarmStatus = valueObj.getAlarmStatus().ordinal();
+      final EpicsChannelAlarmSeverity epicsAlarmSeverity = EpicsChannelAlarmSeverity.from( valueObj.getAlarmSeverity() );
+      final LocalDateTime wicaServerTimestamp = LocalDateTime.now();
+      final long secondsPastEpicsEpoch = valueObj.getSeconds();
+      final int nanoseconds = valueObj.getNanos();
+      final LocalDateTime epicsIocTimestamp  = getEpicsTimestamp( secondsPastEpicsEpoch, nanoseconds );
+
+      final EpicsChannelValue<T> epicsChannelValue = new EpicsChannelValue<>( value, epicsAlarmSeverity, alarmStatus, wicaServerTimestamp, epicsIocTimestamp );
+      valueChangeHandler.accept( epicsChannelValue );
+   }
+
+   private static LocalDateTime getEpicsTimestamp( long secondsPastEpicsEpoch, int nanoseconds )
+   {
+      return LocalDateTime.ofEpochSecond( secondsPastEpicsEpoch + secondsBetweenEpochs, nanoseconds, ZoneOffset.UTC );
+   }
+
+
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

@@ -6,6 +6,8 @@ package ch.psi.wica.controllers;
 
 import ch.psi.wica.model.*;
 import ch.psi.wica.services.EpicsChannelDataService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +17,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -37,6 +41,12 @@ class EpicsChannelDataStreamController
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
+
+   /**
+    * The format which will be used when making String representations
+    * of the times/dates in this class.
+    */
+   private static final String DATETIME_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
 
    private final Logger logger = LoggerFactory.getLogger(EpicsChannelDataStreamController.class );
 
@@ -267,9 +277,14 @@ class EpicsChannelDataStreamController
    {
       Validate.notNull( data,"The valueMap field was null ");
 
-      return ServerSentEvent.builder( data ).id( id.asString() ).comment( comment ).event( event ).build();
+      final DateTimeFormatter formatter = DateTimeFormatter.ofPattern( DATETIME_FORMAT_PATTERN );
+      final String formattedTimeAndDateNow =  LocalDateTime.now().format( formatter );
+      return ServerSentEvent.builder( data )
+                            .id( id.asString() )
+                            .comment( formattedTimeAndDateNow + " - " + comment )
+                            .event( event )
+                            .build();
    }
-
 
    private LocalDateTime getLastUpdateTime()
    {
