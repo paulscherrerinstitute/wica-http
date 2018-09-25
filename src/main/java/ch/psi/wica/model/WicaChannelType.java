@@ -8,7 +8,7 @@ import org.epics.ca.data.AlarmSeverity;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-public enum EpicsChannelType
+public enum WicaChannelType
 {
 
 /*- Public attributes --------------------------------------------------------*/
