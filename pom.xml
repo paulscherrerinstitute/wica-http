@@ -5,7 +5,7 @@
 
     <groupId>ch.psi</groupId>
     <artifactId>wica</artifactId>
-    <version>0.6.0-RELEASE</version>
+    <version>0.7.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>wica2</name>
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>org.epics</groupId>
             <artifactId>ca</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.1</version>
         </dependency>
 
         <dependency>
