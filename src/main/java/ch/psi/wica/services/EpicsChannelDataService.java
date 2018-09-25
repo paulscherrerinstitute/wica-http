@@ -126,7 +126,7 @@ public class EpicsChannelDataService
    }
 
 
-   /*- Private methods ----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
 
    /**
     * Handles a connection state change on the underlying EPICS channel monitor.
@@ -178,7 +178,6 @@ public class EpicsChannelDataService
       channelMetadataStash.put(wicaChannelName, wicaChannelMetadata);
    }
 
-
-   /*- Nested Classes -----------------------------------------------------------*/
+/*- Nested Classes -----------------------------------------------------------*/
 
 }
