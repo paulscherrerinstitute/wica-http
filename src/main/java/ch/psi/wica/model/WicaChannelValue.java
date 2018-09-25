@@ -78,12 +78,12 @@ public class WicaChannelValue<T>
 
 /*- Class methods ------------------------------------------------------------*/
 
-   public static <T> WicaChannelValue createChannelDisconnectedValue( LocalDateTime wicaServerTimestamp )
+   public static <T> WicaChannelValue<T> createChannelDisconnectedValue( LocalDateTime wicaServerTimestamp )
    {
       return new WicaChannelValue<>( null, WicaChannelAlarmSeverity.INVALID_ALARM, 0, wicaServerTimestamp, wicaServerTimestamp );
    }
 
-   public static <T> WicaChannelValue createChannelConnectedValue( T value, WicaChannelAlarmSeverity alarmSeverity, int alarmStatus, LocalDateTime wicaServerTimestamp, LocalDateTime epicsIocTimestamp )
+   public static <T> WicaChannelValue<T> createChannelConnectedValue( T value, WicaChannelAlarmSeverity alarmSeverity, int alarmStatus, LocalDateTime wicaServerTimestamp, LocalDateTime epicsIocTimestamp )
    {
       return new WicaChannelValue<>( value, alarmSeverity, alarmStatus, wicaServerTimestamp, epicsIocTimestamp );
    }
@@ -102,6 +102,9 @@ public class WicaChannelValue<T>
 
 /*- Public methods -----------------------------------------------------------*/
 
+   // This method is mainly to explicitly document the fact that if the value
+   // is set to null this indicates that the EPICS channel that provides the
+   // information source is not available.
    @JsonIgnore
    public boolean isChannelConnected()
    {
@@ -163,6 +166,6 @@ public class WicaChannelValue<T>
       return wicaServerTimestamp;
    }
 
-   /*- Nested Classes -----------------------------------------------------------*/
+/*- Nested Classes -----------------------------------------------------------*/
 
 }
