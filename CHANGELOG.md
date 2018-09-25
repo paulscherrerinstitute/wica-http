@@ -60,7 +60,7 @@ This log describes the functionality of tagged versions within the repository.
   The project starts to mature but is not yet fully stable with various new features in something of an experimental state.
   Main changes are: EPICS channels are now cached, support for delivering metadata to front end, support for rendering
   alarm information, experimental support for http2, now supports deployment at URL: 'https://gfa-wica.psi.ch', initial
-  support for delivering value changes. Initial 
+  support for delivering value changes.  
    - [CTRLIT-6784](https://jira.psi.ch/browse/CTRLIT-6784): Add support for server main page with basic statistics. 
    - [CTRLIT-6785](https://jira.psi.ch/browse/CTRLIT-6785): Add further support for compression of returned content (eg javascript).
    - [CTRLIT-6786](https://jira.psi.ch/browse/CTRLIT-6786): Add support for sharing EPICS channels between streams.
@@ -70,7 +70,25 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-6803](https://jira.psi.ch/browse/CTRLIT-6803): Create Release 0.6.0. 
    - [CTRLIT-6805](https://jira.psi.ch/browse/CTRLIT-6805): Switch deployment to 'gfa-wica.psi.ch'.
    - [CTRLIT-6806](https://jira.psi.ch/browse/CTRLIT-6806): Create Initial Display Page for HIPA.
-   
+
+* [0.7.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.7.0-RELEASE)
+   Biggest change was switch to CSSS based rendering and cleanup of wica.js file to use ECMA6 classes.
+   Reverted http2 -> http, fix to infamous HIPA µ character encoding problem. 
+   - [CTRLIT-6813](https://jira.psi.ch/browse/CTRLIT-6813): Create 0.7.0 Release.
+   - [CTRLIT-6814](https://jira.psi.ch/browse/CTRLIT-6814): Revert http2 to http.
+   - [CTRLIT-6815](https://jira.psi.ch/browse/CTRLIT-6815): Improve class naming for greater consistency.
+   - [CTRLIT-6816](https://jira.psi.ch/browse/CTRLIT-6816): Improve startup responsiveness.
+   - [CTRLIT-6817](https://jira.psi.ch/browse/CTRLIT-6817): Switch to CSS based rendering of WICA components.
+   - [CTRLIT-6818](https://jira.psi.ch/browse/CTRLIT-6818): Add threadpool configuration support for Spring mvc task executor.
+   - [CTRLIT-6819](https://jira.psi.ch/browse/CTRLIT-6819): Miscellaneous improvements to WICA Display Pages.
+   - [CTRLIT-6820](https://jira.psi.ch/browse/CTRLIT-6820): Configure WicaChannelValue serialisation to eliminate data that is currently (timestamps, alarm, state..).
+   - [CTRLIT-6821](https://jira.psi.ch/browse/CTRLIT-6821): Upgrade to use latest (Java 8 targeted) PSI CA library (1.2.1).
+   - [CTRLIT-6822](https://jira.psi.ch/browse/CTRLIT-6822): Fix heartbeat so that it comes more frequently than timeout.
+   - [CTRLIT-6823](https://jira.psi.ch/browse/CTRLIT-6823): Refactor wica library to use ECMA6 classes.
+   - [CTRLIT-6824](https://jira.psi.ch/browse/CTRLIT-6824): Set up system to use ISO8859-1 file encoding.  
+   - [CTRLIT-6825](https://jira.psi.ch/browse/CTRLIT-6825): Resolve HIPA micro charracter / iso8859-1 character encoding issue.     
+   - [CTRLIT-6827](https://jira.psi.ch/browse/CTRLIT-6827): Cleanup MVC Configuration to get rid of deprecated warnings.            
+
 # Project Ideas Completed
 
 1. Consider refactoring so that the app only uses one context (channels can then be cached and shared between 
@@ -86,6 +104,7 @@ It would be far more efficient if EPICS channels were cached and shared between 
 1. Infrastructure Enhancement: Apply for 'gfa-wica web' certificate. DONE.
 1. Bug Fix: sometimes the Wica Server sends disconnect messages but afterwards the monitor continues to send updates
 so one is left with a screen with lost of pink background (pink = the Wica server disconnected). DONE.
+1. Render changes to server and epics channel connection state using CSS.  DONE. 
 
 # Project Ideas Backlog
 
@@ -101,5 +120,5 @@ a desktop monitor).
    - metadata-stream: Sends all values with SLOW periodicity. 
    - value-snapshot-stream: Sends all values with SLOW periodicity. 
    - value-change-stream: Sends only changed values but with fast periodicity.
-1. Render changes to serevr and epics channel connection state using CSS.   
+
    
