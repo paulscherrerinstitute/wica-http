@@ -33,19 +33,20 @@ class WicaMvcConfigurer implements WebMvcConfigurer
    public void configureAsyncSupport( AsyncSupportConfigurer configurer )
    {
       logger.info( "Configuring Async Support..." );
-      configurer.setTaskExecutor( mvcTaskExecutor() );
+      configurer.setTaskExecutor( getMvcTaskExecutor() );
       logger.info( "Async Support configuration completed.");
    }
 
 /*- Private methods ----------------------------------------------------------*/
 
-   private ThreadPoolTaskExecutor mvcTaskExecutor()
+   private ThreadPoolTaskExecutor getMvcTaskExecutor()
    {
       logger.info( "Configuring MVC Task Executor...");
       ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-      executor.setThreadNamePrefix("my-mvc-task-executor-");
+      executor.setThreadNamePrefix( "my-mvc-task-executor-" );
       executor.setCorePoolSize( 5 );
       executor.setMaxPoolSize( 200 );
+      executor.initialize();
       return executor;
    }
 
