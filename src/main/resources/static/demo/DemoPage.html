@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Wica Demo</title>
 
     <!-- Load the Wica library last of all as it will generate events which interact with the page -->
     <script src="https://gfa-wica.psi.ch/wica.js" defer></script>
@@ -58,10 +59,9 @@
     <label>Counter 5.0s </label> <label data-wica-channel-name="wica:test:counter06">NC</label><br>
     <label>Counter 10s  </label> <label data-wica-channel-name="wica:test:counter07">NC</label><br>
 </div>
-</body>
+
 
 <script>
-
     function updateStatusWidget( event )  {
 
         let widget = event.target;
@@ -74,7 +74,7 @@
             widget.textContent = "OK";
         }
     }
-
 </script>
 
+</body>
 </html>
