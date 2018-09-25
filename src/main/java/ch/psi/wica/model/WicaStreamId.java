@@ -10,7 +10,7 @@ import java.util.Objects;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-public class StreamId
+public class WicaStreamId
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -22,21 +22,21 @@ public class StreamId
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   private StreamId( String id )
+   private WicaStreamId( String id )
    {
       this.id = Validate.notBlank( id );
    }
 
 /*- Class methods ------------------------------------------------------------*/
 
-   public static StreamId createNext()
+   public static WicaStreamId createNext()
    {
-      return new StreamId( String.valueOf( nextAllocationId++ ) );
+      return new WicaStreamId(String.valueOf(nextAllocationId++ ) );
    }
 
-   public static StreamId of( String string )
+   public static WicaStreamId of( String string )
    {
-      return new StreamId( string );
+      return new WicaStreamId(string );
    }
 
    public static void resetAllocationSequencer()
@@ -53,8 +53,8 @@ public class StreamId
    {
       if ( this == o ) return true;
       if ( o == null || getClass() != o.getClass() ) return false;
-      StreamId streamId = (StreamId) o;
-      return Objects.equals(id, streamId.id);
+      WicaStreamId wicaStreamId = (WicaStreamId) o;
+      return Objects.equals(id, wicaStreamId.id);
    }
 
    @Override
@@ -71,7 +71,7 @@ public class StreamId
    @Override
    public String toString()
    {
-      return "StreamId<" + id + '>';
+      return "WicaStreamId<" + id + '>';
    }
 
 /*- Private methods ----------------------------------------------------------*/
