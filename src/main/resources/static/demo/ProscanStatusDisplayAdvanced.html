@@ -713,373 +713,374 @@
 
 </div>
 
-<script>
+    <script>
 
-    function updateNoBeamAlarmWidget( event )
-    {
-        let widget = event.target;
-        let channelValue = event.channelValue.val;
-
-        // This test was taken from the caQtDm PROSCAN status display
-        if ( parseFloat(channelValue) < 0.5 )
+        function updateNoBeamAlarmWidget( event )
         {
-            widget.style.visibility = "hidden";
-            widget.textContent = "Beam OK";
-        }
-        else {
-            widget.style.visibility = "visible";
-            widget.textContent = "No Beam";
-        }
-    }
+            let widget = event.target;
+            let channelValue = event.channelValue.val;
 
-    function updateHvpsuOkWidget( event ) {
-        // This test was taken from the caQtDm PROSCAN status display
-        update_status_widget( event.target, parseFloat( event.channelValue.val ) > 0.9 * 1000  );
-    }
-
-    function updateRegulationStatusWidget( event ) {
-        update_status_widget( event.target, parseInt( event.channelValue.val ) !== 0);
-    }
-
-    function updateStopperStatusWidget( event ) {
-        let widget = event.target;
-        let channelValue = event.channelValue.val;
-
-        if ( channelValue.includes( "Offen" )) {
-            widget.style.borderColor = "lime";
-        }
-        else {
-            widget.style.borderColor = "red";
-        }
-        widget.textContent = channelValue;
-    }
-
-    function updateRpsStopperPermissionWidget( event )  {
-        update_status_widget( event.target, ! event.channelValue.val.includes( "NOK" ) );
-    }
-
-    function updatePassStopperPermissionWidget( event )  {
-        update_status_widget( event.target, ! event.channelValue.val.includes( "NOK" ) );
-    }
-
-    function updateRunPermitSystemStatusWidget( event )  {
-        let status = parseInt( event.channelValue.val );
-
-        // This test was taken from the caQtDm PROSCAN status display
-        let bit0Set = ( status & (1 << 0) ) === (1 << 0);
-        update_status_widget( event.target, bit0Set );
-    }
-
-    function updateSafetySwitchBoxStatusWidget( event )  {
-        let status = parseInt( event.channelValue.val );
-
-        // This test was taken from the caQtDm PROSCAN status display
-        let bit3Set = ( status & (1 << 3) ) === (1 << 3);
-        update_status_widget( event.target, bit3Set );
-    }
-
-    function update_status_widget( widget, isOK ) {
-        if ( isOK ) {
-            widget.style.backgroundColor = "lime";
-        }
-        else {
-            widget.style.backgroundColor = "red";
-        }
-    }
-
-    class CalculateHeizLeistung
-    {
-        constructor( calcDivId, channel1DataId, channel2DataId )
-        {
-            this.calculationOutputElement = document.getElementById( calcDivId );
-            this.channel1DataElement = document.getElementById( channel1DataId );
-            this.channel2DataElement = document.getElementById( channel2DataId );
-            this.heizleistungChannel1 = 0.0;
-            this.heizleistungChannel2 = 0.0;
-
-            // Required to overcome Javascript's strange variable scoping rules
-            let that = this;
-
-            this.channel1DataElement.onchange = function( e )
+            // This test was taken from the caQtDm PROSCAN status display
+            if ( parseFloat(channelValue) < 0.5 )
             {
-                that.heizleistungChannel1 = parseFloat( e.channelValue.val);
-            };
-
-            this.channel2DataElement.onchange = function( e )
-            {
-                that.heizleistungChannel2 = parseFloat( e.channelValue.val);
-            };
-
-            // Trigger a task to calculate the Heizlestung every second
-            setInterval( CalculateHeizLeistung.updateOutputElement, 1000, that );
-        }
-
-        static updateOutputElement( that )
-        {
-            if ( ( that.heizleistungChannel1 === undefined ) || ( that.heizleistungChannel2 === undefined ) )
-            {
-                return;
+                widget.style.visibility = "hidden";
+                widget.textContent = "Beam OK";
             }
-           that.calculationOutputElement.textContent = ( that.heizleistungChannel1 * that.heizleistungChannel2).toFixed( 2 ) + "W";
-        }
-    }
-
-    let heizLeistungCalc;
-    heizLeistungCalc = new CalculateHeizLeistung( "heizLeistungCalculator", "heizleistungDataId1", "heizleistungDataId2" );
-
-    class PlotMainChart
-    {
-        constructor( plotDivId, plotTitle, beamCurrentDataId, vdefVoltageDataId, hfPowerDataId )
-        {
-            this.beamCurrentDataElement = document.getElementById( beamCurrentDataId );
-            this.vdefVoltageDataElement = document.getElementById( vdefVoltageDataId );
-            this.hfPowerDataElement = document.getElementById( hfPowerDataId );
-
-            this.plotElement = document.getElementById( plotDivId );
-            this.beamCurrent = undefined;
-            this.vdefVoltage = undefined;
-
-            this.hfPower = undefined;
-
-            this.layout = {
-                autosize: true,
-                type: 'scatter',
-                title: plotTitle,
-                margin: {l: 60, r: 30, b: 40, t: 40, pad: 0},
-                showlegend: true,
-                legend: { x: 0, y: 1.2 },
-                yaxis: { title: "MMAC3 Current (nA)", range: [0, 850]},
-                xaxis: { autorange: true },
-                paper_bgcolor: 'rgba(0,0,0,0)',
-                plot_bgcolor: 'rgba(0,0,0,0)'
-            };
-
-            // Required to overcome Javascript's strange variable scoping rules
-            let that = this;
-
-            this.beamCurrentDataElement.onchange = function( e )
-            {
-                that.beamCurrent = parseFloat( e.channelValue.val );
-            };
-
-            this.vdefVoltageDataElement.onchange = function( e )
-            {
-                // The goal of the scaling below is to convert the input value which
-                // may go up to 2.2KV to a number that will fit in a sensible place
-                // on the Y axis (which currently goes up to 850).
-                that.vdefVoltage = parseFloat( e.channelValue.val ) * 1000 * (850 / 2200);
-            };
-
-            this.hfPowerDataElement.onchange = function( e )
-            {
-                // The goal of the scaling below is to convert the input value which
-                // may go up to 130KW  to a number that will fit in a sensible place
-                // on the Y axis (which currently goes up to 850).
-                that.hfPower = parseFloat( e.channelValue.val) * (850 / 130);
-            };
-
-            this.timeArray = [];
-            this.beamCurrentArray = [];
-            this.vdefVoltageArray = [];
-            this.hfPowerArray = [];
-            this.nPoints = 0;
-
-            // Update the main plot every two seconds
-            setInterval( PlotMainChart.update_plot, 2000, that );
+            else {
+                widget.style.visibility = "visible";
+                widget.textContent = "No Beam";
+            }
         }
 
-        static update_plot( that )
+        function updateHvpsuOkWidget( event ) {
+            // This test was taken from the caQtDm PROSCAN status display
+            update_status_widget( event.target, parseFloat( event.channelValue.val ) > 0.9 * 1000  );
+        }
+
+        function updateRegulationStatusWidget( event ) {
+            update_status_widget( event.target, parseInt( event.channelValue.val ) !== 0);
+        }
+
+        function updateStopperStatusWidget( event ) {
+            let widget = event.target;
+            let channelValue = event.channelValue.val;
+
+            if ( channelValue.includes( "Offen" )) {
+                widget.style.borderColor = "lime";
+            }
+            else {
+                widget.style.borderColor = "red";
+            }
+            widget.textContent = channelValue;
+        }
+
+        function updateRpsStopperPermissionWidget( event )  {
+            update_status_widget( event.target, ! event.channelValue.val.includes( "NOK" ) );
+        }
+
+        function updatePassStopperPermissionWidget( event )  {
+            update_status_widget( event.target, ! event.channelValue.val.includes( "NOK" ) );
+        }
+
+        function updateRunPermitSystemStatusWidget( event )  {
+            let status = parseInt( event.channelValue.val );
+
+            // This test was taken from the caQtDm PROSCAN status display
+            let bit0Set = ( status & (1 << 0) ) === (1 << 0);
+            update_status_widget( event.target, bit0Set );
+        }
+
+        function updateSafetySwitchBoxStatusWidget( event )  {
+            let status = parseInt( event.channelValue.val );
+
+            // This test was taken from the caQtDm PROSCAN status display
+            let bit3Set = ( status & (1 << 3) ) === (1 << 3);
+            update_status_widget( event.target, bit3Set );
+        }
+
+        function update_status_widget( widget, isOK ) {
+            if ( isOK ) {
+                widget.style.backgroundColor = "lime";
+            }
+            else {
+                widget.style.backgroundColor = "red";
+            }
+        }
+
+        class CalculateHeizLeistung
         {
-            if ( ( that.beamCurrent === undefined ) || ( that.vdefVoltage === undefined ) || ( that.hfPower === undefined )  )
+            constructor( calcDivId, channel1DataId, channel2DataId )
             {
-                return;
+                this.calculationOutputElement = document.getElementById( calcDivId );
+                this.channel1DataElement = document.getElementById( channel1DataId );
+                this.channel2DataElement = document.getElementById( channel2DataId );
+                this.heizleistungChannel1 = 0.0;
+                this.heizleistungChannel2 = 0.0;
+
+                // Required to overcome Javascript's strange variable scoping rules
+                let that = this;
+
+                this.channel1DataElement.onchange = function( e )
+                {
+                    that.heizleistungChannel1 = parseFloat( e.channelValue.val);
+                };
+
+                this.channel2DataElement.onchange = function( e )
+                {
+                    that.heizleistungChannel2 = parseFloat( e.channelValue.val);
+                };
+
+                // Trigger a task to calculate the Heizlestung every second
+                setInterval( CalculateHeizLeistung.updateOutputElement, 1000, that );
             }
 
-            let timeNow = new Date();
-
-            // It is important to update the layout data revision so that Plotly
-            // knows it must perform a redraw operation.
-            that.layout.datarevision= timeNow;
-
-            that.timeArray.push( timeNow );
-            that.beamCurrentArray.push( that.beamCurrent );
-            that.vdefVoltageArray.push( that.vdefVoltage );
-            that.hfPowerArray.push( that.hfPower );
-
-            // keep the last 900 points which roughly corresponds to 30 minutes at 2 seconds per update
-            if ( that.nPoints++ === 900 ) {
-                 that.timeArray.shift();
-                 that.beamCurrentArray.shift();
-                 that.vdefVoltageArray.shift();
-                 that.hfPowerArray.shift();
-            }
-
-            let trace1 = {
-                name: 'MMAC3 (nA)',
-                x: that.timeArray,
-                y: that.beamCurrentArray,
-                mode: 'lines+markers',
-                marker: {size: 3, symbol: 'circle'},
-                line: {color: '#00FF00', width: 3},
-                fill: 'tozeroy'
-            };
-
-            let trace2 = {
-                name: 'Deflector (rel)',
-                x: that.timeArray,
-                y: that.vdefVoltageArray,
-                mode: 'lines+markers',
-                marker: {size: 3, symbol: 'circle'},
-                line: {color: '#0000FF', width: 3}
-            };
-
-            let trace3 = {
-                name: 'HF (rel)',
-                x: that.timeArray,
-                y: that.hfPowerArray,
-                mode: 'lines+markers',
-                marker: {size: 3, symbol: 'circle'},
-                line: {color: '#000000', width: 3}
-            };
-
-            let data = [trace1, trace2, trace3];
-            Plotly.react( that.plotElement, data, that.layout );
-        }
-    }
-
-    let mainPlot;
-    mainPlot = new PlotMainChart("mainPlot", "MMAC3 / Deflector / HF", "mainPlotBeamCurrentData", "mainPlotVDefVoltageData", "mainPlotHFPowerData" );
-
-    class PlotVerticalDeflector {
-
-        constructor( plotDivId, plotTitle, xDataId, yDataId )
-        {
-            this.xDataElement = document.getElementById( xDataId );
-            this.yDataElement = document.getElementById( yDataId );
-            this.plotElement = document.getElementById( plotDivId );
-            this.xAxisDataObj = undefined;
-            this.yAxisDataObj = undefined;
-
-            this.layout = {
-                autosize: true,
-                title: plotTitle,
-                margin: {l: 50, r: 30, b: 30, t: 30, pad: 0},
-                xaxis: {title: "Vdef (kV)"},
-                yaxis: {
-                    title: "MMAC3 (nA)",
-                    tickmode: 'auto',
-                    nticks: 5
-                },
-                paper_bgcolor: 'rgba(0,0,0,0)',
-                plot_bgcolor: 'rgba(0,0,0,0)'
-            };
-
-            // Required to overcome Javascript's strange variable scoping rules
-            let that = this;
-
-            this.xDataElement.onchange = function ( e ) {
-                that.xAxisDataObj = e.channelValue.val;
-            };
-            this.yDataElement.onchange = function ( e ) {
-                that.yAxisDataObj = e.channelValue.val;
-            };
-
-            setInterval( PlotVerticalDeflector.update_plot, 2000, that );
-        }
-
-        static update_plot( that )
-        {
-            if ( ( that.xAxisDataObj === undefined ) || ( that.yAxisDataObj === undefined ) )
+            static updateOutputElement( that )
             {
-                return;
+                if ( ( that.heizleistungChannel1 === undefined ) || ( that.heizleistungChannel2 === undefined ) )
+                {
+                    return;
+                }
+               that.calculationOutputElement.textContent = ( that.heizleistungChannel1 * that.heizleistungChannel2).toFixed( 2 ) + "W";
             }
-
-            let trace = {
-                y: that.xAxisDataObj,
-                x: that.yAxisDataObj,
-                type: 'scatter',
-                mode: 'lines+markers',
-                marker: {size: 6, symbol: 'circle'}
-            };
-
-            let data = [trace];
-            Plotly.react( that.plotElement, data, that.layout, {displayModeBar: false} );
-        }
-    }
-
-    let vdefPlot;
-    vdefPlot = new PlotVerticalDeflector("vdefPlot", "Comet Deflector Curve", "vdefPlotDataX", "vdefPlotDataY");
-
-    class PlotProfileMonitor
-    {
-        constructor( plotDivId, plotTitle, xDataId, yDataId )
-        {
-            this.xDataElement = document.getElementById( xDataId );
-            this.yDataElement = document.getElementById( yDataId );
-            this.plotElement = document.getElementById( plotDivId );
-            this.xAxisDataObj = undefined;
-            this.yAxisDataObj = undefined;
-
-            this.layout = {
-                autosize: true,
-                title: plotTitle,
-                margin: { l: 40, r: 10, b: 30, t: 30, pad: 0 },
-                xaxis: {
-                    range: [-32, 32],
-                    tick0: 0,
-                    dtick: 10,
-                    tickwidth: 2
-                },
-                yaxis: {
-                    autorange: true,
-                    tickmode: 'auto',
-                    nticks: 5
-                },
-                paper_bgcolor: 'rgba(0,0,0,0)',
-                plot_bgcolor: 'rgba(0,0,0,0)'
-            };
-
-            // Required to overcome Javascript's strange variable scoping rules
-            let that = this;
-
-            this.xDataElement.onchange = function ( e ) {
-                that.xAxisDataObj = e.channelValue.val;
-            };
-
-            this.yDataElement.onchange = function ( e ) {
-                that.yAxisDataObj = e.channelValue.val;
-            };
-
-            setInterval( this.update_plot, 2000, that );
         }
 
-        update_plot( that )
+        let heizLeistungCalc;
+        heizLeistungCalc = new CalculateHeizLeistung( "heizLeistungCalculator", "heizleistungDataId1", "heizleistungDataId2" );
+
+        class PlotMainChart
         {
-            if ( ( that.xAxisDataObj === undefined ) || ( that.yAxisDataObj === undefined ) )
+            constructor( plotDivId, plotTitle, beamCurrentDataId, vdefVoltageDataId, hfPowerDataId )
             {
-                return;
+                this.beamCurrentDataElement = document.getElementById( beamCurrentDataId );
+                this.vdefVoltageDataElement = document.getElementById( vdefVoltageDataId );
+                this.hfPowerDataElement = document.getElementById( hfPowerDataId );
+
+                this.plotElement = document.getElementById( plotDivId );
+                this.beamCurrent = undefined;
+                this.vdefVoltage = undefined;
+
+                this.hfPower = undefined;
+
+                this.layout = {
+                    autosize: true,
+                    type: 'scatter',
+                    title: plotTitle,
+                    margin: {l: 60, r: 30, b: 40, t: 40, pad: 0},
+                    showlegend: true,
+                    legend: { x: 0, y: 1.2 },
+                    yaxis: { title: "MMAC3 Current (nA)", range: [0, 850]},
+                    xaxis: { autorange: true },
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)'
+                };
+
+                // Required to overcome Javascript's strange variable scoping rules
+                let that = this;
+
+                this.beamCurrentDataElement.onchange = function( e )
+                {
+                    that.beamCurrent = parseFloat( e.channelValue.val );
+                };
+
+                this.vdefVoltageDataElement.onchange = function( e )
+                {
+                    // The goal of the scaling below is to convert the input value which
+                    // may go up to 2.2KV to a number that will fit in a sensible place
+                    // on the Y axis (which currently goes up to 850).
+                    that.vdefVoltage = parseFloat( e.channelValue.val ) * 1000 * (850 / 2200);
+                };
+
+                this.hfPowerDataElement.onchange = function( e )
+                {
+                    // The goal of the scaling below is to convert the input value which
+                    // may go up to 130KW  to a number that will fit in a sensible place
+                    // on the Y axis (which currently goes up to 850).
+                    that.hfPower = parseFloat( e.channelValue.val) * (850 / 130);
+                };
+
+                this.timeArray = [];
+                this.beamCurrentArray = [];
+                this.vdefVoltageArray = [];
+                this.hfPowerArray = [];
+                this.nPoints = 0;
+
+                // Update the main plot every two seconds
+                setInterval( PlotMainChart.update_plot, 2000, that );
             }
 
-            let trace = {
-                x: that.xAxisDataObj,
-                y: that.yAxisDataObj,
-                type: 'scatter',
-                mode: 'lines+markers',
-                fill: 'tozeroy',
-                marker: {size: 6, symbol: 'circle'}
-            };
+            static update_plot( that )
+            {
+                if ( ( that.beamCurrent === undefined ) || ( that.vdefVoltage === undefined ) || ( that.hfPower === undefined )  )
+                {
+                    return;
+                }
 
-            let data = [trace];
-            Plotly.react( that.plotElement, data, that.layout, { displayModeBar: false});
+                let timeNow = new Date();
+
+                // It is important to update the layout data revision so that Plotly
+                // knows it must perform a redraw operation.
+                that.layout.datarevision= timeNow;
+
+                that.timeArray.push( timeNow );
+                that.beamCurrentArray.push( that.beamCurrent );
+                that.vdefVoltageArray.push( that.vdefVoltage );
+                that.hfPowerArray.push( that.hfPower );
+
+                // keep the last 900 points which roughly corresponds to 30 minutes at 2 seconds per update
+                if ( that.nPoints++ === 900 ) {
+                     that.timeArray.shift();
+                     that.beamCurrentArray.shift();
+                     that.vdefVoltageArray.shift();
+                     that.hfPowerArray.shift();
+                }
+
+                let trace1 = {
+                    name: 'MMAC3 (nA)',
+                    x: that.timeArray,
+                    y: that.beamCurrentArray,
+                    mode: 'lines+markers',
+                    marker: {size: 3, symbol: 'circle'},
+                    line: {color: '#00FF00', width: 3},
+                    fill: 'tozeroy'
+                };
+
+                let trace2 = {
+                    name: 'Deflector (rel)',
+                    x: that.timeArray,
+                    y: that.vdefVoltageArray,
+                    mode: 'lines+markers',
+                    marker: {size: 3, symbol: 'circle'},
+                    line: {color: '#0000FF', width: 3}
+                };
+
+                let trace3 = {
+                    name: 'HF (rel)',
+                    x: that.timeArray,
+                    y: that.hfPowerArray,
+                    mode: 'lines+markers',
+                    marker: {size: 3, symbol: 'circle'},
+                    line: {color: '#000000', width: 3}
+                };
+
+                let data = [trace1, trace2, trace3];
+                Plotly.react( that.plotElement, data, that.layout );
+            }
         }
-    }
 
-    let mmap5xPlot;
-    mmap5xPlot = new PlotProfileMonitor("mmap5xPlot", "MMAP5X", "mmap5xPlotDataX", "mmap5xPlotDataY");
-    let mmap6yPlot;
-    mmap6yPlot = new PlotProfileMonitor("mmap6yPlot", "MMAP6Y", "mmap6yPlotDataX", "mmap6yPlotDataY");
+        let mainPlot;
+        mainPlot = new PlotMainChart("mainPlot", "MMAC3 / Deflector / HF", "mainPlotBeamCurrentData", "mainPlotVDefVoltageData", "mainPlotHFPowerData" );
 
-</script>
+        class PlotVerticalDeflector {
+
+            constructor( plotDivId, plotTitle, xDataId, yDataId )
+            {
+                this.xDataElement = document.getElementById( xDataId );
+                this.yDataElement = document.getElementById( yDataId );
+                this.plotElement = document.getElementById( plotDivId );
+                this.xAxisDataObj = undefined;
+                this.yAxisDataObj = undefined;
+
+                this.layout = {
+                    autosize: true,
+                    title: plotTitle,
+                    margin: {l: 50, r: 30, b: 30, t: 30, pad: 0},
+                    xaxis: {title: "Vdef (kV)"},
+                    yaxis: {
+                        title: "MMAC3 (nA)",
+                        tickmode: 'auto',
+                        nticks: 5
+                    },
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)'
+                };
+
+                // Required to overcome Javascript's strange variable scoping rules
+                let that = this;
+
+                this.xDataElement.onchange = function ( e ) {
+                    that.xAxisDataObj = e.channelValue.val;
+                };
+                this.yDataElement.onchange = function ( e ) {
+                    that.yAxisDataObj = e.channelValue.val;
+                };
+
+                setInterval( PlotVerticalDeflector.update_plot, 2000, that );
+            }
+
+            static update_plot( that )
+            {
+                if ( ( that.xAxisDataObj === undefined ) || ( that.yAxisDataObj === undefined ) )
+                {
+                    return;
+                }
+
+                let trace = {
+                    // Note: the X/Y inversion below is rquired and is deliberate
+                    y: that.xAxisDataObj,
+                    x: that.yAxisDataObj,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    marker: {size: 6, symbol: 'circle'}
+                };
+
+                let data = [trace];
+                Plotly.react( that.plotElement, data, that.layout, {displayModeBar: false} );
+            }
+        }
+
+        let vdefPlot;
+        vdefPlot = new PlotVerticalDeflector("vdefPlot", "Comet Deflector Curve", "vdefPlotDataX", "vdefPlotDataY");
+
+        class PlotProfileMonitor
+        {
+            constructor( plotDivId, plotTitle, xDataId, yDataId )
+            {
+                this.xDataElement = document.getElementById( xDataId );
+                this.yDataElement = document.getElementById( yDataId );
+                this.plotElement = document.getElementById( plotDivId );
+                this.xAxisDataObj = undefined;
+                this.yAxisDataObj = undefined;
+
+                this.layout = {
+                    autosize: true,
+                    title: plotTitle,
+                    margin: { l: 40, r: 10, b: 30, t: 30, pad: 0 },
+                    xaxis: {
+                        range: [-32, 32],
+                        tick0: 0,
+                        dtick: 10,
+                        tickwidth: 2
+                    },
+                    yaxis: {
+                        autorange: true,
+                        tickmode: 'auto',
+                        nticks: 5
+                    },
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)'
+                };
+
+                // Required to overcome Javascript's strange variable scoping rules
+                let that = this;
+
+                this.xDataElement.onchange = function ( e ) {
+                    that.xAxisDataObj = e.channelValue.val;
+                };
+
+                this.yDataElement.onchange = function ( e ) {
+                    that.yAxisDataObj = e.channelValue.val;
+                };
+
+                setInterval( this.update_plot, 2000, that );
+            }
+
+            update_plot( that )
+            {
+                if ( ( that.xAxisDataObj === undefined ) || ( that.yAxisDataObj === undefined ) )
+                {
+                    return;
+                }
+
+                let trace = {
+                    x: that.xAxisDataObj,
+                    y: that.yAxisDataObj,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    fill: 'tozeroy',
+                    marker: {size: 6, symbol: 'circle'}
+                };
+
+                let data = [trace];
+                Plotly.react( that.plotElement, data, that.layout, { displayModeBar: false});
+            }
+        }
+
+        let mmap5xPlot;
+        mmap5xPlot = new PlotProfileMonitor("mmap5xPlot", "MMAP5X", "mmap5xPlotDataX", "mmap5xPlotDataY");
+        let mmap6yPlot;
+        mmap6yPlot = new PlotProfileMonitor("mmap6yPlot", "MMAP6Y", "mmap6yPlotDataX", "mmap6yPlotDataY");
+
+    </script>
 </body>
 
 </html>
