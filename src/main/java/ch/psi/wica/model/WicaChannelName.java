@@ -9,8 +9,7 @@ import java.util.Objects;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-
-public class EpicsChannelName
+public class WicaChannelName
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -21,7 +20,7 @@ public class EpicsChannelName
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public EpicsChannelName( String channelName )
+   public WicaChannelName( String channelName )
    {
       this.channelName = Validate.notBlank( channelName );
    }
@@ -34,7 +33,7 @@ public class EpicsChannelName
    {
       if ( this == o ) return true;
       if ( o == null || getClass() != o.getClass() ) return false;
-      EpicsChannelName that = (EpicsChannelName) o;
+      WicaChannelName that = (WicaChannelName) o;
       return Objects.equals(channelName, that.channelName);
    }
 
