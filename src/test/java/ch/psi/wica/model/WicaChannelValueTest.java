@@ -18,13 +18,13 @@ import java.util.Map;
 /*- Class Declaration --------------------------------------------------------*/
 
 @SpringBootTest
-class EpicsChannelValueTest
+class WicaChannelValueTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( EpicsChannelValueTest.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaChannelValueTest.class );
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -34,21 +34,21 @@ class EpicsChannelValueTest
    @Test
    void testValueSerialisation()
    {
-      final Map<EpicsChannelName,EpicsChannelValue> map = new HashMap<>();
-      map.put( new EpicsChannelName( "chan1" ), new EpicsChannelValue( "abc", EpicsChannelAlarmSeverity.MINOR_ALARM, 0, LocalDateTime.now(), LocalDateTime.now() ) );
-      map.put( new EpicsChannelName( "chan2" ), new EpicsChannelValue( "123", EpicsChannelAlarmSeverity.MAJOR_ALARM, 0, LocalDateTime.now(), LocalDateTime.now() ) );
+      final Map<WicaChannelName, WicaChannelValue> map = new HashMap<>();
+      map.put(new WicaChannelName("chan1" ), WicaChannelValue.createChannelConnectedValue("abc", WicaChannelAlarmSeverity.MINOR_ALARM, 0, LocalDateTime.now(), LocalDateTime.now() ) );
+      map.put(new WicaChannelName("chan2" ), WicaChannelValue.createChannelConnectedValue("123", WicaChannelAlarmSeverity.MAJOR_ALARM, 0, LocalDateTime.now(), LocalDateTime.now() ) );
 
-      final String valueString = EpicsChannelValue.convertMapToJsonRepresentation( map );
+      final String valueString = WicaChannelValue.convertMapToJsonRepresentation(map );
       logger.info( "JSON Value String looks like this: '{}'", valueString );
    }
 
    @Test
    void testMetadataSerialisation()
    {
-      final Map<EpicsChannelName,EpicsChannelMetadata> map = new HashMap<>();
-      map.put( new EpicsChannelName( "chan1" ), EpicsChannelMetadata.createStringInstance() );
-      map.put( new EpicsChannelName( "chan2" ), EpicsChannelMetadata.createRealInstance( "abc",0,0,0,0,0,0,0,0,0 ) );
-      final String metadataString = EpicsChannelMetadata.convertMapToJsonRepresentation( map );
+      final Map<WicaChannelName, WicaChannelMetadata> map = new HashMap<>();
+      map.put(new WicaChannelName("chan1" ), WicaChannelMetadata.createStringInstance() );
+      map.put(new WicaChannelName("chan2" ), WicaChannelMetadata.createRealInstance("abc", 0, 0, 0, 0, 0, 0, 0, 0, 0 ) );
+      final String metadataString = WicaChannelMetadata.convertMapToJsonRepresentation(map );
       logger.info( "JSON Metadata String looks like this: '{}'", metadataString );
    }
 
