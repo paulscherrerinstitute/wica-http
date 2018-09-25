@@ -73,7 +73,7 @@ This log describes the functionality of tagged versions within the repository.
 
 * [0.7.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.7.0-RELEASE)
    Biggest change was switch to CSSS based rendering and cleanup of wica.js file to use ECMA6 classes.
-   Reverted http2 -> http, fix to infamous HIPA µ character encoding problem. 
+   Reverted http2 -> http, fix to infamous HIPA µ character encoding problem. Many other minor improvements and bug fixes.
    - [CTRLIT-6813](https://jira.psi.ch/browse/CTRLIT-6813): Create 0.7.0 Release.
    - [CTRLIT-6814](https://jira.psi.ch/browse/CTRLIT-6814): Revert http2 to http.
    - [CTRLIT-6815](https://jira.psi.ch/browse/CTRLIT-6815): Improve class naming for greater consistency.
@@ -87,6 +87,7 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-6823](https://jira.psi.ch/browse/CTRLIT-6823): Refactor wica library to use ECMA6 classes.
    - [CTRLIT-6824](https://jira.psi.ch/browse/CTRLIT-6824): Set up system to use ISO8859-1 file encoding.  
    - [CTRLIT-6825](https://jira.psi.ch/browse/CTRLIT-6825): Resolve HIPA micro charracter / iso8859-1 character encoding issue.     
+   - [CTRLIT-6826](https://jira.psi.ch/browse/CTRLIT-6826): Fix bug whereby only one client was notified of the value change stream.   
    - [CTRLIT-6827](https://jira.psi.ch/browse/CTRLIT-6827): Cleanup MVC Configuration to get rid of deprecated warnings.            
 
 # Project Ideas Completed
