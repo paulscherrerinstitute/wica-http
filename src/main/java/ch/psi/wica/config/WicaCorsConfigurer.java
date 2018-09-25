@@ -1,6 +1,6 @@
 /*- Package Declaration ------------------------------------------------------*/
 
-package ch.psi.wica.controllers;
+package ch.psi.wica.config;
 
 /*- Imported packages --------------------------------------------------------*/
 
@@ -15,13 +15,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /*- Class Declaration --------------------------------------------------------*/
 
 @Configuration
-class CorsConfigurer implements WebMvcConfigurer
+class WicaCorsConfigurer implements WebMvcConfigurer
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( CorsConfigurer.class );
+   private final Logger logger = LoggerFactory.getLogger(WicaCorsConfigurer.class );
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
