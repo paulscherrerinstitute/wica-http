@@ -3,15 +3,12 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import org.apache.commons.lang3.Validate;
 import org.epics.ca.data.AlarmSeverity;
-
-import java.util.Objects;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-public enum EpicsChannelAlarmSeverity
+public enum WicaChannelAlarmSeverity
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -26,9 +23,9 @@ public enum EpicsChannelAlarmSeverity
 /*- Constructor --------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
 
-   public static EpicsChannelAlarmSeverity from( AlarmSeverity caAlarmSeverity )
+   public static WicaChannelAlarmSeverity from( AlarmSeverity caAlarmSeverity )
    {
-      return EpicsChannelAlarmSeverity.valueOf( caAlarmSeverity.toString() );
+      return WicaChannelAlarmSeverity.valueOf(caAlarmSeverity.toString() );
    }
 
 /*- Public methods -----------------------------------------------------------*/
