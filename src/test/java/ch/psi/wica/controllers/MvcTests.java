@@ -3,7 +3,7 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.StreamId;
+import ch.psi.wica.model.WicaStreamId;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,7 +61,7 @@ public class MvcTests
    {
       epicsChannelListOk = new String(Files.readAllBytes(Paths.get("src/test/resources/epics/epics_channel_list_ok.json") ), StandardCharsets.UTF_8) ;
       epicsChannelListEmpty = new String(Files.readAllBytes(Paths.get("src/test/resources/epics/epics_channel_list_empty.json") ), StandardCharsets.UTF_8) ;
-      StreamId.resetAllocationSequencer();
+      WicaStreamId.resetAllocationSequencer();
    }
 
 	@Test
