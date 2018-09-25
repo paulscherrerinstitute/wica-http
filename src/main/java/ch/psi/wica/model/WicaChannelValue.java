@@ -14,17 +14,15 @@ import org.apache.commons.lang3.Validate;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Map;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@JsonPropertyOrder( { "val", "alarm", "ts" } )
+@JsonPropertyOrder( { "val", "stat", "sevr", "ts1", "ts2", "ts1-alt", "ts2-alt" } )
 @Immutable
-public class EpicsChannelValue<T>
+public class WicaChannelValue<T>
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -43,7 +41,7 @@ public class EpicsChannelValue<T>
    }
 
    private final T value;
-   private final EpicsChannelAlarmSeverity alarmSeverity;
+   private final WicaChannelAlarmSeverity alarmSeverity;
    private final int alarmStatus;
    private final LocalDateTime wicaServerTimestamp;
    private final LocalDateTime epicsIocTimestamp;
@@ -53,23 +51,25 @@ public class EpicsChannelValue<T>
 /*- Constructor --------------------------------------------------------------*/
 
    /**
-    * Constructs a new instance based on the supplied string representations
-    * of the current value, the current alarm status and the supplied timestamp.
+    * Constructs a new instance based on the supplied value, alarm information
+    * and the server and channel timestamps.
     *
-    * @param value the string representation of the channel value. When
-    *        the channel is non-scalar the normal Java representation should
-    *        be supplied, thus: [ "abc", "def", "ghi" ]
+    * @param value the channel value. Can be NULL to indicate the channel is
+    *        disconnected. When the channel is non-scalar the normal Java
+    *        array representation should be supplied, thus: [ "abc", "def",
+    *        "ghi" ] etc.
     *
-    * @param alarmSeverity the alarm severity
+    * @param alarmSeverity the alarm severity.
+    * @param alarmStatus the alarm status.
     *
     * @param wicaServerTimestamp the timestamp obtained from the Wica Server
     *                            at the time the instance was created.
     *
     * @param epicsIocTimestamp the timestamp sent by the remote IOC
     */
-   public EpicsChannelValue( T value, EpicsChannelAlarmSeverity alarmSeverity, int alarmStatus, LocalDateTime wicaServerTimestamp, LocalDateTime epicsIocTimestamp )
+   private WicaChannelValue( T value, WicaChannelAlarmSeverity alarmSeverity, int alarmStatus, LocalDateTime wicaServerTimestamp, LocalDateTime epicsIocTimestamp )
    {
-      this.value = Validate.notNull( value );
+      this.value = value;
       this.alarmSeverity = Validate.notNull( alarmSeverity );
       this.alarmStatus = alarmStatus;
       this.wicaServerTimestamp = Validate.notNull( wicaServerTimestamp );
@@ -78,7 +78,17 @@ public class EpicsChannelValue<T>
 
 /*- Class methods ------------------------------------------------------------*/
 
-   public static String convertMapToJsonRepresentation( Map<EpicsChannelName,EpicsChannelValue> map )
+   public static <T> WicaChannelValue createChannelDisconnectedValue( LocalDateTime wicaServerTimestamp )
+   {
+      return new WicaChannelValue<>( null, WicaChannelAlarmSeverity.INVALID_ALARM, 0, wicaServerTimestamp, wicaServerTimestamp );
+   }
+
+   public static <T> WicaChannelValue createChannelConnectedValue( T value, WicaChannelAlarmSeverity alarmSeverity, int alarmStatus, LocalDateTime wicaServerTimestamp, LocalDateTime epicsIocTimestamp )
+   {
+      return new WicaChannelValue<>( value, alarmSeverity, alarmStatus, wicaServerTimestamp, epicsIocTimestamp );
+   }
+
+   public static String convertMapToJsonRepresentation( Map<WicaChannelName, WicaChannelValue> map )
    {
       try
       {
@@ -92,12 +102,19 @@ public class EpicsChannelValue<T>
 
 /*- Public methods -----------------------------------------------------------*/
 
+   @JsonIgnore
+   public boolean isChannelConnected()
+   {
+      return value == null;
+   }
+
    @JsonProperty( "val" )
    public T getValue()
    {
       return value;
    }
 
+   @JsonIgnore
    @JsonProperty( "stat")
    public int getAlarmStatus()
    {
@@ -110,16 +127,32 @@ public class EpicsChannelValue<T>
       return alarmSeverity.ordinal();
    }
 
+   @JsonIgnore
    @JsonProperty( "ts1" )
    public long getWicaServerTimestamp()
    {
       return wicaServerTimestamp.atOffset( ZoneOffset.UTC ).toInstant().toEpochMilli();
    }
 
+   @JsonIgnore
    @JsonProperty( "ts2" )
    public long getEpicsIocTimestamp()
    {
       return epicsIocTimestamp.atOffset( ZoneOffset.UTC ).toInstant().toEpochMilli();
+   }
+
+   @JsonIgnore
+   @JsonProperty( "ts1-alt" )
+   public LocalDateTime getWicaServerTimestampAlt()
+   {
+      return wicaServerTimestamp;
+   }
+
+   @JsonIgnore
+   @JsonProperty( "ts2-alt" )
+   public LocalDateTime getEpicsIocTimestampAlt()
+   {
+      return epicsIocTimestamp;
    }
 
 /*- Private methods ----------------------------------------------------------*/
