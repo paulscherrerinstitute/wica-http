@@ -6,7 +6,7 @@
 # FROM openjdk:9-jdk as build_jdk
 FROM openjdk:10-jdk as build_jdk
 
-#WORKDIR /app
+WORKDIR /app
 
 # Create a reduced JVM with just those modules that are required by the
 # wica application.
@@ -15,13 +15,13 @@ FROM openjdk:10-jdk as build_jdk
 # tool to analyse the dependencies in the wica über jar. Obviously the
 # list will need to be adjusted when/if new features are added.
 
-#RUN jlink --module-path $JAVA_HOME/jmods \
-#          --add-modules java.base,java.desktop,java.instrument,java.logging,java.management,java.naming,java.prefs,java.rmi,java.security.jgss,java.scripting,java.sql,java.transaction,java.xml,java.xml.bind,java.xml.ws,java.xml.ws.annotation,jdk.httpserver \
-#          --output my_java \
-#          --compress 2 \
-#          --strip-debug \
-#          --no-header-files \
-#          --no-man-pages
+RUN jlink --module-path $JAVA_HOME/jmods \
+          --add-modules java.base,java.desktop,java.instrument,java.logging,java.management,java.naming,java.prefs,java.rmi,java.security.jgss,java.scripting,java.sql,java.transaction,java.xml,java.xml.bind,java.xml.ws,java.xml.ws.annotation,jdk.httpserver \
+          --output my_java \
+          --compress 2 \
+          --strip-debug \
+          --no-header-files \
+          --no-man-pages
 
 ###############################################################################
 # 2.0 Get support for EPICS
@@ -55,7 +55,7 @@ FROM openjdk:10-jdk as build_jdk
 # 3.0 Now create a debian image for deploying the application
 ###############################################################################
 
-#FROM debian:stable-slim
+FROM debian:stable-slim
 
 # This script takes one argument - the name of the jar file containing
 # the Spring Boot application.
@@ -63,11 +63,10 @@ ARG JAR_FILE
 
 # Copy over the cutdown Java runtime that was created in the first stage
 # of the build above.
-#ENV JAVA_HOME=/opt/jdk \
-#    PATH=${PATH}:/opt/jdk/bin
+ENV JAVA_HOME=/opt/jdk \
+    PATH=${PATH}:/opt/jdk/bin
 
-#COPY --from=build_jdk /app/my_java/ $JAVA_HOME
-
+COPY --from=build_jdk /app/my_java/ $JAVA_HOME
 
 ##
 ## Enable the following block when EPICS is needed in the container for eg
@@ -156,8 +155,13 @@ VOLUME /root/config
 ###############################################################################
 
 # Run the application on the Java 10 module path invoking the docker-run configuration profile
-# and passing the contents of the SSH Deploy Key
-ENTRYPOINT java -Dspring.config.location=config/application-docker-run.properties \
+# and passing the contents of the SSH Deploy Key.
+# Note the 'file.encoding' setting determines how the application reconstitutes
+# String information that has been sent down the wire. By choosing the ISO8859-1
+# character set this means we can cater for DB files that are encoded the old-school
+# (ISO8859-1) way.
+ENTRYPOINT java -Dfile.encoding=ISO8859-1 \
+           -Dspring.config.location=config/application-docker-run.properties \
            -p lib/jarfile.jar \
            --add-modules ALL-DEFAULT \
            -m jarfile \
