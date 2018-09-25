@@ -12,14 +12,14 @@ import java.util.Set;
 /*- Class Declaration --------------------------------------------------------*/
 
 @Immutable
-public class EpicsChannelDataStream
+public class WicaStream
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final StreamId streamId;
-   private final Set<EpicsChannelName> channels;
+   private final WicaStreamId wicaStreamId;
+   private final Set<WicaChannelName> channels;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -30,20 +30,20 @@ public class EpicsChannelDataStream
     *
     * @param channels the channels of interest
     */
-   public EpicsChannelDataStream( Set<EpicsChannelName> channels )
+   public WicaStream( Set<WicaChannelName> channels )
    {
       this.channels = Validate.notNull ( channels );
-      this.streamId = StreamId.createNext();
+      this.wicaStreamId = WicaStreamId.createNext();
    }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public StreamId getStreamId()
+   public WicaStreamId getWicaStreamId()
    {
-      return streamId;
+      return wicaStreamId;
    }
-   public Set<EpicsChannelName> getChannels()
+   public Set<WicaChannelName> getChannels()
    {
       return channels;
    }
