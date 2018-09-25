@@ -5,7 +5,7 @@ package ch.psi.wica.controllers;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.WicaApplication;
-import ch.psi.wica.model.StreamId;
+import ch.psi.wica.model.WicaStreamId;
 import ch.psi.wica.services.EpicsChannelMonitorService;
 import net.jcip.annotations.ThreadSafe;
 import org.slf4j.Logger;
@@ -32,13 +32,13 @@ import java.util.Map;
 @ThreadSafe
 @RequestMapping("/")
 @Controller
-class HtmlControllerMainPage
+class WicaMainPageController
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(HtmlControllerMainPage.class );
+   private final Logger logger = LoggerFactory.getLogger(WicaMainPageController.class );
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -72,7 +72,7 @@ class HtmlControllerMainPage
       serverStatisticsMap.put( "Server Started",    formattedServerStartTime );
       serverStatisticsMap.put( "Server Uptime",     formattedServerUpTime );
 
-      serverStatisticsMap.put( "WICA Streams Created",     String.valueOf( StreamId.getCreationCount() ) );
+      serverStatisticsMap.put( "WICA Streams Created",     String.valueOf(WicaStreamId.getCreationCount() ) );
       serverStatisticsMap.put( "EPICS Channels Created",   String.valueOf( EpicsChannelMonitorService.getChannelCreationCount()   ) );
       serverStatisticsMap.put( "EPICS Channels Connected", String.valueOf( EpicsChannelMonitorService.getChannelConnectionCount() ) );
       serverStatisticsMap.put( "EPICS Monitors Created",   String.valueOf( EpicsChannelMonitorService.getMonitorCreationCount()   ) );
