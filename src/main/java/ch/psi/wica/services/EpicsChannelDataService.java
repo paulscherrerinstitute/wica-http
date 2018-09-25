@@ -3,10 +3,10 @@ package ch.psi.wica.services;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.EpicsChannelMetadata;
-import ch.psi.wica.model.EpicsChannelName;
-import ch.psi.wica.model.EpicsChannelValue;
-import ch.psi.wica.model.EpicsChannelDataStream;
+import ch.psi.wica.model.WicaChannelMetadata;
+import ch.psi.wica.model.WicaChannelName;
+import ch.psi.wica.model.WicaChannelValue;
+import ch.psi.wica.model.WicaStream;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -32,9 +32,9 @@ public class EpicsChannelDataService
 
    private final Logger logger = LoggerFactory.getLogger (EpicsChannelDataService.class );
 
-   private static final Map<EpicsChannelName,Integer> channelInterestMap = Collections.synchronizedMap(new HashMap<>() );
-   private static final Map<EpicsChannelName, EpicsChannelValue> channelValueStash = Collections.synchronizedMap(new HashMap<>() );
-   private static final Map<EpicsChannelName, EpicsChannelMetadata> channelMetadataStash = Collections.synchronizedMap(new HashMap<>() );
+   private static final Map<WicaChannelName,Integer> channelInterestMap = Collections.synchronizedMap(new HashMap<>() );
+   private static final Map<WicaChannelName, WicaChannelValue> channelValueStash = Collections.synchronizedMap(new HashMap<>() );
+   private static final Map<WicaChannelName, WicaChannelMetadata> channelMetadataStash = Collections.synchronizedMap(new HashMap<>() );
 
    private EpicsChannelMonitorService epicsChannelMonitorService;
 
@@ -51,11 +51,11 @@ public class EpicsChannelDataService
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public void startMonitoring( EpicsChannelDataStream epicsChannelDataStream )
+   public void startMonitoring( WicaStream wicaStream )
    {
-      Validate.notNull(epicsChannelDataStream);
+      Validate.notNull(wicaStream);
 
-      for ( EpicsChannelName channelName : epicsChannelDataStream.getChannels() )
+      for ( WicaChannelName channelName : wicaStream.getChannels() )
       {
          // If the channel is already being monitored increment the interest count.
          if ( channelInterestMap.containsKey( channelName ) )
@@ -68,19 +68,19 @@ public class EpicsChannelDataService
             logger.info("subscribing to new channel: '{}'", channelName ) ;
             // Now startMonitoring
             final Consumer<Boolean> stateChangedHandler = b -> stateChanged( channelName, b );
-            final Consumer<EpicsChannelValue> valueChangedHandler =  v -> valueChanged( channelName, v );
-            final Consumer<EpicsChannelMetadata> metadataChangedHandler =  v -> metadataChanged( channelName, v );
+            final Consumer<WicaChannelValue> valueChangedHandler = v -> valueChanged(channelName, v );
+            final Consumer<WicaChannelMetadata> metadataChangedHandler = v -> metadataChanged(channelName, v );
             epicsChannelMonitorService.startMonitoring( channelName, stateChangedHandler, metadataChangedHandler, valueChangedHandler );
             channelInterestMap.put( channelName, 1 );
          }
       }
    }
 
-   public void stopMonitoring( EpicsChannelDataStream epicsChannelDataStream )
+   public void stopMonitoring( WicaStream WicaStream )
    {
-      Validate.notNull(epicsChannelDataStream);
+      Validate.notNull(WicaStream);
 
-      for ( EpicsChannelName channelName : epicsChannelDataStream.getChannels() )
+      for ( WicaChannelName channelName : WicaStream.getChannels() )
       {
          // Validate the precondition that
          Validate.isTrue( channelInterestMap.containsKey( channelName ) );
@@ -96,31 +96,31 @@ public class EpicsChannelDataService
    }
 
 
-   public Map<EpicsChannelName,EpicsChannelValue> getChannelValues( EpicsChannelDataStream epicsChannelDataStream )
+   public Map<WicaChannelName, WicaChannelValue> getChannelValues( WicaStream WicaStream )
    {
-      Validate.notNull(epicsChannelDataStream);
+      Validate.notNull(WicaStream);
 
-      return epicsChannelDataStream.getChannels().stream()
+      return WicaStream.getChannels().stream()
                                                   .filter( channelValueStash::containsKey )
                                                   .collect( Collectors.toMap( Function.identity(), channelValueStash::get ) );
    }
 
 
-   public Map<EpicsChannelName,EpicsChannelValue> getChannelValuesUpdatedSince( EpicsChannelDataStream epicsChannelDataStream, LocalDateTime sinceDateTime )
+   public Map<WicaChannelName, WicaChannelValue> getChannelValuesUpdatedSince( WicaStream WicaStream, LocalDateTime sinceDateTime )
    {
-      Validate.notNull(epicsChannelDataStream);
+      Validate.notNull(WicaStream);
 
-      return epicsChannelDataStream.getChannels().stream()
+      return WicaStream.getChannels().stream()
                                                   .filter( channelValueStash::containsKey )
                                                   .filter( c -> channelValueStash.get( c ).getTimestamp().isAfter( sinceDateTime ) )
                                                   .collect( Collectors.toMap( Function.identity(), channelValueStash::get ) );
    }
 
-   public Map<EpicsChannelName,EpicsChannelMetadata> getChannelMetadata( EpicsChannelDataStream epicsChannelDataStream )
+   public Map<WicaChannelName, WicaChannelMetadata> getChannelMetadata( WicaStream WicaStream )
    {
-      Validate.notNull(epicsChannelDataStream);
+      Validate.notNull(WicaStream);
 
-      return epicsChannelDataStream.getChannels().stream()
+      return WicaStream.getChannels().stream()
             .filter( channelMetadataStash::containsKey )
             .collect( Collectors.toMap( Function.identity(), channelMetadataStash::get ) );
    }
@@ -131,51 +131,51 @@ public class EpicsChannelDataService
    /**
     * Handles a connection state change on the underlying EPICS channel monitor.
     *
-    * @param epicsChannelName the name of the channel whose connection state changed.
+    * @param wicaChannelName the name of the channel whose connection state changed.
     * @param isConnected the new connection state.
     */
-   private void stateChanged( EpicsChannelName epicsChannelName, Boolean isConnected )
+   private void stateChanged( WicaChannelName wicaChannelName, Boolean isConnected )
    {
-      Validate.notNull( epicsChannelName, "The 'epicsChannelName' argument was null" );
+      Validate.notNull(wicaChannelName, "The 'wicaChannelName' argument was null" );
       Validate.notNull( isConnected, "The 'isConnected' argument was null"  );
 
-      logger.info("'{}' - connection state changed to '{}'.", epicsChannelName, isConnected);
+      logger.info("'{}' - connection state changed to '{}'.", wicaChannelName, isConnected);
 
       if ( ! isConnected )
       {
-         logger.debug("'{}' - value changed to NULL to indicate the connection was lost.", epicsChannelName);
-         channelValueStash.put( epicsChannelName, null );
+         logger.debug("'{}' - value changed to NULL to indicate the connection was lost.", wicaChannelName);
+         channelValueStash.put( wicaChannelName, WicaChannelValue.createChannelDisconnectedValue( LocalDateTime.now() ) );
       }
    }
 
    /**
     * Handles a value change on the underlying EPICS channel monitor.
     *
-    * @param epicsChannelName the name of the channel whose monitor changed.
-    * @param epicsChannelValue the new value.
+    * @param wicaChannelName the name of the channel whose monitor changed.
+    * @param wicaChannelValue the new value.
     */
-   private void valueChanged( EpicsChannelName epicsChannelName, EpicsChannelValue epicsChannelValue )
+   private void valueChanged( WicaChannelName wicaChannelName, WicaChannelValue wicaChannelValue )
    {
-      Validate.notNull( epicsChannelName, "The 'epicsChannelName' argument was null");
-      Validate.notNull( epicsChannelValue,"The 'newValue' argument was null");
+      Validate.notNull(wicaChannelName, "The 'wicaChannelName' argument was null");
+      Validate.notNull(wicaChannelValue, "The 'newValue' argument was null");
 
-      logger.trace("'{}' - value changed to: '{}'", epicsChannelName, epicsChannelValue );
-      channelValueStash.put( epicsChannelName,  epicsChannelValue );
+      logger.trace("'{}' - value changed to: '{}'", wicaChannelName, wicaChannelValue);
+      channelValueStash.put(wicaChannelName, wicaChannelValue);
    }
 
    /**
     * Handles a value change on the metadata associated with an EPICS channel.
     *
-    * @param epicsChannelName the name of the channel for whom metadata is now available
-    * @param epicsChannelMetadata the metadata
+    * @param wicaChannelName the name of the channel for whom metadata is now available
+    * @param wicaChannelMetadata the metadata
     */
-   private void metadataChanged( EpicsChannelName epicsChannelName, EpicsChannelMetadata epicsChannelMetadata )
+   private void metadataChanged( WicaChannelName wicaChannelName, WicaChannelMetadata wicaChannelMetadata )
    {
-      Validate.notNull( epicsChannelName, "The 'epicsChannelName' argument was null");
-      Validate.notNull( epicsChannelMetadata,"The 'epicsChannelMetadata' argument was null");
+      Validate.notNull(wicaChannelName, "The 'wicaChannelName' argument was null");
+      Validate.notNull(wicaChannelMetadata, "The 'wicaChannelMetadata' argument was null");
 
-      logger.trace("'{}' - metadata changed to: '{}'", epicsChannelName, epicsChannelMetadata );
-      channelMetadataStash.put( epicsChannelName,  epicsChannelMetadata );
+      logger.trace("'{}' - metadata changed to: '{}'", wicaChannelName, wicaChannelMetadata);
+      channelMetadataStash.put(wicaChannelName, wicaChannelMetadata);
    }
 
 
