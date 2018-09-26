@@ -89,7 +89,8 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-6825](https://jira.psi.ch/browse/CTRLIT-6825): Resolve HIPA micro charracter / iso8859-1 character encoding issue.     
    - [CTRLIT-6826](https://jira.psi.ch/browse/CTRLIT-6826): Fix bug whereby only one client was notified of the value change stream.   
    - [CTRLIT-6827](https://jira.psi.ch/browse/CTRLIT-6827): Cleanup MVC Configuration to get rid of deprecated warnings.            
-
+   - [CTRLIT-6831](https://jira.psi.ch/browse/CTRLIT-6831): Correct problem with PROSCAN Status Display when plotting more than 900 points.
+    
 # Project Ideas Completed
 
 1. Consider refactoring so that the app only uses one context (channels can then be cached and shared between 

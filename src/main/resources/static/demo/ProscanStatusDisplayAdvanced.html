@@ -906,8 +906,9 @@
                 that.vdefVoltageArray.push( that.vdefVoltage );
                 that.hfPowerArray.push( that.hfPower );
 
-                // keep the last 900 points which roughly corresponds to 30 minutes at 2 seconds per update
-                if ( that.nPoints++ === 900 ) {
+                // Start throwing away the oldest value in the array after 900 points have been
+                // received. This corresponds roughly to 30 minutes at 2 seconds per update.
+                if ( that.nPoints++ > 900 ) {
                      that.timeArray.shift();
                      that.beamCurrentArray.shift();
                      that.vdefVoltageArray.shift();
