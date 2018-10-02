@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>HIPA RF Ring Monitor</title>
+
+    <!-- Load the Plotly library after the rest of this HTML page has loaded -->
+    <script src="https://gfa-wica.psi.ch/plotly-latest.min.js" defer async></script>
+    <!-- Load the Wica library last of all as it will generate events which interact with the page -->
+    <script src="https://gfa-wica.psi.ch/wica.js" defer></script>
+
+    <style>
+
+        * {
+            font-family: "Helvetica Neue",sans-serif;
+            padding: 0;
+            margin: 0;
+            border:0;
+        }
+
+        body, html {
+            height: 100vh;
+            width: 100vw;
+            background-color: darkgrey;
+            overflow:hidden;
+        }
+
+        .flex-new-row {
+            width: 100%;
+        }
+
+        /* Extra small devices (portrait phones, less than 544px). There is no media query */
+        /* since this is the default in Bootstrap because it is "mobile first" */
+        html {
+            font-size:1rem;
+        } /*1rem = 16px*/
+
+        .statusItemLabel {
+            text-align: right;
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .statusItemValue {
+            background-color: lightgray;
+            width: 7rem;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .statusWidget {
+            background-color: red;
+            margin: 0.5rem;
+            height: 1.2rem;
+            width: 1.2rem;
+        }
+
+        .grid-container {
+            height: 95%;
+            width: 95%;
+            margin: auto;
+        }
+
+        /* Grid Definition */
+        .Labview     { grid-area: Labview; }
+        .Banner      { grid-area: Banner;  }
+        .Legend      { grid-area: Legend;  }
+
+        .PlotI       { grid-area: PlotI;   }
+        .PlotII      { grid-area: PlotII;  }
+        .PlotIII     { grid-area: PlotIII; }
+        .PlotIV      { grid-area: PlotIV;  }
+        .PlotV       { grid-area: PlotV;   }
+
+        .PhaseI      { grid-area: PhaseI;  }
+        .PhaseII     { grid-area: PhaseII; }
+        .PhaseIII    { grid-area: PhaseIII;}
+        .PhaseIV     { grid-area: PhaseIV; }
+        .PhaseV      { grid-area: PhaseV;  }
+
+        .Strahl      { grid-area: Strahl;  }
+        .Temp1       { grid-area: Temp1;   }
+        .Temp2       { grid-area: Temp2;   }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            grid-template-rows:    1fr 5fr 1fr 1fr 1fr;
+            grid-gap: 1%;
+            grid-template-areas:
+                    'Labview  Banner   Banner    Banner   Legend'
+                    'PlotI    PlotII   PlotIII   PlotIV   PlotV'
+                    'PhaseI   PhaseII  PhaseIII  PhaseIV  PhaseV'
+                    'Strahl   Strahl   .         Temp1    Temp1'
+                    '.        .        .         Temp2    Temp2';
+        }
+
+        .legendContainer {
+            display: flex;
+            height: 100%;
+            flex-flow: row wrap;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .legendBox {
+            margin-left: 1rem;
+            width: 2rem;
+            height: 0.5rem;
+        }
+
+        .legendLabel {
+            width: 8rem;
+            font-size: 0.8rem;
+        }
+
+        .spannung, .hinlauf, .reflexion, .vakuum {
+            width: 2rem;
+            margin-right: 0.2rem;
+        }
+
+        .spannung {
+            background-color: darkblue;
+        }
+
+        .hinlauf {
+            background-color: limegreen;
+        }
+
+        .reflexion {
+            background-color: red;
+        }
+
+        .vakuum {
+            background-color: black;
+        }
+
+        .labviewContainer, .bannerContainer {
+            display: flex;
+            height: 100%;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .plotIContainer, .plotIIContainer, .plotIIIContainer, .plotIVContainer, .plotVContainer {
+            display: grid;
+            height: 100%;
+        }
+
+        .plotIContainerTempHolder, .plotIIContainerTempHolder, .plotIIIContainerTempHolder, .plotIVContainerTempHolder, .plotVContainerTempHolder {
+            height: 100%;
+            grid-row-start: 1;
+            grid-column-start: 1;
+            z-index: 1;
+            margin-left: auto;
+        }
+
+        .phaseIContainer, .phaseIIContainer, .phaseIIIContainer, .phaseIVContainer, .phaseVContainer {
+            display: grid;
+            height: 100%;
+        }
+
+        .tempValue {
+            margin: 0.3rem;
+            background-color: darkgray;
+            font-size: 1rem;
+        }
+
+        .plotIContainerPlotHolder, .plotIIContainerPlotHolder, .plotIIIContainerPlotHolder, .plotIVContainerPlotHolder, .plotVContainerPlotHolder {
+            grid-row-start: 1;
+            grid-column-start: 1;
+            z-index: 0;
+            display: flex;
+            height: 100%;
+        }
+
+        .plot {
+            background-color: lightgray;
+            height: 100%;
+            width: 100%;
+            flex-basis: auto;
+        }
+
+        .strahlContainer {
+            display: flex;
+            height: 100%;
+            flex-flow: row wrap;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .temp1Container, .temp2Container {
+            display: flex;
+            height: 100%;
+            flex-flow: row wrap;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="grid-container">
+
+        <!-- Row 1 Status Information -->
+        <div class="Labview">
+            <div class="labviewContainer">
+                <div class="statusItemLabel">Labview RT</div>
+                <div class="statusWidget" data-wica-channel-name="ZRFMON-VME-1:LV-RT-ALIVE" onchange="updateLabviewAliveStatusWidget( event )"></div>
+            </div>
+        </div>
+
+        <div class="Banner">
+            <div class="bannerContainer">
+                <h1>HIPA RF Ring Monitor</h1>
+            </div>
+        </div>
+
+        <div class="Legend">
+            <div class="legendContainer">
+                <div class="flex-new-row"></div>
+                <div class="legendBox spannung">&nbsp;</div>
+                <div class="legendLabel">Spannung</div>
+                <div class="flex-new-row"></div>
+                <div class="legendBox hinlauf">&nbsp;</div>
+                <div class="legendLabel">Hinlauf (PFWD)</div>
+                <div class="flex-new-row"></div>
+                <div class="legendBox reflexion">&nbsp;</div>
+                <div class="legendLabel">Reflexion (PBV)</div>
+                <div class="flex-new-row"></div>
+                <div class="legendBox vakuum">&nbsp;</div>
+                <div class="legendLabel">Vakuum</div>
+            </div>
+        </div>
+
+        <!-- Row 2 Status Information -->
+        <div class="PlotI">
+            <div class="plotIContainer">
+                <div class="plotIContainerTempHolder">
+                    <div class="tempValue" data-wica-channel-name="CR1-RFMON:TEMP" data-wica-rendering-hints='{ "units": "°C", "prec" : 0 }'></div>
+                </div>
+                <div class="plotIContainerPlotHolder">
+                    <div class ="plot" id="plotIPlotId">
+                        <div id="plotIData1Id" data-wica-channel-name="CR1-RFMON:V"></div>
+                        <div id="plotIData2Id" data-wica-channel-name="CR1-RFMON:PFWD"></div>
+                        <div id="plotIData3Id" data-wica-channel-name="CR1-RFMON:PREFL"></div>
+                        <div id="plotIData4Id" data-wica-channel-name="CR1-RFMON:VAC-LOG"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="PlotII">
+            <div class="plotIIContainer">
+                <div class="plotIIContainerTempHolder">
+                    <div class="tempValue" data-wica-channel-name="CR2-RFMON:TEMP" data-wica-rendering-hints='{ "units": "°C", "prec" : 0 }'></div>
+                </div>
+                <div class="plotIIContainerPlotHolder">
+                    <div class ="plot" id="plotIIPlotId">
+                        <div id="plotIIData1Id" data-wica-channel-name="CR2-RFMON:V"></div>
+                        <div id="plotIIData2Id" data-wica-channel-name="CR2-RFMON:PFWD"></div>
+                        <div id="plotIIData3Id" data-wica-channel-name="CR2-RFMON:PREFL"></div>
+                        <div id="plotIIData4Id" data-wica-channel-name="CR2-RFMON:VAC-LOG"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="PlotIII">
+            <div class="plotIIIContainer">
+                <div class="plotIIIContainerTempHolder">
+                    <div class="tempValue" data-wica-channel-name="CR3-RFMON:TEMP" data-wica-rendering-hints='{ "units": "°C", "prec" : 0 }'></div>
+                </div>
+                <div class="plotIIIContainerPlotHolder">
+                    <div class ="plot" id="plotIIIPlotId">
+                        <div id="plotIIIData1Id" data-wica-channel-name="CR3-RFMON:V"></div>
+                        <div id="plotIIIData2Id" data-wica-channel-name="CR3-RFMON:PFWD"></div>
+                        <div id="plotIIIData3Id" data-wica-channel-name="CR3-RFMON:PREFL"></div>
+                        <div id="plotIIIData4Id" data-wica-channel-name="CR3-RFMON:VAC-LOG"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="PlotIV">
+            <div class="plotIVContainer">
+                <div class="plotIVContainerTempHolder">
+                    <div class="tempValue" data-wica-channel-name="CR4-RFMON:TEMP" data-wica-rendering-hints='{ "units": "°C", "prec" : 0 }'></div>
+                </div>
+                <div class="plotIVContainerPlotHolder">
+                    <div class ="plot" id="plotIVPlotId">
+                        <div id="plotIVData1Id" data-wica-channel-name="CR4-RFMON:V"></div>
+                        <div id="plotIVData2Id" data-wica-channel-name="CR4-RFMON:PFWD"></div>
+                        <div id="plotIVData3Id" data-wica-channel-name="CR4-RFMON:PREFL"></div>
+                        <div id="plotIVData4Id" data-wica-channel-name="CR4-RFMON:VAC-LOG"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="PlotV">
+            <div class="plotVContainer">
+                <div class="plotVContainerTempHolder">
+                    <div class="tempValue" data-wica-channel-name="CR5-RFMON:TEMP" data-wica-rendering-hints='{ "units": "°C", "prec" : 0 }'></div>
+                </div>
+                <div class="plotVContainerPlotHolder">
+                    <div class ="plot" id="plotVPlotId">
+                        <div id="plotVData1Id" data-wica-channel-name="CR5-RFMON:V"></div>
+                        <div id="plotVData2Id" data-wica-channel-name="CR5-RFMON:PFWD"></div>
+                        <div id="plotVData3Id" data-wica-channel-name="CR5-RFMON:PREFL"></div>
+                        <div id="plotVData4Id" data-wica-channel-name="CR5-RFMON:VAC-LOG"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 3 Status Information -->
+        <div class="PhaseI">
+            <div class="phaseIContainer">
+                <div class ="plot" id="phaseIPlotId">
+                    <div id="phaseIPlotDataId" data-wica-channel-name="CR1-RFMON:PHASE12"></div>
+                    <div id="phaseIPlotStatusId" data-wica-channel-name="CR1-RFMON:PHASE12-STAT"></div>
+                </div>
+                </div>
+        </div>
+
+        <div class="PhaseII">
+            <div class="phaseIIContainer">
+                <div class ="plot" id="phaseIIPlotId">
+                    <div id="phaseIIPlotDataId" data-wica-channel-name="CR2-RFMON:PHASE23"></div>
+                    <div id="phaseIIPlotStatusId" data-wica-channel-name="CR2-RFMON:PHASE23-STAT"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="PhaseIII">
+            <div class="phaseIIIContainer">
+                <div class ="plot" id="phaseIIIPlotId">
+                    <div id="phaseIIIPlotDataId" data-wica-channel-name="CR3-RFMON:PHASE34"></div>
+                    <div id="phaseIIIPlotStatusId" data-wica-channel-name="CR3-RFMON:PHASE34-STAT"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="PhaseIV">
+            <div class="phaseIVContainer">
+                <div class ="plot" id="phaseIVPlotId">
+                    <div id="phaseIVPlotDataId" data-wica-channel-name="CR4-RFMON:PHASE41"></div>
+                    <div id="phaseIVPlotStatusId" data-wica-channel-name="CR4-RFMON:PHASE41-STAT"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="PhaseV">
+            <div class="phaseVContainer">
+                <div class ="plot" id="phaseVPlotId">
+                    <div id="phaseVPlotDataId" data-wica-channel-name="CR5-RFMON:PHASES50150"></div>
+                    <div id="phaseVPlotStatusId" data-wica-channel-name="CR5-RFMON:PHASES50150-STAT"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 4 Status Information -->
+        <div class="Strahl">
+            <div class="strahlContainer">
+                <div class="statusItemLabel">Strahlstrom MHC1</div>
+                <div class="statusItemValue" data-wica-channel-name="CR-RFMON:MHC1" data-wica-rendering-hints='{ "prec" : 0 }'></div>
+            </div>
+        </div>
+
+        <div class="Temp1">
+            <div class="temp1Container">
+                <div class="statusItemLabel">Temperatur Kreis HFO VL</div>
+                <div class="statusItemValue" data-wica-channel-name="CR-RFMON:DEMI0" data-wica-rendering-hints='{ "units": "°C", "prec" : 0 }'></div>
+            </div>
+        </div>
+
+        <!-- Row 5 Status Information -->
+        <div class="Temp2">
+            <div class="temp2Container">
+                <div class="statusItemLabel">Temperatur Kreis HFO VL (GLS)</div>
+                <div class="statusItemValue" data-wica-channel-name="GLS:HF0_VL_DEMI" data-wica-rendering-hints='{ "units": "°C", "prec" : 0 }'></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+        function updateLabviewAliveStatusWidget( event ) {
+            if ( event.channelValue.val ===  0 ) {
+                update_status_widget( event.target, true );
+            }
+            else {
+                update_status_widget( event.target, false );
+            }
+        }
+
+        function update_status_widget( widget, isOK ) {
+            if ( isOK ) {
+                widget.style.backgroundColor = "limegreen";
+            }
+            else {
+                widget.style.backgroundColor = "red";
+            }
+        }
+
+        class PlotMeter
+        {
+            constructor( plotTitle, plotDivId, bar1Id, bar2Id, bar3Id, bar4Id, visibility )
+            {
+                this.plotElement = document.getElementById( plotDivId );
+                this.plotTitle = plotTitle;
+                this.bar1Element = document.getElementById( bar1Id );
+                this.bar2Element = document.getElementById( bar2Id );
+                this.bar3Element = document.getElementById( bar3Id );
+                this.bar4Element = document.getElementById( bar4Id );
+                this.visibility = visibility;
+
+                // Required to overcome Javascript's strange variable scoping rules
+                let that = this;
+
+                this.bar1Element.onchange = function( e ) {
+                    that.bar1Value = e.channelValue.val;
+                    // The expected range of the Spannung channel is linear and taken directly from the EPICS channel.
+                    that.bar1Min = e.channelMetadata.lopr;
+                    that.bar1Max = e.channelMetadata.hopr;
+                    that.bar1ScaledValue = 100 * ( that.bar1Value - that.bar1Min ) / ( that.bar1Max - that.bar1Min );
+                    that.bar1DataChannelIsConnected = ( that.bar1Value !== null);
+                };
+
+                this.bar2Element.onchange = function( e ) {
+                    that.bar2Value = e.channelValue.val;
+                    // The expected range of the Hinlauf channel is linear and taken directly from the EPICS channel.
+                    that.bar2Min = e.channelMetadata.lopr;
+                    that.bar2Max = e.channelMetadata.hopr;
+                    that.bar2ScaledValue = 100 * ( that.bar2Value - that.bar2Min ) / ( that.bar2Max - that.bar2Min );
+                    that.bar2DataChannelIsConnected = ( that.bar2Value !== null);
+                };
+
+                this.bar3Element.onchange = function( e ) {
+                     that.bar3Value = e.channelValue.val;
+                     // The expected range of the Reflexion channel is linear and taken directly from the EPICS channel.
+                     that.bar3Min = e.channelMetadata.lopr;
+                     that.bar3Max = e.channelMetadata.hopr;
+                     that.bar3ScaledValue = 100 * ( that.bar3Value - that.bar3Min ) / ( that.bar3Max - that.bar3Min );
+                     that.bar3DataChannelIsConnected = ( that.bar3Value !== null);
+                };
+
+                this.bar4Element.onchange = function( e ) {
+                    that.bar4Value = e.channelValue.val;
+                    // The pressure scale is logarithmic and expected to lie somewhere between 10E-7 and 10E+4 =
+                    // (12 decades). This value then needs converting to a displayable number between 0 and 100.
+                    that.intermediate =  Math.pow( 10, that.bar4Value ) / Math.pow( 10, -7);
+                    that.bar4ScaledValue =  100 * Math.log10( that.intermediate ) / 12;
+                    that.bar4DataChannelIsConnected = ( that.bar4Value !== null);
+                };
+
+                this.layout = {
+                    title: that.plotTitle,
+                    autosize: true,
+                    showlegend: false,
+                    margin: {l: 40, r: 40, b: 40, t: 40},
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    yaxis: { range : [ 0, 100 ], dtick: 10, showticklabels: false },
+                    barmode: 'group',
+                    hovermode: false
+                };
+
+                const PLOT_REFRESH_RATE_IN_MILLIS = 500;
+                setInterval( PlotMeter.updatePlot, PLOT_REFRESH_RATE_IN_MILLIS, that );
+            }
+
+            static updatePlot( that )
+            {
+                let trace1;
+                if ( that.bar1DataChannelIsConnected ) {
+                    trace1 = {
+                        y: [ PlotMeter.rangeLimit( that.bar1ScaledValue ) ],
+                        x: ['kVp'],
+                        text: that.bar1Value.toFixed(1),
+                        textposition: 'outside',
+                        type: 'bar',
+                        marker: {color: 'darkblue'},
+                        visible: that.visibility.trace1
+                    };
+                }
+                else {
+                    trace1 = {
+                        y: [100],
+                        x: ['x'],
+                        type: 'bar',
+                        text: "EPICS Channel Not Connected",
+                        textposition: 'inside',
+                        marker: {color: "white" },
+                     };
+                }
+
+                let trace2;
+                if ( that.bar2DataChannelIsConnected ) {
+                    trace2 = {
+                        y: [ PlotMeter.rangeLimit( that.bar2ScaledValue ) ],
+                        x: ['kW'],
+                        text: that.bar2Value.toFixed(1),
+                        textposition: 'outside',
+                        type: 'bar',
+                        marker: {color: 'limegreen'},
+                        visible: that.visibility.trace2
+                    };
+                }
+                else {
+                    trace2 = {
+                        y: [100],
+                        x: ['x'],
+                        type: 'bar',
+                        text: "EPICS Channel Not Connected",
+                        textposition: 'inside',
+                        marker: {color: "white" },
+                    };
+                }
+
+                let trace3;
+                if ( that.bar3DataChannelIsConnected ) {
+                    trace3 = {
+                        y: [ PlotMeter.rangeLimit( that.bar3ScaledValue ) ],
+                        // Note: its important that this label doesnt clash with the x label on trace 2
+                        x: ['kW '],
+                        text: that.bar3Value.toFixed(1),
+                        textposition: 'outside',
+                        type: 'bar',
+                        marker: {color: 'red'},
+                        visible: that.visibility.trace3
+                    };
+                }
+                else {
+                    trace3 = {
+                        y: [100],
+                        x: ['x'],
+                        type: 'bar',
+                        text: "EPICS Channel Not Connected",
+                        textposition: 'inside',
+                        marker: {color: "white" },
+                    };
+                }
+
+                let trace4;
+                if ( that.bar4DataChannelIsConnected ) {
+                    trace4 = {
+                        y: [ that.bar4ScaledValue ],
+                        x: ['mbar'],
+                        text: "10E" + that.bar4Value.toFixed(1),
+                        textposition: 'outside',
+                        type: 'bar',
+                        marker: {color: 'black'},
+                        visible: that.visibility.trace4
+                    };
+                }
+                else {
+                    trace4 = {
+                        y: [5],
+                        x: ['x'],
+                        type: 'bar',
+                        text: "EPICS Channel Not Connected",
+                        textposition: 'inside',
+                        marker: {color: "white" },
+                    };
+                }
+
+                let data = [ trace1, trace2, trace3, trace4 ];
+                Plotly.react( that.plotElement, data, that.layout, {responsive: true, displayModeBar: false} );
+            }
+
+            static rangeLimit( n )
+            {
+                if ( n < 1 )
+                {
+                    return 1;
+                }
+                else if ( n > 100 )
+                {
+                    return 100;
+                }
+                else
+                {
+                    return n;
+                }
+            }
+        }
+
+        let visibleTrace1ToTrace4 = { trace1 : true, trace2 : true, trace3 : true, trace4 : true };
+        let plotI   = new PlotMeter( "I",   "plotIPlotId",   "plotIData1Id",   "plotIData2Id",   "plotIData3Id",   "plotIData4Id",   visibleTrace1ToTrace4 );
+        let plotII  = new PlotMeter( "II",  "plotIIPlotId",  "plotIIData1Id",  "plotIIData2Id",  "plotIIData3Id",  "plotIIData4Id",  visibleTrace1ToTrace4 );
+        let plotIII = new PlotMeter( "III", "plotIIIPlotId", "plotIIIData1Id", "plotIIIData2Id", "plotIIIData3Id", "plotIIIData4Id", visibleTrace1ToTrace4 );
+        let plotIV  = new PlotMeter( "IV",  "plotIVPlotId",  "plotIVData1Id",  "plotIVData2Id",  "plotIVData3Id",  "plotIVData4Id",  visibleTrace1ToTrace4 );
+        let plotV   = new PlotMeter( "V",   "plotVPlotId",   "plotVData1Id",   "plotVData2Id",   "plotVData3Id",   "plotVData4Id",   visibleTrace1ToTrace4 );
+
+
+        class PhaseMeter
+        {
+            constructor( plotTitle, plotDivId, barDataId, barStatusDataId )
+            {
+                this.plotTitle = plotTitle;
+                this.plotElement = document.getElementById( plotDivId );
+                this.barDataElement = document.getElementById( barDataId );
+                this.barStatusElement = document.getElementById( barStatusDataId );
+
+                // Required to overcome Javascript's strange variable scoping rules
+                let that = this;
+
+                this.barDataElement.onchange = function( e ) {
+                    that.barValue = e.channelValue.val;
+                    that.barMin = e.channelMetadata.lopr;
+                    that.barMax = e.channelMetadata.hopr;
+                    that.barValueInPercent = 100 * ( that.barValue - that.barMin ) / ( that.barMax - that.barMin );
+                    that.barDataChannelIsConnected = ( that.barValue !== null);
+                };
+
+                this.barStatusElement.onchange = function( e ) {
+                    that.barStatus = e.channelValue.val;
+                };
+
+                this.layout = {
+                    title: that.plotTitle,
+                    autosize: true,
+                    showlegend: false,
+                    margin: {l: 20, r: 20, b: 10, t: 30},
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    xaxis: { range : [ -50, 50 ], dtick: 10, showticklabels: false },
+                    yaxis: { visible: false },
+                    barmode: 'stack',
+                    hovermode: false,
+                };
+
+                const PLOT_REFRESH_RATE_IN_MILLIS = 500;
+                setInterval( PhaseMeter.updatePlot, PLOT_REFRESH_RATE_IN_MILLIS, that );
+            }
+
+            static updatePlot( that )
+            {
+                let trace1 = {};
+                let trace2 = {};
+                if ( ( that.barDataChannelIsConnected ) && ( that.barStatus === 0 ) ) {
+
+                    const NEEDLE_WIDTH = 5;
+                    trace1 = {
+                        x: [ PhaseMeter.rangeLimit( that.barValueInPercent - 50 - NEEDLE_WIDTH / 2 ) ],
+                        y: ['x'],
+                        type: 'bar',
+                        // make the first colour in the stack the same as the background
+                        // to create a linear needle effect
+                        marker: {color: 'rgba(0,0,0,0)'},
+                        orientation: 'h'
+                    };
+
+                    trace2 = {
+                        x: [NEEDLE_WIDTH],
+                        y: ['x'],
+                        type: 'bar',
+                        text: that.barValue.toFixed(1) + "°",
+                        textposition: 'outside',
+                        marker: {color: 'limegreen'},
+                        orientation: 'h'
+                    };
+                }
+                else
+                {
+                    trace1 = {
+                        x: [-50],
+                        y: ['x'],
+                        type: 'bar',
+                        orientation: 'h'
+                    };
+
+                    let errorMessage = ( that.barDataChannelIsConnected ) ? "EPICS Channel Not Connected" : "Bad Phase Status";
+                    let errorColor = ( that.barDataChannelIsConnected ) ? "white" : "red";
+
+                    trace2 = {
+                        x: [100],
+                        y: ['x'],
+                        type: 'bar',
+                        text: errorMessage,
+                        textposition: 'inside',
+                        orientation: 'h',
+                        marker: {color: errorColor},
+                    };
+                }
+
+                let data = [ trace1, trace2 ];
+                Plotly.react( that.plotElement, data, that.layout, {responsive: true, displayModeBar: false} );
+            }
+
+            static rangeLimit( n ) {
+
+                if ( n < -50 ) {
+                    return -50;
+                }
+                else if ( n > 50 ) {
+                    return 50;
+                }
+                else {
+                    return n;
+                }
+            }
+        }
+
+        let plotIPhase   = new PhaseMeter( "I-II",    "phaseIPlotId",   "phaseIPlotDataId",   "phaseIPlotStatusId" );
+        let plotIIPhase  = new PhaseMeter( "II-III",  "phaseIIPlotId",  "phaseIIPlotDataId",  "phaseIIPlotStatusId" );
+        let plotIIIPhase = new PhaseMeter( "III-IV",  "phaseIIIPlotId", "phaseIIIPlotDataId", "phaseIIIPlotStatusId" );
+        let plotIVPhase  = new PhaseMeter( "IV-V",    "phaseIVPlotId",  "phaseIVPlotDataId",  "phaseIVPlotStatusId" );
+        let plotVPhase   = new PhaseMeter( "SSI-150", "phaseVPlotId",   "phaseVPlotDataId",   "phaseVPlotStatusId" );
+
+    </script>
+
+</body>
+</html>
