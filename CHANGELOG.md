@@ -90,7 +90,15 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-6826](https://jira.psi.ch/browse/CTRLIT-6826): Fix bug whereby only one client was notified of the value change stream.   
    - [CTRLIT-6827](https://jira.psi.ch/browse/CTRLIT-6827): Cleanup MVC Configuration to get rid of deprecated warnings.            
    - [CTRLIT-6831](https://jira.psi.ch/browse/CTRLIT-6831): Correct problem with PROSCAN Status Display when plotting more than 900 points.
-    
+   - [CTRLIT-6843](https://jira.psi.ch/browse/CTRLIT-6843): Create Prototypes for HIPA RF Group.    
+   - [CTRLIT-6844](https://jira.psi.ch/browse/CTRLIT-6844): Reorganise Wica Demo Pages for better structure.
+   - [CTRLIT-6845](https://jira.psi.ch/browse/CTRLIT-6845): Set precision for all fields for compatibility with existing PROSCAN Status Display.
+   - [CTRLIT-6846](https://jira.psi.ch/browse/CTRLIT-6846): Create separate Wica Admin Page.
+   - [CTRLIT-6847](https://jira.psi.ch/browse/CTRLIT-6847): Upgrade Plotly JS library to latest version.
+   - [CTRLIT-6848](https://jira.psi.ch/browse/CTRLIT-6848): Eliminate white flash when connecting by defining CSS transition.
+   - [CTRLIT-6849](https://jira.psi.ch/browse/CTRLIT-6849): Further javascript cleanup: create class for WicaRenderingManager.
+   - [CTRLIT-6850](https://jira.psi.ch/browse/CTRLIT-6850): Cleanup stream implementation so that it only sends the channel metadata and value maps on first connect.
+   
 # Project Ideas Completed
 
 1. Consider refactoring so that the app only uses one context (channels can then be cached and shared between 
