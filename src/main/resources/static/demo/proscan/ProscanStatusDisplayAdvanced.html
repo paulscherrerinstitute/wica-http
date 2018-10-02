@@ -49,62 +49,6 @@
 
 <style>
 
-    .MainStatus1 {
-        background-color: darkgrey;
-    }
-
-    .MainStatus2 {
-        background-color: darkgrey;
-    }
-
-    .TimeNow {
-        background-color: darkgrey;
-    }
-    .Banner {
-        background-color: darkgrey;
-    }
-
-    .OtherStatus1 {
-        background-color: darkgrey;
-    }
-
-    .OtherStatus2 {
-        background-color: darkgrey;
-    }
-
-    .MainPlot{
-        background-color: darkgrey;
-    }
-
-    .BlockerStatus {
-        background-color: darkgrey;
-    }
-    .Regulation {
-        background-color: darkgrey;
-    }
-    .VDefCurve {
-        background-color: darkgrey;
-    }
-    .MMAP5X {
-        background-color: darkgrey;
-    }
-    .MMAP6Y {
-        background-color: darkgrey;
-    }
-    .Environment {
-        background-color: darkgrey;
-    }
-    .RPS-SSB {
-        background-color: darkgrey;
-    }
-    .Mastership {
-        background-color: darkgrey;
-    }
-
-</style>
-<style>
-
-
     * {
         font-family: "Helvetica Neue",sans-serif;
         padding: 0;
@@ -485,9 +429,9 @@
         <div class="mainStatusItemContainer">
             <div class="mainStatusItemLabel">MMAC3</div>
             <div class="statusWidget" data-wica-channel-name="MMAV6:IST:2" onchange="updateHvpsuOkWidget( event )"></div>
-            <div class="mainStatusItemValue" data-wica-channel-name="MMAC3:STR:2">NC</div>
+            <div class="mainStatusItemValue" data-wica-channel-name="MMAC3:STR:2"  data-wica-rendering-hints='{ "prec" : 0 }'>NC</div>
             <div class="mainStatusItemLabel">Vdef.</div>
-            <div class="mainStatusItemValue" data-wica-channel-name="EMJCYV:IST:2">NC</div>
+            <div class="mainStatusItemValue" data-wica-channel-name="EMJCYV:IST:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
         </div>
     </div>
     <div class="MainStatus2">
@@ -496,7 +440,7 @@
             <div class="statusWidget"></div>
             <div class="mainStatusItemValue" data-wica-channel-name="MMAC:SOL:2">NC</div>
             <div class="mainStatusItemLabel">Degr.</div>
-            <div class="mainStatusItemValue" data-wica-channel-name="DMAD1:IST:2">NC</div>
+            <div class="mainStatusItemValue" data-wica-channel-name="DMAD1:IST:2" data-wica-rendering-hints='{ "prec" : 1 }'>NC</div>
         </div>
     </div>
 
@@ -510,44 +454,44 @@
     <div class="OtherStatus1">
         <div class="otherStatusItemContainer">
             <div class="otherStatusItemLabel">Kicker</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="AMAKI1:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="AMAKI1:IST:2" data-wica-rendering-hints='{ "prec" : 1 }'>NC</div>
             <div class="otherStatusItemLabel">HF</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="CMJSEV:PWRF:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="CMJLL:SOLA:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="CMJSEV:PWRF:2" data-wica-rendering-hints='{ "prec" : 1 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="CMJLL:SOLA:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
             <div class="otherStatusItemLabel">Extractor</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="EMJEC1V:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="EMJEC2V:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="EMJEC1V:IST:2" data-wica-rendering-hints='{ "prec" : 1 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="EMJEC2V:IST:2" data-wica-rendering-hints='{ "prec" : 1 }'>NC</div>
             <div class="otherStatusItemLabel">Hauptmagnet</div>
             <div class="otherStatusItemValue" data-wica-channel-name="AMJHS-I:IADC:2">NC</div>
             <div class="otherStatusItemLabel">Phase</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="MMJF:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="MMJF:IST:2" data-wica-rendering-hints='{ "prec" : 1 }'>NC</div>
             <div class="otherStatusItemLabel">Ionenquelle</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="IMJV:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="IMJI:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="IMJGF:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="XPROIONS:IST1:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="IMJV:IST:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="IMJI:IST:2" data-wica-rendering-hints='{ "prec" : 1 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="IMJGF:IST:2" data-wica-rendering-hints='{ "prec" : 1 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="XPROIONS:IST1:2" data-wica-rendering-hints='{ "prec" : 1 }'>NC</div>
         </div>
     </div>
 
     <div class="OtherStatus2">
         <div class="otherStatusItemContainer">
             <div class="otherStatusItemLabel">QMA1/2/3</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="QMA1:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="QMA2:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="QMA3:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="QMA1:IST:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="QMA2:IST:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="QMA3:IST:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
             <div class="otherStatusItemLabel">SMJ1x/2y</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="SMJ1X:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="SMJ2Y:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="SMJ1X:IST:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="SMJ2Y:IST:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
             <div class="otherStatusItemLabel">SMA1x/1y</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="SMA1X:IST:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="SMA1Y:IST:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="SMA1X:IST:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="SMA1Y:IST:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
             <div class="otherStatusItemLabel">Ph.Spalt 1/2</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="MMJP2:IST1:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="FMJEPI:POS:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="FMJEPI:BREI:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="MMJP2:IST2:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="FMJIPI:POS:2">NC</div>
-            <div class="otherStatusItemValue" data-wica-channel-name="FMJIPI:BREI:2">NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="MMJP2:IST1:2" data-wica-rendering-hints='{ "prec" : 0 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="FMJEPI:POS:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="FMJEPI:BREI:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="MMJP2:IST2:2" data-wica-rendering-hints='{ "prec" : 0 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="FMJIPI:POS:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
+            <div class="otherStatusItemValue" data-wica-channel-name="FMJIPI:BREI:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
         </div>
     </div>
 
@@ -668,17 +612,17 @@
         <div class="envStatusItemContainer">
             <div id="heizleistungDataId1" data-wica-channel-name="YMJHH:SPARB:2"></div>
             <div id="heizleistungDataId2" data-wica-channel-name="YMJHH:STR:2"></div>
-            <div class="envStatusItemLabel">Schildkü 1:</div><div class="envStatusItemValue" data-wica-channel-name="YMJCS1K:IST:2">NC</div>
+            <div class="envStatusItemLabel">Schildkü 1:</div><div class="envStatusItemValue" data-wica-channel-name="YMJCS1K:IST:2" data-wica-rendering-hints='{ "prec" : 1 }'>NC</div>
             <div class="flex-new-row"></div>
-            <div class="envStatusItemLabel">Schildkü 2:</div><div class="envStatusItemValue" data-wica-channel-name="YMJCS2K:IST:2">NC</div>
+            <div class="envStatusItemLabel">Schildkü 2:</div><div class="envStatusItemValue" data-wica-channel-name="YMJCS2K:IST:2" data-wica-rendering-hints='{ "prec" : 1 }'>NC</div>
             <div class="flex-new-row"></div>
             <div class="envStatusItemLabel">Heizleist.</div><div id="heizLeistungCalculator" class="envStatusItemValue">NC</div>
             <div class="flex-new-row"></div>
-            <div class="envStatusItemLabel">He Level:  </div><div class="envStatusItemValue" data-wica-channel-name="YMJHL:IST:2">NC</div>
+            <div class="envStatusItemLabel">He Level:  </div><div class="envStatusItemValue" data-wica-channel-name="YMJHL:IST:2" data-wica-rendering-hints='{ "prec" : 0 }'>NC</div>
             <div class="flex-new-row"></div>
-            <div class="envStatusItemLabel">He Druck:  </div><div class="envStatusItemValue" data-wica-channel-name="YMJHG:IST:2">NC</div>
+            <div class="envStatusItemLabel">He Druck:  </div><div class="envStatusItemValue" data-wica-channel-name="YMJHG:IST:2" data-wica-rendering-hints='{ "prec" : 2 }'>NC</div>
             <div class="flex-new-row"></div>
-            <div class="envStatusItemLabel">Bunker:    </div><div class="envStatusItemValue" data-wica-channel-name="YMJKKRT:IST:2">NC</div>
+            <div class="envStatusItemLabel">Bunker:    </div><div class="envStatusItemValue" data-wica-channel-name="YMJKKRT:IST:2" data-wica-rendering-hints='{ "prec" : 1 }'>NC</div>
         </div>
     </div>
 
@@ -746,7 +690,7 @@
             let channelValue = event.channelValue.val;
 
             if ( channelValue.includes( "Offen" )) {
-                widget.style.borderColor = "lime";
+                widget.style.borderColor = "limegreen";
             }
             else {
                 widget.style.borderColor = "red";
@@ -780,7 +724,7 @@
 
         function update_status_widget( widget, isOK ) {
             if ( isOK ) {
-                widget.style.backgroundColor = "lime";
+                widget.style.backgroundColor = "limegreen";
             }
             else {
                 widget.style.backgroundColor = "red";
@@ -845,6 +789,7 @@
                     autosize: true,
                     type: 'scatter',
                     title: plotTitle,
+                    titlefont: { color: 'darkblue' },
                     margin: {l: 60, r: 30, b: 40, t: 40, pad: 0},
                     showlegend: true,
                     legend: { x: 0, y: 1.2 },
@@ -921,7 +866,7 @@
                     y: that.beamCurrentArray,
                     mode: 'lines+markers',
                     marker: {size: 3, symbol: 'circle'},
-                    line: {color: '#00FF00', width: 3},
+                    line: {color: 'limegreen', width: 3},
                     fill: 'tozeroy'
                 };
 
@@ -964,6 +909,7 @@
                 this.layout = {
                     autosize: true,
                     title: plotTitle,
+                    titlefont: { color: 'darkblue' },
                     margin: {l: 50, r: 30, b: 30, t: 30, pad: 0},
                     xaxis: {title: "Vdef (kV)"},
                     yaxis: {
@@ -1025,6 +971,7 @@
                 this.layout = {
                     autosize: true,
                     title: plotTitle,
+                    titlefont: { color: 'darkblue' },
                     margin: { l: 40, r: 10, b: 30, t: 30, pad: 0 },
                     xaxis: {
                         range: [-32, 32],
