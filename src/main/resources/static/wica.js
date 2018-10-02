@@ -76,7 +76,7 @@
                 if ( this.countdownInSeconds === 0 ) {
                     console.warn("Event source 'stream': creating new...");
                     this.createStream();
-                    console.log("Event source: 'stream' - OK: create event stream task started");
+                    console.warn("Event source: 'stream' - OK: create event stream task started");
                     this.countdownInSeconds = this.streamReconnectIntervalInSeconds;
                 }
                 this.countdownInSeconds--;
@@ -92,21 +92,22 @@
             // Inform listeners that a stream connection attempt is in progress
             this.streamConnect();
 
-            // Create a request object which will ask the server to create the new stream.
-            // Add a handler which will subscribe to the stream once it has been created.
+            // Create a request object which will be used to ask the server to create the new stream.
             let xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = () => {
-                if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status === 200) {
-                    let streamId = xhttp.responseText;
-                    console.log("Stream created, returned id is: ", streamId);
-                    let subscribeUrl = this.serverUrl + "/ca/streams/" + streamId;
-                    this.subscribeStream( subscribeUrl );
-                }
-            };
 
             // Add a handler which will print an error message if the stream couldn't be created.
             xhttp.onerror = () => {
-                console.log("XHTTP error when subscribing to channel");
+                console.warn( "XHTTP error when sending request to create event source" );
+            };
+
+            // Add a handler which will subscribe to the stream once it has been created.
+            xhttp.onreadystatechange = () => {
+                if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status === 200) {
+                    let streamId = xhttp.responseText;
+                    console.warn( "Stream created, returned id is: ", streamId );
+                    let subscribeUrl = this.serverUrl + "/ca/streams/" + streamId;
+                    this.subscribeStream( subscribeUrl );
+                }
             };
 
             // Now send off the request
@@ -129,9 +130,10 @@
         {
             let eventSource = new EventSource( subscribeUrl, { withCredentials: true } );
 
-            // The heartbeat message is for internal use of the stream handler.
-            // If a heartbeat isn't received periodically then the stream will
-            // be automatically recreated.
+            // The heartbeat message is for internal use of this stream handler.
+            // If a heartbeat isn't received periodically then the connection
+            // will be deemed to have failed, triggering a new stream creation
+            // and subscription cycle.
             eventSource.addEventListener( 'ev-wica-server-heartbeat', ev => {
                 if ( this.crossOriginCheckOk( ev ) ) {
                     this.countdownInSeconds = this.streamTimeoutIntervalInSeconds;
@@ -156,13 +158,13 @@
             eventSource.addEventListener( 'open', ev => {
                 if ( this.crossOriginCheckOk( ev ) ) {
                     this.streamOpened();
-                    console.log("Event source: 'stream' - open event.");
+                    console.warn("Event source: 'stream' - open event.");
                 }
             }, false);
 
             eventSource.addEventListener( 'error', ev => {
                 if ( this.crossOriginCheckOk( ev ) ) {
-                    console.log("Event source: 'stream'  - error event. Closing event source.");
+                    console.warn("Event source: 'stream'  - error event. Closing event source.");
                     eventSource.close();
                     this.streamClosed();
                 }
@@ -223,7 +225,7 @@
 
     messageHandlers.channelValuesUpdated = valueObject =>
     {
-        console.log("Event stream received new channel value map.");
+        console.log( "WicaStream received new channel value map.");
 
         // Go through all the elements in the update object and assign
         // each element's value to the element's "data-wica-channel-value"
@@ -266,105 +268,150 @@
     // Activate channel
     wicaStreamManager.activate();
 
-    /**
-     * Render all wica elements on the page.
-     */
-    function renderWicaElements()
+    class WicaRenderingManager
     {
-        DocumentUtilities.findWicaElements().forEach( (element) =>
+
+        /**
+         * Render all wica elements on the page.
+         */
+        static renderWicaElements()
         {
-            // If we have no information about the channel's current value or the channel's metadata
-            // then there is nothing useful that can be done so bail out.
-            if ( ( ! element.hasAttribute( "data-wica-channel-value" ) ) || ( ! element.hasAttribute( "data-wica-channel-metadata" ) ) )
-            {
-                return;
-            }
-
-            // Obtain the channel value object
-            let channelValueObj = JSON.parse( element.getAttribute( "data-wica-channel-value" ) );
-
-            // Obtain the channel metadata object
-            let channelMetadataObj = JSON.parse( element.getAttribute( "data-wica-channel-metadata" ) );
-
-            // If an onchange event handler is defined then delegate the handling
-            // of the event (typically rendering) to the defined method.
-            if ( element.onchange !== null) {
-                let event = new Event( 'change' );
-                event.channelValue = channelValueObj;
-                event.channelMetadata = channelMetadataObj;
-                element.dispatchEvent( event );
-            }
-            else
-            {
-                // If the value object indicates that the channel is NOT connected then render the element's
-                // title attribute (= "tooltip") using information extracted the element's connection attributes
-                // only.
-                if ( channelValueObj.val === null )
+            DocumentUtilities.findWicaElements().forEach( (element) => {
+                // If we have no information about the channel's current value or the channel's metadata
+                // then there is nothing useful that can be done so bail out.
+                if ( ( !element.hasAttribute("data-wica-channel-value")) || (! element.hasAttribute("data-wica-channel-metadata") ) )
                 {
-                    // Set the tooltip to show the name of the channel and the disconnection reason.
-                    element.title= "Channel Name: " + element.getAttribute( "data-wica-channel-name") +  "\n"  +
-                                   "Stream Connect State: " + element.getAttribute( "data-wica-stream-state" ) + "\n" +
-                                   "Channel Connect State: " + element.getAttribute( "data-wica-channel-connection-state" );
+                    return;
                 }
-                else
-                {
-                    let formattedValueText;
-                    if ( channelMetadataObj.type === "REAL" ) {
-                        let number = channelValueObj.val;
-                        let precision = channelMetadataObj.prec;
-                        let units = channelMetadataObj.egu;
-                        formattedValueText = number.toFixed(precision) + " " + units;
-                    }
-                    else if ( channelMetadataObj.type === "INTEGER" ) {
-                        let number = channelValueObj.val;
-                        let units = channelMetadataObj.egu;
-                        formattedValueText= number + " " + units;
-                    }
-                    else {
-                        formattedValueText = channelValueObj.val;
-                    }
 
-                    // Render the element's title attribute (= "tooltip") using the information extracted from
-                    // the element's connection attributes and the channel metadata and value information.
-                    element.title= "Channel Name: '" + element.getAttribute( "data-wica-channel-name") +  "'\n"  +
-                                   "Stream Connect State: '" + element.getAttribute( "data-wica-stream-state" ) + "'\n" +
-                                   "Channel Connect State: ' " + element.getAttribute( "data-wica-channel-connection-state" ) + "'\n" +
-                                   "Channel Alarm State: '" + element.getAttribute( "data-wica-channel-alarm-state" ) + "'\n" +
-                                   "Channel Value Text: '" + formattedValueText;
+                // Obtain the channel value object
+                let channelValueObj = JSON.parse( element.getAttribute( "data-wica-channel-value" ) );
 
-                    // Render the element's textContent attribute with the formatted value
-                    element.textContent = formattedValueText;
+                // Obtain the channel metadata object
+                let channelMetadataObj = JSON.parse( element.getAttribute( "data-wica-channel-metadata" ) );
+
+                // If an onchange event handler is defined then delegate the handling
+                // of the event (typically rendering) to the defined method.
+                if ( element.onchange !== null ) {
+                    let event = new Event('change');
+                    event.channelValue = channelValueObj;
+                    event.channelMetadata = channelMetadataObj;
+                    element.dispatchEvent(event);
+                    return;
+                }
+
+                // If an onchange handler is NOT defined then render the widget according
+                // to the default local rules.
+                WicaRenderingManager.renderWidget( element, channelValueObj, channelMetadataObj );
+            });
+        }
+
+        static renderWidget( element, channelValueObj, channelMetadataObj ) {
+            let channelName = element.getAttribute( "data-wica-channel-name" );
+            let renderingHintsString = element.hasAttribute("data-wica-rendering-hints" ) ? element.getAttribute("data-wica-rendering-hints") : "{}";
+            let renderingHintsObj;
+            try {
+                renderingHintsObj = JSON.parse( renderingHintsString );
+            }
+            catch (err) {
+                logExceptionData( channelName + ": Illegal JSON format in data-wica-rendering-hints attribute.\nDetails were as follows:\n", err );
+                renderingHintsObj = {};
+            }
+            let formattedValueText = WicaRenderingManager.buildFormattedValueText( channelValueObj, channelMetadataObj, renderingHintsObj);
+            let tooltipText = WicaRenderingManager.buildFormattedTooltipText( element, formattedValueText );
+
+            element.textContent = formattedValueText;
+            element.title = tooltipText;
+        }
+
+        static buildFormattedValueText( channelValueObj, channelMetadataObj, renderingHintsObj )
+        {
+            if ( channelMetadataObj.type === "REAL")
+            {
+                let number = channelValueObj.val;
+                let exponential = renderingHintsObj.hasOwnProperty( "exp" ) ? renderingHintsObj.exp : null;
+                let precision = renderingHintsObj.hasOwnProperty( "prec" ) ? renderingHintsObj.prec: channelMetadataObj.prec;
+                let units = renderingHintsObj.hasOwnProperty( "units" ) ? renderingHintsObj.units: channelMetadataObj.egu;
+
+                if ( exponential === null ) {
+                    return number.toFixed( precision ) + " " + units;
+                }
+                else {
+                    return number.toExponential( exponential ) + " " + units;
                 }
             }
+            else if (channelMetadataObj.type === "INTEGER")
+            {
+                let number = channelValueObj.val;
+                let units = renderingHintsObj.hasOwnProperty( "units" ) ? renderingHintsObj.units: channelMetadataObj.egu;
+                return number + " " + units;
+            }
+            else {
+                return channelValueObj.val;
+            }
+        }
+        static buildFormattedTooltipText( element, formattedValueText )
+        {
+            let channelName = element.getAttribute( "data-wica-channel-name" );
+            let streamConnectState = element.getAttribute("data-wica-stream-state");
+            let streamConnected = streamConnectState === "opened";
 
-        } );
+            if ( !streamConnected ) {
+                return "Channel Name: " + channelName + "\n" +
+                       "Stream Connect State: " + streamConnectState;
+            }
+
+            let channelConnectState = element.getAttribute("data-wica-channel-connection-state");
+            let channelConnected = channelConnectState === "connected";
+
+            if ( !channelConnected ) {
+                return "Channel Name: " + channelName + "\n" +
+                       "Stream Connect State: " + streamConnectState + "\n" +
+                       "Channel Connect State: " + channelConnectState;
+            }
+            let alarmState = element.getAttribute("data-wica-channel-alarm-state");
+
+            return "Channel Name: " + channelName + "'\n" +
+                   "Stream Connect State: '" + streamConnectState + "'\n" +
+                   "Channel Connect State: '" + channelConnectState + "'\n" +
+                   "Channel Alarm State: '" + alarmState + "'\n" +
+                   "Channel Value Text: '" + formattedValueText + "'";
+        }
     }
-
-
-
 
 
     function refreshWicaPage()
     {
         try
         {
-            renderWicaElements();
+            WicaRenderingManager.renderWicaElements();
         }
         catch( err )
         {
-            console.warn( "Programming Error: renderWicaElements threw an exception: " + err.message );
+            logExceptionData( "Programming Error: renderWicaElements threw an exception: ", err );
         }
 
         // Allow at least 100ms after each rendering cycle
         setTimeout( refreshWicaPage, 100 );
     }
 
+    function logExceptionData( msg, err )
+    {
+        var vDebug = "";
+        for (var prop in err)
+        {
+            vDebug += "property: "+ prop+ " value: ["+ err[prop]+ "]\n";
+        }
+        vDebug += "toString(): " + " value: [" + err.toString() + "]";
+        console.warn( msg + vDebug );
+    }
+
     function loadWicaStylesheet()
     {
         if ( ! document.getElementById( 'wica-css-id') )
         {
-            var head  = document.getElementsByTagName('head')[0];
-            var link  = document.createElement('link');
+            let head  = document.getElementsByTagName('head')[0];
+            let link  = document.createElement('link');
             link.id   = 'wica-css-id';
             link.rel  = 'stylesheet';
             link.type = 'text/css';
