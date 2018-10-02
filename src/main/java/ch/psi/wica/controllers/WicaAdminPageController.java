@@ -30,15 +30,15 @@ import java.util.Map;
  * to the other administration pages.
  */
 @ThreadSafe
-@RequestMapping("/")
+@RequestMapping("/admin")
 @Controller
-class WicaMainPageController
+class WicaAdminPageController
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(WicaMainPageController.class );
+   private final Logger logger = LoggerFactory.getLogger(WicaAdminPageController.class );
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -81,7 +81,7 @@ class WicaMainPageController
       viewModel.addAttribute("serverStatisticsMap", serverStatisticsMap );
 
       // Return reference to the template. Spring Boot will do the rest !
-      final String templateFileName = "MainPage";
+      final String templateFileName = "AdminPage";
       logger.info( "Returning reference to thymeleaf template: '{}'", templateFileName );
       return templateFileName;
    }

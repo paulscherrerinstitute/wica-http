@@ -1,0 +1,36 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <style>
+
+        h1 {
+            text-align: center;
+        }
+
+        h2 {
+            padding-top: 15px;
+        }
+
+        td, th {
+            text-align: left;
+            padding-right: 15px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <h1>GFA Wica Server</h1>
+
+    <h2>Server Statistics</h2>
+    <table id ="stats">
+        <tr th:each="mapEntry: ${serverStatisticsMap}">
+            <td th:text="${mapEntry.key}"></td>
+            <td th:text="${mapEntry.value}"></td>
+        </tr>
+    </table>
+
+</body>
+</html>
