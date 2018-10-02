@@ -24,10 +24,12 @@
     color: darkgrey !important;
 }
 
-/*[data-wica-stream-state = 'connecting' ] {*/
-    /*background-color: mintcream !important;*/
-    /*color: darkgrey !important;*/
-/*}*/
+[data-wica-stream-state = 'connecting' ] {
+    background-color: mintcream !important;
+    color: darkgrey !important;
+    transition: color 2s;
+    transition: background-color 2s;
+}
 
 /*[data-wica-stream-state = 'opened' ] {*/
     /*background-color: initial;*/
