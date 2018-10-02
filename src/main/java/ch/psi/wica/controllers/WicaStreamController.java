@@ -6,8 +6,6 @@ package ch.psi.wica.controllers;
 
 import ch.psi.wica.model.*;
 import ch.psi.wica.services.EpicsChannelDataService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,15 +15,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.ReplayProcessor;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.SubmissionPublisher;
 import java.util.stream.Collectors;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -36,7 +38,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping( "/ca/streams")
-class EpicsChannelDataStreamController
+class WicaStreamController
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -48,7 +50,7 @@ class EpicsChannelDataStreamController
     */
    private static final String DATETIME_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
 
-   private final Logger logger = LoggerFactory.getLogger(EpicsChannelDataStreamController.class );
+   private final Logger logger = LoggerFactory.getLogger(WicaStreamController.class );
 
    private final EpicsChannelDataService epicsChannelDataService;
 
@@ -57,7 +59,7 @@ class EpicsChannelDataStreamController
    private final int channelValueFluxInterval;
    private final int channelValueUpdateFluxInterval;
 
-   private final Map<StreamId, Flux<ServerSentEvent<String>>> eventStreamFluxMap = new ConcurrentHashMap<>();
+   private final Map<WicaStreamId, Flux<ServerSentEvent<String>>> eventStreamFluxMap = new ConcurrentHashMap<>();
 
    private LocalDateTime lastUpdateTime = LocalDateTime.MAX;
 
@@ -68,11 +70,11 @@ class EpicsChannelDataStreamController
     * Constructs a new controller which to handle all REST operations associated with EPICS event streams.
     */
    @Autowired
-   private EpicsChannelDataStreamController( @Autowired EpicsChannelDataService epicsChannelDataService,
-                                             @Value( "${wica.heartbeat_flux_interval_in_ms}" ) int heartBeatFluxInterval,
-                                             @Value( "${wica.channel_metadata_flux_interval_in_ms}" ) int channelMetadataFluxInterval,
-                                             @Value( "${wica.channel_value_flux_interval_in_ms}" ) int channelValueFluxInterval,
-                                             @Value( "${wica.channel_value_update_flux_interval_in_ms}" ) int channelValueUpdateFluxInterval)
+   private WicaStreamController( @Autowired EpicsChannelDataService epicsChannelDataService,
+                                 @Value( "${wica.heartbeat_flux_interval_in_ms}" ) int heartBeatFluxInterval,
+                                 @Value( "${wica.channel_metadata_flux_interval_in_ms}" ) int channelMetadataFluxInterval,
+                                 @Value( "${wica.channel_value_flux_interval_in_ms}" ) int channelValueFluxInterval,
+                                 @Value( "${wica.channel_value_update_flux_interval_in_ms}" ) int channelValueUpdateFluxInterval)
    {
       //logger.info( "Created new event stream with heartbeat interval of {} seconds.", eventStreamHeartBeatInterval );
       this.epicsChannelDataService = epicsChannelDataService;
@@ -111,13 +113,13 @@ class EpicsChannelDataStreamController
       }
 
       // Create a set of channels of interest from the request
-      final Set<EpicsChannelName> channels = channelNames.stream()
-                                                         .map( EpicsChannelName::new )
+      final Set<WicaChannelName> channels = channelNames.stream()
+                                                         .map(WicaChannelName::new )
                                                          .collect( Collectors.toSet() );
 
       // Create a new stream whose locus of interest is the specified set of channels
-      final EpicsChannelDataStream stream = new EpicsChannelDataStream( channels );
-      final StreamId streamId = stream.getStreamId();
+      final WicaStream stream = new WicaStream(channels );
+      final WicaStreamId wicaStreamId = stream.getWicaStreamId();
 
       // Create the HEARTBEAT FLUX. The purpose of this flux is to periodically tell remote
       // clients that the stream is still alive. If remote clients do not receive heartbeat
@@ -126,8 +128,8 @@ class EpicsChannelDataStreamController
       // client side and sending a request to the server to recreate the stream.
       final Flux<ServerSentEvent<String>> heartbeatFlux = Flux.interval( Duration.ofMillis( heartBeatFluxInterval ) )
          .map( l -> {
-            logger.trace( "heartbeatFlux is publishing new SSE..." );
-            return buildServerSentMessageEvent( streamId, "ev-wica-server-heartbeat", "heartbeat", getLastUpdateTime().toString() );
+            logger.trace( "heartbeat flux is publishing new SSE..." );
+            return buildServerSentMessageEvent(wicaStreamId, "ev-wica-server-heartbeat", "heartbeat", LocalDateTime.now().toString() );
          } )
          .doOnCancel( () -> logger.warn( "heartbeat flux was cancelled" ) );
       //.log();
@@ -136,11 +138,11 @@ class EpicsChannelDataStreamController
       // information about the nature of the underlying EPICS channel. This may include the
       // channel's type and where relevant the channel's display, alarm and operator limits.
       // This flux runs with a periodicity defined by the channelMetadataFluxInterval.
-      final Flux<ServerSentEvent<String>> channelMetadataFlux = Flux.interval( Duration.ofMillis( channelMetadataFluxInterval ) )
+      final Flux<ServerSentEvent<String>> channelMetadataFlux = Flux.range( 1, 1 )
          .map( l -> {
-            logger.trace( "metadataFlux is publishing new SSE..." );
-            final Map<EpicsChannelName,EpicsChannelMetadata> channelMetadataMap = epicsChannelDataService.getChannelMetadata( stream );
-            return buildServerSentMessageEvent( streamId, "ev-wica-channel-metadata", "channel metadata", EpicsChannelMetadata.convertMapToJsonRepresentation( channelMetadataMap ) );
+            logger.trace( "channel-metadata flux is publishing new SSE..." );
+            final Map<WicaChannelName, WicaChannelMetadata> channelMetadataMap = epicsChannelDataService.getChannelMetadata( stream );
+            return buildServerSentMessageEvent(wicaStreamId, "ev-wica-channel-metadata", "channel metadata", WicaChannelMetadata.convertMapToJsonRepresentation(channelMetadataMap ) );
          } )
          .doOnCancel( () -> logger.warn( "channel-metadata flux was cancelled" ) );
       //.log();
@@ -148,11 +150,11 @@ class EpicsChannelDataStreamController
       // Create the CHANNEL VALUE FLUX. The purpose of this flux is to provide the last received
       // value for ALL channels specified in the event stream. This flux runs with a  periodicity
       // defined by the channelValueFluxInterval.
-      final Flux<ServerSentEvent<String>> channelValueFlux = Flux.interval( Duration.ofMillis( channelValueFluxInterval ) )
+      final Flux<ServerSentEvent<String>> channelValueFlux = Flux.range( 1, 1 ) //( Duration.ofMillis( channelValueFluxInterval ) )
          .map( l -> {
-            logger.trace( "heartbeatFlux is publishing new SSE..." );
-            final Map<EpicsChannelName,EpicsChannelValue> channelValueMap = epicsChannelDataService.getChannelValues( stream );
-            return buildServerSentMessageEvent( streamId, "ev-wica-channel-value","channel values", EpicsChannelValue.convertMapToJsonRepresentation(channelValueMap ) );
+            logger.trace( "channel-value flux is publishing new SSE..." );
+            final Map<WicaChannelName, WicaChannelValue> channelValueMap = epicsChannelDataService.getChannelValues( stream );
+            return buildServerSentMessageEvent(wicaStreamId, "ev-wica-channel-value", "channel values", WicaChannelValue.convertMapToJsonRepresentation( channelValueMap ) );
          } )
          .doOnCancel( () -> logger.warn( "channel-value flux was cancelled" ) );
       //.log();
@@ -160,12 +162,13 @@ class EpicsChannelDataStreamController
       // Create the CHANNEL VALUE UPDATE FLUX. The purpose of this flux is to provide the last received
       // value for any channels which have changed since the last update. This flux runs with a periodicity
       // defined by the channelValueUpdateFluxInterval.
+      LocalDateTime lastUpdateTime;
       final Flux<ServerSentEvent<String>> channelValueUpdateFlux = Flux.interval( Duration.ofMillis( channelValueUpdateFluxInterval ) )
             .map( l -> {
-               logger.trace( "heartbeatFlux is publishing new SSE..." );
-               final Map<EpicsChannelName,EpicsChannelValue> channelValueUpdateMap = epicsChannelDataService.getChannelValuesUpdatedSince(stream, getLastUpdateTime() );
-               setLastUpdateTime();
-               return buildServerSentMessageEvent( streamId, "ev-wica-channel-value","channel value changes", EpicsChannelValue.convertMapToJsonRepresentation(channelValueUpdateMap ) );
+               logger.trace( "channel-value-update flux is publishing new SSE..." );
+               final Map<WicaChannelName, WicaChannelValue> channelValueUpdateMap = epicsChannelDataService.getChannelValuesUpdatedSince( stream, getLastUpdateTime(wicaStreamId) );
+               setLastUpdateTime(wicaStreamId);
+               return buildServerSentMessageEvent(wicaStreamId, "ev-wica-channel-value", "channel value changes", WicaChannelValue.convertMapToJsonRepresentation(channelValueUpdateMap ) );
             } )
             .doOnCancel( () -> logger.warn( "channel-value-update flux was cancelled" ) );
             //.log();
@@ -175,8 +178,8 @@ class EpicsChannelDataStreamController
                                                                          .mergeWith( channelValueFlux )
                                                                          .mergeWith( channelValueUpdateFlux )
                                                                          .doOnCancel( () -> {
-                                                                            logger.warn( "evenStreamFlux was cancelled" );
-                                                                            handleErrors( streamId );
+                                                                            logger.warn( "eventStreamFlux was cancelled" );
+                                                                            handleErrors( wicaStreamId );
                                                                          } );
                                                                          //.log();
       // Store it in the stream map
@@ -185,13 +188,13 @@ class EpicsChannelDataStreamController
       // But eventually in the GET method the map entry will be retrieved
       // and the flux will be subscribed.
       // noinspection UnassignedFluxMonoInstance
-      eventStreamFluxMap.put( streamId, eventStreamFlux );
+      eventStreamFluxMap.put(wicaStreamId, eventStreamFlux );
 
       // Lastly set up monitors on all the channels of interest.
       epicsChannelDataService.startMonitoring( stream );
 
-      logger.info( "POST: allocated stream with id: '{}'" , streamId.asString() );
-      return new ResponseEntity<>( streamId.asString(), HttpStatus.OK );
+      logger.info("POST: allocated stream with id: '{}'" , wicaStreamId.asString() );
+      return new ResponseEntity<>(wicaStreamId.asString(), HttpStatus.OK );
    }
 
    /**
@@ -208,8 +211,8 @@ class EpicsChannelDataStreamController
 
       logger.info( "GET: Handling get stream request for ID: '{}'", id );
 
-      // Handle the situation where an unknown StreamId is given
-      if ( ! eventStreamFluxMap.containsKey( StreamId.of( id ) ) )
+      // Handle the situation where an unknown WicaStreamId is given
+      if ( ! eventStreamFluxMap.containsKey(WicaStreamId.of(id ) ) )
       {
          logger.info( "GET: Rejected request because the event stream 'id' was not recognised." );
          return new ResponseEntity<>( HttpStatus.BAD_REQUEST );
@@ -217,7 +220,7 @@ class EpicsChannelDataStreamController
 
       // Handle the normal case
       logger.info( "Returning event stream with id: '{}'", id );
-      return new ResponseEntity<>( eventStreamFluxMap.get( StreamId.of( id ) ),HttpStatus.OK );
+      return new ResponseEntity<>(eventStreamFluxMap.get(WicaStreamId.of(id ) ), HttpStatus.OK );
    }
 
 
@@ -229,9 +232,9 @@ class EpicsChannelDataStreamController
 
       logger.info( "DELETE: Handling get stream request for ID: '{}'", id );
 
-      // Handle the situation where an unknown StreamId is given
-      final StreamId streamId = StreamId.of( id );
-      if ( ! eventStreamFluxMap.containsKey( streamId ) )
+      // Handle the situation where an unknown WicaStreamId is given
+      final WicaStreamId wicaStreamId = WicaStreamId.of(id );
+      if ( ! eventStreamFluxMap.containsKey(wicaStreamId) )
       {
          logger.info( "GET: Rejected request because the event stream 'id' was not recognised." );
          return new ResponseEntity<>( HttpStatus.BAD_REQUEST );
@@ -240,10 +243,10 @@ class EpicsChannelDataStreamController
       // Handle the normal case
       // Remove all monitors on all the channels of interest.
       // TODO: work out best way of getting stream back from Id
-      //epicsChannelValueStashService.stopMonitoring( eventStreamFluxMap.get( streamId ) );
+      //epicsChannelValueStashService.stopMonitoring( eventStreamFluxMap.get( wicaStreamId ) );
 
       // Note: this generates an IntelliJ warning about unassigned flux. But it is ok.
-      eventStreamFluxMap.remove( streamId );
+      eventStreamFluxMap.remove(wicaStreamId);
 
       logger.info( "DELETE: deleted stream with id: '{}'" , id.toString() );
       return new ResponseEntity<>( id, HttpStatus.OK );
@@ -258,7 +261,7 @@ class EpicsChannelDataStreamController
 
 /*- Private methods ----------------------------------------------------------*/
 
-   private void handleErrors( StreamId id )
+   private void handleErrors( WicaStreamId id )
    {
       logger.info( "Some error occurred on monitor stream with Id: '{}' ", id );
       logger.info( "Probably the client navigated away from the webpage and the eventsource was closed by the browser !! " );
@@ -273,7 +276,7 @@ class EpicsChannelDataStreamController
     * @param data
     * @return the generated SSE.
     */
-   private <T> ServerSentEvent<T> buildServerSentMessageEvent( StreamId id, String event, String comment, T data )
+   private <T> ServerSentEvent<T> buildServerSentMessageEvent( WicaStreamId id, String event, String comment, T data )
    {
       Validate.notNull( data,"The valueMap field was null ");
 
@@ -286,14 +289,16 @@ class EpicsChannelDataStreamController
                             .build();
    }
 
-   private LocalDateTime getLastUpdateTime()
+   private Map<WicaStreamId,LocalDateTime> lastUpdateTimeMap = new HashMap<>();
+
+   private LocalDateTime getLastUpdateTime( WicaStreamId wicaStreamId )
    {
-      return lastUpdateTime;
+      return lastUpdateTimeMap.getOrDefault(wicaStreamId, LocalDateTime.MIN );
    }
 
-   private void setLastUpdateTime()
+   private void setLastUpdateTime( WicaStreamId wicaStreamId )
    {
-      lastUpdateTime = LocalDateTime.now();
+      lastUpdateTimeMap.put(wicaStreamId, LocalDateTime.now() );
    }
 
 
