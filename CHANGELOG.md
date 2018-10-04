@@ -98,6 +98,11 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-6848](https://jira.psi.ch/browse/CTRLIT-6848): Eliminate white flash when connecting by defining CSS transition.
    - [CTRLIT-6849](https://jira.psi.ch/browse/CTRLIT-6849): Further javascript cleanup: create class for WicaRenderingManager.
    - [CTRLIT-6850](https://jira.psi.ch/browse/CTRLIT-6850): Cleanup stream implementation so that it only sends the channel metadata and value maps on first connect.
+
+* [0.8.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.8.0-RELEASE)
+   - [CTRLIT-6853](https://jira.psi.ch/browse/CTRLIT-6853): Add support for external application monitoring via Spring Boot Server Admin App.
+   - [CTRLIT-6854](https://jira.psi.ch/browse/CTRLIT-6854): Create Software Release 0.8.0
+   
    
 # Project Ideas Completed
 
