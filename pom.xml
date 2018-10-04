@@ -5,7 +5,7 @@
 
     <groupId>ch.psi</groupId>
     <artifactId>wica</artifactId>
-    <version>0.7.0-RELEASE</version>
+    <version>0.8.0-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>wica2</name>
@@ -25,6 +25,14 @@
     </properties>
 
     <dependencies>
+
+        <!-- The definition below can be optionally enabled to trigger automatic -->
+        <!-- registration of this application with the SpringBoot Admin Server -->
+        <!--<dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>2.0.3</version>
+        </dependency> -->
 
         <dependency>
             <groupId>com.github.stephenc.jcip</groupId>
