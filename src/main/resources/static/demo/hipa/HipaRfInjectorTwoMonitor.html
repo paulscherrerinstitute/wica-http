@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>HIPA RF Injector II Monitor</title>
+    <title>HIPA RF Injector</title>
 
     <!-- Load the Plotly library after the rest of this HTML page has loaded -->
     <script src="https://gfa-wica.psi.ch/plotly-latest.min.js" defer async></script>
@@ -35,6 +35,14 @@
         html {
             font-size:1rem;
         } /*1rem = 16px*/
+
+        .banner {
+            text-align: center;
+            color: darkblue;
+            font-size: 2.5rem;
+            font-weight: 400;
+            background-color: darkgrey;
+        }
 
         .statusItemLabel {
             text-align: right;
@@ -109,14 +117,14 @@
         }
 
         .legendBox {
-            margin-left: 1rem;
+            margin-left: 0.5rem;
             width: 2rem;
             height: 0.5rem;
         }
 
         .legendLabel {
             width: 8rem;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
         }
 
         .spannung, .hinlauf, .reflexion, .vakuum {
@@ -216,23 +224,23 @@
         <div class="Legend">
             <div class="legendContainer">
                 <div class="flex-new-row"></div>
-                <div class="legendBox spannung">&nbsp;</div>
+                <div class="legendBox spannung"></div>
                 <div class="legendLabel">Spannung</div>
                 <div class="flex-new-row"></div>
-                <div class="legendBox hinlauf">&nbsp;</div>
+                <div class="legendBox hinlauf"></div>
                 <div class="legendLabel">Hinlauf (PFWD)</div>
                 <div class="flex-new-row"></div>
-                <div class="legendBox reflexion">&nbsp;</div>
+                <div class="legendBox reflexion"></div>
                 <div class="legendLabel">Reflexion (PBV)</div>
                 <div class="flex-new-row"></div>
-                <div class="legendBox vakuum">&nbsp;</div>
+                <div class="legendBox vakuum"></div>
                 <div class="legendLabel">Vakuum</div>
             </div>
         </div>
 
         <div class="Banner">
             <div class="bannerContainer">
-                <h1>HIPA RF Injector II Monitor</h1>
+                <div class="banner">HIPA RF Injector II</div>
             </div>
         </div>
 
@@ -778,10 +786,10 @@
             }
         }
 
-        let bIPlotPhase  = new PhaseMeter( "Inj11-BI",  "bIPhasePlot",  "bIPhasePlotData",  "bIPhaseStatus" );
-        let bIIPlotPhase = new PhaseMeter( "Inj11-BII", "bIIPhasePlot", "bIIPhasePlotData", "bIIPhaseStatus" );
-        let cI1PlotPhase = new PhaseMeter( "MO-S5",     "cI1PhasePlot", "cI1PhasePlotData", "cI1PhaseStatus" );
-        let cI3PlotPhase = new PhaseMeter( "I-III",     "cI3PhasePlot", "cI3PhasePlotData", "cI3PhaseStatus" );
+        let bIPlotPhase  = new PhaseMeter( "Inj2-BI",  "bIPhasePlot",  "bIPhasePlotData",  "bIPhaseStatus" );
+        let bIIPlotPhase = new PhaseMeter( "Inj2-BII", "bIIPhasePlot", "bIIPhasePlotData", "bIIPhaseStatus" );
+        let cI1PlotPhase = new PhaseMeter( "MO-S50",   "cI1PhasePlot", "cI1PhasePlotData", "cI1PhaseStatus" );
+        let cI3PlotPhase = new PhaseMeter( "I-III",    "cI3PhasePlot", "cI3PhasePlotData", "cI3PhaseStatus" );
 
     </script>
 </body>

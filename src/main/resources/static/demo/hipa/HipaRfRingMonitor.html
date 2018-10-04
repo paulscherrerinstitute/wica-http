@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>HIPA RF Ring Monitor</title>
+    <title>HIPA RF Ring </title>
 
     <!-- Load the Plotly library after the rest of this HTML page has loaded -->
     <script src="https://gfa-wica.psi.ch/plotly-latest.min.js" defer async></script>
@@ -36,7 +36,16 @@
             font-size:1rem;
         } /*1rem = 16px*/
 
+        .banner {
+            text-align: center;
+            color: darkblue;
+            font-size: 2.5rem;
+            font-weight: 400;
+            background-color: darkgrey;
+        }
+
         .statusItemLabel {
+            color: darkblue;
             text-align: right;
             margin-right: 0.5rem;
             font-size: 1.2rem;
@@ -215,7 +224,7 @@
 
         <div class="Banner">
             <div class="bannerContainer">
-                <h1>HIPA RF Ring Monitor</h1>
+                <div class="banner">HIPA RF Ring</div>
             </div>
         </div>
 
@@ -374,7 +383,7 @@
 
         <div class="Temp1">
             <div class="temp1Container">
-                <div class="statusItemLabel">Temperatur Kreis HFO VL</div>
+                <div class="statusItemLabel">Temperatur Kreis HF0 VL</div>
                 <div class="statusItemValue" data-wica-channel-name="CR-RFMON:DEMI0" data-wica-rendering-hints='{ "units": "°C", "prec" : 0 }'></div>
             </div>
         </div>
@@ -382,7 +391,7 @@
         <!-- Row 5 Status Information -->
         <div class="Temp2">
             <div class="temp2Container">
-                <div class="statusItemLabel">Temperatur Kreis HFO VL (GLS)</div>
+                <div class="statusItemLabel">Temperatur Kreis HF0 VL (GLS)</div>
                 <div class="statusItemValue" data-wica-channel-name="GLS:HF0_VL_DEMI" data-wica-rendering-hints='{ "units": "°C", "prec" : 0 }'></div>
             </div>
         </div>
@@ -713,7 +722,7 @@
         let plotIIPhase  = new PhaseMeter( "II-III",  "phaseIIPlotId",  "phaseIIPlotDataId",  "phaseIIPlotStatusId" );
         let plotIIIPhase = new PhaseMeter( "III-IV",  "phaseIIIPlotId", "phaseIIIPlotDataId", "phaseIIIPlotStatusId" );
         let plotIVPhase  = new PhaseMeter( "IV-V",    "phaseIVPlotId",  "phaseIVPlotDataId",  "phaseIVPlotStatusId" );
-        let plotVPhase   = new PhaseMeter( "SSI-150", "phaseVPlotId",   "phaseVPlotDataId",   "phaseVPlotStatusId" );
+        let plotVPhase   = new PhaseMeter( "S50-150", "phaseVPlotId",   "phaseVPlotDataId",   "phaseVPlotStatusId" );
 
     </script>
 
