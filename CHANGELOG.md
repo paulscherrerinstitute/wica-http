@@ -102,7 +102,7 @@ This log describes the functionality of tagged versions within the repository.
 * [0.8.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.8.0-RELEASE)
    - [CTRLIT-6853](https://jira.psi.ch/browse/CTRLIT-6853): Add support for external application monitoring via Spring Boot Server Admin App.
    - [CTRLIT-6854](https://jira.psi.ch/browse/CTRLIT-6854): Create Software Release 0.8.0
-   
+   - [CTRLIT-6855](https://jira.psi.ch/browse/CTRLIT-6854): Perform initial tweaks to address issues raised against RF Display Panels.
    
 # Project Ideas Completed
 
