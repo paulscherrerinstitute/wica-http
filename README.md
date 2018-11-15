@@ -33,7 +33,7 @@ The simplest Wica webpage would look something like this:
 <head>
    <meta charset="UTF-8"/>
    <title>My Awesome Epics Channel Viewer</title>
-   <script type="text/javascript" src="gfa-wica.psi.ch/wica.js"></script>
+   <script type="text/javascript" src="gfa-wica.psi.ch/wica/wica.js"></script>
 </head>
 
 <body>
@@ -72,7 +72,7 @@ GET /ca/streams/<channelName>
 
 ##### Download the Wica javascript library:
 ```
-GET /wica.js
+GET /wica/wica.js
 ```
 
 ## New Features Coming Soon (status: 2018-08-02)
