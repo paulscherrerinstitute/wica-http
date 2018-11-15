@@ -1,0 +1,66 @@
+/*- Wica Channel Alarm State Rendering ---------------------------------------*/
+
+/* NO ALARM */
+[data-wica-channel-alarm-state = '0'] {
+    /* nothing special for now */
+}
+
+/* MINOR */
+[data-wica-channel-alarm-state = '1'] {
+    color: yellow !important;
+}
+
+/* MAJOR */
+[data-wica-channel-alarm-state = '2'] {
+    color: red !important;
+}
+
+[data-wica-channel-alarm-state = '3'] {
+    /* nothing special for now */
+}
+
+/*- Wica Channel Connection State Rendering ----------------------------------*/
+
+[data-wica-channel-connection-state = 'connected' ] {
+    /* nothing special for now */
+}
+
+[data-wica-channel-connection-state = 'disconnected' ] {
+    background-color: white !important;
+    color: darkgrey !important;
+}
+
+/*- Wica Stream Connection State Rendering -----------------------------------*/
+
+[data-wica-stream-state*= 'connecting' ] {
+    background-color: mintcream !important;
+    color: darkgrey !important;
+    transition: color 2s;
+    transition: background-color 2s;
+}
+
+[data-wica-stream-state*= 'opened' ] {
+    /* nothing special for now */
+}
+
+[data-wica-stream-state*= 'closed' ] {
+    background-color: #ffe4e4 !important;
+    color: darkgrey !important;
+}
+
+
+/*- Wica General Purpose Styling Rules ---------------------------------------*/
+
+/* Styling for tooltip popup on hover */
+[data-wica-tooltip]:hover:before {
+    content: attr( data-wica-tooltip );
+    background-color: yellow;
+    color: black;
+    font-size: 0.75rem;
+    display: block;
+    position:absolute;
+    border: 0.05rem solid black;
+    padding: 0.1rem 0.25rem;
+    z-index: 999;
+}
+
