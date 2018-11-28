@@ -15,7 +15,10 @@ public enum WicaChannelType
 
    INTEGER,
    REAL,
-   STRING
+   STRING,
+   INTEGER_ARRAY,
+   REAL_ARRAY,
+   STRING_ARRAY
 
 /*- Private attributes -------------------------------------------------------*/
 /*- Main ---------------------------------------------------------------------*/
