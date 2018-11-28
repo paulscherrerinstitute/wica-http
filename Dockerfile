@@ -139,7 +139,7 @@ COPY ./target/${JAR_FILE} lib/jarfile.jar
 
 COPY ./src/main/resources/config/keystore.jks config
 COPY ./src/main/resources/application-docker-run.properties config
-COPY ./src/main/resources/docker_logback_config.xml config
+COPY src/main/resources/logback_config.xml config
 
 
 ###############################################################################

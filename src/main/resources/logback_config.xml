@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- Logback Configuration File -for the Wica Server Application -->
+<!-- Logback Configuration File -for Wica Application -->
 <configuration>
 
     <appender name="APP_LOG" class="ch.qos.logback.core.FileAppender">
@@ -43,8 +43,8 @@
         </encoder>
     </appender>
 
-    <!-- Configure the APP appender to receive input from the whole application -->
-    <logger name="ch.psi.wica">
+    <!-- Configure the APP appender to receive input only from the whole application -->
+    <logger name="APP_LOGGER">
         <appender-ref ref="APP_LOG" />
     </logger>
 
