@@ -15,7 +15,7 @@ export class WicaStreamManager
      *
      * @param options object containing definitions which further control
      *        the behaviour of this class. The following options are supported:
-     *        streamReconnectIntervalInSeconds, streamReconnectIntervalInSeconds,
+     *        streamReconnectIntervalInSeconds, streamTimeoutIntervalInSeconds,
      *        crossOriginCheckEnabled.
      */
     constructor( serverUrl, channels, connectionHandlers, messageHandlers, options )
