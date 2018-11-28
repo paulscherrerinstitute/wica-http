@@ -30,7 +30,6 @@ import java.util.Map;
  * to the other administration pages.
  */
 @ThreadSafe
-@RequestMapping("/admin")
 @Controller
 class WicaAdminPageController
 {
@@ -49,10 +48,10 @@ class WicaAdminPageController
 
    // Leave the default MVC handling for this method. This means that the returned value will
    // be interpreted as a reference to a thymeleaf template.
-   @GetMapping( value="/", produces = MediaType.TEXT_HTML_VALUE )
+   @GetMapping( value="/admin", produces = MediaType.TEXT_HTML_VALUE )
    public String getServiceConfigurationListAsHtml( Model viewModel )
    {
-      logger.info("Received status GET / request" );
+      logger.info("Received status GET /admin request" );
 
 
       // Add some server statistics
