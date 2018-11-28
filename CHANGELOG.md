@@ -103,7 +103,32 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-6853](https://jira.psi.ch/browse/CTRLIT-6853): Add support for external application monitoring via Spring Boot Server Admin App.
    - [CTRLIT-6854](https://jira.psi.ch/browse/CTRLIT-6854): Create Software Release 0.8.0
    - [CTRLIT-6855](https://jira.psi.ch/browse/CTRLIT-6854): Perform initial tweaks to address issues raised against RF Display Panels.
-   
+
+* [0.9.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.9.0-RELEASE)
+  This feature is an interim rlease on the way towards support caget and caput and various other features.
+  The codebease works but thins in the SpringBoot Java area wrt EPICS are in a state of flex and need revisiting to cleanup. 
+   - [CTRLIT-6931](https://jira.psi.ch/browse/CTRLIT-6931): Define artifiact naming convention
+   - [CTRLIT-6912](https://jira.psi.ch/browse/CTRLIT-6912): Modualarise JS support.
+   - [CTRLIT-6877](https://jira.psi.ch/browse/CTRLIT-6877): Remove demo panels and index as these will in the future be supported by separate wica2_panels git repository.
+   - [CTRLIT-6853](https://jira.psi.ch/browse/CTRLIT-6853): Add support for external application monitoring via Spring Boot Server Admin App.
+   - [CTRLIT-6878](https://jira.psi.ch/browse/CTRLIT-6878): Add support for serving static resources from outside container.
+   - [CTRLIT-6959](https://jira.psi.ch/browse/CTRLIT-6959): Miscellaneous improvements. These include: 
+                                                            - improved type support and initial attempt at support cagets.
+                                                            - admin page is now served via /admin path.
+                                                            - first start at supporting caget and caput
+                                                            - improved type support for non-scalar channels.
+                                                            - Fixed typos.
+                                                            - Added separate type for non-scalar channel types: INTEGER_ARRAY, REAL_ARRAY, STRING_ARRAY.
+                                                            - Added support for WICA_HOST constant - this should be integrated into the build at some point.
+                                                            - fixed typo.
+                                                            - The renderer will no longer be called if a channel is offline. 
+                                                            - Added support for rendering real or integer numbers that are  NaN and Infinity'. Added better support for PRECISION.
+                                                            - improved debug-ability by adding intermediate variable which can take breakpoint.
+                                                            - temporarily switched to debian image and openjdk10
+                                                            - support for cpu metrics
+                                                            - added support for static locations and add extra information to actuator. Add initial get interval.
+
+
 # Project Ideas Completed
 
 1. Consider refactoring so that the app only uses one context (channels can then be cached and shared between 
@@ -120,6 +145,9 @@ It would be far more efficient if EPICS channels were cached and shared between 
 1. Bug Fix: sometimes the Wica Server sends disconnect messages but afterwards the monitor continues to send updates
 so one is left with a screen with lost of pink background (pink = the Wica server disconnected). DONE.
 1. Render changes to server and epics channel connection state using CSS.  DONE. 
+1. Provide some example displays for Hubert. DONE.
+1. Feature Enhancement: enhance PROSCAN display so that the design is fully responsive (currently it only works well on 
+a desktop monitor). DONE.
 
 # Project Ideas Backlog
 
@@ -128,9 +156,7 @@ implementation it will be placed on the project's [Jira Kanban Board](https://ji
 1. Create end-to-end tests to measure performance.
 1. Optimisation: WICA clients that connect for the first time should receive the full list of channels with current 
 values. They should then only be advised of CHANGES to the value.
-1. Feature Enhancement: enhance PROSCAN display so that the design is fully responsive (currently it only works well on 
-a desktop monitor).
-1. Provide some example displays for Hubert.
+
 1. Cleanup message id's to support the following:
    - metadata-stream: Sends all values with SLOW periodicity. 
    - value-snapshot-stream: Sends all values with SLOW periodicity. 
