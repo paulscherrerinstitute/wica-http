@@ -7,6 +7,9 @@ import {WicaStreamManager} from './stream-manager.js'
 import * as WicaRenderingManager from './rendering-manager.js'
 import * as DocumentUtilities from './document-utils.js'
 
+//const WICA_HOST = "https://gfa-wica.psi.ch";
+const WICA_HOST = "https://gfa-wica-dev.psi.ch";
+
 let lastOpenedStreamId = 0;
 
 let connectionHandlers = {};
@@ -88,7 +91,7 @@ function activateStream()
         channels.push(channelName);
     });
 
-    let wicaStreamManager = new WicaStreamManager("https://gfa-wica-dev.psi.ch", channels,
+    let wicaStreamManager = new WicaStreamManager( WICA_HOST, channels,
         connectionHandlers, messageHandlers,
         {
             streamReconnectIntervalInSeconds: 15,
@@ -135,7 +138,7 @@ function loadWicaCSS()
         link.id   = 'wica-css-id';
         link.rel  = 'stylesheet';
         link.type = 'text/css';
-        link.href = 'https://gfa-wica-dev.psi.ch/wica/wica.css';
+        link.href = WICA_HOST + '/wica/wica.css';
         link.media = 'all';
         head.appendChild(link);
     }
