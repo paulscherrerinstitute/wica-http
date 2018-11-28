@@ -194,7 +194,7 @@ class WicaStreamController
       epicsChannelDataService.startMonitoring( stream );
 
       logger.info("POST: allocated stream with id: '{}'" , wicaStreamId.asString() );
-      return new ResponseEntity<>(wicaStreamId.asString(), HttpStatus.OK );
+      return new ResponseEntity<>( wicaStreamId.asString(), HttpStatus.OK );
    }
 
    /**
@@ -206,7 +206,7 @@ class WicaStreamController
    @GetMapping( value="/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE )
    public ResponseEntity<Flux<ServerSentEvent<String>>> getServerSentEventStream( @PathVariable String id )
    {
-      // Check that the Spring framework gives us something in the channelNames field.
+      // Check that the Spring framework gives us something in the id field.
       Validate.notNull( id, "The event stream 'id' field was empty." );
 
       logger.info( "GET: Handling get stream request for ID: '{}'", id );
