@@ -50,7 +50,6 @@ public class EpicsChannelMonitorService implements AutoCloseable
    private static final List<Channel> channels = new ArrayList<>();
    private static final List<Monitor> monitors = new ArrayList<>();
 
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
@@ -67,6 +66,87 @@ public class EpicsChannelMonitorService implements AutoCloseable
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
+
+
+//   public void get( WicaChannelName wicaChannelName, Consumer<Boolean> connectionStateChangeHandler,
+//                                Consumer<WicaChannelMetadata> metadataChangeHandler, Consumer<WicaChannelValue> valueChangeHandler  )
+//   {
+//      Validate.notNull(wicaChannelName);
+//      Validate.notNull( connectionStateChangeHandler );
+//      Validate.notNull( metadataChangeHandler );
+//      Validate.notNull( valueChangeHandler );
+//
+//      logger.debug("'{}' - starting to monitor... ", wicaChannelName);
+//
+//      try
+//      {
+//         logger.debug("'{}' - creating channel of type '{}'...", wicaChannelName, "generic" );
+//
+//         final Channel<Object> channel = caContext.createChannel( wicaChannelName.toString(), Object.class ) ;
+//         channels.add( channel );
+//
+//         logger.debug("'{}' - channel created ok.", wicaChannelName);
+//         logger.debug("'{}' - connecting synchronously to... ", wicaChannelName);
+//         channel.connect();
+//         logger.debug("'{}' - asynchronous connect completed ok.", wicaChannelName);
+//
+//
+//         logger.debug("'{}' - channel connected ok.", wicaChannelName);
+//         logger.debug("'{}' - getting first value...", wicaChannelName);
+//
+//         final Object firstGet = channel.get();
+//         logger.debug("'{}' - first value received.", wicaChannelName);
+//
+//            if ( ( firstGet instanceof String ) || ( firstGet instanceof String[] ) )
+//            {
+//               logger.debug("'{}' - first value was STRING.", wicaChannelName);
+//               publishStringMetadata( metadataChangeHandler );
+//            }
+//            else if ( ( firstGet instanceof Integer ) || ( firstGet instanceof int[] ) )
+//            {
+//               logger.debug("'{}' - first value was INTEGER.", wicaChannelName);
+//               publishIntegerMetadata( metadataChangeHandler );
+//            }
+//            else if ( ( firstGet instanceof Double ) || ( firstGet instanceof double[] ) )
+//            {
+//               logger.debug( "'{}' - first value was DOUBLE.", wicaChannelName);
+//               // Request the initial value of the channel with the widest possible
+//               // set of metadata. In EPICS this is the DBR_CTRL_xxx type which is
+//               // supported in PSI's CA library via the Metadata<Control> class.
+//               logger.debug( "'{}' - getting epics CTRL metadata...", wicaChannelName);
+//               final Object metadataObject = channel.get( Control.class );
+//               logger.debug( "'{}' - EPICS CTRL metadata received.", wicaChannelName);
+//
+//               // Publish the metadata obtained from the first value.
+//               logger.trace( "'{}' - publishing metadata...", wicaChannelName);
+//               publishNumericMetadata( (Control<?,?>) metadataObject, metadataChangeHandler );
+//            }
+//            else
+//            {
+//               logger.warn( "'{}' - first value was of unsupported type", wicaChannelName);
+//               return;
+//            }
+//            logger.debug( "'{}' - metadata published.", wicaChannelName);
+//
+//            // Establish a monitor on the most dynamic properties of the channel.
+//            // These include the timestamp, the alarm information and value itself.
+//            // In EPICS this is the DBR_TIME_xxx type which is supported in PSI's
+//            // CA library via the Metadata<Timestamped> class.
+//            logger.debug("'{}' - adding monitor...", wicaChannelName);
+//            final Monitor<Timestamped<Object>> monitor = channel.addMonitor( Timestamped.class, valueObj -> {
+//               logger.trace("'{}' - publishing new value...", wicaChannelName);
+//               publishValue( valueObj, valueChangeHandler);
+//               logger.trace("'{}' - new value published.", wicaChannelName);
+//            } );
+//            logger.debug("'{}' - monitor added.", wicaChannelName);
+//            monitors.add( monitor );
+//         } );
+//      }
+//      catch ( Exception ex )
+//      {
+//         logger.debug("'{}' - exception on channel, details were as follows: ", wicaChannelName, ex.toString() );
+//      }
+//   }
 
    /**
     * Starts monitoring the specified EPICS channel and sets up a plan whereby
@@ -106,7 +186,7 @@ public class EpicsChannelMonitorService implements AutoCloseable
       {
          logger.debug("'{}' - creating channel of type '{}'...", wicaChannelName, "generic" );
 
-         final Channel<Object> channel = caContext.createChannel(wicaChannelName.toString(), Object.class ) ;
+         final Channel<Object> channel = caContext.createChannel( wicaChannelName.toString(), Object.class ) ;
          channels.add( channel );
 
          logger.debug("'{}' - channel created ok.", wicaChannelName);
@@ -127,36 +207,72 @@ public class EpicsChannelMonitorService implements AutoCloseable
             logger.debug("'{}' - first value received.", wicaChannelName);
 
             logger.debug("'{}' - publishing metadata...", wicaChannelName);
-            if ( ( firstGet instanceof String ) || ( firstGet instanceof String[] ) )
+            if ( firstGet instanceof String )
             {
                logger.debug("'{}' - first value was STRING.", wicaChannelName);
                publishStringMetadata( metadataChangeHandler );
             }
-            else if ( ( firstGet instanceof Integer ) || ( firstGet instanceof int[] ) )
+            else if ( firstGet instanceof String[] )
+            {
+               logger.debug("'{}' - first value was STRING ARRAY.", wicaChannelName);
+               publishStringArrayMetadata( metadataChangeHandler );
+            }
+            else if ( firstGet instanceof Integer )
             {
                logger.debug("'{}' - first value was INTEGER.", wicaChannelName);
-               publishIntegerMetadata( metadataChangeHandler );
-            }
-            else if ( ( firstGet instanceof Double ) || ( firstGet instanceof double[] ) )
-            {
-               logger.debug("'{}' - first value was DOUBLE.", wicaChannelName);
                // Request the initial value of the channel with the widest possible
                // set of metadata. In EPICS this is the DBR_CTRL_xxx type which is
                // supported in PSI's CA library via the Metadata<Control> class.
-               logger.debug("'{}' - getting epics CTRL metadata...", wicaChannelName);
+               logger.debug( "'{}' - getting epics CTRL metadata...", wicaChannelName);
                final Object metadataObject = channel.get( Control.class );
-               logger.debug("'{}' - EPICS CTRL metadata received.", wicaChannelName);
+               logger.debug( "'{}' - EPICS CTRL metadata received.", wicaChannelName);
+               publishIntegerMetadata( (Control<?,?>) metadataObject, metadataChangeHandler );
+            }
+            else if ( firstGet instanceof int[] )
+            {
+               logger.debug("'{}' - first value was INTEGER ARRAY.", wicaChannelName);
+               // Request the initial value of the channel with the widest possible
+               // set of metadata. In EPICS this is the DBR_CTRL_xxx type which is
+               // supported in PSI's CA library via the Metadata<Control> class.
+               logger.debug( "'{}' - getting epics CTRL metadata...", wicaChannelName);
+               final Object metadataObject = channel.get( Control.class );
+               logger.debug( "'{}' - EPICS CTRL metadata received.", wicaChannelName);
+               publishIntegerArrayMetadata( (Control<?,?>) metadataObject, metadataChangeHandler );
+            }
+            else if ( firstGet instanceof Double )
+            {
+               logger.debug( "'{}' - first value was DOUBLE.", wicaChannelName);
+               // Request the initial value of the channel with the widest possible
+               // set of metadata. In EPICS this is the DBR_CTRL_xxx type which is
+               // supported in PSI's CA library via the Metadata<Control> class.
+               logger.debug( "'{}' - getting epics CTRL metadata...", wicaChannelName);
+               final Object metadataObject = channel.get( Control.class );
+               logger.debug( "'{}' - EPICS CTRL metadata received.", wicaChannelName);
 
                // Publish the metadata obtained from the first value.
-               logger.trace("'{}' - publishing metadata...", wicaChannelName);
-               publishNumericMetadata( (Control<?,?>) metadataObject, metadataChangeHandler );
+               logger.trace( "'{}' - publishing metadata...", wicaChannelName);
+               publishRealMetadata( (Control<?,?>) metadataObject, metadataChangeHandler );
+            }
+            else if ( firstGet instanceof double[] )
+            {
+               logger.debug( "'{}' - first value was DOUBLE ARRAY.", wicaChannelName);
+               // Request the initial value of the channel with the widest possible
+               // set of metadata. In EPICS this is the DBR_CTRL_xxx type which is
+               // supported in PSI's CA library via the Metadata<Control> class.
+               logger.debug( "'{}' - getting epics CTRL metadata...", wicaChannelName);
+               final Object metadataObject = channel.get( Control.class );
+               logger.debug( "'{}' - EPICS CTRL metadata received.", wicaChannelName);
+
+               // Publish the metadata obtained from the first value.
+               logger.trace( "'{}' - publishing metadata...", wicaChannelName);
+               publishRealArrayMetadata( (Control<?,?>) metadataObject, metadataChangeHandler );
             }
             else
             {
-               logger.warn("'{}' - first value was of unsupported type", wicaChannelName);
+               logger.warn( "'{}' - first value was of unsupported type", wicaChannelName);
                return;
             }
-            logger.debug("'{}' - metadata published.", wicaChannelName);
+            logger.debug( "'{}' - metadata published.", wicaChannelName);
 
             // Establish a monitor on the most dynamic properties of the channel.
             // These include the timestamp, the alarm information and value itself.
@@ -255,13 +371,45 @@ public class EpicsChannelMonitorService implements AutoCloseable
       metadataChangeHandler.accept(wicaChannelMetadata);
    }
 
-   private void publishIntegerMetadata( Consumer<WicaChannelMetadata> metadataChangeHandler )
+   private void publishStringArrayMetadata( Consumer<WicaChannelMetadata> metadataChangeHandler )
    {
-      final WicaChannelMetadata wicaChannelMetadata = WicaChannelMetadata.createIntegerInstance();
+      final WicaChannelMetadata wicaChannelMetadata = WicaChannelMetadata.createStringArrayInstance();
       metadataChangeHandler.accept(wicaChannelMetadata);
    }
 
-   private <T,ST> void publishNumericMetadata( Control<T,ST> metadataObject, Consumer<WicaChannelMetadata> metadataChangeHandler )
+   private <T,ST> void publishIntegerMetadata( Control<T,ST> metadataObject, Consumer<WicaChannelMetadata> metadataChangeHandler )
+   {
+      final String units = metadataObject.getUnits();
+      final int upperDisplay = (int) metadataObject.getUpperDisplay();
+      final int lowerDisplay = (int) metadataObject.getLowerDisplay();
+      final int upperControl = (int) metadataObject.getUpperControl();
+      final int lowerControl = (int) metadataObject.getLowerControl();
+      final int upperAlarm   = (int) metadataObject.getUpperAlarm();
+      final int lowerAlarm   = (int) metadataObject.getLowerAlarm();
+      final int upperWarning = (int) metadataObject.getUpperWarning();
+      final int lowerWarning = (int) metadataObject.getLowerWarning();
+
+      final WicaChannelMetadata wicaChannelMetadata = WicaChannelMetadata.createIntegerInstance( units, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
+      metadataChangeHandler.accept(wicaChannelMetadata);
+   }
+
+   private <T,ST> void publishIntegerArrayMetadata( Control<T,ST> metadataObject, Consumer<WicaChannelMetadata> metadataChangeHandler )
+   {
+      final String units = metadataObject.getUnits();
+      final int upperDisplay = (int) metadataObject.getUpperDisplay();
+      final int lowerDisplay = (int) metadataObject.getLowerDisplay();
+      final int upperControl = (int) metadataObject.getUpperControl();
+      final int lowerControl = (int) metadataObject.getLowerControl();
+      final int upperAlarm   = (int) metadataObject.getUpperAlarm();
+      final int lowerAlarm   = (int) metadataObject.getLowerAlarm();
+      final int upperWarning = (int) metadataObject.getUpperWarning();
+      final int lowerWarning = (int) metadataObject.getLowerWarning();
+
+      final WicaChannelMetadata wicaChannelMetadata = WicaChannelMetadata.createIntegerArrayInstance( units, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
+      metadataChangeHandler.accept(wicaChannelMetadata);
+   }
+
+   private <T,ST> void publishRealMetadata( Control<T,ST> metadataObject, Consumer<WicaChannelMetadata> metadataChangeHandler )
    {
       final String units = metadataObject.getUnits();
       final int precision   = metadataObject.getPrecision();
@@ -274,7 +422,24 @@ public class EpicsChannelMonitorService implements AutoCloseable
       final double upperWarning = (double) metadataObject.getUpperWarning();
       final double lowerWarning = (double) metadataObject.getLowerWarning();
 
-      final WicaChannelMetadata wicaChannelMetadata = WicaChannelMetadata.createRealInstance(units, precision, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
+      final WicaChannelMetadata wicaChannelMetadata = WicaChannelMetadata.createRealInstance( units, precision, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
+      metadataChangeHandler.accept(wicaChannelMetadata);
+   }
+
+   private <T,ST> void publishRealArrayMetadata( Control<T,ST> metadataObject, Consumer<WicaChannelMetadata> metadataChangeHandler )
+   {
+      final String units = metadataObject.getUnits();
+      final int precision   = metadataObject.getPrecision();
+      final double upperDisplay = (double) metadataObject.getUpperDisplay();
+      final double lowerDisplay = (double) metadataObject.getLowerDisplay();
+      final double upperControl = (double) metadataObject.getUpperControl();
+      final double lowerControl = (double) metadataObject.getLowerControl();
+      final double upperAlarm   = (double) metadataObject.getUpperAlarm();
+      final double lowerAlarm   = (double) metadataObject.getLowerAlarm();
+      final double upperWarning = (double) metadataObject.getUpperWarning();
+      final double lowerWarning = (double) metadataObject.getLowerWarning();
+
+      final WicaChannelMetadata wicaChannelMetadata = WicaChannelMetadata.createRealArrayInstance(units, precision, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
       metadataChangeHandler.accept(wicaChannelMetadata);
    }
 
