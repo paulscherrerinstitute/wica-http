@@ -1,5 +1,7 @@
 import * as DocumentUtilities from './document-utils.js'
 
+const MAX_PRECISION = 8;
+
 /**
  * Render all wica-aware  html elements in the current document.
  */
@@ -13,14 +15,19 @@ export function renderWicaElements()
             return;
         }
 
-        // Obtain the channel name object
-        let channelName = element.getAttribute( "data-wica-channel-name" );
-
         // Obtain the channel value object
         let channelValueObj = JSON.parse( element.getAttribute( "data-wica-channel-value" ) );
 
+        // If the current value is not available because the channel is off line then bail out
+        if ( channelValueObj.val === null ) {
+            return;
+        }
+
         // Obtain the channel metadata object
         let channelMetadataObj = JSON.parse( element.getAttribute( "data-wica-channel-metadata" ) );
+
+        // Obtain the channel name object
+        let channelName = element.getAttribute( "data-wica-channel-name" );
 
         // If an onchange event handler is defined then delegate the handling
         // of the event (typically rendering) to the defined method.
@@ -110,7 +117,17 @@ function formatScalarValue( channelValueObj, channelMetadataObj, renderingHintsO
         let precision = renderingHintsObj.hasOwnProperty( "prec" ) ? renderingHintsObj.prec : channelMetadataObj.prec;
         let units = renderingHintsObj.hasOwnProperty( "units" ) ? renderingHintsObj.units: channelMetadataObj.egu;
 
-        if ( exponential === null ) {
+        // TODO: look at more rigorous deserialisation of NaN's, Infinity etc
+        if ( ( rawValue === "Infinity" ) || ( rawValue === "NaN") )  {
+            return rawValue;
+        }
+        else if ( exponential === null ) {
+
+            if ( precision > MAX_PRECISION )
+            {
+                console.warn( "Channel precision is out-of-range. Precision will be truncated to " + MAX_PRECISION );
+                precision = MAX_PRECISION;
+            }
             return rawValue.toFixed( precision ) + " " + units;
         }
         else {
@@ -119,8 +136,14 @@ function formatScalarValue( channelValueObj, channelMetadataObj, renderingHintsO
     }
     else if ( channelMetadataObj.type === "INTEGER")
     {
-        let units = renderingHintsObj.hasOwnProperty( "units" ) ? renderingHintsObj.units: channelMetadataObj.egu;
-        return rawValue + " " + units;
+        // TODO: look at more rigorous deserialisation of NaN's, Infinity etc
+        if ( rawValue === "Infinity" )  {
+            return rawValue;
+        }
+        else {
+            let units = renderingHintsObj.hasOwnProperty("units") ? renderingHintsObj.units : channelMetadataObj.egu;
+            return rawValue + " " + units;
+        }
     }
     else {
         return rawValue;
