@@ -7,8 +7,8 @@ import {WicaStreamManager} from './stream-manager.js'
 import * as WicaRenderingManager from './rendering-manager.js'
 import * as DocumentUtilities from './document-utils.js'
 
-const WICA_HOST = "https://gfa-wica.psi.ch";
-//const WICA_HOST = "https://gfa-wica-dev.psi.ch";
+//const WICA_HOST = "https://gfa-wica.psi.ch";
+const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
 let lastOpenedStreamId = 0;
 

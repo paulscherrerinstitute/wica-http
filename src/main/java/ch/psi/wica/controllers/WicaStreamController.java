@@ -22,10 +22,7 @@ import reactor.core.publisher.ReplayProcessor;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.SubmissionPublisher;
 import java.util.stream.Collectors;
@@ -153,7 +150,7 @@ class WicaStreamController
       final Flux<ServerSentEvent<String>> channelValueFlux = Flux.range( 1, 1 ) //( Duration.ofMillis( channelValueFluxInterval ) )
          .map( l -> {
             logger.trace( "channel-value flux is publishing new SSE..." );
-            final Map<WicaChannelName, WicaChannelValue> channelValueMap = epicsChannelDataService.getChannelValues( stream );
+            final Map<WicaChannelName, Queue<WicaChannelValue>> channelValueMap = epicsChannelDataService.getChannelValues(stream );
             return buildServerSentMessageEvent(wicaStreamId, "ev-wica-channel-value", "channel values", WicaChannelValue.convertMapToJsonRepresentation( channelValueMap ) );
          } )
          .doOnCancel( () -> logger.warn( "channel-value flux was cancelled" ) );
@@ -166,7 +163,7 @@ class WicaStreamController
       final Flux<ServerSentEvent<String>> channelValueUpdateFlux = Flux.interval( Duration.ofMillis( channelValueUpdateFluxInterval ) )
             .map( l -> {
                logger.trace( "channel-value-update flux is publishing new SSE..." );
-               final Map<WicaChannelName, WicaChannelValue> channelValueUpdateMap = epicsChannelDataService.getChannelValuesUpdatedSince( stream, getLastUpdateTime(wicaStreamId) );
+               final Map<WicaChannelName, Queue<WicaChannelValue>> channelValueUpdateMap = epicsChannelDataService.getChannelValuesUpdatedSince( stream, getLastUpdateTime(wicaStreamId) );
                setLastUpdateTime(wicaStreamId);
                return buildServerSentMessageEvent(wicaStreamId, "ev-wica-channel-value", "channel value changes", WicaChannelValue.convertMapToJsonRepresentation(channelValueUpdateMap ) );
             } )

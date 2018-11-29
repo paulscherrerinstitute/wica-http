@@ -59,7 +59,7 @@ public class EpicsChannelMonitorService implements AutoCloseable
 
       // Setup a context that does no buffering. This is good enough for most
       // status display purposes to humans.
-      System.setProperty( "CA_MONITOR_NOTIFIER_IMPL", "BlockingQueueMultipleWorkerMonitorNotificationServiceImpl,16,1" );
+      System.setProperty( "CA_MONITOR_NOTIFIER_IMPL", "BlockingQueueMultipleWorkerMonitorNotificationServiceImpl,16,10" );
       caContext = new Context();
       logger.debug( "'{}' - service instance constructed ok.", this );
    }

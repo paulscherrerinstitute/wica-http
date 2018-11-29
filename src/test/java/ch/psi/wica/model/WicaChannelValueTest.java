@@ -3,15 +3,14 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
-
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -34,11 +33,17 @@ class WicaChannelValueTest
    @Test
    void testValueSerialisation()
    {
-      final Map<WicaChannelName, WicaChannelValue> map = new HashMap<>();
-      map.put(new WicaChannelName("chan1" ), WicaChannelValue.createChannelConnectedValue("abc", WicaChannelAlarmSeverity.MINOR_ALARM, 0, LocalDateTime.now(), LocalDateTime.now() ) );
-      map.put(new WicaChannelName("chan2" ), WicaChannelValue.createChannelConnectedValue("123", WicaChannelAlarmSeverity.MAJOR_ALARM, 0, LocalDateTime.now(), LocalDateTime.now() ) );
+      final Map<WicaChannelName, Queue<WicaChannelValue>> map = new HashMap<>();
+      WicaChannelValue value1 = WicaChannelValue.createChannelConnectedValue("abc", WicaChannelAlarmSeverity.MINOR_ALARM, 0, LocalDateTime.now(), LocalDateTime.now() );
+      WicaChannelValue value2 = WicaChannelValue.createChannelConnectedValue("123", WicaChannelAlarmSeverity.MAJOR_ALARM, 0, LocalDateTime.now(), LocalDateTime.now() );
 
-      final String valueString = WicaChannelValue.convertMapToJsonRepresentation(map );
+      LinkedList<WicaChannelValue> list1 = new LinkedList<>( List.<WicaChannelValue>of( value1, value2 ) );
+      LinkedList<WicaChannelValue> list2 = new LinkedList<>( List.<WicaChannelValue>of( value1, value2 ) );
+
+      map.put( new WicaChannelName("chan1" ), list1 );
+      map.put( new WicaChannelName("chan2" ), list2 );
+
+      final String valueString = WicaChannelValue.convertMapToJsonRepresentation( map );
       logger.info( "JSON Value String looks like this: '{}'", valueString );
    }
 

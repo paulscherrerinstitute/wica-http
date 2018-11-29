@@ -16,6 +16,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Map;
+import java.util.Queue;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -88,11 +89,12 @@ public class WicaChannelValue<T>
       return new WicaChannelValue<>( value, alarmSeverity, alarmStatus, wicaServerTimestamp, epicsIocTimestamp );
    }
 
-   public static String convertMapToJsonRepresentation( Map<WicaChannelName, WicaChannelValue> map )
+   public static String convertMapToJsonRepresentation( Map<WicaChannelName, Queue<WicaChannelValue>> map )
    {
       try
       {
-         return jsonObjectMapper.writeValueAsString( map );
+         final String result = jsonObjectMapper.writeValueAsString( map );
+         return result;
       }
       catch ( JsonProcessingException ex )
       {

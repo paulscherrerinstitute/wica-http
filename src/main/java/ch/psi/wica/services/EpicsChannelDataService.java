@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -35,7 +37,7 @@ public class EpicsChannelDataService
    private final Logger logger = LoggerFactory.getLogger (EpicsChannelDataService.class );
 
    private static final Map<WicaChannelName,Integer> channelInterestMap = Collections.synchronizedMap( new HashMap<>() );
-   private static final Map<WicaChannelName, WicaChannelValue> channelValueStash = Collections.synchronizedMap( new HashMap<>() );
+   private static final Map<WicaChannelName, Queue<WicaChannelValue>> channelValueStash = Collections.synchronizedMap( new HashMap<>() );
    private static final Map<WicaChannelName, WicaChannelMetadata> channelMetadataStash = Collections.synchronizedMap( new HashMap<>() );
 
    private EpicsChannelMonitorService epicsChannelMonitorService;
@@ -44,7 +46,7 @@ public class EpicsChannelDataService
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   private EpicsChannelDataService( EpicsChannelMonitorService epicsChannelMonitorService )
+   EpicsChannelDataService( EpicsChannelMonitorService epicsChannelMonitorService )
    {
       Validate.notNull ( epicsChannelMonitorService );
       this.epicsChannelMonitorService = new EpicsChannelMonitorService();
@@ -128,11 +130,12 @@ public class EpicsChannelDataService
       return channelMetadataStash.get( channelName );
    }
 
-
    public WicaChannelValue getChannelValue( WicaChannelName channelName )
    {
       Validate.notNull( channelName );
-      return channelValueStash.get( channelName );
+
+      final Queue<WicaChannelValue> valueQueue = channelValueStash.get( channelName );
+      return valueQueue.remove();
    }
 
    public boolean waitForFirstValue( WicaChannelName channelName, TimeUnit timeUnit, long timeout ) throws InterruptedException
@@ -144,23 +147,24 @@ public class EpicsChannelDataService
    }
 
 
-   public Map<WicaChannelName, WicaChannelValue> getChannelValues( WicaStream WicaStream )
+   public Map<WicaChannelName, Queue<WicaChannelValue>> getChannelValues( WicaStream wicaStream )
    {
-      Validate.notNull(WicaStream);
+      Validate.notNull( wicaStream );
 
-      return WicaStream.getChannels().stream()
+      return wicaStream.getChannels().stream()
                                      .filter( channelValueStash::containsKey )
                                      .collect( Collectors.toMap( Function.identity(), channelValueStash::get ) );
    }
 
 
-   public Map<WicaChannelName, WicaChannelValue> getChannelValuesUpdatedSince( WicaStream WicaStream, LocalDateTime sinceDateTime )
+   public Map<WicaChannelName, Queue<WicaChannelValue>> getChannelValuesUpdatedSince( WicaStream wicaStream, LocalDateTime sinceDateTime )
    {
-      Validate.notNull(WicaStream);
+      Validate.notNull( wicaStream );
 
-      return WicaStream.getChannels().stream()
+      return wicaStream.getChannels().stream()
                                      .filter( channelValueStash::containsKey )
-                                     .filter( c -> channelValueStash.get( c ).getTimestamp().isAfter( sinceDateTime ) )
+                                     .filter( c -> ! channelValueStash.get( c ).isEmpty() )
+                                     .filter( c -> channelValueStash.get( c ).peek().getTimestamp().isAfter( sinceDateTime ) )
                                      .collect( Collectors.toMap( Function.identity(), channelValueStash::get ) );
    }
 
@@ -192,7 +196,21 @@ public class EpicsChannelDataService
       if ( ! isConnected )
       {
          logger.debug("'{}' - value changed to NULL to indicate the connection was lost.", wicaChannelName);
-         channelValueStash.put( wicaChannelName, WicaChannelValue.createChannelDisconnectedValue( LocalDateTime.now() ) );
+         final WicaChannelValue disconnectedValue = WicaChannelValue.createChannelDisconnectedValue( LocalDateTime.now() );
+
+         System.out.println( "*************************DISCONNECTED********************");
+         if ( channelValueStash.get( wicaChannelName ) == null )
+         {
+            System.out.println( "*************************ALLOCATONG********************");
+            final Queue<WicaChannelValue> myQueue = new LinkedList<>();
+            myQueue.add( disconnectedValue );
+            channelValueStash.put( wicaChannelName,  myQueue );
+         }
+         else {
+            System.out.println( "*************************ADDINGTOQ********************");
+            channelValueStash.get( wicaChannelName ).add( disconnectedValue );
+         }
+
       }
    }
 
@@ -205,10 +223,24 @@ public class EpicsChannelDataService
    private void valueChanged( WicaChannelName wicaChannelName, WicaChannelValue wicaChannelValue )
    {
       Validate.notNull(wicaChannelName, "The 'wicaChannelName' argument was null");
-      Validate.notNull(wicaChannelValue, "The 'newValue' argument was null");
+      Validate.notNull(wicaChannelValue, "The 'wicaChannelValue' argument was null");
 
-      logger.trace("'{}' - value changed to: '{}'", wicaChannelName, wicaChannelValue);
-      channelValueStash.put( wicaChannelName, wicaChannelValue );
+      logger.info("'{}' - value changed to: '{}'", wicaChannelName, wicaChannelValue);
+
+
+      System.out.println( "*************************NEWVAL********************");
+      if ( channelValueStash.get( wicaChannelName ) == null )
+      {
+         System.out.println( "*************************ALLOCATONG********************");
+         final Queue<WicaChannelValue> myQueue = new LinkedList<>();
+         myQueue.add( wicaChannelValue );
+         channelValueStash.put( wicaChannelName,  myQueue );
+      }
+      else {
+         System.out.println( "*************************ADDINGTOQ********************");
+         channelValueStash.get( wicaChannelName ).add( wicaChannelValue );
+      }
+
    }
 
    /**
@@ -223,7 +255,7 @@ public class EpicsChannelDataService
       Validate.notNull(wicaChannelMetadata, "The 'wicaChannelMetadata' argument was null");
 
       logger.trace("'{}' - metadata changed to: '{}'", wicaChannelName, wicaChannelMetadata);
-      channelMetadataStash.put(wicaChannelName, wicaChannelMetadata);
+      channelMetadataStash.put( wicaChannelName, wicaChannelMetadata);
    }
 
 /*- Nested Classes -----------------------------------------------------------*/
