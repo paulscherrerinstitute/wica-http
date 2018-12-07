@@ -39,8 +39,8 @@ class WicaCorsConfigurer implements WebMvcConfigurer
               .allowedOrigins( "*" )
                // Firefox is pickier: as '*' is not an allowed origin the
                // origins must be enabled by hand.
-              .allowedOrigins( "http://localhost:8000", "https://intranet.psi.ch", "http://pc9013.psi.ch:8000", "file://" )
-              .allowCredentials( true );
+               //.allowedOrigins( "http://localhost:8000", "https://intranet.psi.ch", "http://pc9013.psi.ch:8000", "file://" )
+               .allowCredentials( true );
       logger.info( "CORS configuration completed.");
    }
 
