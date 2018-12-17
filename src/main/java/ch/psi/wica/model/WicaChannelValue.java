@@ -3,171 +3,309 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.annotation.*;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Map;
-import java.util.Queue;
+import java.util.Objects;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@JsonPropertyOrder( { "val", "stat", "sevr", "ts1", "ts2", "ts1-alt", "ts2-alt" } )
+@JsonFilter( "WicaChannelValueFilter" )
+@JsonPropertyOrder( { "conn", "type", "val", "sevr", "stat", "ts", "wsts", "wsts-alt", "dsts", "dsts-alt" } )
 @Immutable
-public class WicaChannelValue<T>
+public abstract class WicaChannelValue
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   /**
-    * The format which will be used when making JSON or String representations
-    * of the times/dates in this class.
-    */
-   private static final String DATETIME_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
-   private static final ObjectMapper jsonObjectMapper = new Jackson2ObjectMapperBuilder().createXmlMapper( false ).build();
-
-   static {
-      jsonObjectMapper.configure( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false );
-      jsonObjectMapper.configure( SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false );
-   }
-
-   private final T value;
-   private final WicaChannelAlarmSeverity alarmSeverity;
-   private final int alarmStatus;
+   private final boolean connected;
    private final LocalDateTime wicaServerTimestamp;
-   private final LocalDateTime epicsIocTimestamp;
-
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   /**
-    * Constructs a new instance based on the supplied value, alarm information
-    * and the server and channel timestamps.
-    *
-    * @param value the channel value. Can be NULL to indicate the channel is
-    *        disconnected. When the channel is non-scalar the normal Java
-    *        array representation should be supplied, thus: [ "abc", "def",
-    *        "ghi" ] etc.
-    *
-    * @param alarmSeverity the alarm severity.
-    * @param alarmStatus the alarm status.
-    *
-    * @param wicaServerTimestamp the timestamp obtained from the Wica Server
-    *                            at the time the instance was created.
-    *
-    * @param epicsIocTimestamp the timestamp sent by the remote IOC
-    */
-   private WicaChannelValue( T value, WicaChannelAlarmSeverity alarmSeverity, int alarmStatus, LocalDateTime wicaServerTimestamp, LocalDateTime epicsIocTimestamp )
+   private WicaChannelValue( boolean connected, LocalDateTime wicaServerTimestamp )
    {
-      this.value = value;
-      this.alarmSeverity = Validate.notNull( alarmSeverity );
-      this.alarmStatus = alarmStatus;
-      this.wicaServerTimestamp = Validate.notNull( wicaServerTimestamp );
-      this.epicsIocTimestamp = Validate.notNull( epicsIocTimestamp );
+      this.connected = connected;
+      this.wicaServerTimestamp = Validate.notNull( wicaServerTimestamp, "wicaServerTimestamp cannot be null" );
    }
 
 /*- Class methods ------------------------------------------------------------*/
 
-   public static <T> WicaChannelValue<T> createChannelDisconnectedValue( LocalDateTime wicaServerTimestamp )
+   public static WicaChannelValue createChannelValueDisconnected()
    {
-      return new WicaChannelValue<>( null, WicaChannelAlarmSeverity.INVALID_ALARM, 0, wicaServerTimestamp, wicaServerTimestamp );
+      return new WicaChannelValueDisconnected();
    }
 
-   public static <T> WicaChannelValue<T> createChannelConnectedValue( T value, WicaChannelAlarmSeverity alarmSeverity, int alarmStatus, LocalDateTime wicaServerTimestamp, LocalDateTime epicsIocTimestamp )
+   public static WicaChannelValue createChannelValueConnected( double value )
    {
-      return new WicaChannelValue<>( value, alarmSeverity, alarmStatus, wicaServerTimestamp, epicsIocTimestamp );
+      return new WicaChannelValueConnectedReal( WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
    }
 
-   public static String convertMapToJsonRepresentation( Map<WicaChannelName, Queue<WicaChannelValue>> map )
+   public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double value  )
    {
-      try
-      {
-         final String result = jsonObjectMapper.writeValueAsString( map );
-         return result;
-      }
-      catch ( JsonProcessingException ex )
-      {
-         return "error";
-      }
+      return new WicaChannelValueConnectedReal( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
    }
+
+   public static WicaChannelValue createChannelValueConnected( double[] value )
+   {
+      return new WicaChannelValueConnectedRealArray( WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
+   }
+
+   public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double[] value  )
+   {
+      return new WicaChannelValueConnectedRealArray( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
+   }
+
+   public static WicaChannelValue createChannelValueConnected( int value )
+   {
+      return new WicaChannelValueConnectedInteger( WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
+   }
+
+   public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, int value  )
+   {
+      return new WicaChannelValueConnectedInteger( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
+   }
+
+   public static WicaChannelValue createChannelValueConnected( int[] value )
+   {
+      return new WicaChannelValueConnectedIntegerArray( WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
+   }
+
+   public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, int[] value  )
+   {
+      return new WicaChannelValueConnectedIntegerArray( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
+   }
+
+   public static WicaChannelValue createChannelValueConnected( String value )
+   {
+      return new WicaChannelValueConnectedString( WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
+   }
+
+   public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, String value  )
+   {
+      return new WicaChannelValueConnectedString( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
+   }
+
+   public static WicaChannelValue createChannelValueConnected( String[] value )
+   {
+      return new WicaChannelValueConnectedStringArray( WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
+   }
+
+   public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, String[] value  )
+   {
+      return new WicaChannelValueConnectedStringArray( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
+   }
+
 
 /*- Public methods -----------------------------------------------------------*/
 
-   // This method is mainly to explicitly document the fact that if the value
-   // is set to null this indicates that the EPICS channel that provides the
-   // information source is not available.
-   @JsonIgnore
-   public boolean isChannelConnected()
+   @JsonProperty( "conn" )
+   public boolean isConnected()
    {
-      return value == null;
+      return connected;
    }
 
-   @JsonProperty( "val" )
-   public T getValue()
+   @JsonProperty( "wsts" )
+   public LocalDateTime getWicaServerTimestamp()
    {
-      return value;
+      return this.wicaServerTimestamp;
    }
 
-   @JsonIgnore
-   @JsonProperty( "stat")
-   public int getAlarmStatus()
+   @JsonProperty( "wsts-alt" )
+   public long getWicaServerTimestampAlt()
    {
-      return alarmStatus;
+      return this.wicaServerTimestamp.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli();
    }
 
-   @JsonProperty( "sevr")
-   public int getAlarmSeverity()
-   {
-      return alarmSeverity.ordinal();
-   }
-
-   @JsonIgnore
-   @JsonProperty( "ts1" )
-   public long getWicaServerTimestamp()
-   {
-      return wicaServerTimestamp.atOffset( ZoneOffset.UTC ).toInstant().toEpochMilli();
-   }
-
-   @JsonIgnore
-   @JsonProperty( "ts2" )
-   public long getEpicsIocTimestamp()
-   {
-      return epicsIocTimestamp.atOffset( ZoneOffset.UTC ).toInstant().toEpochMilli();
-   }
-
-   @JsonIgnore
-   @JsonProperty( "ts1-alt" )
-   public LocalDateTime getWicaServerTimestampAlt()
-   {
-      return wicaServerTimestamp;
-   }
-
-   @JsonIgnore
-   @JsonProperty( "ts2-alt" )
-   public LocalDateTime getEpicsIocTimestampAlt()
-   {
-      return epicsIocTimestamp;
-   }
 
 /*- Private methods ----------------------------------------------------------*/
+/*- Nested Classes -----------------------------------------------------------*/
 
-   @JsonIgnore
-   public LocalDateTime getTimestamp()
+/*- Nested Class: WicaChannelValueDisconnected -------------------------------*/
+
+   public static class WicaChannelValueDisconnected extends WicaChannelValue
    {
-      return wicaServerTimestamp;
+      private WicaChannelValueDisconnected()
+      {
+         this( LocalDateTime.now() );
+      }
+
+      private WicaChannelValueDisconnected( LocalDateTime wicaServerTimestamp )
+      {
+         super(false,wicaServerTimestamp );
+      }
    }
 
-/*- Nested Classes -----------------------------------------------------------*/
+/*- Nested Class: WicaChannelValueConnected ----------------------------------*/
+
+   public static abstract class WicaChannelValueConnected extends WicaChannelValue
+   {
+      private final WicaChannelType wicaChannelType;
+      private final WicaChannelAlarmSeverity wicaChannelAlarmSeverity;
+      private final WicaChannelAlarmStatus wicaChannelAlarmStatus;
+      private final LocalDateTime dataSourceTimestamp;
+
+      @JsonProperty( "type" )
+      public WicaChannelType getWicaChannelType()
+      {
+         return wicaChannelType;
+      }
+
+      @JsonProperty( "sevr" )
+      public int getWicaAlarmSeverity()
+      {
+         return wicaChannelAlarmSeverity.ordinal();
+      }
+
+      @JsonProperty( "stat" )
+      public int getWicaChannelAlarmStatus()
+      {
+         return wicaChannelAlarmStatus.getStatusCode();
+      }
+
+      @JsonProperty( "ts" )
+      public LocalDateTime getDataSourceTimestamp()
+      {
+         return dataSourceTimestamp;
+      }
+
+      @JsonProperty( "dsts-alt" )
+      public long getDataSourceTimestampAlt()
+      {
+         return dataSourceTimestamp.atOffset( ZoneOffset.UTC ).toInstant().toEpochMilli();
+      }
+
+      private WicaChannelValueConnected( WicaChannelType wicaChannelType, WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp )
+      {
+         super(true, LocalDateTime.now());
+         this.wicaChannelType = Validate.notNull( wicaChannelType, "wicaChannelType cannot be null " );
+         this.wicaChannelAlarmSeverity = Validate.notNull( wicaChannelAlarmSeverity, "wicaAlarmSeverity cannot be null " );
+         this.wicaChannelAlarmStatus = Validate.notNull( wicaChannelAlarmStatus, "wicaAlarmStatus cannot be null " );
+         this.dataSourceTimestamp = Validate.notNull( dataSourceTimestamp,"dataSourceTimestamp cannot be null " );
+      }
+   }
+
+/*- Nested Class: WicaChannelValueConnectedReal -----------------------------*/
+
+   public static class WicaChannelValueConnectedReal extends WicaChannelValueConnected
+   {
+      private final double value;
+
+      @JsonProperty( "val" )
+      public double getValue()
+      {
+         return value;
+      }
+
+      private WicaChannelValueConnectedReal( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, double value )
+      {
+         super(WicaChannelType.REAL, alarmSeverity, alarmStatus, dataSourceTimestamp );
+         this.value = value;
+      }
+   }
+
+/*- Nested Class: WicaChannelValueConnectedRealArray ------------------------*/
+
+   public static class WicaChannelValueConnectedRealArray extends WicaChannelValueConnected
+   {
+      private final double[] value;
+
+      @JsonProperty( "val" )
+      public double[] getValue()
+      {
+         return value;
+      }
+
+      private WicaChannelValueConnectedRealArray( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, double[] value )
+      {
+         super(WicaChannelType.REAL_ARRAY, alarmSeverity, alarmStatus, dataSourceTimestamp );
+         this.value = value;
+      }
+   }
+
+/*- Nested Class: WicaChannelValueConnectedInteger --------------------------*/
+
+   public static class WicaChannelValueConnectedInteger extends WicaChannelValueConnected
+   {
+      private final int value;
+
+      @JsonProperty( "val" )
+      public int getValue()
+      {
+         return value;
+      }
+
+      private WicaChannelValueConnectedInteger( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, int value )
+      {
+         super(WicaChannelType.INTEGER, alarmSeverity, alarmStatus, dataSourceTimestamp);
+         this.value = value;
+      }
+   }
+
+/*- Nested Class: WicaChannelValueConnectedIntegerArray ---------------------*/
+
+   public static class WicaChannelValueConnectedIntegerArray extends WicaChannelValueConnected
+   {
+      private final int[] value;
+
+      @JsonProperty( "val" )
+      public int[] getValue()
+      {
+         return value;
+      }
+
+      private WicaChannelValueConnectedIntegerArray( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, int[] value )
+      {
+         super(WicaChannelType.INTEGER, alarmSeverity, alarmStatus, dataSourceTimestamp);
+         this.value = value;
+      }
+   }
+
+
+/*- Nested Class: WicaChannelValueConnectedString ---------------------------*/
+
+   public static class WicaChannelValueConnectedString extends WicaChannelValueConnected
+   {
+      private final String value;
+
+      @JsonProperty( "val" )
+      public String getValue()
+      {
+         return value;
+      }
+
+      private WicaChannelValueConnectedString( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, String value )
+      {
+         super( WicaChannelType.STRING, alarmSeverity, alarmStatus, dataSourceTimestamp);
+         this.value = value;
+      }
+   }
+
+/*- Nested Class: WicaChannelValueConnectedStringArray ----------------------*/
+
+   private static class WicaChannelValueConnectedStringArray extends WicaChannelValueConnected
+   {
+      private final String[] value;
+
+      @JsonProperty( "val" )
+      public String[] getValue()
+      {
+         return value;
+      }
+
+      private WicaChannelValueConnectedStringArray( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, String[] value )
+      {
+         super( WicaChannelType.STRING, alarmSeverity, alarmStatus, dataSourceTimestamp);
+         this.value = value;
+      }
+   }
+
+/*- Json View Classes -------------------------------------------------------*/
 
 }

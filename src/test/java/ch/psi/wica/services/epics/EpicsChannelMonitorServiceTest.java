@@ -1,5 +1,5 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.services;
+package ch.psi.wica.services.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
@@ -7,6 +7,8 @@ package ch.psi.wica.services;
 import ch.psi.wica.model.WicaChannelMetadata;
 import ch.psi.wica.model.WicaChannelName;
 import ch.psi.wica.model.WicaChannelValue;
+import ch.psi.wica.services.epics.EpicsChannelMonitorService;
+import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -22,6 +24,7 @@ import static org.mockito.Mockito.*;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+@Ignore
 @SpringBootTest
 class EpicsChannelMonitorServiceTest
 {
@@ -29,7 +32,7 @@ class EpicsChannelMonitorServiceTest
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private EpicsChannelMonitorService epicsChannelMonitorService = new EpicsChannelMonitorService();
+   private EpicsChannelMonitorService epicsChannelMonitorService = new EpicsChannelMonitorService( );
 
    private Consumer<Boolean> stateChangeHandler = ( bool ) -> {};
    private Consumer<WicaChannelMetadata> metadataChangeHandler = ( string ) -> {};
@@ -170,7 +173,7 @@ class EpicsChannelMonitorServiceTest
       epicsChannelMonitorService.startMonitoring(new WicaChannelName("test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
       Thread.sleep( 1_000 );
       assertEquals( 1, EpicsChannelMonitorService.getChannelConnectionCount() );
-      assertThrows( IllegalArgumentException.class, () ->  epicsChannelMonitorService.stopMonitoring( new WicaChannelName("XXXXX" ) ) );
+      assertThrows( IllegalArgumentException.class, () ->  epicsChannelMonitorService.stopMonitoring( new WicaChannelName( "XXXXX" ) ) );
    }
 
 

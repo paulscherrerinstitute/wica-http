@@ -6,7 +6,7 @@ package ch.psi.wica.controllers;
 
 import ch.psi.wica.WicaApplication;
 import ch.psi.wica.model.WicaStreamId;
-import ch.psi.wica.services.EpicsChannelMonitorService;
+import ch.psi.wica.services.epics.EpicsChannelMonitorService;
 import net.jcip.annotations.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

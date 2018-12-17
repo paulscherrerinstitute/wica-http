@@ -8,6 +8,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.epics.ca.Channels;
 import org.epics.ca.Context;
 import org.junit.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ public class ChannelsTests
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   @Before
+   @BeforeEach
    public void before() throws Exception
    {
       // The following sleep is sometimes useful to allow profiling with tools like

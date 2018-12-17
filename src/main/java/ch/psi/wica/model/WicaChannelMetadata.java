@@ -4,13 +4,8 @@ package ch.psi.wica.model;
 /*- Imported packages --------------------------------------------------------*/
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-
-import java.util.Map;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -21,8 +16,6 @@ public abstract class WicaChannelMetadata
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
-
-   private static final ObjectMapper jsonObjectMapper = new Jackson2ObjectMapperBuilder().createXmlMapper(false ).build();
 
    private final WicaChannelType type;
 
@@ -37,16 +30,9 @@ public abstract class WicaChannelMetadata
 
 /*- Class methods ------------------------------------------------------------*/
 
-   public static String convertMapToJsonRepresentation( Map<WicaChannelName, WicaChannelMetadata> channelMetadataMap )
+   public static WicaChannelMetadata createUnknownInstance()
    {
-      try
-      {
-         return jsonObjectMapper.writeValueAsString( channelMetadataMap );
-      }
-      catch ( JsonProcessingException ex )
-      {
-         return "error";
-      }
+      return new EpicsChannelMetadataUnknown();
    }
 
    public static WicaChannelMetadata createStringInstance()
@@ -110,9 +96,22 @@ public abstract class WicaChannelMetadata
    }
 
 /*- Private methods ----------------------------------------------------------*/
+
 /*- Nested Classes -----------------------------------------------------------*/
 
-   // EpicsChannelMetadataString
+/*- Nested Class: EpicsChannelMetadataUnknown --------------------------------*/
+
+   private static class EpicsChannelMetadataUnknown extends WicaChannelMetadata
+   {
+      EpicsChannelMetadataUnknown()
+      {
+         super( WicaChannelType.UNKNOWN );
+      }
+   }
+
+
+/*- Nested Class: EpicsChannelMetadataString --------------------------------*/
+
    private static class EpicsChannelMetadataString extends WicaChannelMetadata
    {
       EpicsChannelMetadataString()
@@ -126,7 +125,9 @@ public abstract class WicaChannelMetadata
       }
    }
 
-   // EpicsChannelMetadataStringArray
+
+/*- Nested Class: EpicsChannelMetadataStringArray ----------------------------*/
+
    private static class EpicsChannelMetadataStringArray extends EpicsChannelMetadataString
    {
       EpicsChannelMetadataStringArray()
@@ -135,7 +136,9 @@ public abstract class WicaChannelMetadata
       }
    }
 
-   // EpicsChannelMetadataInteger
+
+/*- Nested Class: EpicsChannelMetadataInteger --------------------------------*/
+
    private static class EpicsChannelMetadataInteger extends WicaChannelMetadata
    {
       private final String units;
@@ -245,7 +248,9 @@ public abstract class WicaChannelMetadata
       }
    }
 
-   // EpicsChannelMetadataIntegerArray
+
+/*- Nested Class: EpicsChannelMetadataIntegerArray ---------------------------*/
+
    private static class EpicsChannelMetadataIntegerArray extends EpicsChannelMetadataInteger
    {
       private EpicsChannelMetadataIntegerArray( String units,
@@ -258,7 +263,8 @@ public abstract class WicaChannelMetadata
       }
    }
 
-   // EpicsChannelMetadataReal
+/*- Nested Class: EpicsChannelMetadataReal -----------------------------------*/
+
    private static class EpicsChannelMetadataReal extends WicaChannelMetadata
    {
       private final String units;
@@ -295,11 +301,11 @@ public abstract class WicaChannelMetadata
       }
 
       private EpicsChannelMetadataReal( String units,
-                                           int precision,
-                                           double upperDisplay, double lowerDisplay,
-                                           double upperControl, double lowerControl,
-                                           double upperAlarm,   double lowerAlarm,
-                                           double upperWarning, double lowerWarning )
+                                        int precision,
+                                        double upperDisplay, double lowerDisplay,
+                                        double upperControl, double lowerControl,
+                                        double upperAlarm,   double lowerAlarm,
+                                        double upperWarning, double lowerWarning )
       {
          this( WicaChannelType.REAL,
                units,
@@ -381,15 +387,17 @@ public abstract class WicaChannelMetadata
       }
    }
 
-   // EpicsChannelMetadataRealArray
+
+/*- Nested Class: EpicsChannelMetadataRealArray ------------------------------*/
+
    private static class EpicsChannelMetadataRealArray extends EpicsChannelMetadataReal
    {
       private EpicsChannelMetadataRealArray( String units,
-                                            int precision,
-                                            double upperDisplay, double lowerDisplay,
-                                            double upperControl, double lowerControl,
-                                            double upperAlarm,   double lowerAlarm,
-                                            double upperWarning, double lowerWarning )
+                                             int precision,
+                                             double upperDisplay, double lowerDisplay,
+                                             double upperControl, double lowerControl,
+                                             double upperAlarm,   double lowerAlarm,
+                                             double upperWarning, double lowerWarning )
       {
          super( WicaChannelType.REAL_ARRAY, units, precision, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
       }

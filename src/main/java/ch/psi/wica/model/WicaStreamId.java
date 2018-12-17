@@ -31,7 +31,7 @@ public class WicaStreamId
 
    public static WicaStreamId createNext()
    {
-      return new WicaStreamId(String.valueOf(nextAllocationId++ ) );
+      return new WicaStreamId(String.valueOf( nextAllocationId++ ) );
    }
 
    public static WicaStreamId of( String string )

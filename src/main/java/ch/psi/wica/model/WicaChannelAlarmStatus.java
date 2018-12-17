@@ -3,56 +3,45 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import org.apache.commons.lang3.Validate;
-import java.util.Objects;
+import org.epics.ca.data.AlarmStatus;
+
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-public class WicaChannelName
+public class WicaChannelAlarmStatus
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final String channelName;
+   private int wicaAlarmStatusCode;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelName( String channelName )
+   private WicaChannelAlarmStatus( int wicaAlarmStatusCode )
    {
-      this.channelName = Validate.notBlank( channelName );
+      this.wicaAlarmStatusCode = wicaAlarmStatusCode;
    }
 
 /*- Class methods ------------------------------------------------------------*/
 
-   public static WicaChannelName of( String channelName )
+   public static WicaChannelAlarmStatus of( int statusCode )
    {
-      return new WicaChannelName( channelName );
+      return new WicaChannelAlarmStatus( statusCode );
+   }
+
+   public static WicaChannelAlarmStatus ofNoError()
+   {
+      return new WicaChannelAlarmStatus( 0 );
    }
 
 /*- Public methods -----------------------------------------------------------*/
 
-   @Override
-   public boolean equals( Object o )
+   public int getStatusCode()
    {
-      if ( this == o ) return true;
-      if ( o == null || getClass() != o.getClass() ) return false;
-      WicaChannelName that = (WicaChannelName) o;
-      return Objects.equals(channelName, that.channelName);
-   }
-
-   @Override
-   public int hashCode()
-   {
-      return Objects.hash(channelName);
-   }
-
-   @Override
-   public String toString()
-   {
-      return channelName;
+      return wicaAlarmStatusCode;
    }
 
 /*- Private methods ----------------------------------------------------------*/

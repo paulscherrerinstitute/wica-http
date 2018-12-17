@@ -1,0 +1,20 @@
+
+record( calc, "test:slowcounter" ) {
+  field( SCAN,"10 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "test:fastcounter" ) {
+  field( SCAN,".1 second")
+  field( CALC,"(VAL+1) % 100")
+}
+
+record( calc, "test:fastpulse" ) {
+  field( SCAN,".1 second")
+  field( INPA,"test:fastcounter")
+  field( CALC,"A<10?A:0")
+}
+
+
+
+

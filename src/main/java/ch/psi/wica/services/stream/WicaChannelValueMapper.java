@@ -1,61 +1,39 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.model;
+package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import org.apache.commons.lang3.Validate;
-import java.util.Objects;
+import ch.psi.wica.model.WicaChannelValue;
+import net.jcip.annotations.Immutable;
+
+import java.util.List;
+
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-public class WicaChannelName
+@Immutable
+public interface WicaChannelValueMapper
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
-
-   private final String channelName;
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
-
-   public WicaChannelName( String channelName )
-   {
-      this.channelName = Validate.notBlank( channelName );
-   }
-
 /*- Class methods ------------------------------------------------------------*/
-
-   public static WicaChannelName of( String channelName )
-   {
-      return new WicaChannelName( channelName );
-   }
-
 /*- Public methods -----------------------------------------------------------*/
 
-   @Override
-   public boolean equals( Object o )
-   {
-      if ( this == o ) return true;
-      if ( o == null || getClass() != o.getClass() ) return false;
-      WicaChannelName that = (WicaChannelName) o;
-      return Objects.equals(channelName, that.channelName);
-   }
-
-   @Override
-   public int hashCode()
-   {
-      return Objects.hash(channelName);
-   }
-
-   @Override
-   public String toString()
-   {
-      return channelName;
-   }
+   /**
+    * Transforms the values in the input map to the output map using
+    * some configurable algorithm.
+    *
+    * @param inputList the list of values to process.
+    * @return the list of values that were produced from the processing step.
+    */
+   List<WicaChannelValue> map( List<WicaChannelValue> inputList );
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
+
 
 }

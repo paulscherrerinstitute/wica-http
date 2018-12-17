@@ -1,51 +1,57 @@
 /*- Package Declaration ------------------------------------------------------*/
-
-package ch.psi.wica.config;
+package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.WicaChannelValue;
+import net.jcip.annotations.ThreadSafe;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@Configuration
-class WicaCorsConfigurer implements WebMvcConfigurer
+@ThreadSafe
+class WicaPeriodicSamplingChannelValueMapper implements WicaChannelValueMapper
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(WicaCorsConfigurer.class );
+   private final int samplingInterval;
+
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
+
+   WicaPeriodicSamplingChannelValueMapper( int samplingInterval )
+   {
+      Validate.isTrue( samplingInterval > 1 );
+      this.samplingInterval = Validate.notNull( samplingInterval );
+   }
+
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
    @Override
-   public void addCorsMappings( CorsRegistry registry )
+   public List<WicaChannelValue> map( List<WicaChannelValue> inputList )
    {
-      logger.info( "Configuring CORS...");
-      registry.addMapping("/**")
-               // The definition below means that when Safari and Chrome load a web
-               // page from ANY webserver they will be able to make XHR and SSE
-               // requests on this server.
-               .allowedOrigins( "*" )
-               // Firefox is pickier: as '*' is not an allowed origin the
-               // origins must be enabled by hand.
-               //.allowedOrigins( "https://mpc2330.psi.ch" )
-               .allowCredentials( true );
-      logger.info( "CORS configuration completed.");
+      final List<WicaChannelValue> outputList = new LinkedList<>();
+
+      return IntStream.range(0, inputList.size())
+            .filter(n -> n % samplingInterval == 0)
+            .mapToObj( inputList::get)
+            .collect( Collectors.toList() );
    }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
-

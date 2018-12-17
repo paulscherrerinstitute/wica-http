@@ -1,35 +1,43 @@
 export class WicaStreamManager
 {
     /**
-     * @param serverUrl the url of the server hosting the Wica Stream.
+     * Creates an object for handling the Server-Sent-Event (SSE) data stream with the Wica backend server.
      *
-     * @param channels array of channel names to monitor.
+     * Note: The returned manager will remain in an inactive state until it is activated by a call to
+     *       its activate method.
      *
-     * @param connectionHandlers object containing references to optional
-     *        connection callback handlers. The following handlers are
-     *        supported: streamConnect(), streamOpened(), streamClosed().
+     * @param {string} serverUrl - the url of the server hosting the Wica Stream.
      *
-     * @param messageHandlers object containing references to optional
-     *        message callback handlers. The following handlers are
-     *        supported: channelMetadataUpdated(), channelValuesUpdated().
+     * @param {Object} streamConfiguration - The configuration of the stream which should include the
+     *        stream properties (if any), the name of the channels, and associated channel properties.
+     * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
+     * @param {callback} connectionHandlers.streamOpened - Called when the stream is opened (= not yet connected)
+     * @param {callback} connectionHandlers.streamConnect - Called when the stream sucessfully connects.
+     * @param {callback} connectionHandlers.streamClosed - Called when the stream disconnects.
      *
-     * @param options object containing definitions which further control
-     *        the behaviour of this class. The following options are supported:
-     *        streamReconnectIntervalInSeconds, streamTimeoutIntervalInSeconds,
-     *        crossOriginCheckEnabled.
+     * @param {Object} messageHandlers - Callbacks for handling data received from the SSE stream.
+     * @param {callback} messageHandlers.channelMetadataUpdated -  Called when stream metadata information is received.
+     * @param {callback} connectionHandlers.channelValuesUpdated - Called when stream value information is received.
+     *
+     * @param {Object} options - Object providing miscellaneous configuration options.
+     * @param {number} options.streamReconnectIntervalInSeconds - how often the manager should attempt to reconnect
+     *                                                            with the server if there is a communication outage.
+     *
+     * @param {number} options.streamTimeoutIntervalInSeconds - how often the stream's heartbeat signal need's
+     *                                                         to be received before the channel connection will
+     *                                                         be deemed to have failed.
+     *
+     * @param {boolean} options.crossOriginCheckEnabled - whether this manager should perform a CORS check.
      */
-    constructor( serverUrl, channels, connectionHandlers, messageHandlers, options )
+    constructor( serverUrl, streamConfiguration, connectionHandlers, messageHandlers, options )
     {
         this.serverUrl = serverUrl;
-        this.channels = channels;
-
-        this.streamConnect = connectionHandlers.streamConnect;
+        this.streamConfiguration = streamConfiguration;
         this.streamOpened = connectionHandlers.streamOpened;
+        this.streamConnect = connectionHandlers.streamConnect;
         this.streamClosed = connectionHandlers.streamClosed;
-
         this.channelMetadataUpdated = messageHandlers.channelMetadataUpdated;
         this.channelValuesUpdated = messageHandlers.channelValuesUpdated;
-
         this.streamReconnectIntervalInSeconds = options.streamReconnectIntervalInSeconds;
         this.streamTimeoutIntervalInSeconds = options.streamTimeoutIntervalInSeconds;
         this.crossOriginCheckEnabled = options.crossOriginCheckEnabled;
@@ -66,7 +74,7 @@ export class WicaStreamManager
         this.streamConnect();
 
         // Create a request object which will be used to ask the server to create the new stream.
-        let xhttp = new XMLHttpRequest();
+        const xhttp = new XMLHttpRequest();
 
         // Add a handler which will print an error message if the stream couldn't be created.
         xhttp.onerror = () => {
@@ -76,9 +84,9 @@ export class WicaStreamManager
         // Add a handler which will subscribe to the stream once it has been created.
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status === 200) {
-                let streamId = xhttp.responseText;
+                const streamId = xhttp.responseText;
                 console.warn( "Stream created, returned id is: ", streamId );
-                let subscribeUrl = this.serverUrl + "/ca/streams/" + streamId;
+                const subscribeUrl = this.serverUrl + "/ca/streams/" + streamId;
                 this.subscribeStream( subscribeUrl );
             }
             if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status !== 200) {
@@ -87,12 +95,12 @@ export class WicaStreamManager
         };
 
         // Now send off the request
+        const createUrl = this.serverUrl + "/ca/streams";
         xhttp.withCredentials = true;
-        let createUrl = this.serverUrl + "/ca/streams";
         xhttp.open("POST", createUrl, true);
         xhttp.setRequestHeader("Content-Type", "application/json");
-        let jsonChannelString = JSON.stringify( this.channels );
-        xhttp.send( jsonChannelString );
+        const jsonStreamConfiguration = JSON.stringify( this.streamConfiguration );
+        xhttp.send( jsonStreamConfiguration );
     }
 
     /**
@@ -104,7 +112,7 @@ export class WicaStreamManager
      */
     subscribeStream( subscribeUrl )
     {
-        let eventSource = new EventSource( subscribeUrl, { withCredentials: true } );
+        const eventSource = new EventSource( subscribeUrl, { withCredentials: true } );
 
         // The heartbeat message is for internal use of this stream handler.
         // If a heartbeat isn't received periodically then the connection
@@ -118,7 +126,7 @@ export class WicaStreamManager
 
         eventSource.addEventListener( 'ev-wica-channel-metadata',ev => {
             if ( this.crossOriginCheckOk( ev ) ) {
-                let metadataArrayObject = JSON.parse( ev.data );
+                const metadataArrayObject = JSON.parse( ev.data );
                 this.channelMetadataUpdated( metadataArrayObject );
             }
 
@@ -126,14 +134,14 @@ export class WicaStreamManager
 
         eventSource.addEventListener( 'ev-wica-channel-value', ev => {
             if ( this.crossOriginCheckOk( ev ) ) {
-                let valueArrayObject = JSON.parse( ev.data );
+                const valueArrayObject = JSON.parse( ev.data );
                 this.channelValuesUpdated( valueArrayObject );
             }
         }, false);
 
         eventSource.addEventListener( 'open', ev => {
             if ( this.crossOriginCheckOk( ev ) ) {
-                let id = WicaStreamManager.extractEventSourceStreamIdFromUrl( ev.target.url );
+                const id = WicaStreamManager.extractEventSourceStreamIdFromUrl( ev.target.url );
                 this.streamOpened( id );
                 console.warn("Event source: 'stream' - open event on stream with id: " + id );
             }
@@ -141,7 +149,7 @@ export class WicaStreamManager
 
         eventSource.addEventListener( 'error', ev => {
             if ( this.crossOriginCheckOk( ev ) ) {
-                let id = WicaStreamManager.extractEventSourceStreamIdFromUrl( ev.target.url );
+                const id = WicaStreamManager.extractEventSourceStreamIdFromUrl( ev.target.url );
                 console.warn("Event source: 'stream'  - error event on stream with id: " + id );
                 ev.target.close();  // close the event source that triggered this message
                 this.streamClosed( id );
@@ -163,7 +171,7 @@ export class WicaStreamManager
             return true;
         }
 
-        let expectedOrigin = location.origin;
+        const expectedOrigin = location.origin;
         if ( event.origin === expectedOrigin ) {
             return true;
         }

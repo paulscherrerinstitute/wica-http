@@ -15,8 +15,23 @@ export function renderWicaElements()
             return;
         }
 
-        // Obtain the channel value object
-        let channelValueObj = JSON.parse( element.getAttribute( "data-wica-channel-value" ) );
+        // Obtain the object containing the array of recently received channel values.
+        const channelValueArrayObj = JSON.parse( element.getAttribute( "data-wica-channel-value" ) );
+
+        // Check that the received object was an array
+        if ( ! Array.isArray( channelValueArrayObj ) ) {
+            console.warn( "Stream error: received value object was not an array !" );
+            return;
+        }
+
+        // If there isn't at least one value present bail out as there is nothing to be done.
+        if ( channelValueArrayObj.length === 0 ) {
+            return;
+        }
+
+        // For widget rendering purposes we always use only the most recent value,
+        // discarding the rest.
+        const channelValueObj = channelValueArrayObj.pop();
 
         // If the current value is not available because the channel is off line then bail out
         if ( channelValueObj.val === null ) {
@@ -24,24 +39,9 @@ export function renderWicaElements()
         }
 
         // Obtain the channel metadata object
-        let channelMetadataObj = JSON.parse( element.getAttribute( "data-wica-channel-metadata" ) );
+        const channelMetadataObj = JSON.parse( element.getAttribute( "data-wica-channel-metadata" ) );
 
-        // Obtain the channel name object
-        let channelName = element.getAttribute( "data-wica-channel-name" );
-
-        // If an onchange event handler is defined then delegate the handling
-        // of the event (typically rendering) to the defined method.
-        if ( element.onchange !== null ) {
-            let event = new Event('change');
-            event.channelName = channelName;
-            event.channelValue = channelValueObj;
-            event.channelMetadata = channelMetadataObj;
-            element.dispatchEvent(event);
-            return;
-        }
-
-        // If an onchange handler is NOT defined then render the widget according
-        // to the default local rules.
+        // Now render the widget
         renderWidget( element, channelValueObj, channelMetadataObj );
     });
 }

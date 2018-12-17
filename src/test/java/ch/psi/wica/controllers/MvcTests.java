@@ -6,6 +6,7 @@ package ch.psi.wica.controllers;
 import ch.psi.wica.model.WicaStreamId;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,10 @@ public class MvcTests
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   // TODO for some reason this test is still being run under junit 4. So
+   // the @before annotation is required and @BeforeEach does nothing
    @Before
+   @BeforeEach
    public void buildJsonNotificationBody() throws IOException
    {
       epicsChannelListOk = new String(Files.readAllBytes(Paths.get("src/test/resources/epics/epics_channel_list_ok.json") ), StandardCharsets.UTF_8) ;
@@ -68,7 +72,7 @@ public class MvcTests
    public void testPost_RequestIsProcessedNormallyWhenEpicsChannelListOk() throws Exception
    {
       // Send a POST request with a list containing a couple of EPICS channels
-      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams" ).content(epicsChannelListOk).contentType(MediaType.APPLICATION_JSON_VALUE ).accept(MediaType.TEXT_PLAIN_VALUE );
+      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams" ).content( epicsChannelListOk ).contentType(MediaType.APPLICATION_JSON_VALUE ).accept(MediaType.TEXT_PLAIN_VALUE );
    	final MvcResult result1 = mockMvc.perform( rb ).andDo( print()).andExpect( status().isOk() ).andReturn();
 
    	// Check that the status code was ok

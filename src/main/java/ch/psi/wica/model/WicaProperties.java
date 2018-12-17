@@ -3,56 +3,63 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
-import java.util.Objects;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-public class WicaChannelName
+@Immutable
+public class WicaProperties
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final String channelName;
+   private final Map<String,String> map;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelName( String channelName )
+   WicaProperties( Map<String,String> map )
    {
-      this.channelName = Validate.notBlank( channelName );
+      Validate.notNull( map );
+      this.map = Collections.unmodifiableMap( map );
    }
 
 /*- Class methods ------------------------------------------------------------*/
-
-   public static WicaChannelName of( String channelName )
-   {
-      return new WicaChannelName( channelName );
-   }
-
 /*- Public methods -----------------------------------------------------------*/
 
-   @Override
-   public boolean equals( Object o )
+   public Set<String> getPropertyNames()
    {
-      if ( this == o ) return true;
-      if ( o == null || getClass() != o.getClass() ) return false;
-      WicaChannelName that = (WicaChannelName) o;
-      return Objects.equals(channelName, that.channelName);
+      return map.keySet();
    }
 
-   @Override
-   public int hashCode()
+   public int getNumberOfProperties()
    {
-      return Objects.hash(channelName);
+      return map.keySet().size();
    }
 
-   @Override
-   public String toString()
+
+   public boolean hasProperty( String propertyName  )
    {
-      return channelName;
+      Validate.notEmpty( propertyName );
+      return map.containsKey( propertyName );
+   }
+
+   public String getPropertyValue( String propertyName )
+   {
+      Validate.notEmpty( propertyName );
+
+      if ( ! map.containsKey( propertyName ) )
+      {
+         throw new IllegalArgumentException( "The property map does not contain a property named: '" + propertyName + "'" );
+      }
+      return map.get( propertyName );
    }
 
 /*- Private methods ----------------------------------------------------------*/

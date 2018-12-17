@@ -3,58 +3,44 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
-import java.util.Objects;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-public class WicaChannelName
+@Immutable
+public class WicaChannelProperties extends WicaProperties
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
-
-   private final String channelName;
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelName( String channelName )
+   private WicaChannelProperties( Map<String,String> map )
    {
-      this.channelName = Validate.notBlank( channelName );
+      super( map );
    }
 
 /*- Class methods ------------------------------------------------------------*/
 
-   public static WicaChannelName of( String channelName )
+   public static WicaChannelProperties of( Map<String,String> map )
    {
-      return new WicaChannelName( channelName );
+      Validate.notNull(map );
+      return new WicaChannelProperties( map );
    }
 
-/*- Public methods -----------------------------------------------------------*/
-
-   @Override
-   public boolean equals( Object o )
+   public static WicaChannelProperties ofEmpty()
    {
-      if ( this == o ) return true;
-      if ( o == null || getClass() != o.getClass() ) return false;
-      WicaChannelName that = (WicaChannelName) o;
-      return Objects.equals(channelName, that.channelName);
+      return new WicaChannelProperties( Map.of() );
    }
 
-   @Override
-   public int hashCode()
-   {
-      return Objects.hash(channelName);
-   }
-
-   @Override
-   public String toString()
-   {
-      return channelName;
-   }
-
+   /*- Public methods -----------------------------------------------------------*/
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 

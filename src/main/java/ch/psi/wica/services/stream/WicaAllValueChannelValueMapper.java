@@ -1,19 +1,30 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.model;
+package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
+
+import ch.psi.wica.model.WicaChannelValue;
+import net.jcip.annotations.Immutable;
+import org.apache.commons.lang3.Validate;
+
+import java.util.List;
+
+
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-public enum WicaChannelAlarmSeverity
+@Immutable
+class WicaAllValueChannelValueMapper implements WicaChannelValueMapper
 {
 
 /*- Public attributes --------------------------------------------------------*/
 
-   NO_ALARM,      // 0
-   MINOR_ALARM,   // 1
-   MAJOR_ALARM,   // 2
-   INVALID_ALARM; // 3
+   @Override
+   public List<WicaChannelValue> map( List<WicaChannelValue> inputList )
+   {
+      Validate.notNull( inputList );
+      return inputList;
+   }
 
 /*- Private attributes -------------------------------------------------------*/
 /*- Main ---------------------------------------------------------------------*/
