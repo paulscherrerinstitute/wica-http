@@ -14,20 +14,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static ch.psi.wica.model.WicaChannelType.REAL;
+import static ch.psi.wica.model.WicaChannelType.REAL_ARRAY;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-/**
- * A WicaChannelValueMapper that writes a new value to the output list every time
- * the input signal makes a change whose absolute value exceeds a configured
- * deadband.
- *
- * The mapper only transfer values for types WicaChannelType.REAL and
- * WicaChannelType.INTEGER. All other value types in the input list will be
- * ignored and will NOT be transferred to the output list.
- */
 @ThreadSafe
 class WicaPrecisionLimitingChannelValueMapper implements WicaChannelValueMapper
 {
@@ -39,8 +31,8 @@ class WicaPrecisionLimitingChannelValueMapper implements WicaChannelValueMapper
 
    private final int numberOfDigits;
 
-   /*- Main ---------------------------------------------------------------------*/
-   /*- Constructor --------------------------------------------------------------*/
+/*- Main ---------------------------------------------------------------------*/
+/*- Constructor --------------------------------------------------------------*/
 
    /**
     * Constructs a new instance based on the specified numberOfDigits.
@@ -74,9 +66,14 @@ class WicaPrecisionLimitingChannelValueMapper implements WicaChannelValueMapper
          if ( currentConnectedValue.getWicaChannelType() == REAL )
          {
             final double currentValueAsDouble = ((WicaChannelValue.WicaChannelValueConnectedReal) currentValue).getValue();
-            final String formatString = "%." + numberOfDigits  + "f";
-            final String convertedToFixedLengthStringValue = String.format( formatString, currentValueAsDouble );
-            outputList.add( WicaChannelValue.createChannelValueConnected( convertedToFixedLengthStringValue ) );
+            final WicaChannelValue convertedValue =  WicaChannelValue.createChannelValueConnected( currentValueAsDouble, numberOfDigits );
+            outputList.add( convertedValue );
+         }
+         else if ( currentConnectedValue.getWicaChannelType() == REAL_ARRAY )
+         {
+            final double[] currentValueAsDouble = ((WicaChannelValue.WicaChannelValueConnectedRealArray) currentValue).getValue();
+            final WicaChannelValue convertedValue =  WicaChannelValue.createChannelValueConnected( currentValueAsDouble, numberOfDigits );
+            outputList.add( convertedValue );
          }
          else
          {
