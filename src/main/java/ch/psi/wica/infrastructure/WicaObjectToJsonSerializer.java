@@ -3,6 +3,7 @@ package ch.psi.wica.infrastructure;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.WicaChannel;
 import ch.psi.wica.model.WicaChannelMetadata;
 import ch.psi.wica.model.WicaChannelName;
 import ch.psi.wica.model.WicaChannelValue;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.BeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
@@ -25,6 +27,9 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,23 +51,21 @@ public class WicaObjectToJsonSerializer
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaObjectToJsonSerializer()
-   {
-      this( Set.of() );
-   }
-
-   public WicaObjectToJsonSerializer( Set<String> fieldSelectors )
+   public WicaObjectToJsonSerializer( Set<String> fieldSelectors, int numberOfDigits )
    {
       Validate.notNull( fieldSelectors );
 
-      final SimpleBeanPropertyFilter sbf = SimpleBeanPropertyFilter.filterOutAllExcept( fieldSelectors );
-      final FilterProvider fp = new SimpleFilterProvider().addFilter( "WicaChannelValueFilter", sbf );
+      final SimpleBeanPropertyFilter simpleBeanPropertyFilterf = SimpleBeanPropertyFilter.filterOutAllExcept( fieldSelectors );
+      final FilterProvider filterProvider = new SimpleFilterProvider().addFilter( "WicaChannelValueFilter", simpleBeanPropertyFilterf );
 
-      jsonObjectMapper = new Jackson2ObjectMapperBuilder().createXmlMapper(false ).build();
+      final SimpleModule simpleModule = new SimpleModule();
+      simpleModule.addSerializer( Double.class, new MyDoubleSerializer( numberOfDigits ) );
+      jsonObjectMapper = new Jackson2ObjectMapperBuilder().createXmlMapper( false ).build();
       jsonObjectMapper.configure( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false );
       jsonObjectMapper.configure( SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false );
-      jsonObjectMapper.setFilterProvider( fp );
-   }
+      jsonObjectMapper.setFilterProvider( filterProvider );
+      jsonObjectMapper.registerModule( simpleModule );
+ }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
@@ -93,21 +96,7 @@ public class WicaObjectToJsonSerializer
       }
    }
 
-   public String convertWicaChannelValueListToJsonRepresentation( Map<WicaChannelName,List<WicaChannelValue>> channelValueMap )
-   {
-      Validate.notNull( channelValueMap );
-      try
-      {
-         final String result = jsonObjectMapper.writeValueAsString( channelValueMap );
-         return result;
-      }
-      catch ( JsonProcessingException ex )
-      {
-         return "json serialisation error";
-      }
-   }
-
-   <T>String convertWicaChannelValueToJsonRepresentation( WicaChannelValue channelValue )
+   public String convertWicaChannelValueToJsonRepresentation( WicaChannelValue channelValue )
    {
       Validate.notNull( channelValue );
       try
@@ -120,21 +109,7 @@ public class WicaObjectToJsonSerializer
       }
    }
 
-   String convertWicaChannelValueMapToJsonRepresentation( Map<WicaChannelName, WicaChannelValue> channelValueMap )
-   {
-      Validate.notNull( channelValueMap );
-      try
-      {
-         final String result = jsonObjectMapper.writeValueAsString( channelValueMap );
-         return result;
-      }
-      catch ( JsonProcessingException ex )
-      {
-         return "json serialisation error";
-      }
-   }
-
-   String convertWicaChannelValueListToJsonRepresentation( List<WicaChannelValue> channelValueList )
+   public String convertWicaChannelValueListToJsonRepresentation( List<WicaChannelValue> channelValueList )
    {
       Validate.notNull( channelValueList );
       try
@@ -148,12 +123,12 @@ public class WicaObjectToJsonSerializer
       }
    }
 
-   String convertWicaChannelMapToJsonRepresentation( Map<WicaChannelName, Map<String,String>> genericMap )
+   public String convertWicaChannelValueMapToJsonRepresentation( Map<WicaChannelName,List<WicaChannelValue>> channelValueMap )
    {
-      Validate.notNull( genericMap );
+      Validate.notNull( channelValueMap );
       try
       {
-         final String result = jsonObjectMapper.writeValueAsString( genericMap );
+         final String result = jsonObjectMapper.writeValueAsString( channelValueMap );
          return result;
       }
       catch ( JsonProcessingException ex )
@@ -165,5 +140,23 @@ public class WicaObjectToJsonSerializer
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
+
+   public static class MyDoubleSerializer extends JsonSerializer<Double>
+   {
+      private final int numberOfDigits;
+
+      MyDoubleSerializer( int numberOfDigits )
+      {
+         this.numberOfDigits = numberOfDigits;
+      }
+
+      @Override
+      public void serialize( Double value, JsonGenerator gen, SerializerProvider serializers )
+            throws IOException
+      {
+         final BigDecimal bd = BigDecimal.valueOf( value ).setScale( numberOfDigits, RoundingMode.HALF_UP );
+         gen.writeNumber( bd.toPlainString());
+      }
+   }
 
 }
