@@ -95,44 +95,47 @@ public class EpicsChannelMonitorService implements AutoCloseable
     *
     * The supplied handlers will be potentially called back on multiple threads.
     *
-    * @param epicsChannelName the name of the channel to be monitored.
+    * @param wicaChannelName the name of the channel to be monitored.
     * @param connectionStateChangeHandler the handler to be informed of changes
     *        to the channel's connection state.
     * @param metadataChangeHandler the handler to be informed of metadata changes.
     * @param valueChangeHandler the handler to be informed of value changes.
     *
     */
-    void startMonitoring( String epicsChannelName,
+    void startMonitoring( WicaChannelName wicaChannelName,
                           Consumer<Boolean> connectionStateChangeHandler,
                           Consumer<WicaChannelMetadata> metadataChangeHandler,
                           Consumer<WicaChannelValue> valueChangeHandler )
    {
-      Validate.notNull( epicsChannelName);
+      Validate.notNull(wicaChannelName);
       Validate.notNull( connectionStateChangeHandler );
       Validate.notNull( metadataChangeHandler );
       Validate.notNull( valueChangeHandler );
 
-      logger.debug("'{}' - starting to monitor... ", epicsChannelName);
+      logger.debug("'{}' - starting to monitor... ", wicaChannelName);
 
       try
       {
-         logger.debug("'{}' - creating channel of type '{}'...", epicsChannelName, "generic" );
+         logger.debug("'{}' - creating channel of type '{}'...", wicaChannelName, "generic" );
 
-         final Channel<Object> channel = caContext.createChannel( epicsChannelName.toString(), Object.class ) ;
+         final String epicsChannelName = EpicsConversionUtilities.getEpicsChannelName( wicaChannelName );
+         logger.debug("'{}' - converted to EPICS channel name: '{}'...", wicaChannelName, epicsChannelName );
+
+         final Channel<Object> channel = caContext.createChannel( epicsChannelName, Object.class ) ;
          channels.add( channel );
 
-         logger.debug("'{}' - channel created ok.", epicsChannelName);
+         logger.debug("'{}' - channel created ok.", wicaChannelName);
 
-         logger.debug("'{}' - adding connection listener... ", epicsChannelName);
+         logger.debug("'{}' - adding connection listener... ", wicaChannelName);
          channel.addConnectionListener( ( chan, isConnected ) -> connectionStateChangeHandler.accept( isConnected ) );
-         logger.debug("'{}' - connection listener added ok.", epicsChannelName);
+         logger.debug("'{}' - connection listener added ok.", wicaChannelName);
 
-         logger.debug("'{}' - connecting asynchronously to... ", epicsChannelName);
+         logger.debug("'{}' - connecting asynchronously to... ", wicaChannelName);
          final CompletableFuture<Channel<Object>> completableFuture = channel.connectAsync();
-         logger.debug("'{}' - asynchronous connect completed ok.", epicsChannelName);
+         logger.debug("'{}' - asynchronous connect completed ok.", wicaChannelName);
 
          completableFuture.thenRunAsync( () -> {
-            logger.debug("'{}' - channel connected ok.", epicsChannelName);
+            logger.debug("'{}' - channel connected ok.", wicaChannelName);
             epicsChannelMetadataPublisher.getAndPublishMetadata( channel, metadataChangeHandler );
             epicsChannelValuePublisher.getAndPublishValue( channel, valueChangeHandler );
             registerValueChangeHandler( channel, valueChangeHandler );
@@ -140,28 +143,28 @@ public class EpicsChannelMonitorService implements AutoCloseable
       }
       catch ( Exception ex )
       {
-         logger.debug("'{}' - exception on channel, details were as follows: ", epicsChannelName, ex.toString() );
+         logger.debug("'{}' - exception on channel, details were as follows: ", wicaChannelName, ex.toString() );
       }
    }
 
    /**
     * Stop monitoring the specified channel.
     *
-    * @param epicsChannelName the channel which is no longer of interest.
+    * @param wicaChannelName the channel which is no longer of interest.
     */
-   void stopMonitoring( WicaChannelName epicsChannelName )
+   void stopMonitoring( WicaChannelName wicaChannelName )
    {
-      Validate.notNull(epicsChannelName);
+      Validate.notNull(wicaChannelName);
 
       final boolean channelNameIsRecognised = channels.stream()
-                                                      .anyMatch( c -> c.getName().equals(epicsChannelName.toString() ) );
+                                                      .anyMatch( c -> c.getName().equals(wicaChannelName.toString() ) );
 
       Validate.isTrue( channelNameIsRecognised, "channel name not recognised" );
 
-      logger.debug("'{}' - stopping monitor... ", epicsChannelName);
+      logger.debug("'{}' - stopping monitor... ", wicaChannelName);
 
       channels.stream()
-              .filter( c -> c.getName().equals(epicsChannelName.toString() ) )
+              .filter( c -> c.getName().equals(wicaChannelName.toString() ) )
               .forEach( Channel::close );
    }
 

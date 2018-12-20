@@ -4,6 +4,7 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.infrastructure.WicaObjectToJsonSerializer;
 import ch.psi.wica.infrastructure.WicaServerSentEventBuilder;
 import ch.psi.wica.model.*;
 import ch.psi.wica.services.epics.EpicsChannelDataService;
@@ -190,9 +191,11 @@ class WicaStreamCreateController
       return Flux.interval( Duration.ofMillis( wicaStream.getChannelValueUpdateFluxInterval() ) )
             .map( l -> {
                logger.trace( "channel-value-update flux is publishing new SSE..." );
-               final Map<WicaChannelName, List<WicaChannelValue>> channelValueUpdateMap = epicsChannelDataService.getLaterThan( wicaStream, wicaStream.getLastPublicationTime() );
+               final Map<WicaChannelName, List<WicaChannelValue>> updatedChannelValues = epicsChannelDataService.getLaterThan( wicaStream, wicaStream.getLastPublicationTime() );
                wicaStream.setLastPublicationTime();
-               final String jsonValueString = wicaStream.getSerializer().convertWicaChannelValueListToJsonRepresentation( wicaStream.map( channelValueUpdateMap ) );
+               final Map<WicaChannelName, List<WicaChannelValue>> updatedChannelValuesMapped = wicaStream.map( updatedChannelValues );
+               final WicaObjectToJsonSerializer serializer = wicaStream.getSerializer();
+               final String jsonValueString = serializer.convertWicaChannelValueMapToJsonRepresentation( updatedChannelValuesMapped );
                final ServerSentEvent<String> str = WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUE_CHANGES.build(  wicaStream.getWicaStreamId(), jsonValueString );
                return str;
             } )
@@ -215,9 +218,10 @@ class WicaStreamCreateController
       return Flux.range(1, 1)
             .map(l -> {
                logger.trace("channel-value flux is publishing new SSE...");
-               final Map<WicaChannelName, List<WicaChannelValue>> channelValueMap = epicsChannelDataService.getLaterThan( wicaStream, LONG_AGO );
+               final Map<WicaChannelName, List<WicaChannelValue>> allChannelValues = epicsChannelDataService.getLaterThan( wicaStream, LONG_AGO );
                wicaStream.setLastPublicationTime();
-               final String jsonValueString = wicaStream.getSerializer().convertWicaChannelValueListToJsonRepresentation( wicaStream.map( channelValueMap )  );
+               final Map<WicaChannelName, List<WicaChannelValue>> allChannelValuesMapped = wicaStream.map( allChannelValues );
+               final String jsonValueString = wicaStream.getSerializer().convertWicaChannelValueMapToJsonRepresentation( allChannelValuesMapped );
                final ServerSentEvent<String> str = WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUE_ALLDATA.build( wicaStream.getWicaStreamId(), jsonValueString);
                return str;
             })

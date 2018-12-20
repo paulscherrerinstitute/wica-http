@@ -91,8 +91,7 @@ public class EpicsChannelDataService
          final Consumer<Boolean> stateChangedHandler = b -> stateChanged( wicaChannelName, b );
          final Consumer<WicaChannelValue> valueChangedHandler = v -> valueChanged( wicaChannelName, v );
          final Consumer<WicaChannelMetadata> metadataChangedHandler = v -> metadataChanged( wicaChannelName, v );
-         final String epicsChannelName = EpicsConversionUtilities.getEpicsChannelName( wicaChannelName );
-         epicsChannelMonitorService.startMonitoring( epicsChannelName, stateChangedHandler, metadataChangedHandler, valueChangedHandler );
+         epicsChannelMonitorService.startMonitoring( wicaChannelName, stateChangedHandler, metadataChangedHandler, valueChangedHandler );
          channelInterestMap.put( wicaChannelName, 1 );
       }
    }

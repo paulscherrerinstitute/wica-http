@@ -100,7 +100,7 @@ function activateStream()
         if ( widget.hasAttribute( "data-wica-channel-props" ) )
         {
             const channelProps = widget.getAttribute("data-wica-channel-props");
-            channels.push( { "name" : channelName, "props" : channelProps } );
+            channels.push( { "name" : channelName, "props" : JSON.parse( channelProps ) } );
         }
         else
         {
