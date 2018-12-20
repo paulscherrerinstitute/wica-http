@@ -3,13 +3,26 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.infrastructure.WicaObjectToJsonSerializer;
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.NumberSerializer;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
+import org.springframework.format.annotation.NumberFormat;
 
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -23,8 +36,11 @@ public abstract class WicaChannelValue
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
+   private static final int DEFAULT_PRECISION = 6;
+
    private final boolean connected;
    private final LocalDateTime wicaServerTimestamp;
+
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -47,6 +63,11 @@ public abstract class WicaChannelValue
       return new WicaChannelValueConnectedReal( WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
    }
 
+   public static WicaChannelValue createChannelValueConnected( double value, int precision )
+   {
+      return new WicaChannelValueConnectedReal( WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value, precision );
+   }
+
    public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double value  )
    {
       return new WicaChannelValueConnectedReal( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
@@ -55,6 +76,11 @@ public abstract class WicaChannelValue
    public static WicaChannelValue createChannelValueConnected( double[] value )
    {
       return new WicaChannelValueConnectedRealArray( WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
+   }
+
+   public static WicaChannelValue createChannelValueConnected( double[] value, int precision )
+   {
+      return new WicaChannelValueConnectedRealArray( WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value, precision );
    }
 
    public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double[] value  )
@@ -170,6 +196,7 @@ public abstract class WicaChannelValue
       }
 
       @JsonProperty( "ts" )
+ //     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss.SSS")
       public LocalDateTime getDataSourceTimestamp()
       {
          return dataSourceTimestamp;
@@ -195,18 +222,29 @@ public abstract class WicaChannelValue
 
    public static class WicaChannelValueConnectedReal extends WicaChannelValueConnected
    {
-      private final double value;
+      private final BigDecimal value;
 
       @JsonProperty( "val" )
-      public double getValue()
+      public BigDecimal getValueAsBigDecimal()
       {
          return value;
       }
 
+      @JsonProperty( "val-alt" )
+      public double getValue()
+      {
+         return value.doubleValue();
+      }
+
       private WicaChannelValueConnectedReal( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, double value )
       {
+         this( alarmSeverity, alarmStatus, dataSourceTimestamp, value, DEFAULT_PRECISION );
+      }
+
+      private WicaChannelValueConnectedReal( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, double value, int precision )
+      {
          super(WicaChannelType.REAL, alarmSeverity, alarmStatus, dataSourceTimestamp );
-         this.value = value;
+         this.value = BigDecimal.valueOf( value ).setScale( precision, RoundingMode.HALF_UP );
       }
    }
 
@@ -214,18 +252,29 @@ public abstract class WicaChannelValue
 
    public static class WicaChannelValueConnectedRealArray extends WicaChannelValueConnected
    {
-      private final double[] value;
+      private final List<BigDecimal> value;
 
       @JsonProperty( "val" )
-      public double[] getValue()
+      public List<BigDecimal> getValueArrayAsBigDecimalList()
       {
          return value;
       }
 
+      @JsonProperty( "val-alt" )
+      public double[] getValue()
+      {
+         return value.stream().map( BigDecimal::doubleValue ).mapToDouble( Double::doubleValue ).toArray();
+      }
+
       private WicaChannelValueConnectedRealArray( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, double[] value )
       {
+         this( alarmSeverity, alarmStatus, dataSourceTimestamp, value, DEFAULT_PRECISION );
+      }
+
+      private WicaChannelValueConnectedRealArray( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, double[] value, int precision )
+      {
          super(WicaChannelType.REAL_ARRAY, alarmSeverity, alarmStatus, dataSourceTimestamp );
-         this.value = value;
+         this.value = Arrays.stream( value ).boxed().map( v -> BigDecimal.valueOf( v ).setScale( precision, RoundingMode.HALF_UP) ).collect( toList() );
       }
    }
 
@@ -266,7 +315,6 @@ public abstract class WicaChannelValue
          this.value = value;
       }
    }
-
 
 /*- Nested Class: WicaChannelValueConnectedString ---------------------------*/
 
