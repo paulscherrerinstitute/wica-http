@@ -66,7 +66,7 @@ public class WicaStream implements WicaStreamMapper
       this.channelMap = Collections.unmodifiableMap( wicaChannels.stream().collect(Collectors.toConcurrentMap( WicaChannel::getName, c -> c ) ) );
 
       Validate.isTrue(defaultHeartBeatFluxInterval > 50, "The 'wica.heartbeat_flux_interval_default_in_ms' setting cannot be less than 50ms." );
-      Validate.isTrue(defaultChannelValueUpdateFluxInterval >50, "The 'wica.channel_value_flux_update_flux_interval_default_in_ms' setting cannot be less than 50ms." );
+      Validate.isTrue(defaultChannelValueUpdateFluxInterval > 50, "The 'wica.channel_value_flux_update_flux_interval_default_in_ms' setting cannot be less than 50ms." );
 
       this.defaultHeartBeatFluxInterval = defaultHeartBeatFluxInterval;
       this.defaultChannelValueUpdateFluxInterval = defaultChannelValueUpdateFluxInterval;
@@ -75,7 +75,7 @@ public class WicaStream implements WicaStreamMapper
       logger.info( "Is this stream a plot stream: '{}'", isPlotStream );
       final Set<String> fieldSelectors = isPlotStream ? Set.of( "val", "sevr", "ts" ) : Set.of( "val", "sevr" );
       logger.info( "Fields selected for value serialization are '{}'", fieldSelectors );
-      this.serializer = new WicaObjectToJsonSerializer( fieldSelectors );
+      this.serializer = new WicaObjectToJsonSerializer( fieldSelectors, 2 );
 
       logger.info( "Created new WicaStream with properties as follows: '{}'", this );
    }
@@ -161,12 +161,14 @@ public class WicaStream implements WicaStreamMapper
       inputMap.keySet().forEach( c -> {
          final List<WicaChannelValue> inputList = inputMap.get( c );
          final WicaChannel wicaChannel = this.channelMap.get( c );
-         outputMap.put( c, wicaChannel.map( inputList ) );
+         final List<WicaChannelValue> outputList = wicaChannel.map( inputList );
+         if ( outputList.size() > 0 ) {
+            outputMap.put( c, outputList );
+         }
       } );
 
       return outputMap;
    }
-
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
