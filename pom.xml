@@ -121,12 +121,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Note this additional dependency is necessary to get JSON serialisation support for LocalDateTime etc -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-
     </dependencies>
 
     <build>
