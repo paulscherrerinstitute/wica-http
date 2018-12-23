@@ -5,7 +5,7 @@
 
     <groupId>ch.psi</groupId>
     <artifactId>wica</artifactId>
-    <version>0.9.1-SNAPSHOT</version>
+    <version>0.9.5-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>wica2</name>
