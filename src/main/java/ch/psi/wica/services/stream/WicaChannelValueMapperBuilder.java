@@ -43,7 +43,7 @@ public class WicaChannelValueMapperBuilder
 
       if ( wicaChannelProperties.hasProperty( "filterType" ) )
       {
-         final String filterType = wicaChannelProperties.getPropertyValue("filterType");
+         final String filterType = wicaChannelProperties.getPropertyValue("filterType" );
          switch ( filterType )
          {
             case "allValue":
