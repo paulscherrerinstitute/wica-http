@@ -57,31 +57,34 @@ messageHandlers.channelMetadataUpdated = metadataObject =>
 
 messageHandlers.channelValuesUpdated = valueObject =>
 {
-    console.log( "WicaStream received new channel value map.");
+    //console.log( "WicaStream received new channel value map.");
 
     // Go through all the elements in the update object and assign
-    // each element's value to the element's "data-wica-channel-value"
-    // attribute. Update the  "data-wica-channel-connection-state" attribute to
-    // reflect the channel's underlying connection state.
+    // each element's value to the element's "data-wica-channel-value-latest"
+    // and "data-wica-channel-value-array" attributes. Update the
+    // "data-wica-channel-connection-state" attribute to reflect the
+    // channel's underlying connection state.
     Object.keys( valueObject ).forEach( ( key ) =>
     {
         const channelName = key;
         const channelValueArray = valueObject[ key ];
         const elements = DocumentUtilities.findWicaElementsWithChannelName( channelName );
-        const valueAsString = JSON.stringify( channelValueArray );
+        const channelValueArrayAsString = JSON.stringify( channelValueArray );
 
         if ( ! Array.isArray( channelValueArray ) )
         {
             console.warn( "Stream Error: not an array !" );
             return;
         }
-        const lastValue = channelValueArray.pop();
+        const channelValueLatest = channelValueArray.pop();
+        const channelValueLatestAsString = JSON.stringify( channelValueLatest );
+        const channelConnectionState = ( channelValueLatest.val === null ) ? "disconnected" : "connected";
         elements.forEach( ele => {
-            ele.setAttribute( "data-wica-channel-value", valueAsString );
-            const channelConnectionState = ( lastValue.val === null ) ? "disconnected" : "connected";
+            ele.setAttribute( "data-wica-channel-value-latest", channelValueLatestAsString );
+            ele.setAttribute( "data-wica-channel-value-array", channelValueArrayAsString );
             ele.setAttribute( "data-wica-channel-connection-state", channelConnectionState );
-            ele.setAttribute( "data-wica-channel-alarm-state", lastValue.sevr );
-            console.log("Value updated: " + valueAsString);
+            ele.setAttribute( "data-wica-channel-alarm-state", channelValueLatest.sevr );
+            //console.log("Value updated: " + channelValueLatest);
         } );
     } );
 };
