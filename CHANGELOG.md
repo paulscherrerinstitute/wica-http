@@ -128,6 +128,11 @@ This log describes the functionality of tagged versions within the repository.
                                                             - support for cpu metrics
                                                             - added support for static locations and add extra information to actuator. Add initial get interval.
 
+* [0.9.5-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.9.5-RELEASE)
+   - [CTRLIT-XXXX](https://jira.psi.ch/browse/CTRLIT-XXXX): XXXX
+
+
+
 
 # Project Ideas Completed
 
