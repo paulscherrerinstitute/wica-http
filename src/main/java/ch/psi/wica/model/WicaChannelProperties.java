@@ -31,7 +31,7 @@ public class WicaChannelProperties extends WicaProperties
 
    public static WicaChannelProperties of( Map<String,String> map )
    {
-      Validate.notNull(map );
+      Validate.notNull( map );
       return new WicaChannelProperties( map );
    }
 
@@ -40,7 +40,7 @@ public class WicaChannelProperties extends WicaProperties
       return new WicaChannelProperties( Map.of() );
    }
 
-   /*- Public methods -----------------------------------------------------------*/
+/*- Public methods -----------------------------------------------------------*/
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
