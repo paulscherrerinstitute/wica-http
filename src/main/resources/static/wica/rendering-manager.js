@@ -10,13 +10,13 @@ export function renderWicaElements()
     DocumentUtilities.findWicaElements().forEach( (element) => {
         // If we have no information about the channel's current value or the channel's metadata
         // then there is nothing useful that can be done so bail out.
-        if ( ( !element.hasAttribute("data-wica-channel-value")) || (! element.hasAttribute("data-wica-channel-metadata") ) )
+        if ( ( !element.hasAttribute("data-wica-channel-value-array")) || (! element.hasAttribute("data-wica-channel-metadata") ) )
         {
             return;
         }
 
         // Obtain the object containing the array of recently received channel values.
-        const channelValueArrayObj = JSON.parse( element.getAttribute( "data-wica-channel-value" ) );
+        const channelValueArrayObj = JSON.parse( element.getAttribute( "data-wica-channel-value-array" ) );
 
         // Check that the received object was an array
         if ( ! Array.isArray( channelValueArrayObj ) ) {
