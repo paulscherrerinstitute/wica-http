@@ -66,7 +66,7 @@ public class EpicsChannelValuePublisher
    {
       if ( ! WicaChannelType.isRecognisedType( valueObj.getValue() ) )
       {
-         logger.debug("'{}' - the value received was of an unrecopgnised type. ", epicsChannelName );
+         logger.trace("'{}' - the value received was of an unrecopgnised type. ", epicsChannelName );
          return;
       }
       
@@ -77,32 +77,32 @@ public class EpicsChannelValuePublisher
       switch( WicaChannelType.getTypeFromObject( valueObj.getValue() ) )
       {
          case REAL:
-            logger.debug( "'{}' - value was DOUBLE.", epicsChannelName );
+            logger.trace( "'{}' - value was DOUBLE.", epicsChannelName );
             publishTimestampedValueDouble( valueObj, wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, valueChangeHandler );
             return;
 
          case REAL_ARRAY:
-            logger.debug( "'{}' - value was DOUBLE ARRAY.", epicsChannelName );
+            logger.trace( "'{}' - value was DOUBLE ARRAY.", epicsChannelName );
             publishTimestampedValueDoubleArray( valueObj, wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, valueChangeHandler );
             return;
 
          case INTEGER:
-            logger.debug("'{}' - value was INTEGER.", epicsChannelName );
+            logger.trace("'{}' - value was INTEGER.", epicsChannelName );
             publishTimestampedValueInteger( valueObj, wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, valueChangeHandler );
             return;
 
          case INTEGER_ARRAY:
-            logger.debug("'{}' - value was INTEGER ARRAY.", epicsChannelName );
+            logger.trace("'{}' - value was INTEGER ARRAY.", epicsChannelName );
             publishTimestampedValueIntegerArray( valueObj, wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, valueChangeHandler );
             return;
 
          case STRING:
-            logger.debug("'{}' - value was STRING.", epicsChannelName );
+            logger.trace("'{}' - value was STRING.", epicsChannelName );
             publishTimestampedValueString( valueObj, wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, valueChangeHandler );
             return;
 
          case STRING_ARRAY:
-            logger.debug("'{}' - value was STRING ARRAY.", epicsChannelName );
+            logger.trace("'{}' - value was STRING ARRAY.", epicsChannelName );
             publishTimestampedValueStringArray( valueObj, wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, valueChangeHandler );
             return;
       }
