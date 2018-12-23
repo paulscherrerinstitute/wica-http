@@ -7,7 +7,7 @@ import * as DocumentUtilities from './document-utils.js'
  *
  * The current implementation obtains its information about the state
  * of each wica-aware element by looking at the information in the
- * 'data-wica-channel-value' and 'data-wica-channel-metadata' html
+ * 'data-wica-channel-value-array' and 'data-wica-channel-metadata' html
  * element attributes.
  *
  * No events will be fired until the channel is connected to its
@@ -22,7 +22,8 @@ import * as DocumentUtilities from './document-utils.js'
  *
  *   detail.channelName
  *   detail.channelMetadata
- *   detail.channelValues
+ *   detail.channelValueArray
+ *   detail.channelValueLatest
  *
  */
 export function fireEvents()
@@ -31,7 +32,7 @@ export function fireEvents()
 
         // If we have no information about the channel's current value or the channel's metadata
         // then there is nothing useful that can be done so bail out.
-        if ( ( !element.hasAttribute("data-wica-channel-value")) || (! element.hasAttribute("data-wica-channel-metadata") ) )
+        if ( ( !element.hasAttribute("data-wica-channel-value-array")) || (! element.hasAttribute("data-wica-channel-metadata") ) )
         {
             return;
         }
@@ -43,7 +44,7 @@ export function fireEvents()
         const channelMetadataObj = JSON.parse( element.getAttribute( "data-wica-channel-metadata" ) );
 
         // Obtain the object containing the array of recently received channel values.
-        const channelValueArrayObj = JSON.parse( element.getAttribute( "data-wica-channel-value" ) );
+        const channelValueArrayObj = JSON.parse( element.getAttribute( "data-wica-channel-value-array" ) );
 
         // Check that the received value object really was an array
         if ( ! Array.isArray( channelValueArrayObj ) ) {
@@ -51,8 +52,7 @@ export function fireEvents()
             return;
         }
 
-        // If there isn't at least one value present bail out as there is nothing useful
-        // that can be done so bail out.
+        // If there isn't at least one value present bail out as there is nothing useful to be done
         if ( channelValueArrayObj.length === 0 ) {
             return;
         }
@@ -64,7 +64,8 @@ export function fireEvents()
             let event = new Event('change');
             event.channelName = channelName;
             event.channelMetadata = channelMetadataObj;
-            event.channelValues = channelValueArrayObj;
+            event.channelValueArray = channelValueArrayObj;
+            event.channelValueLatest = channelValueArrayObj[ channelValueArrayObj.length - 1 ];
             element.dispatchEvent(event);
         }
 
@@ -75,9 +76,10 @@ export function fireEvents()
         {
             const customEvent = new CustomEvent( 'wica', {
                 detail: {
-                    "channelName"     : channelName,
-                    "channelMetadata" : channelMetadataObj,
-                    "channelValues"   : channelValueArrayObj
+                    "channelName"        : channelName,
+                    "channelMetadata"    : channelMetadataObj,
+                    "channelValueArray"  : channelValueArrayObj,
+                    "channelValueLatest" : channelValueArrayObj[ channelValueArrayObj.length - 1 ]
                 }
             } );
             element.dispatchEvent( customEvent );
