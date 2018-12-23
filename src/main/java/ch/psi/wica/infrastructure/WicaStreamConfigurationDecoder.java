@@ -110,12 +110,12 @@ public class WicaStreamConfigurationDecoder
       {
          if ( !channelNode.has("name") )
          {
-            throw new IllegalArgumentException("The JSON configuration string did not specify the name of one or more channels (missing 'name' field)");
+            throw new IllegalArgumentException( "The JSON configuration string did not specify the name of one or more channels (missing 'name' field)");
          }
 
          if ( !channelNode.hasNonNull("name") )
          {
-            throw new IllegalArgumentException("The JSON configuration string did not contain a valid value for one or more channel 'name' fields.");
+            throw new IllegalArgumentException( "The JSON configuration string did not contain a valid value for one or more channel 'name' fields.");
          }
          final JsonNode strNode = channelNode.findValue("name");
 
@@ -126,11 +126,11 @@ public class WicaStreamConfigurationDecoder
          {
             if ( channelNode.hasNonNull("props") )
             {
-               propsMap = decodeObject(channelNode.get( "props" ));
+               propsMap = decodeObject( channelNode.get( "props" ) );
             }
             else
             {
-               throw new IllegalArgumentException("The JSON configuration string did not specify one or more property values (missing 'props' value field)" );
+               throw new IllegalArgumentException( "The JSON configuration string did not specify one or more property values (missing 'props' value field)" );
             }
          }
          else
