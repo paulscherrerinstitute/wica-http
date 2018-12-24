@@ -3,9 +3,7 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.WicaChannelType;
 import ch.psi.wica.model.WicaChannelValue;
-import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -20,7 +18,7 @@ import java.util.List;
 
 /**
  * A WicaChannelValueMapper that writes a new value to the output list every time
- * the input signal makes a change whose absolute value exceeds a configured
+ * the input signal makes a change whose absolute value exceeds the configured
  * deadband.
  *
  * The mapper only transfer values for types WicaChannelType.REAL and

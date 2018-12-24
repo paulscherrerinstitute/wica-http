@@ -13,6 +13,10 @@ import java.util.List;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * A WicaChannelValueMapper that returns an output list with all input values
+ * passed through unchanged.
+ */
 @Immutable
 class WicaAllValueChannelValueMapper implements WicaChannelValueMapper
 {

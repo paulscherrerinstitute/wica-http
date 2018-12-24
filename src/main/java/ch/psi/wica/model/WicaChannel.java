@@ -30,7 +30,7 @@ public class WicaChannel implements WicaChannelValueMapper
 
    public WicaChannel( WicaChannelName wicaChannelName )
    {
-      logger.info( "Creating new wicaChannelValueMapper with default properties" );
+      logger.info( "Creating new wicaChannelValueMapper with DEFAULT properties." );
 
       this.wicaChannelName = wicaChannelName;
       this.wicaChannelProperties = WicaChannelProperties.ofEmpty();
