@@ -154,7 +154,14 @@ public class WicaStream implements WicaStreamMapper
 
    public Map<WicaChannelName,List<WicaChannelValue>> map( Map<WicaChannelName,List<WicaChannelValue>> inputMap )
    {
-      Validate.isTrue( wicaChannels.stream().anyMatch( c -> inputMap.containsKey( c.getName() ) ),"no mapping function for one or more channels" );
+      Validate.isTrue( wicaChannels.stream().allMatch( c -> {
+         final boolean result = inputMap.containsKey( c.getName() );
+         if ( ! result )
+         {
+            logger.warn("No mapping function for channel: '{}'", c.getName());
+         }
+         return result;
+      } ), "no mapping function for one or more channels" );
 
       final Map<WicaChannelName,List<WicaChannelValue>> outputMap = new HashMap<>();
 
