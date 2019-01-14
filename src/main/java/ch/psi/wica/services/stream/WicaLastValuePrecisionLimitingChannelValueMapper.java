@@ -22,6 +22,8 @@ import static ch.psi.wica.model.WicaChannelType.REAL_ARRAY;
  * A WicaChannelValueMapper that transfers only the last value from the input
  * list to the output list.
  *
+ * If the input list is empty the output list will also be empty.
+ *
  * If the input value is of type WicaChannelType.REAL or WicaChannelType.REAL_ARRAY
  * then the returned value will (additionally) be precision limited to the specified
  * number of digits.

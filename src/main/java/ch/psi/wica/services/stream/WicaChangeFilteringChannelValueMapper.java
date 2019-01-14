@@ -22,8 +22,8 @@ import java.util.List;
  * deadband.
  *
  * The mapper only transfer values for types WicaChannelType.REAL and
- * WicaChannelType.INTEGER. All other value types in the input list will be
- * ignored and will NOT be transferred to the output list.
+ * WicaChannelType.INTEGER. All other value types in the input list
+ * will be silently ignored and will NOT be transferred to the output list.
  */
 @ThreadSafe
 class WicaChangeFilteringChannelValueMapper implements WicaChannelValueMapper

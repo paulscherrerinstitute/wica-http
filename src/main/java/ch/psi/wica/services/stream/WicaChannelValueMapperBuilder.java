@@ -24,6 +24,7 @@ public class WicaChannelValueMapperBuilder
 
    private static final Logger logger = LoggerFactory.getLogger( WicaChannelValueMapperBuilder.class );
 
+   private static final int DEFAULT_PRECISION = 6;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -121,8 +122,8 @@ public class WicaChannelValueMapperBuilder
       }
       else
       {
-         logger.info( "Precison property NOT found. Set to default value of 6 digits." );
-         return new WicaLastValuePrecisionLimitingChannelValueMapper( 6 );
+         logger.info( "Precison property NOT found. Set to default value of {} digits", DEFAULT_PRECISION );
+         return new WicaLastValuePrecisionLimitingChannelValueMapper( DEFAULT_PRECISION );
       }
    }
 
