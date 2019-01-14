@@ -3,14 +3,12 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.WicaChannelAlarmSeverity;
 import ch.psi.wica.model.WicaChannelValue;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /*- Class Declaration --------------------------------------------------------*/
 
 @SpringBootTest
-class WicaLastValueChannelValueMapperTest
+class WicaLastValuePrecisionLimitingChannelValueMapperTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaLastValueChannelValueMapperTest.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaLastValuePrecisionLimitingChannelValueMapperTest.class );
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -44,7 +42,7 @@ class WicaLastValueChannelValueMapperTest
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4 );
 
-      final WicaChannelValueMapper mapper = new WicaLastValueChannelValueMapper( 4);
+      final WicaChannelValueMapper mapper = new WicaLastValuePrecisionLimitingChannelValueMapper( 4);
       final List<WicaChannelValue> outputList  = mapper.map( inputList );
       assertEquals( 1, outputList.size() );
       assertEquals( inputList.get( 3 ), outputList.get( 0 ) );

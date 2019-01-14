@@ -24,6 +24,7 @@ public class WicaChannelValueMapperBuilder
 
    private static final Logger logger = LoggerFactory.getLogger( WicaChannelValueMapperBuilder.class );
 
+   private static final int DEFAULT_PRECISION = 6;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -31,12 +32,12 @@ public class WicaChannelValueMapperBuilder
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public static WicaChannelValueMapper createDefault()
-   {
-      final WicaChannelProperties defaultProps = WicaChannelProperties.of( Map.of("prec", "6" ) );
-      return createDefault( defaultProps );
-   }
-
+   /**
+    * Returns a channel value mapper based on the supplied channel properties object.
+    *
+    * @param wicaChannelProperties the channel properties obhject.
+    * @return the returned mapper.
+    */
    public static WicaChannelValueMapper createFromChannelProperties( WicaChannelProperties wicaChannelProperties )
    {
       Validate.notNull( wicaChannelProperties );
@@ -52,15 +53,7 @@ public class WicaChannelValueMapperBuilder
                return new WicaAllValueChannelValueMapper();
             }
 
-            case "precision":
-            {
-               logger.info("Creating wicaChannelValueMapper for filterType=precision");
-               Validate.isTrue(wicaChannelProperties.hasProperty("digits"));
-               final int numberOfDigits = Integer.parseInt(wicaChannelProperties.getPropertyValue("digits"));
-               return new WicaPrecisionLimitingChannelValueMapper(numberOfDigits);
-            }
-
-            case "periodic":
+           case "periodic":
             {
                logger.info("Creating wicaChannelValueMapper for filterType=periodic");
                Validate.isTrue(wicaChannelProperties.hasProperty("interval"));
@@ -76,6 +69,14 @@ public class WicaChannelValueMapperBuilder
                return new WicaChangeFilteringChannelValueMapper(deadband);
             }
 
+            case "precision":
+            {
+               logger.info("Creating wicaChannelValueMapper for filterType=precision");
+               Validate.isTrue(wicaChannelProperties.hasProperty("digits"));
+               final int numberOfDigits = Integer.parseInt(wicaChannelProperties.getPropertyValue("digits"));
+               return new WicaAllValuePrecisionLimitingChannelValueMapper(numberOfDigits);
+            }
+
             default:
                logger.warn("The filterType parameter was not recognised. Using default mapper.");
                return createDefault( wicaChannelProperties );
@@ -88,19 +89,41 @@ public class WicaChannelValueMapperBuilder
       }
    }
 
+   /**
+    * Returns the DEFAULT channel value mapper.
+    *
+    * @return the returned mapper.
+    */
+   public static WicaChannelValueMapper createDefault()
+   {
+      final WicaChannelProperties defaultProps = WicaChannelProperties.of( Map.of("prec", "6" ) );
+      return createDefault( defaultProps );
+   }
+
+   /**
+    * Returns the DEFAULT channel value mapper, modified, optionally by the
+    * supplied properties object.
+    *
+    * @implNote
+    *
+    * The current implementation:
+    * - transfers only the last value from the input list.
+    * - precision limits WicaChannelType.REAL and WicaChannelType.REAL_ARRAY values.
+    * - transfers all other values unchanged.
+    */
    public static WicaChannelValueMapper createDefault( WicaChannelProperties wicaChannelProperties )
    {
       logger.info( "Creating default wicaChannelValueMapper" );
       if(  wicaChannelProperties.hasProperty("prec") )
       {
-         logger.info( "Precison property found" );
          final int numberOfDigits = Integer.parseInt(wicaChannelProperties.getPropertyValue("prec"));
-         return new WicaLastValueChannelValueMapper( numberOfDigits );
+         logger.info( "Precison property was found and set to {} digits.", numberOfDigits );
+         return new WicaLastValuePrecisionLimitingChannelValueMapper( numberOfDigits );
       }
       else
       {
-         logger.info( "Precison property NOT found" );
-         return new WicaLastValueChannelValueMapper( 6 );
+         logger.info( "Precison property NOT found. Set to default value of {} digits", DEFAULT_PRECISION );
+         return new WicaLastValuePrecisionLimitingChannelValueMapper( DEFAULT_PRECISION );
       }
    }
 
@@ -117,7 +140,7 @@ public class WicaChannelValueMapperBuilder
 //      SAMPLE_LAST_VALUE( "allValue", WicaAllValueChannelValueMapper.class ),
 //      SAMPLE_PERIODIC  ( "periodic", WicaPeriodicSamplingChannelValueMapper.class ),
 //      FILTER_CHANGES   ( "changes",  WicaChangeFilteringChannelValueMapper.class),
-//      LIMIT_PRECISION  ( "prec",     WicaPrecisionLimitingChannelValueMapper.class );
+//      LIMIT_PRECISION  ( "prec",     WicaAllValuePrecisionLimitingChannelValueMapper.class );
 //
 //      private String propertyName;
 //      private Class mapper;

@@ -3,7 +3,6 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.WicaChannelType;
 import ch.psi.wica.model.WicaChannelValue;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
@@ -20,14 +19,22 @@ import static ch.psi.wica.model.WicaChannelType.REAL_ARRAY;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * A WicaChannelValueMapper that returns an output list with all input values
+ * represented in the output list.
+ *
+ * If the input value is of type WicaChannelType.REAL or WicaChannelType.REAL_ARRAY
+ * then the returned value will (additionally) be precision limited to the specified
+ * number of digits.
+ */
 @ThreadSafe
-class WicaPrecisionLimitingChannelValueMapper implements WicaChannelValueMapper
+class WicaAllValuePrecisionLimitingChannelValueMapper implements WicaChannelValueMapper
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private static final Logger logger = LoggerFactory.getLogger( WicaPrecisionLimitingChannelValueMapper.class);
+   private static final Logger logger = LoggerFactory.getLogger( WicaAllValuePrecisionLimitingChannelValueMapper.class);
 
    private final int numberOfDigits;
 
@@ -39,7 +46,7 @@ class WicaPrecisionLimitingChannelValueMapper implements WicaChannelValueMapper
     *
     * @param numberOfDigits
     */
-   WicaPrecisionLimitingChannelValueMapper( int numberOfDigits )
+   WicaAllValuePrecisionLimitingChannelValueMapper(int numberOfDigits )
    {
       Validate.isTrue( numberOfDigits >= 0 );
       this.numberOfDigits = numberOfDigits;

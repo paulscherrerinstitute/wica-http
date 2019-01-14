@@ -3,15 +3,12 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.infrastructure.WicaObjectToJsonSerializer;
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.NumberSerializer;
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
-import org.springframework.format.annotation.NumberFormat;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -19,8 +16,6 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -222,6 +217,27 @@ public abstract class WicaChannelValue
 
    public static class WicaChannelValueConnectedReal extends WicaChannelValueConnected
    {
+      @Override
+      public boolean equals(Object o)
+      {
+         if (this == o)
+         {
+            return true;
+         }
+         if (!(o instanceof WicaChannelValueConnectedReal))
+         {
+            return false;
+         }
+         WicaChannelValueConnectedReal that = (WicaChannelValueConnectedReal) o;
+         return Objects.equals(getValue(), that.getValue());
+      }
+
+      @Override
+      public int hashCode()
+      {
+         return Objects.hash(getValue());
+      }
+
       private final BigDecimal value;
 
       @JsonProperty( "val" )
@@ -321,6 +337,27 @@ public abstract class WicaChannelValue
    public static class WicaChannelValueConnectedString extends WicaChannelValueConnected
    {
       private final String value;
+
+      @Override
+      public boolean equals(Object o)
+      {
+         if (this == o)
+         {
+            return true;
+         }
+         if (!(o instanceof WicaChannelValueConnectedString))
+         {
+            return false;
+         }
+         WicaChannelValueConnectedString that = (WicaChannelValueConnectedString) o;
+         return Objects.equals(getValue(), that.getValue());
+      }
+
+      @Override
+      public int hashCode()
+      {
+         return Objects.hash(getValue());
+      }
 
       @JsonProperty( "val" )
       public String getValue()
