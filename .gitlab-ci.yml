@@ -8,6 +8,6 @@ pages:
   - mv .public public
   artifacts:
     paths:
-    - docs/api-docs-js
+    - docs/api-docs-js/wica
   only:
   - master
