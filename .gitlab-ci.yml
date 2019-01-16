@@ -4,10 +4,10 @@ pages:
   stage: deploy
   script:
   - mkdir .public
-  - cp -r * .public
+  - cp -r docs/api-docs-js/wica/* .public
   - mv .public public
   artifacts:
     paths:
-    - docs/api-docs-js/wica
+    - public
   only:
   - master
