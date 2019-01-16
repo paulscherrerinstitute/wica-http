@@ -1,33 +1,46 @@
+/**
+ * @module stream-manager
+ * @desc Provides support for creating and using Wica streams.
+ */
+
+/**
+ * Provides support for creating a new WicaStream on the Wica backend server, for thereafter subscribing
+ * to it and for publishing locally the received information.
+ */
 export class WicaStreamManager
 {
     /**
-     * Creates an object for handling the Server-Sent-Event (SSE) data stream with the Wica backend server.
+     * Constructs a new instance.
      *
-     * Note: The returned manager will remain in an inactive state until it is activated by a call to
-     *       its activate method.
+     * The returned object will remain in a dormant state until triggered by a call to the activate
+     * method.
      *
-     * @param {string} serverUrl - the url of the server hosting the Wica Stream.
+     * @param {string} serverUrl - The url of the server to contact to request the creation of the new stream.
      *
-     * @param {Object} streamConfiguration - The configuration of the stream which should include the
-     *        stream properties (if any), the name of the channels, and associated channel properties.
+     * @param {Object} streamConfiguration - The stream specification to be sent to the server. This includes
+     *     the configuration of each of the stream's channels, together with, optionally, the stream properties
+     *     object.
+     *
+     * @param {StreamProperties} [streamConfiguration.props] - The stream properties object.
+     * @param {Object[]} streamConfiguration.channels - The configuration of each stream channel.
+     * @param {string} streamConfiguration.channels[].name - The name of the channel.
+     * @param {ChannelProperties} [streamConfiguration.channels[].props] - The channel properties object.
+     *
      * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
-     * @param {callback} connectionHandlers.streamOpened - Called when the stream is opened (= not yet connected)
-     * @param {callback} connectionHandlers.streamConnect - Called when the stream sucessfully connects.
+     * @param {callback} connectionHandlers.streamOpened - Called when the stream is opened (= not yet connected).
+     * @param {callback} connectionHandlers.streamConnect - Called when the stream successfully connects.
      * @param {callback} connectionHandlers.streamClosed - Called when the stream disconnects.
      *
      * @param {Object} messageHandlers - Callbacks for handling data received from the SSE stream.
      * @param {callback} messageHandlers.channelMetadataUpdated -  Called when stream metadata information is received.
-     * @param {callback} connectionHandlers.channelValuesUpdated - Called when stream value information is received.
+     * @param {callback} messageHandlers.channelValuesUpdated - Called when stream value information is received.
      *
-     * @param {Object} options - Object providing miscellaneous configuration options.
-     * @param {number} options.streamReconnectIntervalInSeconds - how often the manager should attempt to reconnect
-     *                                                            with the server if there is a communication outage.
-     *
-     * @param {number} options.streamTimeoutIntervalInSeconds - how often the stream's heartbeat signal need's
-     *                                                         to be received before the channel connection will
-     *                                                         be deemed to have failed.
-     *
-     * @param {boolean} options.crossOriginCheckEnabled - whether this manager should perform a CORS check.
+     * @param {Object} options - Provides additional client-side configuration options.
+     * @param {number} [options.streamReconnectIntervalInSeconds] - How often the manager should attempt to reconnect
+     *     with the server if there is a communication outage.
+     * @param {number} [options.streamTimeoutIntervalInSeconds] - Periodicity with which the stream's heartbeat signal
+     *     needs to be received before the manager will conclude that a communication outage has occurred.
+     * @param {boolean} [options.crossOriginCheckEnabled] - whether this manager should perform a CORS check.
      */
     constructor( serverUrl, streamConfiguration, connectionHandlers, messageHandlers, options )
     {
@@ -56,7 +69,7 @@ export class WicaStreamManager
         setInterval( () => {
             if ( this.countdownInSeconds === 0 ) {
                 console.warn("Event source 'stream': creating new...");
-                this.createStream();
+                this.createStream_();
                 console.warn("Event source: 'stream' - OK: create event stream task started");
                 this.countdownInSeconds = this.streamReconnectIntervalInSeconds;
             }
@@ -67,8 +80,10 @@ export class WicaStreamManager
     /**
      * Sends a POST request to the Wica Server to create a new stream. Adds a handler to
      * subscribe to the stream once it has been created.
+     *
+     * @private
      */
-    createStream()
+    createStream_()
     {
         // Inform listeners that a stream connection attempt is in progress
         this.streamConnect();
@@ -87,7 +102,7 @@ export class WicaStreamManager
                 const streamId = xhttp.responseText;
                 console.warn( "Stream created, returned id is: ", streamId );
                 const subscribeUrl = this.serverUrl + "/ca/streams/" + streamId;
-                this.subscribeStream( subscribeUrl );
+                this.subscribeStream_( subscribeUrl );
             }
             if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status !== 200) {
                 console.warn( "Error when sending create stream request." );
@@ -108,9 +123,10 @@ export class WicaStreamManager
      * Adds handlers to deal with the various events and/or messages which may be
      * associated with the stream.
      *
+     * @private
      * @param subscribeUrl the stream subscription URL.
      */
-    subscribeStream( subscribeUrl )
+    subscribeStream_( subscribeUrl )
     {
         const eventSource = new EventSource( subscribeUrl, { withCredentials: true } );
 
@@ -141,15 +157,15 @@ export class WicaStreamManager
 
         eventSource.addEventListener( 'open', ev => {
             if ( this.crossOriginCheckOk( ev ) ) {
-                const id = WicaStreamManager.extractEventSourceStreamIdFromUrl( ev.target.url );
+                const id = WicaStreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
                 this.streamOpened( id );
                 console.warn("Event source: 'stream' - open event on stream with id: " + id );
             }
         }, false);
 
         eventSource.addEventListener( 'error', ev => {
-            if ( this.crossOriginCheckOk( ev ) ) {
-                const id = WicaStreamManager.extractEventSourceStreamIdFromUrl( ev.target.url );
+            if ( this.crossOriginCheckOk_( ev ) ) {
+                const id = WicaStreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
                 console.warn("Event source: 'stream'  - error event on stream with id: " + id );
                 ev.target.close();  // close the event source that triggered this message
                 this.streamClosed( id );
@@ -162,10 +178,11 @@ export class WicaStreamManager
      * Performs a CORS check to verify the origin of the supplied event
      * is the same as the origin of the page that is currently loaded.
      *
+     * @private
      * @param event the event to check
      * @returns boolean result, true when the check is ok.
      */
-    crossOriginCheckOk( event )
+    crossOriginCheckOk_( event )
     {
         if ( ! this.crossOriginCheckEnabled ) {
             return true;
@@ -184,10 +201,11 @@ export class WicaStreamManager
     /**
      * Extracts the last part of the url which is expected to contain the stream id.
      *
+     * @private
      * @param url
      * @returns {string}
      */
-    static extractEventSourceStreamIdFromUrl( url )
+    static extractEventSourceStreamIdFromUrl_( url )
     {
         return url.substr( url.lastIndexOf( "/" ) + 1 );
     }

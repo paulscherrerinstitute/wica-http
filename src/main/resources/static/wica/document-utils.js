@@ -1,10 +1,15 @@
+/**
+ * @module
+ * @desc Provides helper functions for wica-aware html pages.
+ */
+
 export {
     findWicaElements,
     findWicaElementsWithChannelName
 }
 
 /**
- * Finds all HTML elements in the current document which are wica aware.
+ * Finds all wica-aware HTML elements in the current document.
  *
  * @returns {NodeListOf<Element>} the result list.
  */
@@ -14,7 +19,7 @@ function findWicaElements() {
 }
 
 /**
- * Finds all HTML elements in the current document with the specified wica channel name.
+ * Finds all wica-aware HTML elements in the current document with the specified wica channel name.
  *
  * @param target the channel name to search for.
  * @returns {NodeListOf<Element>}  the result list.

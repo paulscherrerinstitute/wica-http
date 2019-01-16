@@ -1,30 +1,33 @@
+/**
+ * @module
+ * @desc Provides support for firing wica notification events on wica-aware elements in the current document.
+ */
+
 import * as DocumentUtilities from './document-utils.js'
 
 /**
- * Fire events on all wica-aware html elements in the current document.
+ * Fires wica notification events on all wica-aware elements in the current document.
+ *
+ * The following event types are supported:
+ * - 'onwica': custom event.
+ * - 'onchange': deprecated, provided only for backwards compatibility.
+ *
+ * The event payload includes the most recently received stream notification information for the wica
+ * channel's metadata and wica channel's value.
+ *
+ * No events will be fired until both the channel's metadata and value have been obtained.
+ *
+ * In the case of the 'onwica' event the following information is provided in the detail attribute:
+ *
+ *   - detail.channelName
+ *   - detail.channelMetadata
+ *   - detail.channelValueArray
+ *   - detail.channelValueLatest
  *
  * @implNote
  *
- * The current implementation obtains its information about the state
- * of each wica-aware element by looking at the information in the
- * 'data-wica-channel-value-array' and 'data-wica-channel-metadata' html
- * element attributes.
- *
- * No events will be fired until the channel is connected to its
- * underlying datasource.
- *
- * The following events are supported:
- *   - onchange: backwards compatibility open
- *   - CustomEvent "wica"
- *
- * The following information is provided in the CustomEvent detail
- * attribute:
- *
- *   detail.channelName
- *   detail.channelMetadata
- *   detail.channelValueArray
- *   detail.channelValueLatest
- *
+ * The current implementation obtains the event payload information by looking at the information in the
+ * 'data-wica-channel-value-array' and 'data-wica-channel-metadata' html element attributes.
  */
 export function fireEvents()
 {

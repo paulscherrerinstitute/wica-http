@@ -1,88 +1,183 @@
-**Note: the information below is under construction and still evolving !**
-
-
 # Overview
 
-This project is intended to be a successor to PSI's earlier [Wica](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica)
-project whose stated goal was to provide:
+The **Wica2** project is the successor to PSI's earlier [Wica](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica)
+project whose stated goal was to provide a: 
 
-> *a very simple, but powerful, Channel Access to REST service*
+> _**"Simple, but powerful, Channel Access to REST service."**_ 
 
-Wica2 aims to provide similar functionality but the vision of the project is stated in rather more abstract terms:
+Wica2 includes the goal of the earlier project but expands the vision to target the following primary use case:
 
-> _**create a mechanism to enable an end-user to easily put together a webpage which
-monitors the live status of one or more EPICS channels of interest**_
+> _**"Create some software that will enable an end-user to easily create their own customised web pages that
+show the evolving, live status of one or more EPICS channels of interest."**_
 
-Wica2 will leverage off up-and-coming technologies within PSI's GFA Controls Section. More concretely the main 
+Wica2 provides a REST backend service with similar functionality to Wica. Additionally it provides a 
+frontend library which can stream live data from the backend, using the obtained information to dynamically 
+update the end-user's web page.
+
+Wica2 is based on technologies that are currently being actively used within PSI's GFA Controls Section. The main 
 technology differences between Wica and Wica2 are as follows:
 
-| Original WICA Project                | WICA2 project                              |
-| :----------------------------------- | :----------------------------------------- |
-| Runs on Glassfish Application Server | Uses Spring Boot containers (tomcat/netty) |
-| Runs directly on linux host          | Runs in Docker container                   |
-| No direct support for HTML           | Uses HTML5 features eg Server Sent Events (SSE) and Global Data (data-*) attributes.
-| Uses EPICS JCA/CAJ CA library        | Uses PSI's EPICS CA client library         |
+| Original WICA Project                         | WICA2 Project                                           |
+| :-------------------------------------------- | :------------------------------------------------------ |
+| Backend runs on Glassfish Application Server. | Backend uses JavaSpring Boot containers (Tomcat/Netty). |
+| Backend runs directly on linux host.          | Backend runs in Docker container.                       |
+| Backend uses EPICS JCA/CAJ CA library.        | Backend uses PSI's EPICS CA client library.             |
+| No direct support for frontend (webpages).    | Frontend uses JS library to leverage off modern HTML5 features (eg Server Sent Events (SSE), data-* attributes...)
 
 
-# Wica Webpage
+# Simple Wica Webpage Example
 
-The simplest Wica webpage would look something like this:
+The simplest Wica2 webpage looks like this:
 ```
 <!DOCTYPE html>
 <html lang="en">
 <head>
    <meta charset="UTF-8"/>
    <title>My Awesome Epics Channel Viewer</title>
-   <script type="text/javascript" src="gfa-wica.psi.ch/wica/wica.js"></script>
+   <script src="/wica/wica.js" type="module"></script>
 </head>
 
 <body>
-   <div data-epics-ca="abc:def:some_channel_of_interest"></div>
+   <div data-wica-channel-name="abc:def"></div>
+</body>
+
+</html>
+```
+In this example a single channel named "abc:def" is monitored. When the page is loaded the div element's
+text content will be dynamically updated with the latest values received from the wica channel.
+
+# How it Works
+
+The principle of operation is as follows. The Wica JS library module is loaded after the rest of the webpage. The 
+library scans the rest of the document for elements whose 'data-wica-channel-name' attribute indicates an interest 
+in some Wica channel. The library then communicates the channels of interest to the Wica REST Server which initiates 
+monitoring of the associated data sources and the streaming back of channel metadata and value information to the
+frontend.
+
+In response to the received event stream the Wica JS library module then updates the following attributes of each 
+wica-aware html element:
+
+| Attribute                           | Meaning                                                    | Possible Values                                           |
+| :---------------------------------- | :----------------------------------------------------------| :-------------------------------------------------------- |
+| data-wica-stream-state              | Contains status of connection to Wica Server.              | "connecting", "opened-XXX", "closed-XXX"                  |
+| data-wica-channel-connection-state  | Contains status of connection to data source.              | "disconnected", "connected"                               |
+| data-wica-channel-alarm-state       | Contains alarm status of data source.                      | "NO_ALARM", "MINOR_ALARM", "MAJOR_ALARM", "INVALID_ALARM" |
+| data-wica-channel-metadata          | Contains last received metadata from data source.          | Format depends on data source.                            |
+| data-wica-channel-value-latest      | Contains last received value from data source.             | Format depends on data source.                            |
+| data-wica-channel-value-array       | Contains array of latest received values from data source. | Format depends on data source.                            |
+ 
+Periodically (default = 100ms) the  Wica JS library module iterates through all wica-aware elements and performs the 
+following actions:
+1. if element's 'onchange' event handler is defined or a custom 'onwica' event handler is defined - the library module
+calls the handlers with the latest received information.
+1. if the element supports a textControl attribute it is set by default to the value of the 
+'data-wica-channel-value-latest' attribute.
+
+ToDo: document how the data-wica-rendering-hints attribute can be used to further control the behaviour.
+ToDo: document how tooltips are supported.
+ToDo document how CSS is used to colourise the element.
+  
+# Setting Wica Channel properties
+
+In addition to the 'data-wica-channel-name' attribute one can supply a 'data-wica-channel-props' object to modify 
+the properties of the channel. For example:
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8"/>
+   <title>My Awesome Epics Channel Viewer</title>
+   <script src="/wica/wica.js" type="module"></script>
+</head>
+
+<body>
+   <div data-wica-channel-name="some_channel_of_interest" data-wica-channel-props='{ "prec" : 0 }'></div>
 </body>
 
 </html>
 ```
 
-When the page is loaded the underlying Javascript library will analyse the page for elements whose 'data-epics-ca' 
-attribute indicates an interest in some EPICS channel. The library then communicates with the wica server which will 
-use EPICS Channel Access (CA) technology to monitor the relevant channels and send value updates using the HTML5 Server 
-Sent Event (SSE) feature. 
+In the above example the precision of the channel is set to 0 decimal places.
+ToDo: document the supported properties.
+
+# Wica Javascript Client API-v1
+
+Currently the API consists of only one function.
+
+```
+/**
+ * Returns an object that can be used to initiate a new Wica Server Sent Event (SSE) data stream from
+ * a Wica REST Server and to subsequently handle the received events.
+ *
+ * Note: The returned object will remain in an inactive state until it is activated by a call to
+ *       its activate method.
+ *
+ * @param {string} serverUrl - the url of the server hosting the Wica Stream.
+ *
+ * @param {Object} streamConfiguration - the configuration of the stream which should include the
+ *        stream properties (if any), the name of the channels, and associated channel properties.
+ *
+ * @param {Object} streamConfiguration.props - the properties of the stream.
+ * @param {Array} streamConfiguration.channels - the configuration of each channel in the stream.
+ * @param {string} streamConfiguration.channels[x].name - the name of the channel.
+ * @param {Object} streamConfiguration.channels[x].props - the properties of the channel.
+ * 
+ * @param {Object} connectionHandlers - callbacks for handling connection state changes.
+ * @param {callback} connectionHandlers.streamOpened - called when the stream is opened (= not yet connected).
+ * @param {callback} connectionHandlers.streamConnect - called when the stream successfully connects.
+ * @param {callback} connectionHandlers.streamClosed - called when the stream disconnects.
+ *
+ * @param {Object} messageHandlers - callbacks for handling data received from the SSE stream.
+ * @param {callback} messageHandlers.channelMetadataUpdated -  called when stream metadata information is received.
+ * @param {callback} connectionHandlers.channelValuesUpdated - called when stream value information is received.
+ *
+ * @param {Object} options - an object providing other miscellaneous configuration options.
+ * @param {number} options.streamReconnectIntervalInSeconds - how often the manager should attempt to reconnect
+ *                 with the server if there is a communication outage.
+ *
+ * @param {number} options.streamTimeoutIntervalInSeconds - how often the stream's heartbeat signal need's
+ *                 to be received before the channel connection will be deemed to have failed.
+ *
+ * @param {boolean} options.crossOriginCheckEnabled - whether this manager should perform a CORS check.
+ */
+function wicaStreamCreate( serverUrl, streamConfiguration, connectionHandlers, messageHandlers, options )
+```
 
 
-# Wica REST API (Endpoints)
+# Wica REST Service API 
 
-"Underneath the hood" the Wica javascript library communicates with Wica HTTP Server using a series of REST endpoints.
-In the short to medium term it is anticipated that the Wica2 server will use an API that is functionally identical to 
-the old Wica server whose API is documented [here](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica/blob/master/Readme.md#API)
+## Currently Supported Features 
 
-## Currently Supported Features (status: 2018-08-02)
+##### Create Wica Stream
 
-##### Register new stream (register channels to monitor):
 ```
 POST /ca/streams
 Content-Type: application/json
 
-["channel1", "channel2", "channel3"]
+{ "channels" : [ { "name": "abc:def", "props": { "chan_propA": "AAA", "chan_propB": "BBB" } } ], 
+     "props" : { "stream_propX": "XXX", "stream_propY": "YYY" } }
+
+Returns <streamId> a unique reference string that can be used when getting the stream (see below).
 ```
 
-##### Subscribe for stream (Server Sent Event) updates:
+##### Subscribe to Wica Stream
 ```
-GET /ca/streams/<channelName>
+GET /ca/streams/<streamId>
 ```
 
-##### Download the Wica javascript library:
+##### Download the Wica javascript library module:
 ```
 GET /wica/wica.js
 ```
 
-## New Features Coming Soon (status: 2018-08-02)
+## New Features Coming Soon (status: 2019-01-14)
 
 ##### Get value of a channel
 ```
 GET /ca/channels/<channel>
 ```
 
-#####  Set value of channel
+#####  Set the value of channel
 ```
 PUT /ca/channels/<channel>
 Content-Type: application/json or text/plain

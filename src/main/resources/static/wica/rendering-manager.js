@@ -1,9 +1,13 @@
+/**
+ * @module
+ * @desc Provides support for rendering the text content of wica-aware elements in the current document.
+ */
 import * as DocumentUtilities from './document-utils.js'
 
 const MAX_PRECISION = 8;
 
 /**
- * Render all wica-aware  html elements in the current document.
+ * Render all wica-aware html elements in the current document.
  */
 export function renderWicaElements()
 {
@@ -42,7 +46,7 @@ export function renderWicaElements()
         const channelMetadataObj = JSON.parse( element.getAttribute( "data-wica-channel-metadata" ) );
 
         // Now render the widget
-        renderWidget( element, channelValueObj, channelMetadataObj );
+        renderWidget_( element, channelValueObj, channelMetadataObj );
     });
 }
 
@@ -51,13 +55,14 @@ export function renderWicaElements()
  * underlying channel.
  *
  * The term 'render' here means manipulating the element in the DOM to enable
- * the Wica CSS styling rules  to achieve the desired effect.
+ * the Wica CSS styling rules to achieve the desired effect.
  *
+ * @private
  * @param element the html element to render.
  * @param channelValueObj the value object associated with the element's underlying wica channel.
  * @param channelMetadataObj the metadata object associated with the element's underlying wica channel.
  */
-function renderWidget( element, channelValueObj, channelMetadataObj ) {
+function renderWidget_( element, channelValueObj, channelMetadataObj ) {
     let channelName = element.getAttribute( "data-wica-channel-name" );
     let renderingHintsString = element.hasAttribute("data-wica-rendering-hints" ) ? element.getAttribute("data-wica-rendering-hints") : "{}";
     let renderingHintsObj;
@@ -68,7 +73,7 @@ function renderWidget( element, channelValueObj, channelMetadataObj ) {
         logExceptionData( channelName + ": Illegal JSON format in data-wica-rendering-hints attribute.\nDetails were as follows:\n", err );
         renderingHintsObj = {};
     }
-    let formattedValueText = buildFormattedValueText( channelValueObj, channelMetadataObj, renderingHintsObj);
+    let formattedValueText = buildFormattedValueText_( channelValueObj, channelMetadataObj, renderingHintsObj);
 
     // Suppress manipulation of element text content if overridden by the rendering hint
     let disableRendering = renderingHintsObj.hasOwnProperty( "disable" ) ? renderingHintsObj.disable : false;
@@ -77,18 +82,18 @@ function renderWidget( element, channelValueObj, channelMetadataObj ) {
         element.textContent = formattedValueText;
     }
 
-    // If a tooltip is explictly defined on the element then use it otherwwise add it
+    // If a tooltip is explictly defined on the element then use it otherwise add it
     // using the rules defined in the function
     if ( ! element.hasAttribute(  "data-wica-tooltip" ) ) {
-        let tooltipText = buildFormattedTooltipText( element, formattedValueText );
+        let tooltipText = buildFormattedTooltipText_( element, formattedValueText );
         element.setAttribute( "data-wica-tooltip", tooltipText );
     }
 }
 
 /**
- * Returns a String representing the current value using information extracted from the
- * wica-channel.
+ * Returns a String representing the current value using information extracted from the wica-channel.
  *
+ * @private
  * @param channelValueObj the value object associated with the element's underlying wica channel.
  * @param channelMetadataObj the metadata object associated with the element's underlying wica channel.
  * @param renderingHintsObj an object containg various styling hints.
@@ -96,18 +101,27 @@ function renderWidget( element, channelValueObj, channelMetadataObj ) {
  * @returns {*} the formatted string.
  *
  */
-function buildFormattedValueText( channelValueObj, channelMetadataObj, renderingHintsObj )
+function buildFormattedValueText_( channelValueObj, channelMetadataObj, renderingHintsObj )
 {
     // If the supplied value is non-scalar just return the string representation.
     if ( ( channelMetadataObj.type === "INTEGER_ARRAY") || ( channelMetadataObj.type === "REAL_ARRAY") || ( channelMetadataObj.type === "STRING_ARRAY") ) {
         return JSON.stringify( channelValueObj.val );
     }
     else {
-        return formatScalarValue( channelValueObj, channelMetadataObj, renderingHintsObj )
+        return formatScalarValue_( channelValueObj, channelMetadataObj, renderingHintsObj )
     }
 }
 
-function formatScalarValue( channelValueObj, channelMetadataObj, renderingHintsObj )
+/**
+ *
+ * @private
+ * @param channelValueObj
+ * @param channelMetadataObj
+ * @param renderingHintsObj
+ * @returns {*}
+ * @private
+ */
+function formatScalarValue_( channelValueObj, channelMetadataObj, renderingHintsObj )
 {
     let rawValue = channelValueObj.val;
 
@@ -150,8 +164,16 @@ function formatScalarValue( channelValueObj, channelMetadataObj, renderingHintsO
     }
 }
 
+/**
+ *
+ * @private
+ * @param element
+ * @param formattedValueText
+ * @returns {string}
+ * @private
+ */
 
-function buildFormattedTooltipText( element, formattedValueText )
+function buildFormattedTooltipText_( element, formattedValueText )
 {
     const SUPPORT_OPTION_TOOLTIPS_SHOW_CHANNEL_NAME_ONLY = true;
     const MAX_TOOLTIP_VALUE_STRING_LENGTH = 64;
@@ -180,7 +202,7 @@ function buildFormattedTooltipText( element, formattedValueText )
     }
     let alarmState = element.getAttribute("data-wica-channel-alarm-state");
 
-    let truncatedValueString = truncateValueString( formattedValueText, MAX_TOOLTIP_VALUE_STRING_LENGTH );
+    let truncatedValueString = truncateValueString_( formattedValueText, MAX_TOOLTIP_VALUE_STRING_LENGTH );
 
     return "Channel Name: " + channelName + "'\n" +
         "Stream Connect State: '" + streamConnectState + "'\n" +
@@ -189,7 +211,7 @@ function buildFormattedTooltipText( element, formattedValueText )
         "Channel Value Text: '" + truncatedValueString + "'";
 }
 
-function truncateValueString( inputString, maxLength )
+function truncateValueString_( inputString, maxLength )
 {
     return ( inputString.length <= maxLength ) ? inputString : inputString.substring( 0, maxLength - 1) + "...";
 }
