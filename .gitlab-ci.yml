@@ -24,8 +24,8 @@ pages:
   - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public
   - mv .public public
   after_script:
-  - rm -fr ~/.nvm # remove nvm installation directory
   - nvm unload    # unload nvm environment
+  - rm -fr ~/.nvm # remove nvm installation directory
   - mv ~/.bashrc_backup ~/.bashrc # restore old shell environment
   - source ~/.bashrc
   artifacts:
