@@ -8,26 +8,27 @@
 # is the environment whichs hosts the jsdoc tool. The script attempts to
 # clean up after itself.
 
-before_script:
-  - cp -a ~/.bashrc ~/.bashrc_backup # hold a backup copy of whatever shell environment we start with
-  - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-  - source ~/.bashrc
-  - nvm install stable
-  - npm install jsdoc -g
-
-after_script:
-  - nvm unload    # Ensure nvm environment
-  - rm -fr ~/.nvm # remove nvm installation directory
-  - mv ~/.bashrc_backup ~/.bashrc # restore old shell environment
-  - source ~/.bashrc
 
 pages:
+
+  before_script:
+    - cp -a ~/.bashrc ~/.bashrc_backup # hold a backup copy of whatever shell environment we start with
+    - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+    - source ~/.bashrc
+    - nvm install stable
+    - npm install jsdoc -g
+
+  after_script:
+    - nvm unload    # Ensure nvm environment
+    - rm -fr ~/.nvm # remove nvm installation directory
+    - mv ~/.bashrc_backup ~/.bashrc # restore old shell environment
+    - source ~/.bashrc
 
   tags:
     - shell
     - gitlab-pages
 
-  stage: deploy
+#  stage: deploy
 
   script:
     - mkdir .public
