@@ -6,7 +6,6 @@ pages:
   - gitlab-pages
   stage: deploy
   before_script:
-  - rm -fr .nvm # Cleanup
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
   - export NVM_DIR="$HOME/.nvm"
   #- [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
