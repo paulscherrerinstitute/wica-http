@@ -12,7 +12,7 @@ pages:
   script:
   - mkdir .public
   - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public
-  #- cp -r docs/api-docs-js/wica/* .public
+  - cp -r docs/api-docs-js/wica/* .public
   - mv .public public
   artifacts:
     paths:
