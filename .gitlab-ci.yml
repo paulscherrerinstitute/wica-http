@@ -3,7 +3,9 @@ image: library/alpine
 before_script:
   - apk update
   - apk add --no-cache nodejs
-  - node version
+  - apk add --no-cache npm
+  - node --version
+  - npm install jsdoc
 
 pages:
 
