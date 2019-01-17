@@ -1,0 +1,29 @@
+image: library/alpine
+
+pages:
+
+  tags:
+    - shared
+    - gitlab-pages
+    - docker
+
+  before_script:
+    - apk update
+    - apk add --no-cache nodejs
+    - apk add --no-cache npm
+    - node --version
+    - npm install jsdoc -g
+
+  script:
+    - echo "Building Site using Docker Executor"
+    - mkdir .public
+    - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public
+    - mv .public public
+
+  artifacts:
+    paths:
+      - public
+
+  only:
+    - master
+
