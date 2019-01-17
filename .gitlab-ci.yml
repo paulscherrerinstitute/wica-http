@@ -14,7 +14,7 @@ before_script:
   - source ~/.bashrc
   - nvm install stable
   - npm install jsdoc -g
-  -
+
 after_script:
   - nvm unload    # Ensure nvm environment
   - rm -fr ~/.nvm # remove nvm installation directory
