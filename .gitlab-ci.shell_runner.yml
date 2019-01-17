@@ -1,0 +1,22 @@
+# This file is a template, and might need editing before it works on your project.
+# Full project: https://gitlab.com/pages/plain-html
+pages:
+  tags: 
+  - shell
+  - gitlab-pages
+  stage: deploy
+  before_script:
+  # - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+  # - nvm install stable
+  - npm install jsdoc -g
+  script:
+  - mkdir .public
+  - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public
+  - ls .public/wica
+  #- cp -r docs/api-docs-js/wica/* .public
+  - mv .public public
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
