@@ -70,14 +70,13 @@ wica-aware html element:
  
 Periodically (default = 100ms) the  Wica JS library module iterates through all wica-aware elements and performs the 
 following actions:
-1. if element's 'onchange' event handler is defined or a custom 'onwica' event handler is defined - the library module
-calls the handlers with the latest received information.
-1. if the element supports a textControl attribute it is set by default to the value of the 
-'data-wica-channel-value-latest' attribute.
+1. if an element's 'onchange' attribute is defined or a custom 'onwica' event handler is defined - the library module
+calls the handlers, providing them with the latest received channel metadata and value information.
+1. if an element is of a type which supports a textControl attribute then this attribute is set to the latest channel value.
 
 ToDo: document how the data-wica-rendering-hints attribute can be used to further control the behaviour.
 ToDo: document how tooltips are supported.
-ToDo document how CSS is used to colourise the element.
+ToDo document how CSS is used to perform colorisation of the element in the case of an alarm situation.
   
 # Setting Wica Channel properties
 
