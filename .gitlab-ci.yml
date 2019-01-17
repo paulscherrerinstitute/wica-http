@@ -1,42 +1,22 @@
-# This script attempts to execute the Javscript documentation utility 'jsdoc'
-# to generate html output from JS source code. It then moves the generated
-# files to a location where they are later accessible from the GitLab pages
-# environment.
-#
-# This script attempts to make few assumptions about the environment in which
-# it runs. It starts off by installing the latest stable node release which
-# is the environment whichs hosts the jsdoc tool. The script attempts to
-# clean up after itself.
+image: gliderlabs/alpine
 
+before_script:
+  - apk --update add node
+  - node version
 
 pages:
-
-  before_script:
-    - cp -a ~/.bashrc ~/.bashrc_backup # hold a backup copy of whatever shell environment we start with
-    - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-    - source ~/.bashrc
-    - nvm install stable
-    - npm install jsdoc -g
-
+  tags:
+    - shared
+    - gitlab-pages
+    - docker
   script:
+    - echo "Building Site using Docker Executor"
     - mkdir .public
     - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public
     - mv .public public
-
-  after_script:
-    - nvm unload    # Ensure nvm environment
-    - rm -fr ~/.nvm # remove nvm installation directory
-    - mv ~/.bashrc_backup ~/.bashrc # restore old shell environment
-    - source ~/.bashrc
-
-  tags:
-    - shell
-    - gitlab-pages
-
   artifacts:
     paths:
-    - public
-
+      - public
   only:
     - master
 
