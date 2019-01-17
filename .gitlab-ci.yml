@@ -8,7 +8,7 @@ pages:
   before_script:
   - cp -a ~/.bashrc ~/.bashrc_backup # backup the configuration of whatever shell we start with
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-  - export NVM_DIR="$HOME/.nvm"
+  # export NVM_DIR="$HOME/.nvm"
   #- [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
   - nvm install stable
   - npm install jsdoc -g
@@ -17,8 +17,8 @@ pages:
   - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public
   - mv .public public
   after_script:
-  - rm -fr .nvm # Cleanup
-  - nvm unload # unload nvm environment
+  - rm -fr ~/.nvm # remove nvm installation directory
+  - nvm unload    # unload nvm environment
   - mv ~/.bashrc_backup ~/.bashrc # restore old shell environment 
   artifacts:
     paths:
