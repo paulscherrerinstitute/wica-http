@@ -9,7 +9,7 @@ pages:
   - apt-get update -qq && apt-get install -y -qq node && apt-get install -y -qq npm
   script:
   - mkdir .public
-  jsdoc src/main/resources/static/wica/* -c /src/main/resources/static/wica/config.json -d .public
+  - jsdoc src/main/resources/static/wica/* -c /src/main/resources/static/wica/config.json -d .public
   #- cp -r docs/api-docs-js/wica/* .public
   - mv .public public
   artifacts:
