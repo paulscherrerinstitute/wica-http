@@ -237,7 +237,7 @@ Disadvantages:
 Current Status (2018-09-25):
 - For the moment this featured has been turned OFF and the WICA Server is using http v1.2.
 
-#Notes on Character Encoding Issue (ISO8859-1, UTF-8 etc)
+# Notes on Character Encoding Issue (ISO8859-1, UTF-8 etc)
   
 It was observed that the HIPA status units were not rendering the "µ" character
 properly.
