@@ -26,7 +26,8 @@ pages:
   after_script:
   - rm -fr ~/.nvm # remove nvm installation directory
   - nvm unload    # unload nvm environment
-  - mv ~/.bashrc_backup ~/.bashrc # restore old shell environment 
+  - mv ~/.bashrc_backup ~/.bashrc # restore old shell environment
+  - source ~/.bashrc
   artifacts:
     paths:
     - public
