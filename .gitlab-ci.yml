@@ -18,7 +18,7 @@ pages:
   - mv .public public
   after_script:
   - rm -fr .nvm # Cleanup
-  - nvm unload
+  - nvm unload # unload nvm environment
   - mv ~/.bashrc_backup ~/.bashrc # restore old shell environment 
   artifacts:
     paths:
