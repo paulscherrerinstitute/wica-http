@@ -1,18 +1,18 @@
 image: library/alpine
 
-before_script:
-  - apk update
-  - apk add --no-cache nodejs
-  - apk add --no-cache npm
-  - node --version
-  - npm install jsdoc
-
 pages:
 
   tags:
     - shared
     - gitlab-pages
     - docker
+
+  before_script:
+    - apk update
+    - apk add --no-cache nodejs
+    - apk add --no-cache npm
+    - node --version
+    - npm install jsdoc -g
 
   script:
     - echo "Building Site using Docker Executor"
