@@ -49,10 +49,12 @@ text content will be dynamically updated with the latest values received from th
 # How it Works
 
 The principle of operation is as follows. The Wica JS library module is loaded after the rest of the webpage. The 
-library scans the document from which it was loaded for elements whose 'data-wica-channel-name' attribute is set,
-which is taken to indicate that the element is "wica-aware". The library then communicates the channel names
-associated with all wica-aware elemments to the Wica REST Server which initiates monitoring of the associated 
-data sources and the streaming back of channel metadata and value information to the frontend.
+library scans the document from which it was loaded for elements whose 'data-wica-channel-name' attribute is set.
+This attribute is used as a means of indicating that the element is "wica-aware". 
+
+The library then communicates the channel names associated with all wica-aware elements to the Wica REST Server 
+which instigates monitoring of the associated data sources and the streaming back of channel metadata and value 
+information to the frontend.
 
 In response to the received event stream the Wica JS library module then updates the following attributes of each 
 wica-aware html element:
