@@ -8,6 +8,7 @@ pages:
   before_script:
   - uname -a
   - whoami
+  - ls -la ~
   - echo 'export PATH=$HOME/local/bin:$PATH' >> ~/.bashrc
   - . ~/.bashrc
   - mkdir ~/local2 
