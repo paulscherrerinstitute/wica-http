@@ -11,7 +11,7 @@ Wica2 includes the goal of the earlier project but expands the vision to target 
 show the evolving, live status of one or more EPICS channels of interest."**_
 
 Wica2 provides a REST backend service with similar functionality to Wica. Additionally it provides a 
-frontend library which can stream live data from the backend, using the obtained information to dynamically 
+frontend library which can stream live data from the backend, using the received information to dynamically 
 update the end-user's web page.
 
 Wica2 is based on technologies that are currently being actively used within PSI's GFA Controls Section. The main 
@@ -49,10 +49,12 @@ text content will be dynamically updated with the latest values received from th
 # How it Works
 
 The principle of operation is as follows. The Wica JS library module is loaded after the rest of the webpage. The 
-library scans the rest of the document for elements whose 'data-wica-channel-name' attribute indicates an interest 
-in some Wica channel. The library then communicates the channels of interest to the Wica REST Server which initiates 
-monitoring of the associated data sources and the streaming back of channel metadata and value information to the
-frontend.
+library scans the document from which it was loaded for elements whose 'data-wica-channel-name' attribute is set.
+This attribute is used as a means of indicating that the element is "wica-aware". 
+
+The library then communicates the channel names associated with all wica-aware elements to the Wica REST Server 
+(on the backend) which instigates monitoring of the associated data sources and the streaming back of channel 
+metadata and value information to the frontend.
 
 In response to the received event stream the Wica JS library module then updates the following attributes of each 
 wica-aware html element:
@@ -68,14 +70,13 @@ wica-aware html element:
  
 Periodically (default = 100ms) the  Wica JS library module iterates through all wica-aware elements and performs the 
 following actions:
-1. if element's 'onchange' event handler is defined or a custom 'onwica' event handler is defined - the library module
-calls the handlers with the latest received information.
-1. if the element supports a textControl attribute it is set by default to the value of the 
-'data-wica-channel-value-latest' attribute.
+1. if an element's 'onchange' attribute is defined or a custom 'onwica' event handler is defined - the library module
+calls the handlers, providing them with the latest received channel metadata and value information.
+1. if an element is of a type which supports a textControl attribute then this attribute is set to the latest channel value.
 
 ToDo: document how the data-wica-rendering-hints attribute can be used to further control the behaviour.
 ToDo: document how tooltips are supported.
-ToDo document how CSS is used to colourise the element.
+ToDo document how CSS is used to perform colorisation of the element in the case of an alarm situation.
   
 # Setting Wica Channel properties
 
@@ -187,7 +188,7 @@ See the unit tests
 * See also the project's [Jira Kanban Board](https://jira.psi.ch/secure/RapidBoard.jspa?rapidView=1631)
 
 
-#Notes on WICA Compression
+# Notes on WICA Compression
 
 This can be enabled in SpringBoot via the following settings:
 
@@ -211,7 +212,7 @@ Compression factor was 45.
 Current Status (2018-09-25): 
 -Compression is turned ON.
 
-#Notes on HTTP2
+# Notes on HTTP2
 
 This project explored the possibility of using "h2" (= http version 2) to deliver 
 the service.
@@ -236,7 +237,7 @@ Disadvantages:
 Current Status (2018-09-25):
 - For the moment this featured has been turned OFF and the WICA Server is using http v1.2.
 
-#Notes on Character Encoding Issue (ISO8859-1, UTF-8 etc)
+# Notes on Character Encoding Issue (ISO8859-1, UTF-8 etc)
   
 It was observed that the HIPA status units were not rendering the "µ" character
 properly.
