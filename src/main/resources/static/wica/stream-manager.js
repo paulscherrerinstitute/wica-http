@@ -12,8 +12,7 @@ export class WicaStreamManager
     /**
      * Constructs a new instance.
      *
-     * The returned object will remain in a dormant state until triggered by a call to the activate
-     * method.
+     * The returned object will remain in a dormant state until triggered by a call to the activate method.
      *
      * @param {string} serverUrl - The url of the server to contact to request the creation of the new stream.
      *
