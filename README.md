@@ -188,7 +188,7 @@ See the unit tests
 * See also the project's [Jira Kanban Board](https://jira.psi.ch/secure/RapidBoard.jspa?rapidView=1631)
 
 
-#Notes on WICA Compression
+# Notes on WICA Compression
 
 This can be enabled in SpringBoot via the following settings:
 
@@ -212,7 +212,7 @@ Compression factor was 45.
 Current Status (2018-09-25): 
 -Compression is turned ON.
 
-#Notes on HTTP2
+# Notes on HTTP2
 
 This project explored the possibility of using "h2" (= http version 2) to deliver 
 the service.
