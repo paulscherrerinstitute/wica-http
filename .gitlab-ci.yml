@@ -18,6 +18,11 @@ pages:
     - nvm install stable
     - npm install jsdoc -g
 
+  script:
+    - mkdir .public
+    - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public
+    - mv .public public
+
   after_script:
     - nvm unload    # Ensure nvm environment
     - rm -fr ~/.nvm # remove nvm installation directory
@@ -27,11 +32,6 @@ pages:
   tags:
     - shell
     - gitlab-pages
-
-  script:
-    - mkdir .public
-    - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public
-    - mv .public public
 
   artifacts:
     paths:
