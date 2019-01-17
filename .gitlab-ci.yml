@@ -22,17 +22,22 @@ after_script:
   - source ~/.bashrc
 
 pages:
+
   tags:
     - shell
     - gitlab-pages
+
   stage: deploy
+
   script:
     - mkdir .public
     - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public
     - mv .public public
+
   artifacts:
     paths:
-      - public
+    - public
+
   only:
     - master
 
