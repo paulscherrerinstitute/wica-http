@@ -1,7 +1,8 @@
-image: gliderlabs/alpine
+image: library/alpine
 
 before_script:
-  - apk --update add node
+  - apk update
+  - apk add --no-cache node
   - node version
 
 pages:
