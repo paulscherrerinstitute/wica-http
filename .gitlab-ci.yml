@@ -7,6 +7,8 @@ pages:
   stage: deploy
   before_script:
   - uname -a
+  - whoami
+  - yum install rh-nodejs8
   - apt-get update -qq && apt-get install -y -qq node && apt-get install -y -qq npm
   script:
   - mkdir .public
