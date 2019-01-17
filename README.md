@@ -11,7 +11,7 @@ Wica2 includes the goal of the earlier project but expands the vision to target 
 show the evolving, live status of one or more EPICS channels of interest."**_
 
 Wica2 provides a REST backend service with similar functionality to Wica. Additionally it provides a 
-frontend library which can stream live data from the backend, using the obtained information to dynamically 
+frontend library which can stream live data from the backend, using the received information to dynamically 
 update the end-user's web page.
 
 Wica2 is based on technologies that are currently being actively used within PSI's GFA Controls Section. The main 
@@ -49,10 +49,10 @@ text content will be dynamically updated with the latest values received from th
 # How it Works
 
 The principle of operation is as follows. The Wica JS library module is loaded after the rest of the webpage. The 
-library scans the rest of the document for elements whose 'data-wica-channel-name' attribute indicates an interest 
-in some Wica channel. The library then communicates the channels of interest to the Wica REST Server which initiates 
-monitoring of the associated data sources and the streaming back of channel metadata and value information to the
-frontend.
+library scans the document from which it was loaded for elements whose 'data-wica-channel-name' attribute is set,
+which is taken to indicate that the element is "wica-aware". The library then communicates the channel names
+associated with all wica-aware elemments to the Wica REST Server which initiates monitoring of the associated 
+data sources and the streaming back of channel metadata and value information to the frontend.
 
 In response to the received event stream the Wica JS library module then updates the following attributes of each 
 wica-aware html element:
