@@ -13,8 +13,9 @@ pages:
   - gitlab-pages
   stage: deploy
   before_script:
-  - unset NVM_DIR 
-  - cp -a ~/.bashrc ~/.bashrc_backup # hold a backup copy of whatever shell environment we start with
+  - unset NVM_DIR
+  - head -n -4 ~/.bashrc > ~/.bashrc_backup
+  # - cp -a ~/.bashrc ~/.bashrc_backup # hold a backup copy of whatever shell environment we start with
   - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
   - source ~/.bashrc
   - nvm install stable
