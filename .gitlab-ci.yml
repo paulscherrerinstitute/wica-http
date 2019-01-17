@@ -26,7 +26,6 @@ pages:
   - nvm unload    # Ensure nvm environment
   - rm -fr ~/.nvm # remove nvm installation directory
   - mv ~/.bashrc_backup ~/.bashrc # restore old shell environment
-  - cat ~/.bashrc
   - source ~/.bashrc
   artifacts:
     paths:
