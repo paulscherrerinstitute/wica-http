@@ -19,7 +19,7 @@ import * as WicaConstants from  './constants.js'
 export const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
 /**
- * @constant {string}
+ * @constant {string} STREAM_STATE
  * @desc some description
  * @default
  */
