@@ -34,6 +34,13 @@ import * as WicaElementAttributes from './constants.js'
 * @property {string} disable - X*
 */
 
+/**
+ * @global
+ * @typedef WicaElementAttributes
+ * @desc The attributes of a wica-aware element that contribute to its behaviour.
+ * @property {string} channelNameAttribute = "data-wica-channel-name" - The channel name.
+ * @property {string} channelPropertiesAttribute ="data-wica-channel-name" - The channel properties.
+ */
 
 /**
  * Returns an object that can be used to initiate a new Wica Server Sent Event (SSE) data stream from
