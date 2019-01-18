@@ -4,7 +4,7 @@
 // B) In ES6 module file: import 'wica/wica.js'
 console.debug( "Executing script in wica.js module...");
 
-import {WicaDocumentManager} from './document-manager.js'
+import {DocumentStreamManager} from './document-attribute-updater.js'
 import * as WicaEventManager from './event-manager.js'
 import * as WicaRenderingManager from './rendering-manager.js'
 
@@ -65,7 +65,7 @@ function loadWicaCSS()
     }
 }
 
-const wicaDocumentManager = new WicaDocumentManager();
+const wicaDocumentManager = new DocumentStreamManager();
 wicaDocumentManager.startAttributeUpdater();
 
 loadWicaCSS();

@@ -3,24 +3,38 @@
  * @desc Provides support for updating the current document with live information from the data sources on the backend.
  */
 
-console.debug( "Executing script in document-manager.js module...");
+console.debug( "Executing script in document-attribute-updater.js module...");
 
 import {WicaStreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
 
 
 //const WICA_HOST = "https://gfa-wica.psi.ch";
+
+/**
+ * The default host.
+ * @type {string}
+ */
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
-export class WicaDocumentManager
+/**
+ * Provides real-time updates on the attributes of one or more of the current document's
+ * wica-aware elements based on information streamed from a Wica backend data server.
+ */
+export class DocumentAttributeUpdater
 {
     /**
+     * Constructs a new instance.
      *
-     * @param {string} serverUrl
+     * The returned object will remain in a dormant state until triggered by a call to the activate method.
+
+     * @param {string} streamServerUrl - the URL of the backend server from whom information is to be onbtained.
+     * @param {StreamProperties} streamProperties - The properties of the stream that will be created to obtain the
      */
-    constructor( serverUrl= WICA_HOST )
+    constructor( streamServerUrl = WICA_HOST, streamProperties = {} )
     {
-        this.serverUrl = serverUrl;
+        this.streamServerUrl = streamServerUrl;
+        this.streamProperties = streamProperties;
         this.lastOpenedStreamId = 0;
         this.streamConnectionHandlers = {};
         this.streamMessageHandlers = {};
@@ -40,14 +54,14 @@ export class WicaDocumentManager
      * @param {string} channelConnectionStateAttribute - The name of the attribute to be updated with the latest received values from the data source.
      * @param {string} channelAlarmStateAttribute - The name of the attribute to be updated with the latest received values from the data source.
      */
-    startAttributeUpdater( streamConnectionStateAttribute = "data-wica-stream-state" ,
-                           channelNameAttribute="data-wica-channel-name",
-                           channelPropertiesAttribute="data-wica-channel-props",
-                           channelMetadataAttribute = "data-wica-channel-metadata",
-                           channelValueArrayAttribute = "data-wica-channel-value-array",
-                           channelValueLatestAttribute = "data-wica-channel-value-latest",
-                           channelConnectionStateAttribute = "data-wica-channel-connection-state",
-                           channelAlarmStateAttribute = "data-wica-channel-alarm-state"  )
+    activate( streamConnectionStateAttribute = "data-wica-stream-state" ,
+              channelNameAttribute="data-wica-channel-name",
+              channelPropertiesAttribute="data-wica-channel-props",
+              channelMetadataAttribute = "data-wica-channel-metadata",
+              channelValueArrayAttribute = "data-wica-channel-value-array",
+              channelValueLatestAttribute = "data-wica-channel-value-latest",
+              channelConnectionStateAttribute = "data-wica-channel-connection-state",
+              channelAlarmStateAttribute = "data-wica-channel-alarm-state"  )
     {
         this.configureStreamConnectionHandlers_( streamConnectionStateAttribute );
         this.configureStreamMessageHandlers_( channelMetadataAttribute,
@@ -59,6 +73,13 @@ export class WicaDocumentManager
         this.activateStream_();
     }
 
+    /**
+     * Shuts down the service offered by this class.
+     */
+    shutdown()
+    {
+        this.wicaStreamManager.shutdown();
+    }
 
     /**
      * Configures the document stream connection handling object to deal with the connection-related events generated
@@ -190,8 +211,8 @@ export class WicaDocumentManager
             crossOriginCheckEnabled: false,
         };
 
-        const streamConfiguration = { "channels": channels };
-        this.wicaStreamManager = new WicaStreamManager( this.serverUrl, streamConfiguration, this.connectionHandlers, this.messageHandlers, streamOptions );
+        const streamConfiguration = { "channels": channels, "props": this.streamProperties };
+        this.wicaStreamManager = new WicaStreamManager( this.streamServerUrl, streamConfiguration, this.connectionHandlers, this.messageHandlers, streamOptions );
 
     }
 
@@ -199,6 +220,5 @@ export class WicaDocumentManager
     {
         this.wicaStreamManager.activate();
     }
-
 
 }

@@ -77,10 +77,10 @@ function wicaStreamCreate( serverUrl, streamConfiguration, connectionHandlers, m
  * Returns an object which can be used for XXX...
  *
  * @param serverUrl
- * @returns {WicaDocumentManager}
+ * @returns {DocumentStreamManager}
  */
 function wicaDocumentManagerCreate( serverUrl )
 {
-    return new WicaDocumentManager( serverUrl );
+    return new DocumentStreamManager( serverUrl );
 }
 

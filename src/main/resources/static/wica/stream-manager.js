@@ -14,7 +14,7 @@ export class WicaStreamManager
      *
      * The returned object will remain in a dormant state until triggered by a call to the activate method.
      *
-     * @param {string} serverUrl - The url of the server to contact to request the creation of the new stream.
+     * @param {string} serverUrl - The URL of the server to contact to request the creation of the new stream.
      *
      * @param {Object} streamConfiguration - The stream specification to be sent to the server. This includes
      *     the configuration of each of the stream's channels, together with, optionally, the stream properties
