@@ -73,8 +73,6 @@ wicaDocumentManager.startAttributeUpdater();
 
 loadWicaCSS();
 
-activateStream();
-
 setTimeout( fireWicaEvents, 100 );
 setTimeout( refreshWicaPage, 100 );
 

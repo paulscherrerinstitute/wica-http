@@ -3,7 +3,6 @@
  * @desc Provides support for updating the current document with live information from the data sources on the backend.
  */
 
-
 console.debug( "Executing script in document-manager.js module...");
 
 import {WicaStreamManager} from './stream-manager.js'
@@ -13,10 +12,8 @@ import * as DocumentUtilities from './document-utils.js'
 //const WICA_HOST = "https://gfa-wica.psi.ch";
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
-
 export class WicaDocumentManager
 {
-
     constructor( )
     {
         this.lastOpenedStreamId = 0;
@@ -182,6 +179,3 @@ export class WicaDocumentManager
         wicaStreamManager.activate();
     }
 }
-
-
-activateStream();
