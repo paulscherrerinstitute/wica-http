@@ -4,6 +4,10 @@
  */
 import * as DocumentUtilities from './document-utils.js'
 
+/**
+ * The default precision to be used when rendering a channel with a numeric value.
+ * @type {number}
+ */
 const MAX_PRECISION = 8;
 
 /**
