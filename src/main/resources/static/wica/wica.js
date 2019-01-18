@@ -4,9 +4,9 @@
 // B) In ES6 module file: import 'wica/wica.js'
 console.debug( "Executing script in wica.js module...");
 
-import {DocumentStreamManager} from './document-attribute-updater.js'
+import {DocumentStreamManager} from './document-stream-connector.js'
 import * as WicaEventManager from './event-manager.js'
-import * as WicaRenderingManager from './rendering-manager.js'
+import * as WicaRenderingManager from './document-renderer.js'
 
 function fireWicaEvents()
 {

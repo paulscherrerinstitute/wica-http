@@ -3,10 +3,12 @@
  * @desc Provides support for updating the current document with live information from the data sources on the backend.
  */
 
-console.debug( "Executing script in document-attribute-updater.js module...");
+console.debug( "Executing script in document-stream-connector.js module...");
 
 import {WicaStreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
+
+import * as WicaConstants from  './constants.js'
 
 
 //const WICA_HOST = "https://gfa-wica.psi.ch";
@@ -16,19 +18,21 @@ import * as DocumentUtilities from './document-utils.js'
  */
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
+
 /**
  * Provides real-time updates on the attributes of one or more of the current document's
  * wica-aware elements based on information streamed from a Wica backend data server.
  */
-export class DocumentAttributeUpdater
+export class DocumentStreamConnector
 {
     /**
      * Constructs a new instance.
      *
      * The returned object will remain in a dormant state until triggered by a call to the activate method.
 
-     * @param {string} streamServerUrl - the URL of the backend server from whom information is to be ontained.
+     * @param {string} streamServerUrl - the URL of the backend server from whom information is to be obtained.
      * @param {StreamProperties} streamProperties - The properties of the stream that will be created to obtain the
+     *     required
      */
     constructor( streamServerUrl = WICA_HOST, streamProperties = {} )
     {
@@ -53,7 +57,7 @@ export class DocumentAttributeUpdater
      * @param {string} channelConnectionStateAttribute - The name of the attribute to be updated with the latest received values from the data source.
      * @param {string} channelAlarmStateAttribute - The name of the attribute to be updated with the latest received values from the data source.
      */
-    activate( streamConnectionStateAttribute = "data-wica-stream-state" ,
+    activate( streamConnectionStateAttribute = WicaConstants.STREAM_CONNECTION_STATE_ATTRIBUTE,
               channelNameAttribute="data-wica-channel-name",
               channelPropertiesAttribute="data-wica-channel-props",
               channelMetadataAttribute = "data-wica-channel-metadata",
