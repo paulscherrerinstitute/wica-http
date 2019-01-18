@@ -38,7 +38,7 @@ import * as WicaElementAttributes from './constants.js'
  * @global
  * @typedef WicaElementAttributes
  * @desc The attributes of a wica-aware element that contribute to its behaviour.
- * @property {string} channelNameAttribute = "data-wica-channel-name" - The channel name.
+ * @property {string} [channelNameAttribute="data-wica-channel-name"] - The channel name.
  * @property {string} channelPropertiesAttribute ="data-wica-channel-name" - The channel properties.
  */
 
