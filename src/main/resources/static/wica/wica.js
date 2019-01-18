@@ -8,9 +8,6 @@ import {WicaDocumentManager} from './document-manager.js'
 import * as WicaEventManager from './event-manager.js'
 import * as WicaRenderingManager from './rendering-manager.js'
 
-//const WICA_HOST = "https://gfa-wica.psi.ch";
-const WICA_HOST = "https://gfa-wica-dev.psi.ch";
-
 function fireWicaEvents()
 {
     try

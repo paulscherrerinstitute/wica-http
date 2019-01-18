@@ -27,6 +27,8 @@ export class WicaDocumentManager
      * the basis of the received information.
      *
      * @param {string} streamConnectionStateAttribute - The name of the attribute to be updated with information about the stream connection state.
+     * @param {string} channelNameAttribute - The name of the attribute which specifies the channel's data source.
+     * @param {string} channelPropertiesAttribute - The name of the attribute which specifies the channel's properties.
      * @param {string} channelMetadataAttribute - The name of the attribute to be updated with metadata information from the data source.
      * @param {string} channelValueArrayAttribute - The name of the attribute to be updated with the latest received values from the data source.
      * @param {string} channelValueLatestAttribute - The name of the attribute to be updated with the latest received values from the data source.
@@ -34,6 +36,8 @@ export class WicaDocumentManager
      * @param {string} channelAlarmStateAttribute - The name of the attribute to be updated with the latest received values from the data source.
      */
     startAttributeUpdater( streamConnectionStateAttribute = "data-wica-stream-state" ,
+                           channelNameAttribute="data-wica-channel-name",
+                           channelPropertiesAttribute="data-wica-channel-props",
                            channelMetadataAttribute = "data-wica-channel-metadata",
                            channelValueArrayAttribute = "data-wica-channel-value-array",
                            channelValueLatestAttribute = "data-wica-channel-value-latest",
@@ -46,7 +50,8 @@ export class WicaDocumentManager
                                               channelValueLatestAttribute,
                                               channelConnectionStateAttribute,
                                               channelAlarmStateAttribute );
-        this.activate();
+        this.createStream_( channelnameAttribute, channelPropertiesAttribute );
+        this.activateStream_();
     }
 
 
@@ -148,7 +153,15 @@ export class WicaDocumentManager
         };
     }
 
-    activate_()
+    /**
+     * Creates the stream based on the wica-aware elements in the current document.
+     *
+     * @private
+     * @param channelNameAttribute
+     * @param channelPropertiesAttribute
+     * @private
+     */
+    createStream_( channelNameAttribute, channelPropertiesAttribute )
     {
         // Look for all wica-aware elements in the current page
         const wicaElements = DocumentUtilities.findWicaElements();
@@ -157,10 +170,10 @@ export class WicaDocumentManager
         // Create an array of the associated channel names
         const channels = [];
         wicaElements.forEach(function (widget) {
-            const channelName = widget.getAttribute("data-wica-channel-name");
-            if (widget.hasAttribute("data-wica-channel-props")) {
-                const channelProps = widget.getAttribute("data-wica-channel-props");
-                channels.push({"name": channelName, "props": JSON.parse(channelProps)});
+            const channelName = widget.getAttribute( channelNameAttribute );
+            if (widget.hasAttribute( channelPropertiesAttribute )) {
+                const channelProps = widget.getAttribute( channelPropertiesAttribute );
+                channels.push({"name": channelName, "props": JSON.parse( channelProps ) });
             } else {
                 channels.push({"name": channelName});
             }
@@ -172,10 +185,15 @@ export class WicaDocumentManager
             crossOriginCheckEnabled: false,
         };
 
-        const streamConfiguration = {"channels": channels};
-        const wicaStreamManager = new WicaStreamManager(WICA_HOST, streamConfiguration, connectionHandlers, messageHandlers, streamOptions);
+        const streamConfiguration = { "channels": channels };
+        this.wicaStreamManager = new WicaStreamManager( WICA_HOST, streamConfiguration, this.connectionHandlers, this.messageHandlers, streamOptions );
 
-        // Activate manager
-        wicaStreamManager.activate();
     }
+
+    activateStream_()
+    {
+        this.wicaStreamManager.activate();
+    }
+
+
 }
