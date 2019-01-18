@@ -1,3 +1,5 @@
+import {CHANNEL_ALARM_STATE_ATTRIBUTE} from "./constants";
+
 export {
     wicaStreamCreate
 }
@@ -85,3 +87,8 @@ function wicaDocumentManagerCreate( serverUrl )
     return new DocumentStreamManager( serverUrl );
 }
 
+/**
+ * asdfsdsfd
+ * @type {string}
+ */
+const simon = CHANNEL_ALARM_STATE_ATTRIBUTE;
