@@ -14,8 +14,13 @@ const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
 export class WicaDocumentManager
 {
-    constructor( )
+    /**
+     *
+     * @param {string} serverUrl
+     */
+    constructor( serverUrl= WICA_HOST )
     {
+        this.serverUrl = serverUrl;
         this.lastOpenedStreamId = 0;
         this.streamConnectionHandlers = {};
         this.streamMessageHandlers = {};
@@ -186,7 +191,7 @@ export class WicaDocumentManager
         };
 
         const streamConfiguration = { "channels": channels };
-        this.wicaStreamManager = new WicaStreamManager( WICA_HOST, streamConfiguration, this.connectionHandlers, this.messageHandlers, streamOptions );
+        this.wicaStreamManager = new WicaStreamManager( this.serverUrl, streamConfiguration, this.connectionHandlers, this.messageHandlers, streamOptions );
 
     }
 
