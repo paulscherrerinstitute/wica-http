@@ -1,0 +1,183 @@
+
+console.debug( "Executing script in document-manager.js module...");
+
+import {WicaStreamManager} from './stream-manager.js'
+import * as DocumentUtilities from './document-utils.js'
+
+
+//const WICA_HOST = "https://gfa-wica.psi.ch";
+const WICA_HOST = "https://gfa-wica-dev.psi.ch";
+
+
+export class DocumentStreamManager
+{
+
+    constructor( )
+    {
+        this.lastOpenedStreamId = 0;
+        this.streamConnectionHandlers = {};
+        this.streamMessageHandlers = {};
+    }
+
+
+    /**
+     * Scans the current document for wica-aware elements, creates a stream on the Wica backend server to obtain
+     * information for each element's data source, sets up handlers to update each element's attributes on
+     * the basis of the received information.
+     *
+     * @param {string} streamConnectionStateAttribute - The name of the attribute to be updated with information about the stream connection state.
+     * @param {string} channelMetadataAttribute - The name of the attribute to be updated with metadata information from the data source.
+     * @param {string} channelValueArrayAttribute - The name of the attribute to be updated with the latest received values from the data source.
+     * @param {string} channelValueLatestAttribute - The name of the attribute to be updated with the latest received values from the data source.
+     * @param {string} channelConnectionStateAttribute - The name of the attribute to be updated with the latest received values from the data source.
+     * @param {string} channelAlarmStateAttribute - The name of the attribute to be updated with the latest received values from the data source.
+     */
+    startAttributeUpdater( streamConnectionStateAttribute = "data-wica-stream-state" ,
+                           channelMetadataAttribute = "data-wica-channel-metadata",
+                           channelValueArrayAttribute = "data-wica-channel-value-array",
+                           channelValueLatestAttribute = "data-wica-channel-value-latest",
+                           channelConnectionStateAttribute = "data-wica-channel-connection-state",
+                           channelAlarmStateAttribute = "data-wica-channel-alarm-state"  )
+    {
+        this.configureStreamConnectionHandlers_( streamConnectionStateAttribute );
+        this.configureStreamMessageHandlers_( channelMetadataAttribute,
+                                              channelValueArrayAttribute,
+                                              channelValueLatestAttribute,
+                                              channelConnectionStateAttribute,
+                                              channelAlarmStateAttribute );
+        this.activateStream();
+    }
+
+
+    /**
+     * Configures the document stream connection handling object to deal with the connection-related events generated
+     * by the document's stream manager.
+     *
+     * @private
+     * @param {string} streamConnectionStateAttribute - The attribute whose value is to be updated when the stream
+     *     manager connects / is opened / is closed.
+     */
+    configureStreamConnectionHandlers_( streamConnectionStateAttribute )
+    {
+        this.streamConnectionHandlers.streamConnect = () => {
+            console.log("Event stream connect" );
+            DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "connecting"));
+        };
+
+        this.streamConnectionHandlers.streamOpened = (id) => {
+            console.log("Event stream opened: " + id);
+            console.log("Setting wica stream state on all html elements to: 'opened'");
+            DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "opened-" + id));
+            this.lastOpenedStreamId = id;
+        };
+
+        this.streamConnectionHandlers.streamClosed = (id) => {
+            console.log("Event stream closed: " + id);
+            if (id === this.lastOpenedStreamId) {
+                console.log("Setting wica stream state on all html elements to: 'closed'");
+                DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "closed-" + id));
+            } else {
+                console.log("Wica stream state on all html elements will be left unchanged as a newer event source is already open !");
+            }
+        };
+    }
+
+    /**
+     * Configures the document stream connection handling object to deal with the message-related events generated
+     * by the document's stream manager.
+
+     * @param {string} channelMetadataAttribute
+     * @param {string} channelValueArrayAttribute
+     * @param {string} channelValueLatestAttribute
+     * @param {string} channelConnectionStateAttribute
+     * @param {string} channelAlarmStateAttribute
+     * @private
+     */
+    configureStreamMessageHandlers_( channelMetadataAttribute, channelValueArrayAttribute,
+                                     channelValueLatestAttribute, channelConnectionStateAttribute,
+                                     channelAlarmStateAttribute )
+    {
+        this.streamMessageHandlers.channelMetadataUpdated = metadataObject => {
+            console.log("Event stream received new channel metadata map.");
+
+            // Go through all the elements in the update object and assign
+            // each element's metadata to the element's "data-wica-channel-metadata"
+            // attribute.
+            Object.keys(metadataObject).forEach((key) => {
+                const channelName = key;
+                const channelMetadata = metadataObject[key];
+                const elements = DocumentUtilities.findWicaElementsWithChannelName(channelName);
+                const metadataAsString = JSON.stringify(channelMetadata);
+                elements.forEach(ele => {
+                    ele.setAttribute( channelMetadataAttribute, metadataAsString);
+                    console.log("Metadata updated: " + metadataAsString);
+                });
+            });
+        };
+
+        this.streamMessageHandlers.channelValuesUpdated = valueObject => {
+            //console.log( "WicaStream received new channel value map.");
+
+            // Go through all the elements in the update object and assign
+            // each element's value to the element's "data-wica-channel-value-latest"
+            // and "data-wica-channel-value-array" attributes. Update the
+            // "data-wica-channel-connection-state" attribute to reflect the
+            // channel's underlying connection state.
+            Object.keys(valueObject).forEach((key) => {
+                const channelName = key;
+                const channelValueArray = valueObject[key];
+                const elements = DocumentUtilities.findWicaElementsWithChannelName(channelName);
+                const channelValueArrayAsString = JSON.stringify(channelValueArray);
+
+                if (!Array.isArray(channelValueArray)) {
+                    console.warn("Stream Error: not an array !");
+                    return;
+                }
+                const channelValueLatest = channelValueArray.pop();
+                const channelValueLatestAsString = JSON.stringify(channelValueLatest);
+                const channelConnectionState = (channelValueLatest.val === null) ? "disconnected" : "connected";
+                elements.forEach(ele => {
+                    ele.setAttribute( channelValueArrayAttribute, channelValueArrayAsString);
+                    ele.setAttribute( channelValueLatestAttribute, channelValueLatestAsString);
+                    ele.setAttribute( channelConnectionStateAttribute, channelConnectionState);
+                    ele.setAttribute( channelAlarmStateAttribute, channelValueLatest.sevr);
+                    //console.log("Value updated: " + channelValueLatest);
+                });
+            });
+        };
+    }
+
+    activateStream()
+    {
+        // Look for all wica-aware elements in the current page
+        const wicaElements = DocumentUtilities.findWicaElements();
+        console.log("Number of Wica elements found: ", wicaElements.length);
+
+        // Create an array of the associated channel names
+        const channels = [];
+        wicaElements.forEach(function (widget) {
+            const channelName = widget.getAttribute("data-wica-channel-name");
+            if (widget.hasAttribute("data-wica-channel-props")) {
+                const channelProps = widget.getAttribute("data-wica-channel-props");
+                channels.push({"name": channelName, "props": JSON.parse(channelProps)});
+            } else {
+                channels.push({"name": channelName});
+            }
+        });
+
+        const streamOptions = {
+            streamReconnectIntervalInSeconds: 15,
+            streamTimeoutIntervalInSeconds: 20,
+            crossOriginCheckEnabled: false,
+        };
+
+        const streamConfiguration = {"channels": channels};
+        const wicaStreamManager = new WicaStreamManager(WICA_HOST, streamConfiguration, connectionHandlers, messageHandlers, streamOptions);
+
+        // Activate manager
+        wicaStreamManager.activate();
+    }
+}
+
+
+activateStream();
