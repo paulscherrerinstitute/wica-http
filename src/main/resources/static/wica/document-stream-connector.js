@@ -14,9 +14,9 @@ import * as WicaConstants from  './constants.js'
 //const WICA_HOST = "https://gfa-wica.psi.ch";
 
 /**
- * @type {string} WICA_HOST - The default host.
+ * @typedef {string} WICA_HOST - The default host.
  */
-const WICA_HOST = "https://gfa-wica-dev.psi.ch";
+export const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
 
 /**
