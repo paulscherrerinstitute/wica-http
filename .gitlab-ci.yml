@@ -19,9 +19,9 @@ pages:
     - mkdir .public
     - ls src/main/resources/static/wica/*
     - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public
-    - ls .public
+    - ls .public/wica
     - mv .public public
-    - ls public
+    - ls public/wica
 
   artifacts:
     paths:
