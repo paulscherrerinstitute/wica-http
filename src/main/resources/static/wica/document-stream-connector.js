@@ -18,6 +18,11 @@ import * as WicaConstants from  './constants.js'
  */
 export const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
+/**
+ * The STREAM state
+ * @type {string} - The stream state
+ */
+export const STREAM_STATE="ABCDEF";
 
 /**
  * Provides real-time updates on the attributes of one or more of the current document's
@@ -57,7 +62,7 @@ export class DocumentStreamConnector
      * @param {string} channelConnectionStateAttribute - The name of the attribute to be updated with the latest received values from the data source.
      * @param {string} channelAlarmStateAttribute - The name of the attribute to be updated with the latest received values from the data source.
      */
-    activate( streamConnectionStateAttribute = WicaConstants.STREAM_CONNECTION_STATE_ATTRIBUTE,
+    activate( streamConnectionStateAttribute = STREAM_STATE,
               channelNameAttribute="data-wica-channel-name",
               channelPropertiesAttribute="data-wica-channel-props",
               channelMetadataAttribute = "data-wica-channel-metadata",
