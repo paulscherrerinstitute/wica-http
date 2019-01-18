@@ -9,7 +9,7 @@ import * as DocumentUtilities from './document-utils.js'
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
 
-export class DocumentStreamManager
+export class WicaDocumentManager
 {
 
     constructor( )
@@ -18,7 +18,6 @@ export class DocumentStreamManager
         this.streamConnectionHandlers = {};
         this.streamMessageHandlers = {};
     }
-
 
     /**
      * Scans the current document for wica-aware elements, creates a stream on the Wica backend server to obtain
@@ -45,7 +44,7 @@ export class DocumentStreamManager
                                               channelValueLatestAttribute,
                                               channelConnectionStateAttribute,
                                               channelAlarmStateAttribute );
-        this.activateStream();
+        this.activate();
     }
 
 
@@ -147,7 +146,7 @@ export class DocumentStreamManager
         };
     }
 
-    activateStream()
+    activate_()
     {
         // Look for all wica-aware elements in the current page
         const wicaElements = DocumentUtilities.findWicaElements();

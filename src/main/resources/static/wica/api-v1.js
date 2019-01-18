@@ -24,6 +24,15 @@ import {WicaStreamManager} from './stream-manager.js'
  * @property {string} prec - The precision to be used when sending numeric information.
  */
 
+/**
+* @global
+* @typedef RenderingHints
+* @desc An object describing the properties associated with rendering.
+* @property {string} prec - X
+* @property {string} exp - X
+* @property {string} disable - X*
+*/
+
 
 /**
  * Returns an object that can be used to initiate a new Wica Server Sent Event (SSE) data stream from
