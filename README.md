@@ -1,5 +1,8 @@
 # Overview
 
+WICA stands for "Web Interface for Controls Applications". The idea is to provide web-based access to PSI's controls 
+infrastructure. 
+
 The **Wica2** project is the successor to PSI's earlier [Wica](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica)
 project whose stated goal was to provide a: 
 

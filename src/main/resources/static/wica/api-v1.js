@@ -29,37 +29,36 @@ import {WicaStreamManager} from './stream-manager.js'
  * Returns an object that can be used to initiate a new Wica Server Sent Event (SSE) data stream from
  * a Wica REST Server and to subsequently handle the received events.
  *
- * Note: The returned object will remain in an inactive state until it is activated by a call to
- *       its activate method.
+ * The returned object will remain in a dormant state until triggered by a call to the activate method.
  *
- * @param {string} serverUrl - the url of the server hosting the Wica Stream.
+ * @param {string} serverUrl - The url of the server to contact to request the creation of the new stream.
  *
- * @param {Object} streamConfiguration - the configuration of the stream which should include the
- *        stream properties (if any), the name of the channels, and associated channel properties.
+ * @param {Object} streamConfiguration - The stream specification to be sent to the server. This includes
+ *     the configuration of each of the stream's channels, together with, optionally, the stream properties
+ *     object.
  *
- * @param {Object} streamConfiguration.props - the properties of the stream.
- * @param {Array} streamConfiguration.channels - the configuration of each channel in the stream.
- * @param {string} streamConfiguration.channels[x].name - the name of the channel.
- * @param {Object} streamConfiguration.channels[x].props - the properties of the channel.
+ * @param {StreamProperties} [streamConfiguration.props] - The stream properties object.
+ * @param {Object[]} streamConfiguration.channels - The configuration of each stream channel.
+ * @param {string} streamConfiguration.channels[].name - The name of the channel.
+ * @param {ChannelProperties} [streamConfiguration.channels[].props] - The channel properties object.
  *
- * @param {Object} connectionHandlers - callbacks for handling connection state changes.
- * @param {callback} connectionHandlers.streamOpened - called when the stream is opened (= not yet connected).
- * @param {callback} connectionHandlers.streamConnect - called when the stream successfully connects.
- * @param {callback} connectionHandlers.streamClosed - called when the stream disconnects.
+ * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
+ * @param {callback} connectionHandlers.streamOpened - Called when the stream is opened (= not yet connected).
+ * @param {callback} connectionHandlers.streamConnect - Called when the stream successfully connects.
+ * @param {callback} connectionHandlers.streamClosed - Called when the stream disconnects.
  *
- * @param {Object} messageHandlers - callbacks for handling data received from the SSE stream.
- * @param {callback} messageHandlers.channelMetadataUpdated -  called when stream metadata information is received.
- * @param {callback} connectionHandlers.channelValuesUpdated - called when stream value information is received.
+ * @param {Object} messageHandlers - Callbacks for handling data received from the SSE stream.
+ * @param {callback} messageHandlers.channelMetadataUpdated -  Called when stream metadata information is received.
+ * @param {callback} messageHandlers.channelValuesUpdated - Called when stream value information is received.
  *
- * @param {Object} options - an object providing other miscellaneous configuration options.
- * @param {number} options.streamReconnectIntervalInSeconds - how often the manager should attempt to reconnect
- *                 with the server if there is a communication outage.
- *
- * @param {number} options.streamTimeoutIntervalInSeconds - how often the stream's heartbeat signal need's
- *                 to be received before the channel connection will be deemed to have failed.
- *
- * @param {boolean} options.crossOriginCheckEnabled - whether this manager should perform a CORS check.
+ * @param {Object} options - Provides additional client-side configuration options.
+ * @param {number} [options.streamReconnectIntervalInSeconds] - How often the manager should attempt to reconnect
+ *     with the server if there is a communication outage.
+ * @param {number} [options.streamTimeoutIntervalInSeconds] - Periodicity with which the stream's heartbeat signal
+ *     needs to be received before the manager will conclude that a communication outage has occurred.
+ * @param {boolean} [options.crossOriginCheckEnabled] - whether this manager should perform a CORS check.
  */
+
 function wicaStreamCreate( serverUrl, streamConfiguration, connectionHandlers, messageHandlers, options )
 {
     return new WicaStreamManager( serverUrl, streamConfiguration, connectionHandlers, messageHandlers, options )
