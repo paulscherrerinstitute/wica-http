@@ -62,7 +62,7 @@ export class DocumentStreamConnector
      * @param {string} channelConnectionStateAttribute - The name of the attribute to be updated with the latest received values from the data source.
      * @param {string} channelAlarmStateAttribute - The name of the attribute to be updated with the latest received values from the data source.
      */
-    activate( streamConnectionStateAttribute = "abc",
+    activate( streamConnectionStateAttribute = STREAM_STATE,
               channelNameAttribute="data-wica-channel-name",
               channelPropertiesAttribute="data-wica-channel-props",
               channelMetadataAttribute = "data-wica-channel-metadata",
