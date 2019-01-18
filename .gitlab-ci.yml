@@ -17,6 +17,7 @@ pages:
   script:
     - echo "Building Site using Docker Executor"
     - mkdir .public
+    - ls src/main/resources/static/wica/*
     - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public
     - mv .public public
 
