@@ -1,3 +1,8 @@
+/**
+ * @module
+ * @desc Provides support for updating the current document with live information from the data sources on the backend.
+ */
+
 
 console.debug( "Executing script in document-manager.js module...");
 
