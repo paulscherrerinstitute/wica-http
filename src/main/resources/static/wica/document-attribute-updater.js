@@ -12,8 +12,7 @@ import * as DocumentUtilities from './document-utils.js'
 //const WICA_HOST = "https://gfa-wica.psi.ch";
 
 /**
- * The default host.
- * @type {string}
+ * @type {string} WICA_HOST - The default host.
  */
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
@@ -28,7 +27,7 @@ export class DocumentAttributeUpdater
      *
      * The returned object will remain in a dormant state until triggered by a call to the activate method.
 
-     * @param {string} streamServerUrl - the URL of the backend server from whom information is to be onbtained.
+     * @param {string} streamServerUrl - the URL of the backend server from whom information is to be ontained.
      * @param {StreamProperties} streamProperties - The properties of the stream that will be created to obtain the
      */
     constructor( streamServerUrl = WICA_HOST, streamProperties = {} )
