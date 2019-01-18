@@ -15,5 +15,8 @@ export class WicaElementAttributes
         this.CHANNEL_CONNECTION_STATE = "data-wica-channel-connection-state";
         this.CHANNEL_ALARM_STATE      = "data-wica-channel-alarm-state";
     }
+
+    get STREAM_STATE() { return this.STREAM_STATE; }
+    get CHANNEL_NAME() { return this.CHANNEL_NAME; }
 }
 
