@@ -23,7 +23,7 @@ export const WICA_HOST = "https://gfa-wica-dev.psi.ch";
  * @desc some description
  * @default
  */
-export const STREAM_STATE = 'ABCDEF';
+const STREAM_STATE = 'ABCDEF';
 
 /**
  * Provides real-time updates on the attributes of one or more of the current document's
