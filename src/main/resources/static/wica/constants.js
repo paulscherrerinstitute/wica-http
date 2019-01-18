@@ -1,6 +1,13 @@
-
-
+/**
+ * ABCDEF
+ * @type {string}
+ */
 export const STREAM_CONNECTION_STATE_ATTRIBUTE  = "data-wica-stream-state";
+
+/**
+ * GHIJK
+ * @type {string}
+ */
 export const CHANNEL_NAME_ATTRIBUTE             = "data-wica-channel-name";
 export const CHANNEL_PROPERTIES_ATTRIBUTE       = "data-wica-channel-props";
 export const CHANNEL_METADATA_ATTRIBUTE         = "data-wica-channel-metadata";
