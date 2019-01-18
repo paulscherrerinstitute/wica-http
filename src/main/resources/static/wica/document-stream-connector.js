@@ -30,7 +30,7 @@ export class DocumentStreamConnector
      *
      * The returned object will remain in a dormant state until triggered by a call to the activate method.
 
-     * @param {string} streamServerUrl - the URL of the backend server from whom information is to be obtained.
+     * @param {string=} [streamServerUrl] - the URL of the backend server from whom information is to be obtained.
      * @param {StreamProperties} streamProperties - The properties of the stream that will be created to obtain the
      *     required
      */
