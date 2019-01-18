@@ -6,7 +6,7 @@ export {
 
 import {WicaStreamManager} from './stream-manager.js'
 
-import * as Attributes from './constants.js'
+import * as WicaElementAttributes from './constants.js'
 
 /**
  * @global

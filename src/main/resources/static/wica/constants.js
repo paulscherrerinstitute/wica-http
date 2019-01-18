@@ -1,18 +1,19 @@
 /**
- * ABCDEF
- * @type {string}
- */
-export const STREAM_CONNECTION_STATE_ATTRIBUTE  = "data-wica-stream-state";
-
-/**
  * GHIJK
  * @type {string}
  */
-export const CHANNEL_NAME_ATTRIBUTE             = "data-wica-channel-name";
-export const CHANNEL_PROPERTIES_ATTRIBUTE       = "data-wica-channel-props";
-export const CHANNEL_METADATA_ATTRIBUTE         = "data-wica-channel-metadata";
-export const CHANNEL_VALUE_ARRAY_ATTRIBUTE      = "data-wica-channel-value-array";
-export const CHANNEL_VALUE_LATEST_ATTRIBUTE     = "data-wica-channel-value-array";
-export const CHANNEL_CONNECTION_STATE_ATTRIBUTE = "data-wica-channel-connection-state";
-export const CHANNEL_ALARM_STATE_ATTRIBUTE      = "data-wica-channel-alarm-state";
+export class WicaElementAttributes
+{
+    constructor()
+    {
+        this.STREAM_STATE             = "data-wica-stream-state";
+        this.CHANNEL_NAME             = "data-wica-channel-name";
+        this.CHANNEL_PROPERTIES       = "data-wica-channel-props";
+        this.CHANNEL_METADATA         = "data-wica-channel-metadata";
+        this.CHANNEL_VALUE_ARRAY      = "data-wica-channel-value-array";
+        this.CHANNEL_VALUE_LATEST     = "data-wica-channel-value-array";
+        this.CHANNEL_CONNECTION_STATE = "data-wica-channel-connection-state";
+        this.CHANNEL_ALARM_STATE      = "data-wica-channel-alarm-state";
+    }
+}
 
