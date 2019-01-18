@@ -1,10 +1,20 @@
 /**
+ * My sepcial constant
+ * @constant
+ * @default
+ * @type {string}
+ */
+export const MY_SPECIAL_CONSTANT = "abcdef";
+
+
+/**
  * GHIJK
  * @type {string}
  */
+
 export class WicaElementAttributes
 {
-    constructor()
+    constructor( STREAM_STATE= MY_SPECIAL_CONSTANT )
     {
         this.STREAM_STATE             = "data-wica-stream-state";
         this.CHANNEL_NAME             = "data-wica-channel-name";
