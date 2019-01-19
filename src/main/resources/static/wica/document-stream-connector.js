@@ -7,7 +7,7 @@ console.debug( "Executing script in document-stream-connector.js module...");
 import {WicaStreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
 
-import {WicaChannelConnectionAttributes} from './definitions.js'
+import {WicaElementConnectionAttributes} from './definitions.js'
 
 //const WICA_HOST = "https://gfa-wica.psi.ch";
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";
@@ -28,14 +28,14 @@ export class DocumentStreamConnector
      * @param {StreamProperties} streamProperties - The properties of the stream that will be created to obtain the
      *     required information from the data sources.
      *
-     * @param {WicaChannelConnectionAttributes} wicaChannelConnectionAttributes - The names of the wica-aware
+     * @param {WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware
      *     element attributes that are used in the communication process.
      */
-    constructor( streamServerUrl, streamProperties, wicaChannelConnectionAttributes )
+    constructor( streamServerUrl, streamProperties, wicaElementConnectionAttributes )
     {
         this.streamServerUrl = streamServerUrl;
         this.streamProperties = streamProperties;
-        this.wicaChannelConnectionAttributes = wicaChannelConnectionAttributes;
+        this.wicaElementConnectionAttributes = wicaElementConnectionAttributes;
         this.lastOpenedStreamId = 0;
         this.streamConnectionHandlers = {};
         this.streamMessageHandlers = {};
@@ -48,15 +48,15 @@ export class DocumentStreamConnector
      */
     activate()
     {
-        this.configureStreamConnectionHandlers_( this.wicaChannelConnectionAttributes.CHANNEL_STREAM_STATE );
+        this.configureStreamConnectionHandlers_( this.wicaElementConnectionAttributes.CHANNEL_STREAM_STATE );
 
-        this.configureStreamMessageHandlers_( this.wicaChannelConnectionAttributes.CHANNEL_METADATA,
-                                              this.wicaChannelConnectionAttributes.CHANNEL_VALUE_ARRAY,
-                                              this.wicaChannelConnectionAttributes.CHANNEL_VALUE_LATEST,
-                                              this.wicaChannelConnectionAttributes.CHANNEL_CONNECTION_STATE,
-                                              this.wicaChannelConnectionAttributes.CHANNEL_ALARM_STATE );
+        this.configureStreamMessageHandlers_( this.wicaElementConnectionAttributes.CHANNEL_METADATA,
+                                              this.wicaElementConnectionAttributes.CHANNEL_VALUE_ARRAY,
+                                              this.wicaElementConnectionAttributes.CHANNEL_VALUE_LATEST,
+                                              this.wicaElementConnectionAttributes.CHANNEL_CONNECTION_STATE,
+                                              this.wicaElementConnectionAttributes.CHANNEL_ALARM_STATE );
 
-        this.createStream_( this.wicaChannelConnectionAttributes.CHANNEL_NAME, this.wicaChannelConnectionAttributes.CHANNEL_PROPERTIES );
+        this.createStream_( this.wicaElementConnectionAttributes.CHANNEL_NAME, this.wicaElementConnectionAttributes.CHANNEL_PROPERTIES );
         this.activateStream_();
     }
 
