@@ -43,6 +43,23 @@ export const CHANNEL_PROPERTIES_ATTRIBUTE = "data-wica-channel-props";
  */
 export const CHANNEL_METADATA_ATTRIBUTE = "data-wica-channel-metadata";
 
+/**
+ * @typedef FieldType
+ * @property {string} Text "text"
+ * @property {string} Date "date"
+ * @property {string} DateTime "datetime"
+ * @property {string} Number "number"
+ * @property {string} Currency "currency"
+ * @property {string} CheckBox "checkbox"
+ * @property {string} ComboBox "combobox"
+ * @property {string} Dropdownlist "dropdownlist"
+ * @property {string} Label "label"
+ * @property {string} TextArea "textarea"
+ * @property {string} JsonEditor "jsoneditor"
+ * @property {string} NoteEditor "noteeditor"
+ * @property {string} ScriptEditor "scripteditor"
+ * @property {string} SqlEditor "sqleditor"
+ */
 
 /**
  * Attribute names for wica-aware HTML elements.
