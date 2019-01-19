@@ -7,34 +7,34 @@ console.debug( "Executing script in document-stream-connector.js module...");
 import {WicaStreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
 
-import {WicaElementConnectionAttributes} from './definitions.js'
+import {WicaElementConnectionAttributes} from './global-definitions.js'
 
 //const WICA_HOST = "https://gfa-wica.psi.ch";
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
 /**
- * Provides real-time updates on the attributes of one or more of the current document's
- * wica-aware elements based on information streamed from a Wica backend data server.
+ * Provides real-time updates to wica-aware elements in the current document based on information streamed
+ * from the Wica server on the backend.
  */
 export class DocumentStreamConnector
 {
     /**
-     * Constructs a new instance.
+     * Constructs a new instance to work with the specified backend server.
      *
      * The returned object will remain in a dormant state until triggered by a call to the activate method.
 
      * @param {string} streamServerUrl - the URL of the backend server from whom information is to be obtained.
      *
-     * @param {StreamProperties} streamProperties - The properties of the stream that will be created to obtain the
-     *     required information from the data sources.
+     * @param {WicaStreamProperties} wicaStreamProperties - The properties of the stream that will be created to
+     *     obtain the required information from the data sources.
      *
      * @param {WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware
      *     element attributes that are used in the communication process.
      */
-    constructor( streamServerUrl, streamProperties, wicaElementConnectionAttributes )
+    constructor( streamServerUrl, wicaStreamProperties, wicaElementConnectionAttributes )
     {
         this.streamServerUrl = streamServerUrl;
-        this.streamProperties = streamProperties;
+        this.streamProperties = wicaStreamProperties;
         this.wicaElementConnectionAttributes = wicaElementConnectionAttributes;
         this.lastOpenedStreamId = 0;
         this.streamConnectionHandlers = {};

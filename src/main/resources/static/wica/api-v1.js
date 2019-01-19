@@ -4,35 +4,6 @@ export {
 
 import {WicaStreamManager} from './stream-manager.js'
 
-import * as WicaElementAttributes from './constants.js'
-
-/**
- * @global
- * @typedef StreamProperties
- * @desc An object describing the properties supported by a WicaStream.
- * @property {number} heartbeatInterval - The interval in milliseconds to be used between successive
- *     heartbeat messages.
- * @property {number} channelValueUpdateInterval - The interval in milliseconds to be used between
- *     successive channel value updates.
- * @property {boolean} plotStream - Whether the stream is to be used for plotting purposes (in which
- *     case timestamp information will be provided for every channel value update).
- */
-
-/**
- * @global
- * @typedef ChannelProperties
- * @desc An object describing the properties supported by a WicaChannel.
- * @property {string} prec - The precision to be used when sending numeric information.
- */
-
-/**
-* @global
-* @typedef RenderingHints
-* @desc An object describing the properties associated with rendering.
-* @property {string} prec - X
-* @property {string} exp - X
-* @property {string} disable - X*
-*/
 
 /**
  * Returns an object that can be used to initiate a new Wica Server Sent Event (SSE) data stream from
