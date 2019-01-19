@@ -45,16 +45,15 @@ export const CHANNEL_METADATA_ATTRIBUTE = "data-wica-channel-metadata";
 
 /**
  * @typedef StreamConnectionAttributes
- * @property {string} CHANNEL_NAME - The attribute which defines the channel name (value: "data-wica-channel-name").
- * @property {string} CHANNEL_PROPERTIES  - The attribute which defines the channel properties (value: "data-wica-channel-properties").
- * @property {string} CHANNEL_METADATA  - The attribute which will reflect the metadata obtained from the channel (value: "data-wica-channel-metadata").
- * @property {string} CHANNEL_VALUE_ARRAY  - The attribute which will reflect the latest values obtained from the channel (value: "data-wica-channel-value-array").
+ * @property {string} CHANNEL_NAME - "data-wica-channel-name" - The attribute which defines the channel name.
+ * @property {string} CHANNEL_PROPERTIES - "data-wica-channel-properties" - The attribute which defines the channel properties.
+ * @property {string} CHANNEL_METADATA - "data-wica-channel-metadata" - The attribute which reflects the metadata obtained from the channel.
+ * @property {string} CHANNEL_VALUE_ARRAY - "data-wica-channel-value-array" - The attribute which reflects the latest values obtained from the channel.
  */
-const StreamConnectionAttributes = { CHANNEL_NAME:            "data-wica-channel-name",
-                                     CHANNEL_PROPERTIES:      "data-wica-channel-properties",
-                                     CHANNEL_METADATA:        "data-wica-channel-metadata",
-                                     CHANNEL_VALUE_ARRAY:     "data-wica-channel-value-array" };
-
+export const StreamConnectionAttributes = { CHANNEL_NAME:            "data-wica-channel-name",
+                                            CHANNEL_PROPERTIES:      "data-wica-channel-properties",
+                                            CHANNEL_METADATA:        "data-wica-channel-metadata",
+                                            CHANNEL_VALUE_ARRAY:     "data-wica-channel-value-array" };
 
 /**
  * Provides real-time updates on the attributes of one or more of the current document's
