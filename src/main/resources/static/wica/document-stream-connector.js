@@ -44,16 +44,16 @@ export const CHANNEL_PROPERTIES_ATTRIBUTE = "data-wica-channel-props";
 export const CHANNEL_METADATA_ATTRIBUTE = "data-wica-channel-metadata";
 
 /**
- * @typedef WicaElementAttributes
- * @property {string} STREAM_CONNECTION_STATE - The name of the attribute to be updated with information about the stream connection state (value: "data-wica-stream-state").
- * @property {string} CHANNEL_NAME - The name of the attribute to be updated with information about the stream connection state (value: "data-wica-channel-name").
- * @property {string} CHANNEL_PROPERTIES "data-wica-channel-properties" - The name of the attribute which specifies the channel's properties.
- * @property {string} CHANNEL_METADATA "data-wica-channel-metadata" - The name of the attribute to be updated with metadata information from the data source.
+ * @typedef WicaElementConnectionAttributes
+ * @property {string} CHANNEL_NAME - The attribute which defines the channel name (value: "data-wica-channel-name").
+ * @property {string} CHANNEL_PROPERTIES  - The attribute which defines the channel properties (value: "data-wica-channel-properties").
+ * @property {string} CHANNEL_METADATA  - The attribute which will reflect the metadata obtained from the channel (value: "data-wica-channel-metadata").
+ * @property {string} CHANNEL_VALUE_ARRAY  - The attribute which will reflect the latest values obtained from the channel (value: "data-wica-channel-value-array").
  */
-const WicaElementAttributes = { STREAM_CONNECTION_STATE: "data-wica-stream-state",
-                                CHANNEL_NAME:            "data-wica-channel-name",
+const WicaElementAttributes = { CHANNEL_NAME:            "data-wica-channel-name",
                                 CHANNEL_PROPERTIES:      "data-wica-channel-properties",
-                                CHANNEL_METADATA:        "data-wica-channel-metadata" };
+                                CHANNEL_METADATA:        "data-wica-channel-metadata",
+                                CHANNEL_VALUE_ARRAY:     "data-wica-channel-value-array" };
 
 
 /**
@@ -67,17 +67,17 @@ export class DocumentStreamConnector
      *
      * The returned object will remain in a dormant state until triggered by a call to the activate method.
 
-     * @param {string=} [streamServerUrl] - the URL of the backend server from whom information is to be obtained.
+     * @param {string} [streamServerUrl] - the URL of the backend server from whom information is to be obtained.
      * @param {StreamProperties} streamProperties - The properties of the stream that will be created to obtain the
      *     required information from the data sources.
-     * @param {WicaElementAttributes} wicaElementAttributes - the names of the attributes that are to be updated.
+     * @param {WicaElementConnectionAttributes} wicaElementConnectionAttributes - the names of the attributes that are to be updated.
      *
      */
-    constructor( streamServerUrl, streamProperties, wicaElementAttributes )
+    constructor( streamServerUrl, streamProperties, wicaElementConnectionAttributes )
     {
         this.streamServerUrl = streamServerUrl;
         this.streamProperties = streamProperties;
-        this.wicaElementAttributes = wicaElementAttributes;
+        this.wicaElementConnectionAttributes = wicaElementConnectionAttributes;
         this.lastOpenedStreamId = 0;
         this.streamConnectionHandlers = {};
         this.streamMessageHandlers = {};
