@@ -91,7 +91,7 @@ function renderWidget_( element, channelValueObj, channelMetadataObj ) {
 
     // If a tooltip is explictly defined on the element then use it otherwise add it
     // using the rules defined in the function
-    const tooltipAttribute = WicaElementRenderingAttributes.CHANNEL_TOOLTIPS;
+    const tooltipAttribute = WicaElementRenderingAttributes.channelTooltips;
     if ( ! element.hasAttribute( tooltipAttribute ) ) {
         let tooltipText = buildFormattedTooltipText_( element, formattedValueText );
         element.setAttribute( tooltipAttribute, tooltipText );
