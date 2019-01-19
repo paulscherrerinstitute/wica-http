@@ -44,30 +44,13 @@ export const CHANNEL_PROPERTIES_ATTRIBUTE = "data-wica-channel-props";
 export const CHANNEL_METADATA_ATTRIBUTE = "data-wica-channel-metadata";
 
 /**
- * @typedef FieldType
- * @property {string} Text "text"
- * @property {string} Date "date"
- * @property {string} DateTime "datetime"
- * @property {string} Number "number"
- * @property {string} Currency "currency"
- * @property {string} CheckBox "checkbox"
- * @property {string} ComboBox "combobox"
- * @property {string} Dropdownlist "dropdownlist"
- * @property {string} Label "label"
- * @property {string} TextArea "textarea"
- * @property {string} JsonEditor "jsoneditor"
- * @property {string} NoteEditor "noteeditor"
- * @property {string} ScriptEditor "scripteditor"
- * @property {string} SqlEditor "sqleditor"
+ * @typedef WicaElementAttributes
+ * @property {string} STREAM_CONNECTION_STATE "data-wica-stream-state"
+ * @property {string} CHANNEL_NAME "data-wica-channel-name"
+ * @property {string} CHANNEL_PROPERTIES "data-wica-channel-properties"
+ * @property {string} CHANNEL_METADATA "data-wica-channel-metadata"
  */
-
-/**
- * Attribute names for wica-aware HTML elements.
- * @constant
- * @type {object}
- * @default
- */
-var WicaElementAttributes = { STREAM_CONNECTION_STATE: "data-wica-stream-state",
+const WicaElementAttributes = { STREAM_CONNECTION_STATE: "data-wica-stream-state",
                                 CHANNEL_NAME:            "data-wica-channel-name",
                                 CHANNEL_PROPERTIES:      "data-wica-channel-properties",
                                 CHANNEL_METADATA:        "data-wica-channel-metadata" };
