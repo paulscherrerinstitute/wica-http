@@ -18,17 +18,31 @@ const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 /**
  * Attributes of a wica-aware HTML element that are used when communicating with the Wica backend server.
  *
- * @typedef WicaElementAttributes
+ * @typedef WicaChannelConnectionAttributes
  * @property {string} CHANNEL_NAME - "data-wica-channel-name" - The attribute which defines the channel name.
- * @property {string} CHANNEL_PROPERTIES - "data-wica-channel-properties" - The attribute which defines the channel properties.
- * @property {string} CHANNEL_METADATA - "data-wica-channel-metadata" - The attribute which reflects the metadata obtained from the channel.
- * @property {string} CHANNEL_VALUE_ARRAY - "data-wica-channel-value-array" - The attribute which reflects the latest values obtained from the channel.
+ * @property {string} CHANNEL_PROPERTIES - "data-wica-channel-properties" - The attribute which defines the channel
+ *     properties.
+ * @property {string} CHANNEL_STREAM_STATE - "data-wica-stream-state" - The attribute which reflects the state of the
+ *     connection to the backend server data stream.
+ * @property {string} CHANNEL_CONNECTION_STATE - "data-wica-channel-connection-state" - The attribute which reflects
+ *     the state of connection between the backend server and the channel's data source.
+ * @property {string} CHANNEL_METADATA - "data-wica-channel-metadata" - The attribute which reflects the metadata
+ *     obtained from the channel.
+ * @property {string} CHANNEL_VALUE_ARRAY - "data-wica-channel-value-array" - The attribute which reflects the
+ *     values most recently obtained from the channel.
+ * @property {string} CHANNEL_VALUE_LATEST - "data-wica-channel-value-latest" - The attribute which reflects the last
+ *     value obtained from the channel.
+ * @property {string} CHANNEL_ALARM_STATE - "data-wica-channel-alarm-state" - The attribute which reflects whether
+ *     the latest alarm status obtained from the channel.
  */
-export const WicaElementAttributes = { CHANNEL_NAME:            "data-wica-channel-name",
-                                       CHANNEL_PROPERTIES:      "data-wica-channel-properties",
-                                       CHANNEL_METADATA:        "data-wica-channel-metadata",
-                                       CHANNEL_VALUE_ARRAY:     "data-wica-channel-value-array" };
-
+export const WicaChannelConnectionAttributes = { CHANNEL_NAME:             "data-wica-channel-name",
+                                                 CHANNEL_PROPERTIES:       "data-wica-channel-properties",
+                                                 CHANNEL_STREAM_STATE:     "data-wica-channel-stream-state",
+                                                 CHANNEL_CONNECTION_STATE: "data-wica-channel-connection-state",
+                                                 CHANNEL_METADATA:         "data-wica-channel-metadata",
+                                                 CHANNEL_VALUE_ARRAY:      "data-wica-channel-value-array",
+                                                 CHANNEL_VALUE_LATEST:     "data-wica-channel-value-latest",
+                                                 CHANNEL_ALARM_STATE:      "data-wica-channel-alarm-state" };
 /**
  * Provides real-time updates on the attributes of one or more of the current document's
  * wica-aware elements based on information streamed from a Wica backend data server.
@@ -43,14 +57,13 @@ export class DocumentStreamConnector
      * @param {string} streamServerUrl - the URL of the backend server from whom information is to be obtained.
      * @param {StreamProperties} streamProperties - The properties of the stream that will be created to obtain the
      *     required information from the data sources.
-     * @param {WicaElementAttributes} wicaElementAttributes - the names of the attributes that are to be updated.
-     *
+     * @param {WicaChannelConnectionAttributes} wicaChannelConnectionAttributes - the names of the attributes that are to be updated.
      */
-    constructor( streamServerUrl, streamProperties, wicaElementAttributes )
+    constructor( streamServerUrl, streamProperties, wicaChannelConnectionAttributes )
     {
         this.streamServerUrl = streamServerUrl;
         this.streamProperties = streamProperties;
-        this.wicaElementAttributes = wicaElementAttributes;
+        this.wicaChannelConnectionAttributes = wicaChannelConnectionAttributes;
         this.lastOpenedStreamId = 0;
         this.streamConnectionHandlers = {};
         this.streamMessageHandlers = {};
@@ -60,32 +73,18 @@ export class DocumentStreamConnector
      * Scans the current document for wica-aware elements, creates a stream on the Wica backend server to obtain
      * information for each element's data source, sets up handlers to update each element's attributes on
      * the basis of the received information.
-     *
-     * @param {string} streamConnectionStateAttribute - The name of the attribute to be updated with information about the stream connection state.
-     * @param {string} channelNameAttribute - The name of the attribute to be updated with information about the stream connection state.
-     * @param {string} channelPropertiesAttribute - The name of the attribute which specifies the channel's properties.
-     * @param {string} channelMetadataAttribute - The name of the attribute to be updated with metadata information from the data source.
-     * @param {string} channelValueArrayAttribute - The name of the attribute to be updated with the latest received values from the data source.
-     * @param {string} channelValueLatestAttribute - The name of the attribute to be updated with the latest received values from the data source.
-     * @param {string} channelConnectionStateAttribute - The name of the attribute to be updated with the latest received values from the data source.
-     * @param {string} channelAlarmStateAttribute - The name of the attribute to be updated with the latest received values from the data source.
      */
-    activate( streamConnectionStateAttribute = STREAM_STATE,
-              channelNameAttribute="data-wica-channel-name",
-              channelPropertiesAttribute="data-wica-channel-props",
-              channelMetadataAttribute = "data-wica-channel-metadata",
-              channelValueArrayAttribute = "data-wica-channel-value-array",
-              channelValueLatestAttribute = "data-wica-channel-value-latest",
-              channelConnectionStateAttribute = "data-wica-channel-connection-state",
-              channelAlarmStateAttribute = "data-wica-channel-alarm-state"  )
+    activate()
     {
-        this.configureStreamConnectionHandlers_( streamConnectionStateAttribute );
-        this.configureStreamMessageHandlers_( channelMetadataAttribute,
-                                              channelValueArrayAttribute,
-                                              channelValueLatestAttribute,
-                                              channelConnectionStateAttribute,
-                                              channelAlarmStateAttribute );
-        this.createStream_( channelnameAttribute, channelPropertiesAttribute );
+        this.configureStreamConnectionHandlers_( this.wicaChannelConnectionAttributes.CHANNEL_STREAM_STATE );
+
+        this.configureStreamMessageHandlers_( this.wicaChannelConnectionAttributes.CHANNEL_METADATA,
+                                              this.wicaChannelConnectionAttributes.CHANNEL_VALUE_ARRAY,
+                                              this.wicaChannelConnectionAttributes.CHANNEL_VALUE_LATEST,
+                                              this.wicaChannelConnectionAttributes.CHANNEL_CONNECTION_STATE,
+                                              this.wicaChannelConnectionAttributes.CHANNEL_ALARM_STATE );
+
+        this.createStream_( this.wicaChannelConnectionAttributes.CHANNEL_NAME, this.wicaChannelConnectionAttributes.CHANNEL_PROPERTIES );
         this.activateStream_();
     }
 
