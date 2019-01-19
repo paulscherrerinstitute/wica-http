@@ -46,12 +46,14 @@ export const CHANNEL_METADATA_ATTRIBUTE = "data-wica-channel-metadata";
 
 /**
  * Attribute names for wica-aware HTML elements.
+ * @constant
+ * @type {object}
  * @default
  */
-const WicaElementAttributes = { STREAM_CONNECTION_STATE: "data-wica-stream-state",
-                                CHANNEL_NAME:            "data-wica-channel-name",
-                                CHANNEL_PROPERTIES:      "data-wica-channel-properties",
-                                CHANNEL_METADATA:        "data-wica-channel-metadata" };
+export const WicaElementAttributes = { STREAM_CONNECTION_STATE: "data-wica-stream-state",
+                                       CHANNEL_NAME:            "data-wica-channel-name",
+                                       CHANNEL_PROPERTIES:      "data-wica-channel-properties",
+                                       CHANNEL_METADATA:        "data-wica-channel-metadata" };
 
 
 /**
