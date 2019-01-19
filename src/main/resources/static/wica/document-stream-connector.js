@@ -8,6 +8,7 @@ import {WicaStreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
 
 import {WicaElementConnectionAttributes} from './shared-definitions.js'
+import {WicaStreamProperties} from './shared-definitions.js'
 
 const CHANNEL_NAME_ATTRIBUTE = WicaElementConnectionAttributes.channelName;
 
