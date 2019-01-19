@@ -22,7 +22,11 @@ export const WICA_HOST = "https://gfa-wica-dev.psi.ch";
  * The stream state
  * @default
  */
-const STREAM_STATE = "ABCDEF";
+export const STREAM_CONNECTION_STATE_ATTRIBUTE = "ABCDEF";
+export const CHANNEL_NAME_ATTRIBUTE = "data-wica-channel-name";
+export const CHANNEL_PROPERTIES_ATTRIBUTE = "data-wica-channel-props";
+export const CHANNEL_METADATA_ATTRIBUTE = "data-wica-channel-metadata";
+
 
 /**
  * Provides real-time updates on the attributes of one or more of the current document's
