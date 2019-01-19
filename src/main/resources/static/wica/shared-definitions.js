@@ -7,28 +7,28 @@
  * Object defining the attributes of a wica-aware HTML element that are used when communicating with the Wica backend server.
  *
  * @typedef WicaElementConnectionAttributes
- * @property {string} channelName - "data-wica-channel-name" - The attribute which defines the channel name.
- * @property {string} channelProperties - "data-wica-channel-properties" - The attribute which defines the channel
+ * @property {string} channelName - Value: "data-wica-channel-name" - The attribute which defines the channel name.
+ * @property {string} channelProperties - Value: "data-wica-channel-properties" - The attribute which defines the channel
  *     properties.
- * @property {string} channelStreamState - "data-wica-stream-state" - The attribute which reflects the state of the
+ * @property {string} channelStreamState - Value: "data-wica-stream-state" - The attribute which reflects the state of the
  *     connection to the backend server's data stream.
- * @property {string} channelConnectionState - "data-wica-channel-connection-state" - The attribute which reflects
+ * @property {string} channelConnectionState - Value: "data-wica-channel-connection-state" - The attribute which reflects
  *     the state of the connection between the backend server and the channel's data source.
- * @property {string} channelMetadata - "data-wica-channel-metadata" - The attribute which reflects the metadata
+ * @property {string} channelMetadata - Value: "data-wica-channel-metadata" - The attribute which reflects the metadata
  *     obtained from the channel.
- * @property {string} channelValueArray - "data-wica-channel-value-array" - The attribute which reflects the values
+ * @property {string} channelValueArray - Value: "data-wica-channel-value-array" - The attribute which reflects the values
  *     most recently obtained from the channel.
- * @property {string} channelValueLatest - "data-wica-channel-value-latest" - The attribute which reflects the last
+ * @property {string} channelValueLatest - Value: "data-wica-channel-value-latest" - The attribute which reflects the last
  *     value obtained from the channel.
- * @property {string} channelAlarmState - "data-wica-channel-alarm-state" - The attribute which reflects the alarm
+ * @property {string} channelAlarmState - Value: "data-wica-channel-alarm-state" - The attribute which reflects the alarm
  *     status obtained from the channel.
  */
 export const WicaElementConnectionAttributes = {
-    channelName:             "data-wica-channel-name",
-    channelProperties:       "data-wica-channel-properties",
+    channelName:            "data-wica-channel-name",
+    channelProperties:      "data-wica-channel-properties",
     channelStreamState:     "data-wica-channel-stream-state",
     channelConnectionState: "data-wica-channel-connection-state",
-    channelMetadata:         "data-wica-channel-metadata",
+    channelMetadata:        "data-wica-channel-metadata",
     channelValueArray:      "data-wica-channel-value-array",
     channelValueLatest:     "data-wica-channel-value-latest",
     channelAlarmState:      "data-wica-channel-alarm-state"
@@ -38,9 +38,9 @@ export const WicaElementConnectionAttributes = {
  * Object defining the attributes of a wica-aware HTML element that are used when rendering its visual state.
  *
  * @typedef WicaElementRenderingAttributes
- * @property {string} CHANNEL_TOOLTIPS - "data-wica-channel-tooltips" - The attribute which defines the channel's
+ * @property {string} CHANNEL_TOOLTIPS - Value: "data-wica-channel-tooltips" - The attribute which defines the channel's
  *     tooltips.
- * @property {string} CHANNEL_RENDERING_PROPERTIES - "data-wica-channel-rendering-props" - The attribute which
+ * @property {string} CHANNEL_RENDERING_PROPERTIES - Value: "data-wica-channel-rendering-props" - The attribute which
  *     defines properties which will affect the way it is rendered.
  */
 const WicaElementRenderingAttributes = {
@@ -52,9 +52,9 @@ const WicaElementRenderingAttributes = {
  * Object defining the properties supported by the default wica element renderer.
  *
  * @typedef WicaElementChannelRenderingProperties
- * @property {boolean} disable - false - Disables the default rendering for this channel.
- * @property {boolean} exp - false - Whether numeric information should be rendered in exponential format.
- * @property {string} prec - 8 - The precision to be used when rendering numeric information.
+ * @property {boolean} disable - Value: false - Disables the default rendering for this channel.
+ * @property {boolean} exp - Value: false - Whether numeric information should be rendered in exponential format.
+ * @property {string} prec - Value: 8 - The precision to be used when rendering numeric information.
  */
 const WicaElementChannelRenderingProperties = {
     disable: false,
@@ -86,7 +86,7 @@ const WicaStreamProperties = {
  * Object defining the properties supported by a WicaChannel.
  *
  * @typedef WicaChannelProperties
- * @property {number} prec - 8 - The precision to be used when sending numeric information.
+ * @property {number} prec - Value: 8 - The precision to be used when sending numeric information.
  */
 const WicaChannelProperties = {
     disable: false,
