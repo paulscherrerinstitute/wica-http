@@ -4,6 +4,8 @@
  */
 import * as DocumentUtilities from './document-utils.js'
 
+import WicaChannelConnectionAttributes from './document-stream-connector.js'
+
 /**
  * The default precision to be used when rendering a channel with a numeric value.
  * @type {number}
@@ -67,7 +69,7 @@ export function renderWicaElements()
  * @param channelMetadataObj the metadata object associated with the element's underlying wica channel.
  */
 function renderWidget_( element, channelValueObj, channelMetadataObj ) {
-    let channelName = element.getAttribute( "data-wica-channel-name" );
+    let channelName = element.getAttribute( WicaChannelConnectionAttributes.CHANNEL_NAME );
     let renderingHintsString = element.hasAttribute("data-wica-rendering-hints" ) ? element.getAttribute("data-wica-rendering-hints") : "{}";
     let renderingHintsObj;
     try {
@@ -182,13 +184,13 @@ function buildFormattedTooltipText_( element, formattedValueText )
     const SUPPORT_OPTION_TOOLTIPS_SHOW_CHANNEL_NAME_ONLY = true;
     const MAX_TOOLTIP_VALUE_STRING_LENGTH = 64;
 
-    let channelName = element.getAttribute( "data-wica-channel-name" );
+    let channelName = element.getAttribute( WicaChannelConnectionAttributes.CHANNEL_NAME );
 
     if ( SUPPORT_OPTION_TOOLTIPS_SHOW_CHANNEL_NAME_ONLY ) {
         return channelName;
     }
 
-    let streamConnectState = element.getAttribute("data-wica-stream-state");
+    let streamConnectState = element.getAttribute( WicaChannelConnectionAttributes.CHANNEL_STREAM_STATE );
     let streamConnected = streamConnectState.startsWith( "opened" );
 
     if ( !streamConnected ) {
@@ -196,7 +198,7 @@ function buildFormattedTooltipText_( element, formattedValueText )
             "Stream Connect State: " + streamConnectState;
     }
 
-    let channelConnectState = element.getAttribute("data-wica-channel-connection-state");
+    let channelConnectState = element.getAttribute( WicaChannelConnectionAttributes.CHANNEL_CONNECTION_STATE );
     let channelConnected = channelConnectState.startsWith( "connected" );
 
     if ( !channelConnected ) {
@@ -204,7 +206,7 @@ function buildFormattedTooltipText_( element, formattedValueText )
             "Stream Connect State: " + streamConnectState + "\n" +
             "Channel Connect State: " + channelConnectState;
     }
-    let alarmState = element.getAttribute("data-wica-channel-alarm-state");
+    let alarmState = element.getAttribute(  WicaChannelConnectionAttributes.CHANNEL_ALARM_STATE );
 
     let truncatedValueString = truncateValueString_( formattedValueText, MAX_TOOLTIP_VALUE_STRING_LENGTH );
 

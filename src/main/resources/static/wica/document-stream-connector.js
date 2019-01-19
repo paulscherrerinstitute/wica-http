@@ -2,13 +2,10 @@
  * @module
  * @desc Provides support for updating the current document with live information from the data sources on the backend.
  */
-
 console.debug( "Executing script in document-stream-connector.js module...");
 
 import {WicaStreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
-
-import * as WicaConstants from  './constants.js'
 
 
 //const WICA_HOST = "https://gfa-wica.psi.ch";
@@ -57,7 +54,8 @@ export class DocumentStreamConnector
      * @param {string} streamServerUrl - the URL of the backend server from whom information is to be obtained.
      * @param {StreamProperties} streamProperties - The properties of the stream that will be created to obtain the
      *     required information from the data sources.
-     * @param {WicaChannelConnectionAttributes} wicaChannelConnectionAttributes - the names of the attributes that are to be updated.
+     * @param {WicaChannelConnectionAttributes} wicaChannelConnectionAttributes - The names of the wica-aware
+     *     element attributes that are used in the communication process.
      */
     constructor( streamServerUrl, streamProperties, wicaChannelConnectionAttributes )
     {
