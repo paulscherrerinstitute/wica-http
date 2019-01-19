@@ -82,7 +82,7 @@ const WicaStreamProperties = {
  * Object defining the properties supported by a WicaChannel.
  *
  * @typedef WicaChannelProperties
- * @property {string} prec - 8 - The precision to be used when sending numeric information.
+ * @property {number} prec - 8 - The precision to be used when sending numeric information.
  */
 const WicaChannelProperties = {
     disable: false,
