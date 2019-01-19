@@ -32,7 +32,7 @@ const WICA_HOST = "https://gfa-wica-dev.psi.ch";
  * @property {string} CHANNEL_ALARM_STATE - "data-wica-channel-alarm-state" - The attribute which reflects whether
  *     the latest alarm status obtained from the channel.
  */
-export const wicaChannelConnectionAttributes = { CHANNEL_NAME:             "data-wica-channel-name",
+ const wicaChannelConnectionAttributes = { CHANNEL_NAME:             "data-wica-channel-name",
                                                  CHANNEL_PROPERTIES:       "data-wica-channel-properties",
                                                  CHANNEL_STREAM_STATE:     "data-wica-channel-stream-state",
                                                  CHANNEL_CONNECTION_STATE: "data-wica-channel-connection-state",
