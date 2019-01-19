@@ -7,7 +7,7 @@ console.debug( "Executing script in document-stream-connector.js module...");
 import {WicaStreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
 
-import {WicaElementConnectionAttributes} from './global-definitions.js'
+import {WicaElementConnectionAttributes} from './shared-definitions.js'
 
 const CHANNEL_NAME_ATTRIBUTE = WicaElementConnectionAttributes.CHANNEL_NAME;
 

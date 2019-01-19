@@ -4,7 +4,7 @@
  */
 import * as DocumentUtilities from './document-utils.js'
 
-import {WicaElementConnectionAttributes,WicaElementRenderingAttributes} from './global-definitions.js'
+import {WicaElementConnectionAttributes,WicaElementRenderingAttributes} from './shared-definitions.js'
 
 /**
  * The default precision to be used when rendering a channel with a numeric value.
