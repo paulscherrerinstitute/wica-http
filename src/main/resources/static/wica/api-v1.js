@@ -35,14 +35,6 @@ import * as WicaElementAttributes from './constants.js'
 */
 
 /**
- * @global
- * @typedef WicaElementAttributes
- * @desc The attributes of a wica-aware element that contribute to its behaviour.
- * @property {string} [channelNameAttribute="data-wica-channel-name"] - The channel name.
- * @property {string} channelPropertiesAttribute ="data-wica-channel-name" - The channel properties.
- */
-
-/**
  * Returns an object that can be used to initiate a new Wica Server Sent Event (SSE) data stream from
  * a Wica REST Server and to subsequently handle the received events.
  *
@@ -91,9 +83,3 @@ function wicaDocumentManagerCreate( serverUrl )
 {
     return new DocumentStreamManager( serverUrl );
 }
-
-/**
- * asdfsdsfd
- * @type {string}
- */
-const simon = new WicaElementAttributes();
