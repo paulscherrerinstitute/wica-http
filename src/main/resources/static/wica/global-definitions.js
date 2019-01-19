@@ -36,7 +36,7 @@ const WicaElementConnectionAttributes = {
  * @typedef WicaElementRenderingAttributes
  * @property {string} CHANNEL_TOOLTIPS - "data-wica-channel-tooltips" - The attribute which defines the channel's
  *     tooltips.
- * @property {string} CHANNEL_RENDERING_PROPERTIES - "data-wica-channel-rendering-hints" - The attribute which
+ * @property {string} CHANNEL_RENDERING_PROPERTIES - "data-wica-channel-rendering-props" - The attribute which
  *     defines properties which will affect the way it is rendered.
  */
 const WicaElementRenderingAttributes = {
