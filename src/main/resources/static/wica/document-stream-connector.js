@@ -20,7 +20,7 @@ export const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
 /**
  * Some description
- * @constant {string}
+ * @constant {string} STREAM_STATE = 'ABCDEF'
  */
 const STREAM_STATE = 'ABCDEF';
 
