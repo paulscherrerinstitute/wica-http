@@ -20,13 +20,13 @@ export function renderWicaElements()
     DocumentUtilities.findWicaElements().forEach( (element) => {
         // If we have no information about the channel's current value or the channel's metadata
         // then there is nothing useful that can be done so bail out.
-        if ( ( !element.hasAttribute( WicaElementConnectionAttributes.CHANNEL_VALUE_ARRAY )) || (! element.hasAttribute( WicaElementConnectionAttributes.CHANNEL_METADATA ) ) )
+        if ( ( !element.hasAttribute( WicaElementConnectionAttributes.channelValueArray )) || (! element.hasAttribute( WicaElementConnectionAttributes.channelMetadata ) ) )
         {
             return;
         }
 
         // Obtain the object containing the array of recently received channel values.
-        const channelValueArrayObj = JSON.parse( element.getAttribute(  WicaElementConnectionAttributes.CHANNEL_VALUE_ARRAY  ) );
+        const channelValueArrayObj = JSON.parse( element.getAttribute(  WicaElementConnectionAttributes.channelValueArray  ) );
 
         // Check that the received object was an array
         if ( ! Array.isArray( channelValueArrayObj ) ) {
@@ -49,7 +49,7 @@ export function renderWicaElements()
         }
 
         // Obtain the channel metadata object
-        const channelMetadataObj = JSON.parse( element.getAttribute(  WicaElementConnectionAttributes.CHANNEL_METADATA ) );
+        const channelMetadataObj = JSON.parse( element.getAttribute(  WicaElementConnectionAttributes.channelMetadata ) );
 
         // Now render the widget
         renderWidget_( element, channelValueObj, channelMetadataObj );
@@ -69,7 +69,7 @@ export function renderWicaElements()
  * @param channelMetadataObj the metadata object associated with the element's underlying wica channel.
  */
 function renderWidget_( element, channelValueObj, channelMetadataObj ) {
-    const channelName = element.getAttribute( WicaElementConnectionAttributes.CHANNEL_NAME );
+    const channelName = element.getAttribute( WicaElementConnectionAttributes.channelName );
     const renderingHintsAttribute = WicaElementRenderingAttributes.CHANNEL_RENDERING_HINTS;
     const renderingHintsString = element.hasAttribute( renderingHintsAttribute ) ? element.getAttribute( renderingHintsAttribute ) : "{}";
     let renderingHintsObj;
@@ -186,13 +186,13 @@ function buildFormattedTooltipText_( element, formattedValueText )
     const SUPPORT_OPTION_TOOLTIPS_SHOW_CHANNEL_NAME_ONLY = true;
     const MAX_TOOLTIP_VALUE_STRING_LENGTH = 64;
 
-    let channelName = element.getAttribute( WicaElementConnectionAttributes.CHANNEL_NAME );
+    let channelName = element.getAttribute( WicaElementConnectionAttributes.channelName );
 
     if ( SUPPORT_OPTION_TOOLTIPS_SHOW_CHANNEL_NAME_ONLY ) {
         return channelName;
     }
 
-    let streamConnectState = element.getAttribute( WicaElementConnectionAttributes.CHANNEL_STREAM_STATE );
+    let streamConnectState = element.getAttribute( WicaElementConnectionAttributes.channelStreamState );
     let streamConnected = streamConnectState.startsWith( "opened" );
 
     if ( !streamConnected ) {
@@ -200,7 +200,7 @@ function buildFormattedTooltipText_( element, formattedValueText )
             "Stream Connect State: " + streamConnectState;
     }
 
-    let channelConnectState = element.getAttribute( WicaElementConnectionAttributes.CHANNEL_CONNECTION_STATE );
+    let channelConnectState = element.getAttribute( WicaElementConnectionAttributes.channelConnectionState );
     let channelConnected = channelConnectState.startsWith( "connected" );
 
     if ( !channelConnected ) {
@@ -208,7 +208,7 @@ function buildFormattedTooltipText_( element, formattedValueText )
             "Stream Connect State: " + streamConnectState + "\n" +
             "Channel Connect State: " + channelConnectState;
     }
-    let alarmState = element.getAttribute( WicaElementConnectionAttributes.CHANNEL_ALARM_STATE );
+    let alarmState = element.getAttribute( WicaElementConnectionAttributes.channelAlarmState );
 
     let truncatedValueString = truncateValueString_( formattedValueText, MAX_TOOLTIP_VALUE_STRING_LENGTH );
 

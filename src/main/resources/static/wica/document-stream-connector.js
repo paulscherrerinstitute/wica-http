@@ -9,7 +9,7 @@ import * as DocumentUtilities from './document-utils.js'
 
 import {WicaElementConnectionAttributes} from './shared-definitions.js'
 
-const CHANNEL_NAME_ATTRIBUTE = WicaElementConnectionAttributes.CHANNEL_NAME;
+const CHANNEL_NAME_ATTRIBUTE = WicaElementConnectionAttributes.channelName;
 
 //const WICA_HOST = "https://gfa-wica.psi.ch";
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";

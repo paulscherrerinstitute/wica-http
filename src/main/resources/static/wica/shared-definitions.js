@@ -7,31 +7,31 @@
  * Object defining the attributes of a wica-aware HTML element that are used when communicating with the Wica backend server.
  *
  * @typedef WicaElementConnectionAttributes
- * @property {string} CHANNEL_NAME - "data-wica-channel-name" - The attribute which defines the channel name.
- * @property {string} CHANNEL_PROPERTIES - "data-wica-channel-properties" - The attribute which defines the channel
+ * @property {string} channelName - "data-wica-channel-name" - The attribute which defines the channel name.
+ * @property {string} channelProperties - "data-wica-channel-properties" - The attribute which defines the channel
  *     properties.
- * @property {string} CHANNEL_STREAM_STATE - "data-wica-stream-state" - The attribute which reflects the state of the
+ * @property {string} channelStreamState - "data-wica-stream-state" - The attribute which reflects the state of the
  *     connection to the backend server's data stream.
- * @property {string} CHANNEL_CONNECTION_STATE - "data-wica-channel-connection-state" - The attribute which reflects
+ * @property {string} channelConnectionState - "data-wica-channel-connection-state" - The attribute which reflects
  *     the state of the connection between the backend server and the channel's data source.
- * @property {string} CHANNEL_METADATA - "data-wica-channel-metadata" - The attribute which reflects the metadata
+ * @property {string} channelMetadata - "data-wica-channel-metadata" - The attribute which reflects the metadata
  *     obtained from the channel.
- * @property {string} CHANNEL_VALUE_ARRAY - "data-wica-channel-value-array" - The attribute which reflects the values
+ * @property {string} channelValueArray - "data-wica-channel-value-array" - The attribute which reflects the values
  *     most recently obtained from the channel.
- * @property {string} CHANNEL_VALUE_LATEST - "data-wica-channel-value-latest" - The attribute which reflects the last
+ * @property {string} channelValueLatest - "data-wica-channel-value-latest" - The attribute which reflects the last
  *     value obtained from the channel.
- * @property {string} CHANNEL_ALARM_STATE - "data-wica-channel-alarm-state" - The attribute which reflects the alarm
+ * @property {string} channelAlarmState - "data-wica-channel-alarm-state" - The attribute which reflects the alarm
  *     status obtained from the channel.
  */
 export const WicaElementConnectionAttributes = {
-    CHANNEL_NAME:             "data-wica-channel-name",
-    CHANNEL_PROPERTIES:       "data-wica-channel-properties",
-    CHANNEL_STREAM_STATE:     "data-wica-channel-stream-state",
-    CHANNEL_CONNECTION_STATE: "data-wica-channel-connection-state",
-    CHANNEL_METADATA:         "data-wica-channel-metadata",
-    CHANNEL_VALUE_ARRAY:      "data-wica-channel-value-array",
-    CHANNEL_VALUE_LATEST:     "data-wica-channel-value-latest",
-    CHANNEL_ALARM_STATE:      "data-wica-channel-alarm-state"
+    channelName:             "data-wica-channel-name",
+    channelProperties:       "data-wica-channel-properties",
+    channelStreamState:     "data-wica-channel-stream-state",
+    channelConnectionState: "data-wica-channel-connection-state",
+    channelMetadata:         "data-wica-channel-metadata",
+    channelValueArray:      "data-wica-channel-value-array",
+    channelValueLatest:     "data-wica-channel-value-latest",
+    channelAlarmState:      "data-wica-channel-alarm-state"
 };
 
 /**
