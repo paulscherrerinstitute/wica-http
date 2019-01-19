@@ -50,10 +50,10 @@ export const CHANNEL_METADATA_ATTRIBUTE = "data-wica-channel-metadata";
  * @type {object}
  * @default
  */
-export const WicaElementAttributes = { STREAM_CONNECTION_STATE: "data-wica-stream-state",
-                                       CHANNEL_NAME:            "data-wica-channel-name",
-                                       CHANNEL_PROPERTIES:      "data-wica-channel-properties",
-                                       CHANNEL_METADATA:        "data-wica-channel-metadata" };
+var WicaElementAttributes = { STREAM_CONNECTION_STATE: "data-wica-stream-state",
+                                CHANNEL_NAME:            "data-wica-channel-name",
+                                CHANNEL_PROPERTIES:      "data-wica-channel-properties",
+                                CHANNEL_METADATA:        "data-wica-channel-metadata" };
 
 
 /**
