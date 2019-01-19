@@ -45,8 +45,8 @@ export const CHANNEL_METADATA_ATTRIBUTE = "data-wica-channel-metadata";
 
 /**
  * @typedef WicaElementAttributes
- * @property {string} STREAM_CONNECTION_STATE "data-wica-stream-state" - The name of the attribute to be updated with information about the stream connection state.
- * @property {string} CHANNEL_NAME "data-wica-channel-name" - The name of the attribute to be updated with information about the stream connection state.
+ * @property {string} STREAM_CONNECTION_STATE - The name of the attribute to be updated with information about the stream connection state (value: "data-wica-stream-state").
+ * @property {string} CHANNEL_NAME - The name of the attribute to be updated with information about the stream connection state (value: "data-wica-channel-name").
  * @property {string} CHANNEL_PROPERTIES "data-wica-channel-properties" - The name of the attribute which specifies the channel's properties.
  * @property {string} CHANNEL_METADATA "data-wica-channel-metadata" - The name of the attribute to be updated with metadata information from the data source.
  */
@@ -69,12 +69,15 @@ export class DocumentStreamConnector
 
      * @param {string=} [streamServerUrl] - the URL of the backend server from whom information is to be obtained.
      * @param {StreamProperties} streamProperties - The properties of the stream that will be created to obtain the
-     *     required
+     *     required information from the data sources.
+     * @param {WicaElementAttributes} wicaElementAttributes - the names of the attributes that are to be updated.
+     *
      */
-    constructor( streamServerUrl = WICA_HOST, streamProperties = {} )
+    constructor( streamServerUrl, streamProperties, wicaElementAttributes )
     {
         this.streamServerUrl = streamServerUrl;
         this.streamProperties = streamProperties;
+        this.wicaElementAttributes = wicaElementAttributes;
         this.lastOpenedStreamId = 0;
         this.streamConnectionHandlers = {};
         this.streamMessageHandlers = {};
