@@ -4,7 +4,7 @@
  */
 import * as DocumentUtilities from './document-utils.js'
 
-import WicaChannelConnectionAttributes from './document-stream-connector.js'
+import {WicaChannelConnectionAttributes} from './document-stream-connector.js'
 
 /**
  * The default precision to be used when rendering a channel with a numeric value.
@@ -20,13 +20,13 @@ export function renderWicaElements()
     DocumentUtilities.findWicaElements().forEach( (element) => {
         // If we have no information about the channel's current value or the channel's metadata
         // then there is nothing useful that can be done so bail out.
-        if ( ( !element.hasAttribute("data-wica-channel-value-array")) || (! element.hasAttribute("data-wica-channel-metadata") ) )
+        if ( ( !element.hasAttribute( WicaChannelConnectionAttributes.CHANNEL_VALUE_ARRAY )) || (! element.hasAttribute( WicaChannelConnectionAttributes.CHANNEL_METADATA ) ) )
         {
             return;
         }
 
         // Obtain the object containing the array of recently received channel values.
-        const channelValueArrayObj = JSON.parse( element.getAttribute( "data-wica-channel-value-array" ) );
+        const channelValueArrayObj = JSON.parse( element.getAttribute(  WicaChannelConnectionAttributes.CHANNEL_VALUE_ARRAY  ) );
 
         // Check that the received object was an array
         if ( ! Array.isArray( channelValueArrayObj ) ) {
@@ -49,7 +49,7 @@ export function renderWicaElements()
         }
 
         // Obtain the channel metadata object
-        const channelMetadataObj = JSON.parse( element.getAttribute( "data-wica-channel-metadata" ) );
+        const channelMetadataObj = JSON.parse( element.getAttribute(  WicaChannelConnectionAttributes.CHANNEL_METADATA ) );
 
         // Now render the widget
         renderWidget_( element, channelValueObj, channelMetadataObj );
