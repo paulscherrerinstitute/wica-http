@@ -9,6 +9,8 @@ import * as DocumentUtilities from './document-utils.js'
 
 import {WicaElementConnectionAttributes} from './global-definitions.js'
 
+const CHANNEL_NAME_ATTRIBUTE = WicaElementConnectionAttributes.CHANNEL_NAME;
+
 //const WICA_HOST = "https://gfa-wica.psi.ch";
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
@@ -183,7 +185,7 @@ export class DocumentStreamConnector
         // Create an array of the associated channel names
         const channels = [];
         wicaElements.forEach(function (widget) {
-            const channelName = widget.getAttribute( channelNameAttribute );
+            const channelName = widget.getAttribute( CHANNEL_NAME_ATTRIBUTE );
             if (widget.hasAttribute( channelPropertiesAttribute )) {
                 const channelProps = widget.getAttribute( channelPropertiesAttribute );
                 channels.push({"name": channelName, "props": JSON.parse( channelProps ) });
