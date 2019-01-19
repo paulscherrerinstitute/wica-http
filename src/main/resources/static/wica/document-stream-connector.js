@@ -46,6 +46,7 @@ export const CHANNEL_METADATA_ATTRIBUTE = "data-wica-channel-metadata";
 
 /**
  * Attribute names for wica-aware HTML elements.
+ * @default
  */
 const WicaElementAttributes = { STREAM_CONNECTION_STATE: "data-wica-stream-state",
                                 CHANNEL_NAME:            "data-wica-channel-name",
