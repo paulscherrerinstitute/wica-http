@@ -45,6 +45,14 @@ export const CHANNEL_METADATA_ATTRIBUTE = "data-wica-channel-metadata";
 
 
 /**
+ * @constant
+ * @type {object}
+ * @default
+ */
+var foo = {a: 1, b: 2, c: [3, 4, 5]};
+
+
+/**
  * Provides real-time updates on the attributes of one or more of the current document's
  * wica-aware elements based on information streamed from a Wica backend data server.
  */
