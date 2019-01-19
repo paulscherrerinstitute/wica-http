@@ -22,7 +22,7 @@ export const WICA_HOST = "https://gfa-wica-dev.psi.ch";
  * The name of the attribute to be updated with information about the stream connection state.
  * @default
  */
-export const STREAM_CONNECTION_STATE_ATTRIBUTE = "ABCDEF";
+const STREAM_CONNECTION_STATE_ATTRIBUTE = "ABCDEF";
 
 /**
  * The name of the attribute which specifies the channel's data source.
