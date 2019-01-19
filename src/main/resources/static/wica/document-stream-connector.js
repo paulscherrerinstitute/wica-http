@@ -19,12 +19,27 @@ import * as WicaConstants from  './constants.js'
 export const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
 /**
- * The stream state
+ * The name of the attribute to be updated with information about the stream connection state.
  * @default
  */
 export const STREAM_CONNECTION_STATE_ATTRIBUTE = "ABCDEF";
+
+/**
+ * The name of the attribute which specifies the channel's data source.
+ * @default
+ */
 export const CHANNEL_NAME_ATTRIBUTE = "data-wica-channel-name";
+
+/**
+ * The name of the attribute which specifies the channel's properties.
+ * @default
+ */
 export const CHANNEL_PROPERTIES_ATTRIBUTE = "data-wica-channel-props";
+
+/**
+ * The name of the attribute to be updated with metadata information from the data source.
+ * @default
+ */
 export const CHANNEL_METADATA_ATTRIBUTE = "data-wica-channel-metadata";
 
 
