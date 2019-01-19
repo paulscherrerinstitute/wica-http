@@ -26,6 +26,7 @@ const STREAM_CONNECTION_STATE_ATTRIBUTE = "ABCDEF";
 
 /**
  * The name of the attribute which specifies the channel's data source.
+ * @type {String}
  * @default
  */
 export const CHANNEL_NAME_ATTRIBUTE = "data-wica-channel-name";
