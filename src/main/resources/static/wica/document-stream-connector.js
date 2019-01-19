@@ -45,10 +45,10 @@ export const CHANNEL_METADATA_ATTRIBUTE = "data-wica-channel-metadata";
 
 /**
  * @typedef WicaElementAttributes
- * @property {string} STREAM_CONNECTION_STATE "data-wica-stream-state"
- * @property {string} CHANNEL_NAME "data-wica-channel-name"
- * @property {string} CHANNEL_PROPERTIES "data-wica-channel-properties"
- * @property {string} CHANNEL_METADATA "data-wica-channel-metadata"
+ * @property {string} STREAM_CONNECTION_STATE "data-wica-stream-state" - The name of the attribute to be updated with information about the stream connection state.
+ * @property {string} CHANNEL_NAME "data-wica-channel-name" - The name of the attribute to be updated with information about the stream connection state.
+ * @property {string} CHANNEL_PROPERTIES "data-wica-channel-properties" - The name of the attribute which specifies the channel's properties.
+ * @property {string} CHANNEL_METADATA "data-wica-channel-metadata" - The name of the attribute to be updated with metadata information from the data source.
  */
 const WicaElementAttributes = { STREAM_CONNECTION_STATE: "data-wica-stream-state",
                                 CHANNEL_NAME:            "data-wica-channel-name",
@@ -86,7 +86,7 @@ export class DocumentStreamConnector
      * the basis of the received information.
      *
      * @param {string} streamConnectionStateAttribute - The name of the attribute to be updated with information about the stream connection state.
-     * @param {string} channelNameAttribute - The name of the attribute which specifies the channel's data source.
+     * @param {string} channelNameAttribute - The name of the attribute to be updated with information about the stream connection state.
      * @param {string} channelPropertiesAttribute - The name of the attribute which specifies the channel's properties.
      * @param {string} channelMetadataAttribute - The name of the attribute to be updated with metadata information from the data source.
      * @param {string} channelValueArrayAttribute - The name of the attribute to be updated with the latest received values from the data source.
