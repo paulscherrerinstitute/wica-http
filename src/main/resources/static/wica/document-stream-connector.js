@@ -45,11 +45,12 @@ export const CHANNEL_METADATA_ATTRIBUTE = "data-wica-channel-metadata";
 
 
 /**
- * @constant
- * @type {object}
- * @default
+ * Attribute names for wica-aware HTML elements.
  */
-var foo = {a: 1, b: 2, c: [3, 4, 5]};
+const WicaElementAttributes = { STREAM_CONNECTION_STATE: "data-wica-stream-state",
+                                CHANNEL_NAME:            "data-wica-channel-name",
+                                CHANNEL_PROPERTIES:      "data-wica-channel-properties",
+                                CHANNEL_METADATA:        "data-wica-channel-metadata" };
 
 
 /**
