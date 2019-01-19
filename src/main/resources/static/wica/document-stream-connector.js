@@ -19,10 +19,10 @@ import * as WicaConstants from  './constants.js'
 export const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
 /**
- * Some description
- * @constant {string} [STREAM_STATE = 'ABCDEF']
+ * The stream state
+ * @default
  */
-const STREAM_STATE = 'ABCDEF';
+const STREAM_STATE = "ABCDEF";
 
 /**
  * Provides real-time updates on the attributes of one or more of the current document's
