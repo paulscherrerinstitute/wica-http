@@ -58,9 +58,14 @@ export class WicaStreamManager
     }
 
     /**
-     * Sets up a plan for managing the event stream, calling other handlers as required.
+     * Sets up a plan for managing the wica event stream and for calling other handlers
+     * as required to track the evolving connection state and received data.
      *
-     * If the countdownTimer reaches zero the stream will be reccreated.
+     * @implNote
+     * The current implementation expects to receive a periodic "heartbeat" message to confirm
+     * that the connection to the data server is ok. If the message is not received within the
+     * allowed time window then the existing stream will be closed and a new stream will be
+     * negotiated with the server.
      */
     activate()
     {
