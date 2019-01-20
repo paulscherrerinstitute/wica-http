@@ -3,7 +3,6 @@
  * @desc Provides support for creating and using Wica streams.
  */
 
-
 /**
  * Provides support for creating a new WicaStream on the Wica backend server, for thereafter subscribing
  * to it and for publishing locally the received information.
@@ -21,7 +20,7 @@ export class WicaStreamManager
      *     the configuration of each of the stream's channels, together with, optionally, the stream properties
      *     object.
      *
-     * @param {module:shared.WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
+     * @param {module:shared.Simon} [streamConfiguration.props] - The stream properties object.
      * @param {Object[]} streamConfiguration.channels - The configuration of each stream channel.
      * @param {string} streamConfiguration.channels[].name - The name of the channel.
      * @param {module:shared.wicaChannelProperties} [streamConfiguration.channels[].props] - The channel properties object.
