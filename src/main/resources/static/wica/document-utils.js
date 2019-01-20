@@ -14,7 +14,7 @@ export {
  * @returns {NodeListOf<Element>} the result list.
  */
 function findWicaElements() {
-    const elements =  document.querySelectorAll('[data-wica-channel-name]');
+    const elements = document.querySelectorAll('[data-wica-channel-name]');
     return elements;
 }
 

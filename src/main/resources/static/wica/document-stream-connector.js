@@ -7,27 +7,8 @@ console.debug( "Executing script in document-stream-connector.js module...");
 import {WicaStreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
 
-const CHANNEL_NAME_ATTRIBUTE = WicaElementConnectionAttributes.channelName;
-
 //const WICA_HOST = "https://gfa-wica.psi.ch";
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";
-
-
-const PROPERTY_A = "A";
-const PROPERTY_B = "B";
-
-/**
- * My favourite constants.
- *
- * @global
- * @property {string} A - the A.
- * @property {string} B - the B.
- */
-class Constants
-{
-    static get A() { return PROPERTY_A; }
-    static get B() { return PROPERTY_B; }
-}
 
 /**
  * Provides real-time updates to wica-aware elements in the current document based on information streamed
@@ -42,7 +23,7 @@ export class DocumentStreamConnector
 
      * @param {string} streamServerUrl - the URL of the backend server from whom information is to be obtained.
      *
-     * @param {Constants} wicaStreamProperties - The properties of the stream that will be created to
+     * @param {WicaStreamProperties} wicaStreamProperties - The properties of the stream that will be created to
      *     obtain the required information from the data sources.
      *
      * @param {WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware

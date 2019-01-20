@@ -19,7 +19,7 @@
  * @property {string} channelAlarmState - "data-wica-channel-alarm-state" - The attribute which reflects the alarm
  *     status obtained from the channel.
  */
-export const WicaElementConnectionAttributes = {
+const WicaElementConnectionAttributes = {
     channelName:            "data-wica-channel-name",
     channelProperties:      "data-wica-channel-properties",
     channelStreamState:     "data-wica-channel-stream-state",
@@ -84,7 +84,7 @@ const WicaStreamProperties = {
  * @typedef WicaChannelProperties
  * @property {number} prec - 8 - The precision to be used when sending numeric information.
  */
-export const WicaChannelProperties = {
+const WicaChannelProperties = {
     disable: false,
     exp: false,
     prec: 8
