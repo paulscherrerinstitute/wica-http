@@ -3,8 +3,6 @@
  * @desc  Definitions that are used throughout the application.
  */
 
-export { WicaStreamProperties };
-
 /**
  * Object defining the attributes of a wica-aware HTML element that are used when communicating with the Wica backend server.
  *
@@ -93,7 +91,7 @@ const WicaElementChannelRenderingProperties = {
  * @property {boolean} includeTimeStamp - false - Whether timestamp information should be included in channel
  *     value updates. Needed for time plots.
  */
-const WicaStreamProperties = {
+export const WicaStreamProperties = {
     heartBeatInterval: 15000,
     channelValueUpdateInterval: 100,
     includeAlarmState: true,
