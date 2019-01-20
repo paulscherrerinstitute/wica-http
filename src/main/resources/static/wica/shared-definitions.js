@@ -161,7 +161,7 @@ export const wicaChannelProperties = {
 */
 
 /**
- * @type {Simon} - @see Simon
+ * @type {Simon} - @see {@link Simon}
  * @property {string} PROPA - value: 5
  * @property {string} PROPB - value: 6
  */
