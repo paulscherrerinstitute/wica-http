@@ -7,7 +7,6 @@ console.debug( "Executing script in document-stream-connector.js module...");
 import {WicaStreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
 
-import {WicaElementConnectionAttributes} from './shared-definitions.js'
 import {WicaStreamProperties} from './shared-definitions.js'
 
 const CHANNEL_NAME_ATTRIBUTE = WicaElementConnectionAttributes.channelName;
@@ -16,10 +15,10 @@ const CHANNEL_NAME_ATTRIBUTE = WicaElementConnectionAttributes.channelName;
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
 /**
- *
- * @type {{channelMetadata: string, channelStreamState: string, channelAlarmState: string, channelProperties: string, channelConnectionState: string, channelValueLatest: string, channelName: string, channelValueArray: string}}
+ * ABCDEF
+ * @type {WicaElementConnectionAttributes}
  */
-const WicaElementConnectionAttributes = {
+const wicaElementConnectionAttributes = {
     channelName:            "data-wica-channel-name",
     channelProperties:      "data-wica-channel-properties",
     channelStreamState:     "data-wica-channel-stream-state",
