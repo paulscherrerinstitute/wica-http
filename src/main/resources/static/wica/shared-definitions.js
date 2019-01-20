@@ -155,8 +155,7 @@ export const wicaChannelProperties = {
 
 /**
  * Super class of something
- *
- * @enum
+ * @typedef
  * @property {string} PROPA - 5 - The wibble
  * @property {string} PROPB - 6 - The wobble
  */
