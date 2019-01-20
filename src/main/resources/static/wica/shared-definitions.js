@@ -10,8 +10,8 @@
 const simon = 22;
 
 /**
- * @member shared
- * @type {number}
+ * @member Some idea
+ * @constant {number}
  */
 const peter = 44;
 
