@@ -159,9 +159,7 @@ export const wicaChannelProperties = {
  * @property {string} PROPA - 5 - The wibble
  * @property {string} PROPB - 6 - The wobble
  */
-export class Simon {
-
-    static PROPA = 5;
-    static PROPB = 6;
-
+export const Simon = {
+    PROPA: 5,
+    PROPB: 6
 }
