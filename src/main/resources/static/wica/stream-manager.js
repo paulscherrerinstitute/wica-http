@@ -23,10 +23,10 @@ export class WicaStreamManager
      *     the configuration of each of the stream's channels, together with, optionally, the stream properties
      *     object.
      *
-     * @param {module:shared-definitions~WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
+     * @param {module:shared.WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
      * @param {Object[]} streamConfiguration.channels - The configuration of each stream channel.
      * @param {string} streamConfiguration.channels[].name - The name of the channel.
-     * @param {module:shared-definitions~WicaChannelProperties} [streamConfiguration.channels[].props] - The channel properties object.
+     * @param {module:shared.WicaChannelProperties} [streamConfiguration.channels[].props] - The channel properties object.
      *
      * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
      * @param {callback} connectionHandlers.streamOpened - Called when the stream is opened (= not yet connected).

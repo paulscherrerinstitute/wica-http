@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module shared
  * @desc  Definitions that are used throughout the application.
  */
 
@@ -23,7 +23,7 @@
  * @property {string} channelAlarmState - "data-wica-channel-alarm-state" - The attribute which reflects the alarm
  *     status obtained from the channel.
  */
-const WicaElementConnectionAttributes = {
+export const WicaElementConnectionAttributes = {
     channelName:            "data-wica-channel-name",
     channelProperties:      "data-wica-channel-properties",
     channelStreamState:     "data-wica-channel-stream-state",
@@ -43,7 +43,7 @@ const WicaElementConnectionAttributes = {
  * @property {string} channelRenderingProperties - "data-wica-channel-rendering-props" - The attribute which
  *     defines properties which will affect the way it is rendered.
  */
-const WicaElementRenderingAttributes = {
+export const WicaElementRenderingAttributes = {
     channelTooltips:            "data-wica-channel-tooltips",
     channelRenderingProperties: "data-wica-channel-rendering-props"
 };
@@ -56,7 +56,7 @@ const WicaElementRenderingAttributes = {
  * @property {boolean} exp - false - Whether numeric information should be rendered in exponential format.
  * @property {string} prec - 8 - The precision to be used when rendering numeric information.
  */
-const WicaElementChannelRenderingProperties = {
+export const WicaElementChannelRenderingProperties = {
     disable: false,
     exp: false,
     prec: 8
@@ -103,7 +103,7 @@ export const WicaStreamProperties = {
  * @typedef WicaChannelProperties
  * @property {number} prec - 8 - The precision to be used when sending numeric information.
  */
-const WicaChannelProperties = {
+export const WicaChannelProperties = {
     disable: false,
     exp: false,
     prec: 8
