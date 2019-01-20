@@ -161,8 +161,7 @@ export const wicaChannelProperties = {
 */
 
 /**
- * @inheritdoc
- * @type {Simon}
+ * @type {Simon} - @see shared.Simon
  * @property {string} PROPA - value: 5
  * @property {string} PROPB - value: 6
  */
