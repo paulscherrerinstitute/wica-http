@@ -27,14 +27,14 @@ const peter = 44;
 const SomeType = {
 
     /**
-     * @member {string}
      * Some property
+     * @member {string} - Some property
      */
     PROPERTY_A: "dd",
 
     /**
-     * @member {string}
      * Some other property
+     * @member {string} - Some other property
      */
     PROPERTY_B: "cc"
 }
