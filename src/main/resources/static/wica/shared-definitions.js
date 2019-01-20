@@ -89,7 +89,7 @@ export const WicaElementChannelRenderingProperties = {
  * @property {boolean} includeTimeStamp - false - Whether timestamp information should be included in channel
  *     value updates. Needed for time plots.
  */
-export const wicaStreamProperties = {
+export const defaultWicaStreamProperties = {
     heartBeatInterval: 15000,
     channelValueUpdateInterval: 100,
     includeAlarmState: true,
