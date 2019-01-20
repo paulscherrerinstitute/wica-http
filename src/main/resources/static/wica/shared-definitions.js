@@ -155,13 +155,13 @@ export const wicaChannelProperties = {
 
 /**
 * Super class of something
-* @typedef Simon
+* @typedef module:shared.Simon
 * @property {string} PROPA - The wibble
 * @property {string} PROPB - The wobble
 */
 
 /**
- * @type {Simon} - @see {@link module:shared.Simon}
+ * @type {module:shared.Simon} - @see {@link module:shared.Simon}
  * @property {string} PROPA - value: 5
  * @property {string} PROPB - value: 6
  */
