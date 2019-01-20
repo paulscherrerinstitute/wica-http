@@ -153,19 +153,19 @@ export const wicaChannelProperties = {
     prec: 8
 };
 
-/**
-* Super class of something. For default values see {@link module:shared.DefaultSimon}
-* @typedef module:shared.Simon
-* @property {string} PROPA - The wibble
-* @property {string} PROPB - The wobble
-*/
+// /**
+// * Super class of something. For default values see {@link module:shared.DefaultSimon}
+// * @typedef module:shared.Simon
+// * @property {string} PROPA - value: 5 - The wibble
+// * @property {string} PROPB - value: 6 - The wobble
+// */
 
 /**
- * @see {@link module:shared.Simon}
- * @property {string} PROPA - value: 5
- * @property {string} PROPB - value: 6
+ * Super class of something.
+ * @property {string} PROPA - value: 5 - The wibble.
+ * @property {string} PROPB - value: 6 - The wobble.
  */
-export const DefaultSimon = {
+export const Simon = {
     PROPA: 5,
     PROPB: 6
 }
