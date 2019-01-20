@@ -24,10 +24,6 @@ const PROPERTY_B = "B";
  */
 class Constants
 {
-    /**
-     * @private
-     */
-    constructor() {}
     static get A() { return PROPERTY_A; }
     static get B() { return PROPERTY_B; }
 }
