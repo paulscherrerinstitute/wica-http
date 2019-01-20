@@ -155,19 +155,13 @@ export const wicaChannelProperties = {
 
 /**
  * Super class of something
+ *
+ * @property {string} PROPA - 5 - The wibble
+ * @property {string} PROPB - 6 - The wobble
  */
 export class Simon {
 
-    /**
-     * The wobble
-     * @type {number}
-     */
     static PROPA = 5;
-
-    /**
-     * The wibble
-     * @type {number}
-     */
     static PROPB = 6;
 
 }
