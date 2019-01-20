@@ -12,6 +12,22 @@ const CHANNEL_NAME_ATTRIBUTE = WicaElementConnectionAttributes.channelName;
 //const WICA_HOST = "https://gfa-wica.psi.ch";
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
+
+const PROPERTY_A = "A";
+const PROPERTY_B = "B";
+
+/**
+ * My favourite constants.
+ *
+ * @property {string} A - the A.
+ * @property {string} B - the B.
+ */
+class Constants
+{
+    static get A() { return PROPERTY_A; }
+    static get B() { return PROPERTY_B; }
+}
+
 /**
  * Provides real-time updates to wica-aware elements in the current document based on information streamed
  * from the Wica server on the backend.
