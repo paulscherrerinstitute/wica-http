@@ -154,7 +154,7 @@ export const wicaChannelProperties = {
 };
 
 /**
-* Super class of something
+* Super class of something. For default values see {@link module:shared.DefaultSimon}
 * @typedef module:shared.Simon
 * @property {string} PROPA - The wibble
 * @property {string} PROPB - The wobble
