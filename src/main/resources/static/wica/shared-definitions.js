@@ -21,11 +21,22 @@ const peter = 44;
  */
 
 /**
+ * Does abcdef
  * @enum {MyType}
  */
-const TYPES = {
-    TYPE_A: "dd",
-    TYPE_B: "cc"
+const SomeType = {
+
+    /**
+     * @member {string}
+     * Some property
+     */
+    PROPERTY_A: "dd",
+
+    /**
+     * @member {string}
+     * Some other property
+     */
+    PROPERTY_B: "cc"
 }
 
 
