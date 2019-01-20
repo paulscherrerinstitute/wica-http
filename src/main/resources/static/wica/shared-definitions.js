@@ -156,15 +156,15 @@ export const wicaChannelProperties = {
 /**
 * Super class of something
 * @typedef Simon
-* @property {string} PROPA - 5 - The wibble
-* @property {string} PROPB - 6 - The wobble
+* @property {string} PROPA - The wibble
+* @property {string} PROPB - The wobble
 */
 
 /**
- * @inheritDoc
+ * @inheritdoc
  * @type {Simon}
- * @property {string} PROPA - 5
- * @property {string} PROPB - 6
+ * @property {string} PROPA - value: 5
+ * @property {string} PROPB - value: 6
  */
 export const DefaultSimon = {
     PROPA: 5,
