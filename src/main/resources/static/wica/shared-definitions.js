@@ -103,7 +103,7 @@ export const WicaElementChannelRenderingProperties = {
 /**
  * Object defining the properties supported by a WicaStream.
  *
- * @typedef WicaStreamProperties
+ * @typedef module:shared.WicaStreamProperties
  * @property {number} heartbeatInterval - The interval in milliseconds between heartbeat messages.
  * @property {number} channelValueUpdateInterval The interval in milliseconds between channel value update messages.
  * @property {boolean} includeAlarmState - Whether alarm information should be included in channel
@@ -115,7 +115,7 @@ export const WicaElementChannelRenderingProperties = {
 /**
  * Object defining the properties supported by a WicaStream.
  *
- * @type WicaStreamProperties
+ * @type module:shared.WicaStreamProperties
  * @property {number} heartbeatInterval - 15000 - The interval in milliseconds to be used between the
  *     sending of successive heartbeat messages.
  * @property {number} channelValueUpdateInterval 100 - The interval in milliseconds to be used between
@@ -125,7 +125,7 @@ export const WicaElementChannelRenderingProperties = {
  * @property {boolean} includeTimeStamp - false - Whether timestamp information should be included in channel
  *     value updates. Needed for time plots.
  */
-export const defaultWicaStreamProperties = {
+export const DefaultWicaStreamProperties = {
     heartBeatInterval: 15000,
     channelValueUpdateInterval: 100,
     includeAlarmState: true,
