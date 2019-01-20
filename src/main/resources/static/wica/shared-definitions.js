@@ -152,3 +152,22 @@ export const wicaChannelProperties = {
     exp: false,
     prec: 8
 };
+
+/**
+ * Super class of something
+ */
+export class Simon {
+
+    /**
+     * The wobble
+     * @type {number}
+     */
+    static PROPA = 5;
+
+    /**
+     * The wibble
+     * @type {number}
+     */
+    static PROPB = 6;
+
+}
