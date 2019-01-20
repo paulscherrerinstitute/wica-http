@@ -3,7 +3,8 @@
  * @desc Provides support for creating and using Wica streams.
  */
 
-import {WicaChannelProperties} from "./shared-definitions";
+import WicaStreamProperties from "./shared-definitions";
+import WicaChannelProperties from "./shared-definitions";
 
 
 /**
