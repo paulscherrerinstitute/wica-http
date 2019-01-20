@@ -6,7 +6,6 @@
 /**
  * Object defining the attributes of a wica-aware HTML element that are used when communicating with the Wica backend server.
  *
- * @global
  * @typedef WicaElementConnectionAttributes
  * @property {string} channelName - "data-wica-channel-name" - The attribute which defines the channel name.
  * @property {string} channelProperties - "data-wica-channel-properties" - The attribute which defines the channel
@@ -66,6 +65,7 @@ const WicaElementChannelRenderingProperties = {
 /**
  * Object defining the properties supported by a WicaStream.
  *
+ * @global
  * @typedef WicaStreamProperties
  * @property {number} heartbeatInterval - 15000 - The interval in milliseconds to be used between the
  *     sending of successive heartbeat messages.
