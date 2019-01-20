@@ -1,3 +1,7 @@
+/**
+ * @module
+ * @desc APT
+ */
 export {
     wicaStreamCreate
 }

@@ -1,4 +1,3 @@
-
 /**
  * Object defining the attributes of a wica-aware HTML element that are used when communicating with the Wica backend server.
  *
