@@ -6,7 +6,7 @@ export {
     wicaStreamCreate
 }
 
-import {WicaStreamManager} from './stream-manager.js'
+import {WicaStreamManager} from "./stream-manager.js"
 
 
 /**

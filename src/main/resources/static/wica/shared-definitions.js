@@ -3,6 +3,8 @@
  * @desc  Definitions that are used throughout the application.
  */
 
+export { WicaStreamProperties };
+
 /**
  * Object defining the attributes of a wica-aware HTML element that are used when communicating with the Wica backend server.
  *
@@ -45,7 +47,7 @@ const WicaElementConnectionAttributes = {
  */
 const WicaElementRenderingAttributes = {
     channelTooltips:            "data-wica-channel-tooltips",
-    channelRenderingProperties: "data-wica-channel-rendering-props",
+    channelRenderingProperties: "data-wica-channel-rendering-props"
 };
 
 /**
@@ -63,7 +65,7 @@ const WicaElementChannelRenderingProperties = {
 };
 
 /**
- * Object defining the properties supported by a WicaStream.
+ * Object defining the properties supported by a WicaStream. See <a><
  *
  * @global
  * @typedef WicaStreamProperties
@@ -80,6 +82,7 @@ const WicaElementChannelRenderingProperties = {
 /**
  * Object defining the properties supported by a WicaStream.
  *
+ * @exports WicaStreamProperties
  * @type WicaStreamProperties
  * @property {number} heartbeatInterval - 15000 - The interval in milliseconds to be used between the
  *     sending of successive heartbeat messages.
@@ -90,7 +93,7 @@ const WicaElementChannelRenderingProperties = {
  * @property {boolean} includeTimeStamp - false - Whether timestamp information should be included in channel
  *     value updates. Needed for time plots.
  */
-export const WicaStreamProperties = {
+const WicaStreamProperties = {
     heartBeatInterval: 15000,
     channelValueUpdateInterval: 100,
     includeAlarmState: true,
