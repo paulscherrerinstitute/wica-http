@@ -43,7 +43,7 @@ import {WicaStreamManager} from './stream-manager.js'
  * @param {boolean} [options.crossOriginCheckEnabled] - whether this manager should perform a CORS check.
  */
 
-function wicaStreamCreate( serverUrl, streamConfiguration, connectionHandlers, messageHandlers, options )
+export function wicaStreamCreate( serverUrl, streamConfiguration, connectionHandlers, messageHandlers, options )
 {
     return new WicaStreamManager( serverUrl, streamConfiguration, connectionHandlers, messageHandlers, options )
 }
@@ -54,7 +54,7 @@ function wicaStreamCreate( serverUrl, streamConfiguration, connectionHandlers, m
  * @param serverUrl
  * @returns {DocumentStreamManager}
  */
-function wicaDocumentManagerCreate( serverUrl )
+export function wicaDocumentManagerCreate( serverUrl )
 {
     return new DocumentStreamManager( serverUrl );
 }
