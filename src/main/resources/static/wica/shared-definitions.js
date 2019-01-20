@@ -104,7 +104,7 @@ export const WicaElementChannelRenderingProperties = {
  * Object defining the properties supported by a WicaStream. See also: {@link module:shared.DefaultWicaStreamProperties DefaultWicaStreamProperties}
  *
  * @typedef module:shared.WicaStreamProperties
- * @property {number} heartbeatInterval - The interval in milliseconds between heartbeat messages.
+ * @property {number} [heartbeatInterval=15000] - The interval in milliseconds between heartbeat messages.
  * @property {number} channelValueUpdateInterval The interval in milliseconds between channel value update messages.
  * @property {boolean} includeAlarmState - Whether alarm information should be included in channel
  *     value updates. Needed if the visual state of the element should change when in the alarm state.
