@@ -7,6 +7,9 @@ console.debug( "Executing script in document-stream-connector.js module...");
 import {WicaStreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
 
+import {WicaElementConnectionAttributes} from "shared-definitions.js"
+
+
 //const WICA_HOST = "https://gfa-wica.psi.ch";
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 

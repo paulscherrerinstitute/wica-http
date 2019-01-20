@@ -44,7 +44,7 @@ const SomeType = {
 /**
  * Object defining the attributes of a wica-aware HTML element that are used when communicating with the Wica backend server.
  *
- * @typedef WicaElementConnectionAttributes
+ * WicaElementConnectionAttributes
  * @property {string} channelName - "data-wica-channel-name" - The attribute which defines the channel name.
  * @property {string} channelProperties - "data-wica-channel-properties" - The attribute which defines the channel
  *     properties.
@@ -154,11 +154,19 @@ export const wicaChannelProperties = {
 };
 
 /**
- * Super class of something
- * @property {string} PROPA - 5 - The wibble
- * @property {string} PROPB - 6 - The wobble
+* Super class of something
+* @typedef Simon
+* @property {string} PROPA - 5 - The wibble
+* @property {string} PROPB - 6 - The wobble
+*/
+
+/**
+ * @inheritDoc
+ * @type {Simon}
+ * @property {string} PROPA - 5
+ * @property {string} PROPB - 6
  */
-export const Simon = {
+export const DefaultSimon = {
     PROPA: 5,
     PROPB: 6
 }
