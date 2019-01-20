@@ -29,6 +29,7 @@ const SomeType = {
     /**
      * Some property
      * @member {string} - Some property
+     * @default
      */
     PROPERTY_A: "dd",
 
