@@ -4,13 +4,13 @@
  */
 
 /**
- * @memberOf shared
+ * @member shared
  * @type {number}
  */
 const simon = 22;
 
 /**
- * @memberOf shared
+ * @member shared
  * @type {number}
  */
 const peter = 44;
