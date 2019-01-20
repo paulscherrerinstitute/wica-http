@@ -99,6 +99,13 @@ export const wicaStreamProperties = {
 /**
  * Object defining the properties supported by a WicaChannel.
  *
+ * @typedef WicaChannelProperties
+ * @property {number} prec - The precision to be used when sending numeric information.
+ */
+
+/**
+ * Object defining the properties supported by a WicaChannel.
+ *
  * @type WicaChannelProperties
  * @property {number} prec - 8 - The precision to be used when sending numeric information.
  */

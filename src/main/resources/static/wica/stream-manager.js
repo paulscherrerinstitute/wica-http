@@ -3,8 +3,6 @@
  * @desc Provides support for creating and using Wica streams.
  */
 
-// import WicaStreamProperties from "shared-definitions.js";
-
 
 /**
  * Provides support for creating a new WicaStream on the Wica backend server, for thereafter subscribing
