@@ -1,5 +1,5 @@
 /**
- * @module shared
+ * @module
  * @desc  Definitions that are used throughout the application.
  */
 
