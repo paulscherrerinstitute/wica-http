@@ -101,7 +101,7 @@ export const WicaElementChannelRenderingProperties = {
 };
 
 /**
- * Object defining the properties supported by a WicaStream.
+ * Object defining the properties supported by a WicaStream. See also: {@link module:shared.DefaultWicaStreamProperties}
  *
  * @typedef module:shared.WicaStreamProperties
  * @property {number} heartbeatInterval - The interval in milliseconds between heartbeat messages.
@@ -113,9 +113,8 @@ export const WicaElementChannelRenderingProperties = {
  */
 
 /**
- * Object defining the properties supported by a WicaStream.
+ * Object defining the properties supported by a WicaStream. See also: {@link module:shared.WicaStreamProperties}
  *
- * @type module:shared.WicaStreamProperties
  * @property {number} heartbeatInterval - 15000 - The interval in milliseconds to be used between the
  *     sending of successive heartbeat messages.
  * @property {number} channelValueUpdateInterval 100 - The interval in milliseconds to be used between
