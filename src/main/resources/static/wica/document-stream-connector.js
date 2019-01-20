@@ -16,6 +16,20 @@ const CHANNEL_NAME_ATTRIBUTE = WicaElementConnectionAttributes.channelName;
 const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
 /**
+ *
+ * @type {{channelMetadata: string, channelStreamState: string, channelAlarmState: string, channelProperties: string, channelConnectionState: string, channelValueLatest: string, channelName: string, channelValueArray: string}}
+ */
+const WicaElementConnectionAttributes = {
+    channelName:            "data-wica-channel-name",
+    channelProperties:      "data-wica-channel-properties",
+    channelStreamState:     "data-wica-channel-stream-state",
+    channelConnectionState: "data-wica-channel-connection-state",
+    channelMetadata:        "data-wica-channel-metadata",
+    channelValueArray:      "data-wica-channel-value-array",
+    channelValueLatest:     "data-wica-channel-value-latest",
+    channelAlarmState:      "data-wica-channel-alarm-state"
+};
+/**
  * Provides real-time updates to wica-aware elements in the current document based on information streamed
  * from the Wica server on the backend.
  */
