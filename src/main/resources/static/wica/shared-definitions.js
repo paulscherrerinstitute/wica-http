@@ -1,6 +1,6 @@
 /**
  * @module
- * @desc  Definitions that are used throughtout the application.
+ * @desc  Definitions that are used throughout the application.
  */
 
 /**
