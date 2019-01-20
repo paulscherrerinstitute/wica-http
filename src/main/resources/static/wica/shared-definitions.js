@@ -64,7 +64,7 @@ const WicaElementChannelRenderingProperties = {
 
 /**
  * Object defining the properties supported by a WicaStream.
- *
+ * @global
  * @typedef WicaStreamProperties
  * @property {number} heartbeatInterval - 15000 - The interval in milliseconds to be used between the
  *     sending of successive heartbeat messages.
