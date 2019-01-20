@@ -67,6 +67,20 @@ const WicaElementChannelRenderingProperties = {
  *
  * @global
  * @typedef WicaStreamProperties
+ * @property {number} heartbeatInterval - The interval in milliseconds to be used between the
+ *     sending of successive heartbeat messages.
+ * @property {number} channelValueUpdateInterval The interval in milliseconds to be used between
+ *     the sending of successive channel value updates.
+ * @property {boolean} includeAlarmState - Whether alarm information should be included in channel
+ *     value updates. Needed if the visual state of the element should change when in the alarm state.
+ * @property {boolean} includeTimeStamp - Whether timestamp information should be included in channel
+ *     value updates. Needed for time plots.
+ */
+
+/**
+ * Object defining the properties supported by a WicaStream.
+ *
+ * @type WicaStreamProperties
  * @property {number} heartbeatInterval - 15000 - The interval in milliseconds to be used between the
  *     sending of successive heartbeat messages.
  * @property {number} channelValueUpdateInterval 100 - The interval in milliseconds to be used between
