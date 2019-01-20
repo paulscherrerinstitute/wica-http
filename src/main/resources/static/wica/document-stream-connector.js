@@ -41,7 +41,7 @@ export class DocumentStreamConnector
 
      * @param {string} streamServerUrl - the URL of the backend server from whom information is to be obtained.
      *
-     * @param {Constants} wicaStreamProperties - The properties of the stream that will be created to
+     * @param {~Constants} wicaStreamProperties - The properties of the stream that will be created to
      *     obtain the required information from the data sources.
      *
      * @param {WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware
