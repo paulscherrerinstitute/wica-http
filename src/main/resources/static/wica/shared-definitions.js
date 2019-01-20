@@ -4,6 +4,32 @@
  */
 
 /**
+ * @memberOf shared
+ * @type {number}
+ */
+const simon = 22;
+
+/**
+ * @memberOf shared
+ * @type {number}
+ */
+const peter = 44;
+
+
+/**
+ * @typedef {String} MyType
+ */
+
+/**
+ * @enum {MyType}
+ */
+const TYPES = {
+    TYPE_A: "dd",
+    TYPE_B: "cc"
+}
+
+
+/**
  * Object defining the attributes of a wica-aware HTML element that are used when communicating with the Wica backend server.
  *
  * @typedef WicaElementConnectionAttributes
