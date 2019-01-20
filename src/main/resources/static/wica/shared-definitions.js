@@ -4,61 +4,22 @@
  */
 
 /**
- * @member shared
- * @type {number}
- */
-const simon = 22;
-
-/**
- * @member Some idea
- * @constant {number}
- */
-const peter = 44;
-
-
-/**
- * @typedef {String} MyType
- */
-
-/**
- * Does abcdef
- * @enum {MyType}
- */
-const SomeType = {
-
-    /**
-     * Some property
-     * @member {string} - Some property
-     * @default
-     */
-    PROPERTY_A: "dd",
-
-    /**
-     * Some other property
-     * @member {string} - Some other property
-     */
-    PROPERTY_B: "cc"
-}
-
-
-/**
  * Object defining the attributes of a wica-aware HTML element that are used when communicating with the Wica backend server.
  *
- * WicaElementConnectionAttributes
- * @property {string} channelName - "data-wica-channel-name" - The attribute which defines the channel name.
- * @property {string} channelProperties - "data-wica-channel-properties" - The attribute which defines the channel
+ * @property {string} [channelName="data-wica-channel-name"] - The attribute which defines the channel name.
+ * @property {string} [channelProperties="data-wica-channel-properties"] - The attribute which defines the channel
  *     properties.
- * @property {string} channelStreamState - "data-wica-stream-state" - The attribute which reflects the state of the
+ * @property {string} [channelStreamState="data-wica-stream-state"] - The attribute which reflects the state of the
  *     connection to the backend server's data stream.
- * @property {string} channelConnectionState - "data-wica-channel-connection-state" - The attribute which reflects
+ * @property {string} [channelConnectionState="data-wica-channel-connection-state"] - The attribute which reflects
  *     the state of the connection between the backend server and the channel's data source.
- * @property {string} channelMetadata - "data-wica-channel-metadata" - The attribute which reflects the metadata
+ * @property {string} [channelMetadata="data-wica-channel-metadata"] - The attribute which reflects the metadata
  *     obtained from the channel.
- * @property {string} channelValueArray - "data-wica-channel-value-array" - The attribute which reflects the values
+ * @property {string} [channelValueArray="data-wica-channel-value-array"] - The attribute which reflects the values
  *     most recently obtained from the channel.
- * @property {string} channelValueLatest - "data-wica-channel-value-latest" - The attribute which reflects the last
+ * @property {string} [channelValueLatest="data-wica-channel-value-latest"] - The attribute which reflects the last
  *     value obtained from the channel.
- * @property {string} channelAlarmState - "data-wica-channel-alarm-state" - The attribute which reflects the alarm
+ * @property {string} [channelAlarmState="data-wica-channel-alarm-state"] - The attribute which reflects the alarm
  *     status obtained from the channel.
  */
 export const WicaElementConnectionAttributes = {
@@ -105,26 +66,13 @@ export const WicaElementChannelRenderingProperties = {
  *
  * @typedef module:shared.WicaStreamProperties
  * @property {number} [heartbeatInterval=15000] - The interval in milliseconds between heartbeat messages.
- * @property {number} channelValueUpdateInterval The interval in milliseconds between channel value update messages.
- * @property {boolean} includeAlarmState - Whether alarm information should be included in channel
+ * @property {number} [channelValueUpdateInterval=100] The interval in milliseconds between channel value update messages.
+ * @property {boolean} [includeAlarmState=true] - Whether alarm information should be included in channel
  *     value updates. Needed if the visual state of the element should change when in the alarm state.
- * @property {boolean} includeTimeStamp - Whether timestamp information should be included in channel
+ * @property {boolean} [includeTimeStamp=false] - Whether timestamp information should be included in channel
  *     value updates. Needed for time plots.
  */
-
-/**
- * Object defining the properties supported by a WicaStream. See also: {@link module:shared.WicaStreamProperties WicaStreamProperties}
- *
- * @property {number} heartbeatInterval - 15000 - The interval in milliseconds to be used between the
- *     sending of successive heartbeat messages.
- * @property {number} channelValueUpdateInterval 100 - The interval in milliseconds to be used between
- *     the sending of successive channel value updates.
- * @property {boolean} includeAlarmState - true - Whether alarm information should be included in channel
- *     value updates. Needed if the visual state of the element should change when in the alarm state.
- * @property {boolean} includeTimeStamp - false - Whether timestamp information should be included in channel
- *     value updates. Needed for time plots.
- */
-export const DefaultWicaStreamProperties = {
+export const WicaStreamProperties = {
     heartBeatInterval: 15000,
     channelValueUpdateInterval: 100,
     includeAlarmState: true,
@@ -149,20 +97,3 @@ export const wicaChannelProperties = {
     exp: false,
     prec: 8
 };
-
-// /**
-// * Super class of something. For default values see {@link module:shared.DefaultSimon}
-// * @typedef module:shared.Simon
-// * @property {string} PROPA - value: 5 - The wibble
-// * @property {string} PROPB - value: 6 - The wobble
-// */
-
-/**
- * Super class of something.
- * @property {string} PROPA - value: 5 - The wibble.
- * @property {string} PROPB - value: 6 - The wobble.
- */
-export const Simon = {
-    PROPA: 5,
-    PROPB: 6
-}
