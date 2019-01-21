@@ -53,11 +53,14 @@ export const WicaElementRenderingAttributes = Object.freeze ({
 } );
 
 /**
- * Object defining the properties supported by the wica document renderer, together with their default values.
+ * Object defining properties needed for rendering the visual state of a wica-aware element, together with
+ * their default values.
  *
- * @property {boolean} [disable=false] - Disables the default rendering for this channel.
- * @property {boolean} [exp=false] - Whether numeric information should be rendered in exponential format.
- * @property {number} [prec=8] - The precision to be used when rendering numeric information in fixed decimal point format.
+ * @property {boolean} [disable=false] - Disables the rendering for this channel.
+ * @property {number} [prec=8] - The precision to be used when rendering numeric information in fixed decimal
+ *     point format.
+ * @property {boolean} [exp=false] - Whether numeric information should be rendered in exponential format (when
+ *     set TRUE) or in fixed decimal point format (when set FALSE).
  */
 export const WicaElementRenderingProperties = Object.freeze ({
     disable: false,
