@@ -64,7 +64,7 @@ export const WicaElementChannelRenderingProperties = {
 /**
  * Object defining the properties supported by a WicaStream. See also: {@link module:shared.DefaultWicaStreamProperties DefaultWicaStreamProperties}
  *
- * @typedef module:shared.WicaStreamProperties
+ * @typedef module:shared-definitions.WicaStreamProperties
  * @property {number} [heartbeatInterval=15000] - The interval in milliseconds between heartbeat messages.
  * @property {number} [channelValueUpdateInterval=100] The interval in milliseconds between channel value update messages.
  * @property {boolean} [includeAlarmState=true] - Whether alarm information should be included in channel
@@ -82,17 +82,11 @@ export const WicaStreamProperties = {
 /**
  * Object defining the properties supported by a WicaChannel.
  *
- * @typedef WicaChannelProperties
- * @property {number} prec - The precision to be used when sending numeric information.
- */
-
-/**
- * Object defining the properties supported by a WicaChannel.
- *
+ * @typedef module:shared-definitions.wicaChannelProperties
  * @type WicaChannelProperties
  * @property {number} prec - 8 - The precision to be used when sending numeric information.
  */
-export const wicaChannelProperties = {
+export const WicaChannelProperties = {
     disable: false,
     exp: false,
     prec: 8
