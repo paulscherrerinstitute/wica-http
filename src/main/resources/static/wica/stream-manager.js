@@ -12,25 +12,25 @@
  *
  * @typedef ChannelMetadataObject
  * @property type - always present.
- * @property egu
- * @property prec
- * @property hopr
- * @property lopr
- * @property drvh
- * @property drvl
- * @property hihi
- * @property lolo
- * @property high
- * @property low
+ * @property egu {string}
+ * @property prec {number}
+ * @property hopr {number}
+ * @property lopr {number}
+ * @property drvh {number}
+ * @property drvl {number}
+ * @property hihi {number}
+ * @property lolo {number}
+ * @property high {number}
+ * @property low {number}
  */
 
 /**
  * Provides general purpose information about a channel.
  *
  * @typedef ChannelValueObject
- * @property val
- * @property sevr
- * @property ts
+ * @property val {string|null}
+ * @property sevr {number}
+ * @property ts {string}
  */
 
 
