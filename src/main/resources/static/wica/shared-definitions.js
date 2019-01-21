@@ -5,7 +5,7 @@
 
 
 /**
- * Object provides general purpose information about a channel.
+ * Object provides general purpose information about a channel. This
  *
  * The properties that are available depends on the underlying data source (eg whether the channel data source
  * is an EPICS channel). The type property is always present.
@@ -41,21 +41,22 @@
  * {@link module:document-stream-connector.DocumentStreamConnector DocumentStreamConnector} when communicating
  * with the Wica backend server.
  *
- * @property {string} channelName="data-wica-channel-name" - The attribute which defines the channel name. This
- *     is the minimum information that must be present for the element to be considered "wica-aware'.
- * @property {string} [channelProperties="data-wica-channel-properties"] - The attribute which defines the channel
- *     properties. See {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties}.
+ * @property {string} channelName="data-wica-channel-name" - The name of the attribute which defines the channel
+ *     name. This is the minimum information that must be present for the element to be considered "wica-aware'.
+ * @property {string} [channelProperties="data-wica-channel-properties"] - The name of the attribute which defines
+ *     the channel properties. This attribute may be set to a JSON string which can be parsed to obtain a
+ *     See {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties} object.
  * @property {string} [channelStreamState="data-wica-channel-stream-state"] - The attribute which reflects the state
  *     of the connection to the backend server's data stream.
- * @property {string} [channelConnectionState="data-wica-channel-connection-state"] - The attribute which reflects
- *     the state of the connection between the backend server and the channel's data source.
- * @property {string} [channelMetadata="data-wica-channel-metadata"] - The attribute which reflects the metadata
- *     obtained most recently from the channel.
+ * @property {string} [channelConnectionState="data-wica-channel-connection-state"] - The name of the attribute
+ *     which reflects the state of the connection between the backend server and the channel's data source.
+ * @property {string} [channelMetadata="data-wica-channel-metadata"] - The name  of the attribute which reflects
+ *     the metadata obtained most recently from the channel.
  *     See {@link module:shared-definitions.WicaChannelMetadataObject WicaChannelMetadataObject}.
- * @property {string} [channelValueArray="data-wica-channel-value-array"] - The attribute which reflects the values
- *     most recently obtained from the channel.
- * @property {string} [channelValueLatest="data-wica-channel-value-latest"] - The attribute which reflects the last
- *     value obtained from the channel.
+ * @property {string} [channelValueArray="data-wica-channel-value-array"] - The name of the attribute which
+ *     reflects the values most recently obtained from the channel.
+ * @property {string} [channelValueLatest="data-wica-channel-value-latest"] - The name of the attribute which
+ *     reflects the last value obtained from the channel
  *      See {@link module:shared-definitions.WicaChannelValueObject WicaChannelValueObject}.
  * @property {string} [channelAlarmState="data-wica-channel-alarm-state"] - The attribute which reflects the alarm
  *     status most recently obtained from the channel.
