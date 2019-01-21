@@ -44,7 +44,7 @@ export class DocumentStreamConnector
      * information for each element's data source, sets up handlers to update each element's attributes on
      * the basis of the received information.
      *
-     * @see also {@link module:document-stream-connector.DocumentStreamConnector#shutdown shutdown} method.
+     * See also: {@link module:document-stream-connector.DocumentStreamConnector#shutdown shutdown}.
      */
     activate()
     {
@@ -62,6 +62,8 @@ export class DocumentStreamConnector
 
     /**
      * Shuts down the service offered by this class.
+     *
+     * See also: {@link module:document-stream-connector.DocumentStreamConnector#shutdown activate}.
      */
     shutdown()
     {
