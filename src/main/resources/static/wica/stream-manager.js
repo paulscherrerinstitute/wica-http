@@ -27,20 +27,26 @@ export class WicaStreamManager
      *     See {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties}.
      *
      * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
-     * @param {callback} connectionHandlers.streamOpened - Called when the stream is opened (= not yet connected).
-     * @param {callback} connectionHandlers.streamConnect - Called when the stream successfully connects.
-     * @param {callback} connectionHandlers.streamClosed - Called when the stream disconnects.
+     * @param {callback} connectionHandlers.streamConnect - Called when the stream attempts to connect.
+     * @param {callback} connectionHandlers.streamOpened - Called when the stream is opened (that's to say
+     *     the connection with the server has been successfully established).
+     * @param {callback} connectionHandlers.streamClosed - Called when the stream closes (that's to say the
+     *     connection with the server has been shut down).
      *
      * @param {Object} messageHandlers - Callbacks for handling data received from the SSE stream.
-     * @param {callback} messageHandlers.channelMetadataUpdated -  Called when stream metadata information is received.
-     * @param {callback} messageHandlers.channelValuesUpdated - Called when stream value information is received.
+     * @param {callback} messageHandlers.channelMetadataUpdated -  Called when channel metadata information
+     *     is received.
+     * @param {callback} messageHandlers.channelValuesUpdated - Called when channel value information
+     *     is received.
      *
      * @param {Object} options - Provides additional client-side configuration options.
-     * @param {number} [options.streamReconnectIntervalInSeconds] - How often the manager should attempt to reconnect
-     *     with the server if there is a communication outage.
-     * @param {number} [options.streamTimeoutIntervalInSeconds] - Periodicity with which the stream's heartbeat signal
-     *     needs to be received before the manager will conclude that a communication outage has occurred.
-     * @param {boolean} [options.crossOriginCheckEnabled] - whether this manager should perform a CORS check.
+     * @param {number} [options.streamTimeoutIntervalInSeconds] - Periodicity with which the stream's heartbeat
+     *     message needs to be received before the manager will conclude that a communication outage has occurred.
+     * @param {number} [options.streamReconnectIntervalInSeconds] - Period between successive reconnection
+     *     attempts after a communication outage.
+     * @param {boolean} [options.crossOriginCheckEnabled] - Whether this manager should perform a CORS check
+     *     to verify that the origin of the event stream is the same as the origin from which this manager
+     *     was loaded.
      */
     constructor( serverUrl, streamConfiguration, connectionHandlers, messageHandlers, options )
     {
