@@ -97,8 +97,8 @@ export const WicaChannelProperties = {
 export class Simon {
 
     /**
-     * @param propA - override value for property A.
-     * @param propB - override value for property B.
+     * @param {string} propA - override value for property A.
+     * @param {string} propB - override value for property B.
      */
     constructor( propA = "A", propB = "B" )
     {
