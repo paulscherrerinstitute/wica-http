@@ -89,23 +89,31 @@ export const WicaChannelProperties = {
 };
 
 /**
- * Some class
+ * Object defining the properties supported by a WicaStream and their default values.
  *
- * @property propA {string} - The A prop.
- * @property propB {string} - The B prop.
+ * @property heartbeatInterval {number} - The interval in milliseconds between heartbeat messages.
+ * @property channelValueUpdateInterval {number} - The interval in milliseconds between channel value update messages.
+ * @property includeAlarmState {boolean} -  Whether alarm information should be included in channel
+ *     value updates. Needed if the visual state of the element should change when in the alarm state.
+ * @property includeTimeStamp {boolean} - Whether timestamp information should be included in channel
+ *     value updates. Needed for time plots.
  */
-export class Simon {
+export class WicaStreamProperties2 {
 
     /**
      * Constructs a new instance, optionally overriding the one or more default property values.
-     * @param {string} propA - override value for property A.
-     * @param {string} propB - override value for property B.
+     * @param {number} heartbeatInterval - override value for property A.
+     * @param {number} channelValueUpdateInterval - override value for property B.
+     * @param {boolean} includeAlarmState - override value for property B.
+     * @param {boolean} includeTimeStamp - override value for property B.
      */
-    constructor( propA = "A", propB = "B" )
+    constructor( heartbeatInterval = 15000, channelValueUpdateInterval = 100,includeAlarmState=true, includeTimeStamp=false )
     {
-        this.properties = { propA, propB }
+        this.properties = { heartbeatInterval, channelValueUpdateInterval, includeAlarmState, includeTimeStamp  }
     }
-    get propA() { return this.properties.propA; }
-    get propB() { return this.properties.propB; }
+    get heartbeatInterval() { return this.properties.heartbeatInterval; }
+    get channelValueUpdateInterval() { return this.properties.channelValueUpdateInterval; }
+    get includeAlarmState() { return this.properties.includeAlarmState; }
+    get includeTimeStamp() { return this.properties.includeTimeStamp; }
 
 }
