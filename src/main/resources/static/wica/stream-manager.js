@@ -1,6 +1,6 @@
 /**
+ * Provides support for creating and using Wica streams.
  * @module
- * @desc Provides support for creating and using Wica streams.
  */
 
 /**

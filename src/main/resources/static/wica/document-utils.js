@@ -1,6 +1,6 @@
 /**
+ * Provides helper functions for wica-aware html pages.
  * @module
- * @desc Provides helper functions for wica-aware html pages.
  */
 
 export {

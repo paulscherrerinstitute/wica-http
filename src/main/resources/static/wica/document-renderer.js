@@ -1,6 +1,6 @@
 /**
+ * Provides support for rendering the text content of wica-aware elements in the current document.
  * @module
- * @desc Provides support for rendering the text content of wica-aware elements in the current document.
  */
 import * as DocumentUtilities from './document-utils.js'
 

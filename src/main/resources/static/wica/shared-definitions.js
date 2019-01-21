@@ -1,11 +1,11 @@
 /**
- * Definitions that are used throughout the application.
- *
+ * Provides definitions that are used throughout the application.
  * @module
  */
 
 /**
- * Object defining the attributes of a wica-aware HTML element that are used when communicating with the Wica backend server.
+ * Object defining the attributes of a wica-aware HTML element that are used when communicating with the Wica
+ * backend server.
  *
  * @property {string} [channelName="data-wica-channel-name"] - The attribute which defines the channel name.
  * @property {string} [channelProperties="data-wica-channel-properties"] - The attribute which defines the channel
@@ -48,7 +48,7 @@ export const WicaElementRenderingAttributes = {
 };
 
 /**
- * Object defining the properties supported by the wica document renderer.
+ * Object defining the properties supported by the wica document renderer and their default values.
  *
  * @property {boolean} [disable=false] - Disables the default rendering for this channel.
  * @property {boolean} [exp=false] - Whether numeric information should be rendered in exponential format.
@@ -61,7 +61,7 @@ export const WicaElementChannelRenderingProperties = {
 };
 
 /**
- * Object defining the properties supported by a WicaStream. See also: {@link module:shared.DefaultWicaStreamProperties DefaultWicaStreamProperties}
+ * Object defining the properties supported by a WicaStream and their default values.
  *
  * @property {number} [heartbeatInterval=15000] - The interval in milliseconds between heartbeat messages.
  * @property {number} [channelValueUpdateInterval=100] The interval in milliseconds between channel value update messages.
@@ -78,9 +78,9 @@ export const WicaStreamProperties = {
 };
 
 /**
- * Object defining the properties supported by a WicaChannel.
+ * Object defining the properties supported by a WicaChannel and their default values.
  *
- * @property {number} prec - 8 - The precision to be used when sending numeric information.
+ * @property {number} [prec=8] - The precision to be used when sending numeric information.
  */
 export const WicaChannelProperties = {
     disable: false,

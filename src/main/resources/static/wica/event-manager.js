@@ -1,6 +1,6 @@
 /**
+ * Provides support for firing notification events on wica-aware elements in the current document.
  * @module
- * @desc Provides support for firing wica notification events on wica-aware elements in the current document.
  */
 
 import * as DocumentUtilities from './document-utils.js'

@@ -4,7 +4,11 @@
 // B) In ES6 module file: import 'wica/wica.js'
 console.debug( "Executing script in wica.js module...");
 
+import {WicaElementConnectionAttributes} from "./shared-definitions"
+import {WicaStreamProperties} from "./shared-definitions"
 import {DocumentStreamConnector} from './document-stream-connector.js'
+
+
 import * as WicaEventManager from './event-manager.js'
 import * as WicaRenderingManager from './document-renderer.js'
 
@@ -65,7 +69,13 @@ function loadWicaCSS()
     }
 }
 
-const documentStreamConnector = new DocumentStreamManager();
+//const WICA_HOST = "https://gfa-wica.psi.ch";
+const WICA_HOST = "https://gfa-wica-dev.psi.ch";
+
+const wicaStreamProperties = Object.freeze( WicaStreamProperties );
+const wicaElementConnectionAttributes = Object.freeze( WicaElementConnectionAttributes );
+
+const documentStreamConnector = new DocumentStreamConnector( WICA_HOST, wicaStreamProperties, wicaElementConnectionAttributes );
 documentStreamConnector.startAttributeUpdater();
 
 loadWicaCSS();

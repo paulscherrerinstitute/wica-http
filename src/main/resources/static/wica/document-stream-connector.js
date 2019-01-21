@@ -1,17 +1,11 @@
 /**
+ * Provides support for updating the current document with live information from the data sources on the backend.
  * @module
- * @desc Provides support for updating the current document with live information from the data sources on the backend.
  */
 console.debug( "Executing script in document-stream-connector.js module...");
 
 import {WicaStreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
-
-import {WicaElementConnectionAttributes} from "shared-definitions.js"
-
-
-//const WICA_HOST = "https://gfa-wica.psi.ch";
-const WICA_HOST = "https://gfa-wica-dev.psi.ch";
 
 /**
  * Provides real-time updates to wica-aware elements in the current document based on information streamed
@@ -28,9 +22,11 @@ export class DocumentStreamConnector
      *
      * @param {WicaStreamProperties} wicaStreamProperties - The properties of the stream that will be created to
      *     obtain the required information from the data sources.
+     *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
      *
      * @param {WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware
      *     element attributes that are used in the communication process.
+     *     See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
      */
     constructor( streamServerUrl, wicaStreamProperties, wicaElementConnectionAttributes )
     {
@@ -51,13 +47,13 @@ export class DocumentStreamConnector
     {
         this.configureStreamConnectionHandlers_( this.wicaElementConnectionAttributes.CHANNEL_STREAM_STATE );
 
-        this.configureStreamMessageHandlers_( this.wicaElementConnectionAttributes.CHANNEL_METADATA,
-                                              this.wicaElementConnectionAttributes.CHANNEL_VALUE_ARRAY,
-                                              this.wicaElementConnectionAttributes.CHANNEL_VALUE_LATEST,
-                                              this.wicaElementConnectionAttributes.CHANNEL_CONNECTION_STATE,
-                                              this.wicaElementConnectionAttributes.CHANNEL_ALARM_STATE );
+        this.configureStreamMessageHandlers_( this.wicaElementConnectionAttributes.channelMetadata,
+                                              this.wicaElementConnectionAttributes.channelValueArray,
+                                              this.wicaElementConnectionAttributes.channelValueLatest,
+                                              this.wicaElementConnectionAttributes.channelConnectionState,
+                                              this.wicaElementConnectionAttributes.channelAlarmState );
 
-        this.createStream_( this.wicaElementConnectionAttributes.CHANNEL_NAME, this.wicaElementConnectionAttributes.CHANNEL_PROPERTIES );
+        this.createStream_( this.wicaElementConnectionAttributes.channelName, this.wicaElementConnectionAttributes.channelProperties );
         this.activateStream_();
     }
 
@@ -184,7 +180,7 @@ export class DocumentStreamConnector
         // Create an array of the associated channel names
         const channels = [];
         wicaElements.forEach(function (widget) {
-            const channelName = widget.getAttribute( CHANNEL_NAME_ATTRIBUTE );
+            const channelName = widget.getAttribute( channelNameAttribute );
             if (widget.hasAttribute( channelPropertiesAttribute )) {
                 const channelProps = widget.getAttribute( channelPropertiesAttribute );
                 channels.push({"name": channelName, "props": JSON.parse( channelProps ) });
