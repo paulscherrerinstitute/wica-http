@@ -89,7 +89,10 @@ export const WicaChannelProperties = {
 };
 
 /**
- * SOme class
+ * Some class
+ *
+ * @property propA {string} - The A prop.
+ * @property propB {string} - The B prop.
  */
 export class Simon {
 
