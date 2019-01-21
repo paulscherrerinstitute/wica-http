@@ -53,11 +53,11 @@
  *     {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties} object.
  *
  * @property {string} channelStreamState="data-wica-channel-stream-state" - The name of the element attribute
- *     which is set to reflect the state of the connection to the wica server's data stream. Format: JS string
+ *     which reflects the state of the connection to the wica server's data stream. Format: JS string
  *     literal with possible values: [ "disconnected", "connected" ].
  *
  * @property {string} channelConnectionState="data-wica-channel-connection-state" - The name of the element
- *     attribute which is set to reflect the state of the connection between the wica server and the wica
+ *     attribute which reflects the state of the connection between the wica server and the wica
  *     channel's data source. Format: JS string literal with possible values: ["connecting-N", "opened-X",
  *     "closed-X"], where N represents the incrementing count of connection attempts and X represents the
  *     stream ID assigned by the server.
@@ -67,14 +67,14 @@
  *     representing JS {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata} object.
  *
  * @property {string} channelValueArray="data-wica-channel-value-array" - The name of the attribute which
- *     is set to reflect the most recently obtained values from the wica channel. Format: JSON string literal,
+ *     reflects the most recently obtained values from the wica channel. Format: JSON string literal,
  *     representing JS Array of {@link module:shared-definitions.WicaChannelValue WicaChannelValue} objects.
  *
  * @property {string} channelValueLatest="data-wica-channel-value-latest" - The name of the attribute which is
  *     set to reflect the last value obtained from the channel. Format: JSON string literal, representing JS
  *     {@link module:shared-definitions.WicaChannelValue WicaChannelValue} object.
  *
- * @property {string} channelAlarmState="data-wica-channel-alarm-state" - The attribute which is set to reflect
+ * @property {string} channelAlarmState="data-wica-channel-alarm-state" - The name of the attribute which reflects
  *     the alarm status most recently obtained from the channel. Format: JS string literal with possible values:
  *     ["NO_ALARM", "MINOR_ALARM", "MAJOR_ALARM", "INVALID_ALARM" ].
  */
@@ -98,8 +98,8 @@ export const WicaElementConnectionAttributes = Object.freeze ({
  *     specifies the tooltip that will be displayed when the browser's cursor hovers over the element.
  *     When not defined the wica channel name will be used instead. Format: JS string literal.
  *
- * @property {string} rendererProperties="data-wica-renderer-props" - The name of the attribute which specifies
- *     other general purpose properties which affect the way the element is rendered. Format: JSON string literal
+ * @property {string} rendererProperties="data-wica-renderer-props" - The name of the attribute which provides
+ *     other miscellaneous properties which affect the way the element is rendered. Format: JSON string literal
  *     representing JS {@link module:shared-definitions.WicaElementRenderingProperties WicaElementRenderingProperties}
  *     object.
  */
