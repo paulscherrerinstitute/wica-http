@@ -1,5 +1,5 @@
 /**
- * Provides support for rendering the text content of wica-aware elements in the current document.
+ * Provides support for rendering the textual content of wica-aware elements in the current document.
  * @module
  */
 import * as DocumentUtilities from './document-utils.js'
@@ -16,15 +16,14 @@ const MAX_PRECISION = 8;
  * Renders the visual state of wica-aware elements in the current document based on attribute information
  * obtained from the Wica server on the backend.
  */
-export class DocumentRenderer
+export class DocumentTextRenderer
 {
 
     /**
      * Constructs a new instance.
      *
      * @param context
-     * @param context
-     * @param {!WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware
+     * @param {!WicaElementRenderingAttributes} wicaElementConnectionAttributes - The names of the wica-aware
      *     element attributes that are to be used in the communication process.
      *     See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
      *

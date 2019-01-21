@@ -2,6 +2,8 @@
 // to use this:
 // A) In HTML file: <script type="module" src=".../wica/wica.js"></script>
 // B) In ES6 module file: import 'wica/wica.js'
+import {DocumentTextRenderer} from "./document-text-renderer";
+
 console.debug( "Executing script in wica.js module...");
 
 import {WicaElementConnectionAttributes} from "./shared-definitions"
@@ -10,7 +12,7 @@ import {DocumentStreamConnector} from './document-stream-connector.js'
 
 
 import * as WicaEventManager from './event-manager.js'
-import * as WicaRenderingManager from './document-renderer.js'
+import * as WicaRenderingManager from './document-text-renderer.js'
 
 function fireWicaEvents()
 {
@@ -76,7 +78,12 @@ const wicaStreamProperties = Object.freeze( WicaStreamProperties );
 const wicaElementConnectionAttributes = Object.freeze( WicaElementConnectionAttributes );
 
 const documentStreamConnector = new DocumentStreamConnector( WICA_HOST, wicaStreamProperties, wicaElementConnectionAttributes );
-documentStreamConnector.startAttributeUpdater();
+documentStreamConnector.activate();
+
+const documentTextRenderer = new DocumentTextRenderer( WICA_HOST, wicaStreamProperties, wicaElementConnectionAttributes );
+documentTextRenderer.activate();
+
+
 
 loadWicaCSS();
 

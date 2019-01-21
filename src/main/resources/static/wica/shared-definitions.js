@@ -25,7 +25,7 @@
  * @property {string} [channelAlarmState="data-wica-channel-alarm-state"] - The attribute which reflects the alarm
  *     status obtained from the channel.
  */
-export const WicaElementConnectionAttributes = {
+export const WicaElementConnectionAttributes = Object.freeze ({
     channelName:            "data-wica-channel-name",
     channelProperties:      "data-wica-channel-props",
     streamState:            "data-wica-channel-stream-state",
@@ -34,37 +34,39 @@ export const WicaElementConnectionAttributes = {
     channelValueArray:      "data-wica-channel-value-array",
     channelValueLatest:     "data-wica-channel-value-latest",
     channelAlarmState:      "data-wica-channel-alarm-state"
-};
+} );
 
 /**
- * Object defining the attributes of a wica-aware HTML element that are used by the
- * {@link module:document-renderer.DocumentRenderer DocumentRenderer} when rendering its visual state.
+ * Object defining the attributes of a wica-aware HTML element that are used to render its visual state. As used,
+ * for example, by the {@link module:document-text-renderer.DocumentTextRenderer DocumentTextRenderer}.
  *
- * @property {string} [rendererTooltips="data-wica-renderer-tooltips"] - The attribute which defines the element's
- *     tooltips. When not defined the channel name will be used.
- * @property {string} [rendererProperties="data-wica-renderer-props"] - The attribute which defines other properties
- *     which will affect the way the element is rendered.
+ * @property {string} [rendererTooltips="data-wica-renderer-tooltips"] - The attribute which defines the tooltip
+ *     that will be displayed when the browser's cursor hovers over the element. When not defined the channel
+ *     name will be used.
+ * @property {string} [rendererProperties="data-wica-renderer-props"] - The attribute which defines other general
+ *     purpose properties which will affect the way the element is rendered.
+ *     See @link module:shared-definitions.WicaElementRenderingProperties WicaElementRenderingProperties}.
  */
-export const WicaElementRenderingAttributes = {
+export const WicaElementRenderingAttributes = Object.freeze ({
     rendererTooltips:   "data-wica-renderer-tooltips",
     rendererProperties: "data-wica-renderer-props"
-};
+} );
 
 /**
- * Object defining the properties supported by the wica document renderer and their default values.
+ * Object defining the properties supported by the wica document renderer, together with their default values.
  *
  * @property {boolean} [disable=false] - Disables the default rendering for this channel.
  * @property {boolean} [exp=false] - Whether numeric information should be rendered in exponential format.
  * @property {number} [prec=8] - The precision to be used when rendering numeric information in fixed decimal point format.
  */
-export const WicaElementChannelRenderingProperties = {
+export const WicaElementRenderingProperties = Object.freeze ({
     disable: false,
     exp: false,
     prec: 8
-};
+} );
 
 /**
- * Object defining the properties supported by a WicaStream and their default values.
+ * Object defining the properties supported by a WicaStream, together with their default values.
  *
  * @property {number} [heartbeatInterval=15000] - The interval in milliseconds between heartbeat messages.
  * @property {number} [channelValueUpdateInterval=100] The interval in milliseconds between channel value update messages.
@@ -73,50 +75,20 @@ export const WicaElementChannelRenderingProperties = {
  * @property {boolean} [includeTimeStamp=false] - Whether timestamp information should be included in channel
  *     value updates. Needed for time plots.
  */
-export const WicaStreamProperties = {
+export const WicaStreamProperties = Object.freeze ({
     heartBeatInterval: 15000,
     channelValueUpdateInterval: 100,
     includeAlarmState: true,
     includeTimeStamp: false
-};
+} );
 
 /**
- * Object defining the properties supported by a WicaChannel and their default values.
+ * Object defining the properties supported by a WicaChannel, together with their default values.
  *
  * @property {number} [prec=8] - The precision to be used when sending numeric information.
  */
-export const WicaChannelProperties = {
+export const WicaChannelProperties = Object.freeze ({
     disable: false,
     exp: false,
     prec: 8
-};
-
-/**
- * Object defining the properties supported by a WicaStream and their default values.
- *
- * @property heartbeatInterval {number} - The interval in milliseconds between heartbeat messages.
- * @property channelValueUpdateInterval {number} - The interval in milliseconds between channel value update messages.
- * @property includeAlarmState {boolean} -  Whether alarm information should be included in channel
- *     value updates. Needed if the visual state of the element should change when in the alarm state.
- * @property includeTimeStamp {boolean} - Whether timestamp information should be included in channel
- *     value updates. Needed for time plots.
- */
-export class WicaStreamProperties2 {
-
-    /**
-     * Constructs a new instance, optionally overriding the one or more default property values.
-     * @param {number} heartbeatInterval - override value for property A.
-     * @param {number} channelValueUpdateInterval - override value for property B.
-     * @param {boolean} includeAlarmState - override value for property B.
-     * @param {boolean} includeTimeStamp - override value for property B.
-     */
-    constructor( heartbeatInterval = 15000, channelValueUpdateInterval = 100,includeAlarmState=true, includeTimeStamp=false )
-    {
-        this.properties = { heartbeatInterval, channelValueUpdateInterval, includeAlarmState, includeTimeStamp  }
-    }
-    get heartbeatInterval() { return this.properties.heartbeatInterval; }
-    get channelValueUpdateInterval() { return this.properties.channelValueUpdateInterval; }
-    get includeAlarmState() { return this.properties.includeAlarmState; }
-    get includeTimeStamp() { return this.properties.includeTimeStamp; }
-
-}
+} );
