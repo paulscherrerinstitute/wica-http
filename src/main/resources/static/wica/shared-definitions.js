@@ -97,6 +97,7 @@ export const WicaChannelProperties = {
 export class Simon {
 
     /**
+     * Constructs a new instance, optionally overriding the one or more default property values.
      * @param {string} propA - override value for property A.
      * @param {string} propB - override value for property B.
      */
@@ -104,7 +105,6 @@ export class Simon {
     {
         this.properties = { propA, propB }
     }
-
     get propA() { return this.properties.propA; }
     get propB() { return this.properties.propB; }
 
