@@ -4,14 +4,15 @@
  */
 
 /**
- * Object defining the attributes of a wica-aware HTML element that are used when communicating with the Wica
- * backend server.
+ * Object defining the attributes of a wica-aware HTML element that are used by the
+ * {@link module:document-stream-connector.DocumentStreamConnector DocumentStreamConnector} when communicating
+ * with the Wica backend server.
  *
- * @property {string} [channelName="data-wica-channel-name"] - The attribute which defines the channel name.
+ * @property {string} channelName="data-wica-channel-name" - The attribute which defines the channel name.
  * @property {string} [channelProperties="data-wica-channel-properties"] - The attribute which defines the channel
  *     properties. See {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties}.
- * @property {string} [channelStreamState="data-wica-stream-state"] - The attribute which reflects the state of the
- *     connection to the backend server's data stream.
+ * @property {string} [channelStreamState="data-wica-channel-stream-state"] - The attribute which reflects the state
+ *     of the connection to the backend server's data stream.
  * @property {string} [channelConnectionState="data-wica-channel-connection-state"] - The attribute which reflects
  *     the state of the connection between the backend server and the channel's data source.
  * @property {string} [channelMetadata="data-wica-channel-metadata"] - The attribute which reflects the metadata
@@ -25,8 +26,8 @@
  */
 export const WicaElementConnectionAttributes = {
     channelName:            "data-wica-channel-name",
-    channelProperties:      "data-wica-channel-properties",
-    channelStreamState:     "data-wica-channel-stream-state",
+    channelProperties:      "data-wica-channel-props",
+    streamState:            "data-wica-channel-stream-state",
     channelConnectionState: "data-wica-channel-connection-state",
     channelMetadata:        "data-wica-channel-metadata",
     channelValueArray:      "data-wica-channel-value-array",
@@ -35,16 +36,17 @@ export const WicaElementConnectionAttributes = {
 };
 
 /**
- * Object defining the attributes of a wica-aware HTML element that are used when rendering its visual state.
+ * Object defining the attributes of a wica-aware HTML element that are used by the
+ * {@link module:document-renderer.DocumentRenderer DocumentRenderer} when rendering its visual state.
  *
- * @property {string} [channelTooltips="data-wica-channel-tooltips"] - The attribute which defines the channel's
- *     tooltips.
- * @property {string} [channelRenderingProperties="data-wica-channel-rendering-props"] - The attribute which
- *     defines properties which will affect the way it is rendered.
+ * @property {string} [rendererTooltips="data-wica-renderer-tooltips"] - The attribute which defines the element's
+ *     tooltips. When not defined the channel name will be used.
+ * @property {string} [rendererProperties="data-wica-renderer-props"] - The attribute which defines other properties
+ *     which will affect the way the element is rendered.
  */
 export const WicaElementRenderingAttributes = {
-    channelTooltips:            "data-wica-channel-tooltips",
-    channelRenderingProperties: "data-wica-channel-rendering-props"
+    rendererTooltips:   "data-wica-renderer-tooltips",
+    rendererProperties: "data-wica-renderer-props"
 };
 
 /**
