@@ -10,7 +10,7 @@
  * The properties that are available depends on the underlying data source (eg whether the channel data source
  * is an EPICS channel). The type property is always present.
  *
- * @typedef WicaChannelMetadataObject
+ * @typedef module:shared-definitions.WicaChannelMetadataObject
  * @property type {string} - One of: "REAL", "INTEGER", "STRING", "REAL_ARRAY", "INTEGER_ARRAY", "STRING_ARRAY".
  * @property egu {string} -  Engineering Units in which the channel's value will be expressed.
  * @property prec {number} - The precision in which the channel's value will be expressed. Applies only to numeric types.
@@ -28,7 +28,7 @@
  * Object providing the current value of the channel together with, optionally, the timestamp at which
  * the value snapshot was obtained and the alarm status.
  *
- * @typedef WicaChannelValueObject
+ * @typedef module:shared-definitions.WicaChannelValueObject
  * @property val {string|null} - JSON String representation of the current value. Set to NULL if the channel's
  *     data source is offline, or otherwise unavailable.
  * @property sevr {number} - [Alarm Severity] -  Present if the WicaStreamProperty 'includeAlarmState' is true. The
