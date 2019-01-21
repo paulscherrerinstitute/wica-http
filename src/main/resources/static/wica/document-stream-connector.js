@@ -16,8 +16,9 @@ export class DocumentStreamConnector
     /**
      * Constructs a new instance to work with the specified backend server.
      *
-     * The returned object will remain in a dormant state until triggered by a call to the activate method.
-
+     * The returned object will remain in a dormant state until triggered by a call to the
+     *     {@link module:document-stream-connector.activate activate} method.
+     *
      * @param {!string} streamServerUrl - The URL of the backend server from whom information is to be obtained.
      *
      * @param {!WicaStreamProperties} wicaStreamProperties - The properties of the stream that will be created to
