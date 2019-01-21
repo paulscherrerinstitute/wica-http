@@ -1,26 +1,40 @@
 /**
- * Provides definitions that are used throughout the application.
+ * Provides definitions that are shared throughout the application.
  * @module
  */
 
 /**
- * JS Object that provides channel metadata information.
- *
- * The available properties may vary according to the nature of the underlying data source. The type property is
- * always present.
+ * JS Object that provides channel metadata information for systems with diverse types of data channel.
  *
  * @typedef module:shared-definitions.WicaChannelMetadata
+ * @property {WicaChannelMetadataOther|WicaChannelMetadataEpics}
+ */
+
+/**
+ * JS Object that provides channel metadata information for a minimal system.
+ *
+ * @typedef module:shared-definitions.WicaChannelMetadataOther
+ * @property type {string} - One of: "REAL", "INTEGER", "STRING", "REAL_ARRAY", "INTEGER_ARRAY", "STRING_ARRAY".
+ *     This property is always present.
+ */
+
+/**
+ * JS Object that provides channel metadata for an EPICS IOC data source.
+ *
+ * The available properties may vary according to the EPICS record that provides the EPICS channel.
+ *
+ * @typedef module:shared-definitions.WicaChannelMetadataEpics
  * @property type {string} - One of: "REAL", "INTEGER", "STRING", "REAL_ARRAY", "INTEGER_ARRAY", "STRING_ARRAY".
  * @property egu {string} -  Engineering Units in which the channel's value will be expressed.
  * @property prec {number} - The precision in which the channel's value will be expressed. Applies only to numeric types.
- * @property hopr {number} - High Operating Range. EPICS channels only.
- * @property lopr {number} - Low Operating Range. EPICS channels only.
- * @property drvh {number} - Drive High Control Limit. EPICS channels only.
- * @property drvl {number} - Drive Low Control Limit. EPICS channels only.
- * @property hihi {number} - Upper Alarm Limit. EPICS channels only.
- * @property lolo {number} - Lower Alarm Limit. EPICS channels only.
- * @property high {number} - Upper Warning Limit. EPICS channels only.
- * @property low {number} - Lower Warning Limit. EPICS channels only.
+ * @property hopr {number} - High Operating Range.
+ * @property lopr {number} - Low Operating Range.
+ * @property drvh {number} - Drive High Control Limit.
+ * @property drvl {number} - Drive Low Control Limit.
+ * @property hihi {number} - Upper Alarm Limit.
+ * @property lolo {number} - Lower Alarm Limit.
+ * @property high {number} - Upper Warning Limit.
+ * @property low {number} - Lower Warning Limit.
  */
 
 /**
@@ -34,8 +48,9 @@
  * @property val {string|null} - JSON String representation of the current value. Set to NULL if the channel's
  *     data source is offline, or otherwise unavailable.
  *
- * @property sevr {number} - [Alarm Severity] -  Present if the WicaStreamProperty 'includeAlarmState' is true. The
+ * @property sevr {number} - [Alarm Severity] -  Present if the WicaStreamProperty 'includeAlarmInfo' is true. The
  *    following values are defined (0 = No Alarm; 1 = Minor Alarm, 2 = Major Alarm)
+ *
  * @property ts {string} - [Timestamp] - present if the WicaStreamProperty 'includeTimeStamp' is true.
  */
 
@@ -95,7 +110,7 @@ export const WicaElementConnectionAttributes = Object.freeze ({
  * visual state.
  *
  * @property {string} rendererTooltips="data-wica-renderer-tooltips" - The name of the attribute which
- *     specifies the tooltip that will be displayed when the browser's cursor hovers over the element.
+ *     specifies the tooltip to be displayed when the browser's cursor hovers over the element.
  *     When not defined the wica channel name will be used instead. Format: JS string literal.
  *
  * @property {string} rendererProperties="data-wica-renderer-props" - The name of the attribute which provides
@@ -130,7 +145,7 @@ export const WicaElementRenderingProperties = Object.freeze ({
  *
  * @property {number} [heartbeatInterval=15000] - The interval in milliseconds between heartbeat messages.
  * @property {number} [channelValueUpdateInterval=100] The interval in milliseconds between channel value update messages.
- * @property {boolean} [includeAlarmState=true] - Whether alarm information should be included in channel
+ * @property {boolean} [includeAlarmInfo=true] - Whether alarm information should be included in channel
  *     value updates. Needed if the visual state of the element should change when in the alarm state.
  * @property {boolean} [includeTimeStamp=false] - Whether timestamp information should be included in channel
  *     value updates. Needed for time plots.
@@ -138,7 +153,7 @@ export const WicaElementRenderingProperties = Object.freeze ({
 export const WicaStreamProperties = Object.freeze ({
     heartBeatInterval: 15000,
     channelValueUpdateInterval: 100,
-    includeAlarmState: true,
+    includeAlarmInfo: true,
     includeTimeStamp: false
 } );
 
