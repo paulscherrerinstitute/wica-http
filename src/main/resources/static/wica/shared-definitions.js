@@ -45,15 +45,15 @@
  *     the wica channel name. This is the minimum information that must be present for an element to be
  *     considered "wica-aware".
  * @property {string} channelProperties="data-wica-channel-properties" - The name of the element attribute which
- *     specifies the wica channel properties (JSON String, representing JS Object). See
+ *     specifies the wica channel properties. Format: JSON String, representing JS
  *     {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties} object.
  * @property {string} channelStreamState="data-wica-channel-stream-state" - The name of the element attribute
- *     which is set to reflect the state of the connection to the wica server's data stream. Possible values:
- *     [ "disconnected", "connected" ].
+ *     which is set to reflect the state of the connection to the wica server's data stream. Format: JS string
+ *     with possible values: [ "disconnected", "connected" ].
  * @property {string} channelConnectionState="data-wica-channel-connection-state" - The name of the element
  *     attribute which is set to reflect the state of the connection between the wica server and the wica
- *     channel's data source. Possible values: ["connecting-N", "opened-XXX", "closed-XXX"], where N represents
- *     the incrementing count of connection attempts and XXX represents the stream ID assigned by the server.
+ *     channel's data source. Possible values: ["connecting-N", "opened-X", "closed-X"], where N represents
+ *     the incrementing count of connection attempts and X represents the stream ID assigned by the server.
  * @property {string} channelMetadata="data-wica-channel-metadata" - The name of the element attribute which is
  *     set to reflect the metadata obtained most recently from the wica channel (JSON String, representing
  *     JS {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata} object).
