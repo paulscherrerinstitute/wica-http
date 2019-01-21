@@ -9,7 +9,7 @@
  *
  * @property {string} [channelName="data-wica-channel-name"] - The attribute which defines the channel name.
  * @property {string} [channelProperties="data-wica-channel-properties"] - The attribute which defines the channel
- *     properties.
+ *     properties. See {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties}.
  * @property {string} [channelStreamState="data-wica-stream-state"] - The attribute which reflects the state of the
  *     connection to the backend server's data stream.
  * @property {string} [channelConnectionState="data-wica-channel-connection-state"] - The attribute which reflects
