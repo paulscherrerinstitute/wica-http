@@ -36,13 +36,13 @@
  */
 
 /**
- * JS Object that defines the attributes of a wica-aware HTML element that are used by the
+ * JS Object that defines the HTML element attributes used by the
  * {@link module:document-stream-connector.DocumentStreamConnector DocumentStreamConnector} when communicating
- * with the Wica backend server. Format: JS string.
+ * with the Wica server.
  *
  * @property {string} channelName="data-wica-channel-name" - The name of the element attribute which specifies
  *     the wica channel name. This is the minimum information that must be present for an element to be
- *     considered "wica-aware".
+ *     considered "wica-aware". Format: JS string.
  *
  * @property {string} channelProperties="data-wica-channel-properties" - The name of the element attribute which
  *     specifies the wica channel properties. Format: JSON String, representing JS
