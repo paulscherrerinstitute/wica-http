@@ -3,6 +3,37 @@
  * @module
  */
 
+
+/**
+ * Provides general purpose information about a channel.
+ *
+ * The exact format depends on the underlying data source. For an EPICS channel any (or none) of the
+ * properties below will be available.
+ *
+ * @typedef ChannelMetadataObject
+ * @property type - always present.
+ * @property egu
+ * @property prec
+ * @property hopr
+ * @property lopr
+ * @property drvh
+ * @property drvl
+ * @property hihi
+ * @property lolo
+ * @property high
+ * @property low
+ */
+
+/**
+ * Provides general purpose information about a channel.
+ *
+ * @typedef ChannelValueObject
+ * @property val
+ * @property sevr
+ * @property ts
+ */
+
+
 /**
  * Provides support for creating a new WicaStream on the Wica backend server, for thereafter subscribing
  * to it and for publishing locally the received information.
@@ -38,9 +69,9 @@ export class WicaStreamManager
      *
      * @param {Object} messageHandlers - Callbacks for handling data received from the SSE stream.
      * @param {callback} messageHandlers.channelMetadataUpdated -  Called when channel metadata information
-     *     is received.
+     *     is received. The callback provides a single argument, the so-called ChannelMetadata object.
      * @param {callback} messageHandlers.channelValuesUpdated - Called when channel value information
-     *     is received.
+     *     is received. The callback provides a single argument the ChannelValueArray object.
      *
      * @param {Object} options - Provides additional client-side configuration options.
      * @param {number} [options.streamTimeoutIntervalInSeconds] - Periodicity with which the stream's heartbeat
