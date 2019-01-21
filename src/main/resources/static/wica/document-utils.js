@@ -21,7 +21,7 @@ function findWicaElements() {
 /**
  * Finds all wica-aware HTML elements in the current document with the specified wica channel name.
  *
- * @param target the channel name to search for.
+ * @param {!string} target the channel name to search for.
  * @returns {NodeListOf<Element>}  the result list.
  */
 function findWicaElementsWithChannelName( target ) {

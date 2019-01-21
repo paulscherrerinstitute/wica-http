@@ -18,14 +18,14 @@ export class DocumentStreamConnector
      *
      * The returned object will remain in a dormant state until triggered by a call to the activate method.
 
-     * @param {string} streamServerUrl - the URL of the backend server from whom information is to be obtained.
+     * @param {!string} streamServerUrl - The URL of the backend server from whom information is to be obtained.
      *
-     * @param {WicaStreamProperties} wicaStreamProperties - The properties of the stream that will be created to
+     * @param {!WicaStreamProperties} wicaStreamProperties - The properties of the stream that will be created to
      *     obtain the required information from the data sources.
      *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
      *
-     * @param {WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware
-     *     element attributes that are used in the communication process.
+     * @param {!WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware
+     *     element attributes that are to be used in the communication process.
      *     See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
      */
     constructor( streamServerUrl, wicaStreamProperties, wicaElementConnectionAttributes )

@@ -19,7 +19,6 @@ export class WicaStreamManager
      * @param {Object} streamConfiguration - The stream specification to be sent to the server. This includes
      *     the configuration of each of the stream's channels, together with, optionally, the stream properties
      *     object.
-     *
      * @param {WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
      *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
      * @param {Object[]} streamConfiguration.channels - The configuration of each stream channel.
