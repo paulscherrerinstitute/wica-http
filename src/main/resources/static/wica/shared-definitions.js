@@ -9,8 +9,8 @@
  * @typedef module:shared-definitions.WicaChannelMetadata
  * @property {WicaChannelMetadataOther|WicaChannelMetadataEpics} - One or more metadata properties
  *     whose details depend on the data source.
- *     See {@link module:shared-definitions.WicaChannelMetadataOther WicaChannelMetadataOther}.
- *     See {@link module:shared-definitions.WicaChannelMetadataEpics WicaChannelMetadataEpics}.
+ *     See {@link module:shared-definitions.WicaChannelMetadataOther WicaChannelMetadataOther},
+ *     and {@link module:shared-definitions.WicaChannelMetadataEpics WicaChannelMetadataEpics}.
  */
 
 /**
