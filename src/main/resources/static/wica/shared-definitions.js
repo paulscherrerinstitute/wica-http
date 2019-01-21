@@ -80,7 +80,7 @@ export const WicaElementConnectionAttributes = Object.freeze ({
  *     name will be used.
  * @property {string} [rendererProperties="data-wica-renderer-props"] - The attribute which defines other general
  *     purpose properties which will affect the way the element is rendered.
- *     See @link module:shared-definitions.WicaElementRenderingProperties WicaElementRenderingProperties}.
+ *     See {@link module:shared-definitions.WicaElementRenderingProperties WicaElementRenderingProperties}.
  */
 export const WicaElementRenderingAttributes = Object.freeze ({
     rendererTooltips:   "data-wica-renderer-tooltips",
