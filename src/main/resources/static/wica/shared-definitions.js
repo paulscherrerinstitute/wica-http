@@ -55,11 +55,11 @@
  *     data source. Possible values: ["connecting-NNN", "opened-XXX", "closed-XXX"], where NNN represents the
  *     incrementing count of connection attempts and XXX represents the stream ID assigned by the server.
  * @property {string} channelMetadata="data-wica-channel-metadata" - The name of the element attribute which is
- *     set to reflect the metadata obtained most recently from the channel (JSON String, representing JS Object).
- *     See {@link module:shared-definitions.WicaChannelMetadataObject WicaChannelMetadataObject}.
+ *     set to reflect the metadata obtained most recently from the wica channel (JSON String, representing
+ *     JS Object). See {@link module:shared-definitions.WicaChannelMetadataObject WicaChannelMetadataObject}.
  * @property {string} channelValueArray="data-wica-channel-value-array" - The name of the attribute which
- *     is set to reflect the values most recently obtained values from the channel (JSON String, representing
- *     JS Array).
+ *     is set to reflect the values most recently obtained values from the wica channel (JSON String, representing
+ *     JS Array of {@link module:shared-definitions.WicaChannelValueObject WicaChannelValueObject} objects.
  * @property {string} channelValueLatest="data-wica-channel-value-latest" - The name of the attribute which is
  *     set to reflect the last value obtained from the channel (JSON String, representing JS Object).
  *     See {@link module:shared-definitions.WicaChannelValueObject WicaChannelValueObject}.
