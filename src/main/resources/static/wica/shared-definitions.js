@@ -51,9 +51,9 @@
  *     which is set to reflect the state of the connection to the wica server's data stream. Possible values:
  *     [ "disconnected", "connected" ].
  * @property {string} channelConnectionState="data-wica-channel-connection-state" - The name of the element
- *     attribute which is set to reflect the state of the connection between the wica server and the channel's
- *     data source. Possible values: ["connecting-NNN", "opened-XXX", "closed-XXX"], where NNN represents the
- *     incrementing count of connection attempts and XXX represents the stream ID assigned by the server.
+ *     attribute which is set to reflect the state of the connection between the wica server and the wica
+ *     channel's data source. Possible values: ["connecting-N", "opened-XXX", "closed-XXX"], where N represents
+ *     the incrementing count of connection attempts and XXX represents the stream ID assigned by the server.
  * @property {string} channelMetadata="data-wica-channel-metadata" - The name of the element attribute which is
  *     set to reflect the metadata obtained most recently from the wica channel (JSON String, representing
  *     JS Object). See {@link module:shared-definitions.WicaChannelMetadataObject WicaChannelMetadataObject}.
