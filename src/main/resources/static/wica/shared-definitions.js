@@ -5,12 +5,12 @@
 
 
 /**
- * Object provides general purpose information about a channel. This
+ * Object provides general purpose information about a channel.
  *
  * The properties that are available depends on the underlying data source (eg whether the channel data source
  * is an EPICS channel). The type property is always present.
  *
- * @typedef module:shared-definitions.WicaChannelMetadataObject
+ * @typedef module:shared-definitions.WicaChannelMetadata
  * @property type {string} - One of: "REAL", "INTEGER", "STRING", "REAL_ARRAY", "INTEGER_ARRAY", "STRING_ARRAY".
  * @property egu {string} -  Engineering Units in which the channel's value will be expressed.
  * @property prec {number} - The precision in which the channel's value will be expressed. Applies only to numeric types.
@@ -28,7 +28,7 @@
  * Object providing the current value of the channel together with, optionally, the timestamp at which
  * the value snapshot was obtained and the alarm status.
  *
- * @typedef module:shared-definitions.WicaChannelValueObject
+ * @typedef module:shared-definitions.WicaChannelValue
  * @property val {string|null} - JSON String representation of the current value. Set to NULL if the channel's
  *     data source is offline, or otherwise unavailable.
  * @property sevr {number} - [Alarm Severity] -  Present if the WicaStreamProperty 'includeAlarmState' is true. The
@@ -56,13 +56,13 @@
  *     the incrementing count of connection attempts and XXX represents the stream ID assigned by the server.
  * @property {string} channelMetadata="data-wica-channel-metadata" - The name of the element attribute which is
  *     set to reflect the metadata obtained most recently from the wica channel (JSON String, representing
- *     JS Object). See {@link module:shared-definitions.WicaChannelMetadataObject WicaChannelMetadataObject}.
+ *     JS {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata} object).
  * @property {string} channelValueArray="data-wica-channel-value-array" - The name of the attribute which
- *     is set to reflect the values most recently obtained values from the wica channel (JSON String, representing
- *     JS Array of {@link module:shared-definitions.WicaChannelValueObject WicaChannelValueObject} objects.
+ *     is set to reflect the most recently obtained values from the wica channel (JSON String, representing
+ *     JS Array of {@link module:shared-definitions.WicaChannelValue WicaChannelValue} objects).
  * @property {string} channelValueLatest="data-wica-channel-value-latest" - The name of the attribute which is
- *     set to reflect the last value obtained from the channel (JSON String, representing JS Object).
- *     See {@link module:shared-definitions.WicaChannelValueObject WicaChannelValueObject}.
+ *     set to reflect the last value obtained from the channel (JSON String, representing JS
+ *     {@link module:shared-definitions.WicaChannelValue WicaChannelValue} object).
  * @property {string} channelAlarmState="data-wica-channel-alarm-state" - The attribute which is set to reflect
  *     the alarm status most recently obtained from the channel. Possible values: ["NO_ALARM", "MINOR_ALARM",
  *     "MAJOR_ALARM", "INVALID_ALARM" ].
