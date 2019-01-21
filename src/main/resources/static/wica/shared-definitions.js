@@ -87,3 +87,19 @@ export const WicaChannelProperties = {
     exp: false,
     prec: 8
 };
+
+/**
+ * SOme class
+ */
+export class Simon {
+
+    constructor( propA="A", propB="B" )
+    {
+        this.propA = propA;
+        this.propB = propB;
+    }
+
+    get propA() { return this.propA; }
+    get propB() { return this.propB; }
+
+}
