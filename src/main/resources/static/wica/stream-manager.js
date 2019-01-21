@@ -19,19 +19,22 @@ export class WicaStreamManager
      * @param {Object} streamConfiguration - The stream specification to be sent to the server. This includes
      *     the configuration of each of the stream's channels, together with, optionally, the stream properties
      *     object.
-     * @param {WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
-     *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
      * @param {Object[]} streamConfiguration.channels - The configuration of each stream channel.
      * @param {string} streamConfiguration.channels[].name - The name of the channel.
      * @param {WicaChannelProperties} [streamConfiguration.channels[].props] - The channel properties object.
      *     See {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties}.
+     * @param {WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
+     *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
      *
      * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
-     * @param {callback} connectionHandlers.streamConnect - Called when the stream attempts to connect.
+     * @param {callback} connectionHandlers.streamConnect - Called each time this manager attempts to create
+     *     and subscribe to a new stream. This callback has no arguments.
      * @param {callback} connectionHandlers.streamOpened - Called when the stream is opened (that's to say
-     *     the connection with the server has been successfully established).
+     *     the connection with the server has been successfully established). The callback provides a
+     *     single argument specifying the id of the stream which has been opened (as obtained from the server).
      * @param {callback} connectionHandlers.streamClosed - Called when the stream closes (that's to say the
-     *     connection with the server has been shut down).
+     *     connection with the server has been shut down). The callback provides a single argument specifying
+     *     the id of the stream which has been closed.
      *
      * @param {Object} messageHandlers - Callbacks for handling data received from the SSE stream.
      * @param {callback} messageHandlers.channelMetadataUpdated -  Called when channel metadata information
@@ -43,7 +46,7 @@ export class WicaStreamManager
      * @param {number} [options.streamTimeoutIntervalInSeconds] - Periodicity with which the stream's heartbeat
      *     message needs to be received before the manager will conclude that a communication outage has occurred.
      * @param {number} [options.streamReconnectIntervalInSeconds] - Period between successive reconnection
-     *     attempts after a communication outage.
+     *     attempts following a communication outage.
      * @param {boolean} [options.crossOriginCheckEnabled] - Whether this manager should perform a CORS check
      *     to verify that the origin of the event stream is the same as the origin from which this manager
      *     was loaded.
@@ -60,7 +63,6 @@ export class WicaStreamManager
         this.streamReconnectIntervalInSeconds = options.streamReconnectIntervalInSeconds;
         this.streamTimeoutIntervalInSeconds = options.streamTimeoutIntervalInSeconds;
         this.crossOriginCheckEnabled = options.crossOriginCheckEnabled;
-
         this.countdownInSeconds = 0;
     }
 
