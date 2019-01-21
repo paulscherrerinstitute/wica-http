@@ -11,7 +11,7 @@
  * properties below will be available.
  *
  * @typedef ChannelMetadataObject
- * @property type - always present.
+ * @property type {string} - One of: "REAL", "INTEGER", "STRING", "REAL_ARRAY", "INTEGER_ARRAY", "STRING_ARRAY".
  * @property egu {string}
  * @property prec {number}
  * @property hopr {number}
