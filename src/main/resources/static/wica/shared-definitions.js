@@ -44,24 +44,24 @@
  * @property {string} channelName="data-wica-channel-name" - The name of the element attribute which specifies
  *     the wica channel name. This is the minimum information that must be present for an element to be
  *     considered "wica-aware".
- * @property {string} [channelProperties="data-wica-channel-properties"] - The name of the element attribute which
+ * @property {string} channelProperties="data-wica-channel-properties" - The name of the element attribute which
  *     specifies the wica channel properties (JSON String, representing JS Object).
  *     {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties} object.
- * @property {string} [channelStreamState="data-wica-channel-stream-state"] - The name of the element attribute
+ * @property {string} channelStreamState="data-wica-channel-stream-state" - The name of the element attribute
  *     which is reflects the state of the connection to the wica server's data stream. Possible values:
  *     [ "disconnected", "connected" ].
- * @property {string} [channelConnectionState="data-wica-channel-connection-state"] - The name of the element
+ * @property {string} channelConnectionState="data-wica-channel-connection-state" - The name of the element
  *     attribute which reflects the state of the connection between the wica server and the channel's data source.
  *     Possible values: ["connecting", "opened-XXX", "closed-XXX"].
- * @property {string} [channelMetadata="data-wica-channel-metadata"] - The name of the element attribute which
+ * @property {string} channelMetadata="data-wica-channel-metadata" - The name of the element attribute which
  *     reflects the metadata obtained most recently from the channel (JSON String, representing JS Object).
  *     See {@link module:shared-definitions.WicaChannelMetadataObject WicaChannelMetadataObject}.
- * @property {string} [channelValueArray="data-wica-channel-value-array"] - The name of the attribute which
+ * @property {string} channelValueArray="data-wica-channel-value-array" - The name of the attribute which
  *     reflects the values most recently obtained values from the channel (JSON String, represeting JS Array).
- * @property {string} [channelValueLatest="data-wica-channel-value-latest"] - The name of the attribute which
+ * @property {string} channelValueLatest="data-wica-channel-value-latest" - The name of the attribute which
  *     reflects the last value obtained from the channel (JSON String, representing JS Object).
  *      See {@link module:shared-definitions.WicaChannelValueObject WicaChannelValueObject}.
- * @property {string} [channelAlarmState="data-wica-channel-alarm-state"] - The attribute which reflects the alarm
+ * @property {string} channelAlarmState="data-wica-channel-alarm-state" - The attribute which reflects the alarm
  *     status most recently obtained from the channel. Possible values: ["NO_ALARM", "MINOR_ALARM", "MAJOR_ALARM",
  *     "INVALID_ALARM" ].
  */
