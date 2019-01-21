@@ -7,11 +7,13 @@
  * JS Object that provides channel metadata information for systems with diverse types of data channel.
  *
  * @typedef module:shared-definitions.WicaChannelMetadata
- * @property {WicaChannelMetadataOther|WicaChannelMetadataEpics}
+ * @property {WicaChannelMetadataOther|WicaChannelMetadataEpics|...} One or more metadata properties.
+ *     See {@link module:shared-definitions.WicaChannelMetadataOther WicaChannelMetadataOther}.
+ *     See {@link module:shared-definitions.WicaChannelMetadataEpics WicaChannelMetadataEpics}.
  */
 
 /**
- * JS Object that provides channel metadata information for a minimal system.
+ * JS Object that provides channel metadata information for a data source with minimal additional information.
  *
  * @typedef module:shared-definitions.WicaChannelMetadataOther
  * @property type {string} - One of: "REAL", "INTEGER", "STRING", "REAL_ARRAY", "INTEGER_ARRAY", "STRING_ARRAY".
