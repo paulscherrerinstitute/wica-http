@@ -8,7 +8,8 @@
  * {@link module:document-stream-connector.DocumentStreamConnector DocumentStreamConnector} when communicating
  * with the Wica backend server.
  *
- * @property {string} channelName="data-wica-channel-name" - The attribute which defines the channel name.
+ * @property {string} channelName="data-wica-channel-name" - The attribute which defines the channel name. This
+ *     is the minimum information that must be present for the element to be considered "wica-aware'.
  * @property {string} [channelProperties="data-wica-channel-properties"] - The attribute which defines the channel
  *     properties. See {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties}.
  * @property {string} [channelStreamState="data-wica-channel-stream-state"] - The attribute which reflects the state
