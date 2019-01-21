@@ -7,7 +7,8 @@
  * JS Object that provides channel metadata information for systems with diverse types of data channel.
  *
  * @typedef module:shared-definitions.WicaChannelMetadata
- * @property {WicaChannelMetadataOther|WicaChannelMetadataEpics|...} One or more metadata properties.
+ * @property {WicaChannelMetadataOther|WicaChannelMetadataEpics|...} - One or more metadata properties
+ *     whose details depend on the data source.
  *     See {@link module:shared-definitions.WicaChannelMetadataOther WicaChannelMetadataOther}.
  *     See {@link module:shared-definitions.WicaChannelMetadataEpics WicaChannelMetadataEpics}.
  */
