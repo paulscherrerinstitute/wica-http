@@ -36,10 +36,9 @@ export const WicaElementConnectionAttributes = {
 /**
  * Object defining the attributes of a wica-aware HTML element that are used when rendering its visual state.
  *
- * @typedef WicaElementRenderingAttributes
- * @property {string} channelTooltips - "data-wica-channel-tooltips" - The attribute which defines the channel's
+ * @property {string} [channelTooltips="data-wica-channel-tooltips"] - The attribute which defines the channel's
  *     tooltips.
- * @property {string} channelRenderingProperties - "data-wica-channel-rendering-props" - The attribute which
+ * @property {string} [channelRenderingProperties="data-wica-channel-rendering-props"] - The attribute which
  *     defines properties which will affect the way it is rendered.
  */
 export const WicaElementRenderingAttributes = {
@@ -64,7 +63,6 @@ export const WicaElementChannelRenderingProperties = {
 /**
  * Object defining the properties supported by a WicaStream. See also: {@link module:shared.DefaultWicaStreamProperties DefaultWicaStreamProperties}
  *
- * @typedef module:shared-definitions.WicaStreamProperties
  * @property {number} [heartbeatInterval=15000] - The interval in milliseconds between heartbeat messages.
  * @property {number} [channelValueUpdateInterval=100] The interval in milliseconds between channel value update messages.
  * @property {boolean} [includeAlarmState=true] - Whether alarm information should be included in channel
@@ -82,8 +80,6 @@ export const WicaStreamProperties = {
 /**
  * Object defining the properties supported by a WicaChannel.
  *
- * @typedef module:shared-definitions.wicaChannelProperties
- * @type WicaChannelProperties
  * @property {number} prec - 8 - The precision to be used when sending numeric information.
  */
 export const WicaChannelProperties = {
