@@ -1,6 +1,7 @@
 /**
+ * Definitions that are used throughout the application.
+ *
  * @module
- * @desc  Definitions that are used throughout the application.
  */
 
 /**
@@ -47,12 +48,11 @@ export const WicaElementRenderingAttributes = {
 };
 
 /**
- * Object defining the properties supported by the default wica element renderer.
+ * Object defining the properties supported by the wica document renderer.
  *
- * @typedef WicaElementChannelRenderingProperties
- * @property {boolean} disable - false - Disables the default rendering for this channel.
- * @property {boolean} exp - false - Whether numeric information should be rendered in exponential format.
- * @property {string} prec - 8 - The precision to be used when rendering numeric information.
+ * @property {boolean} [disable=false] - Disables the default rendering for this channel.
+ * @property {boolean} [exp=false] - Whether numeric information should be rendered in exponential format.
+ * @property {number} [prec=8] - The precision to be used when rendering numeric information in fixed decimal point format.
  */
 export const WicaElementChannelRenderingProperties = {
     disable: false,
