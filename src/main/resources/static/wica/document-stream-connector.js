@@ -43,6 +43,8 @@ export class DocumentStreamConnector
      * Scans the current document for wica-aware elements, creates a stream on the Wica backend server to obtain
      * information for each element's data source, sets up handlers to update each element's attributes on
      * the basis of the received information.
+     *
+     * @see also {@link module:document-stream-connector.DocumentStreamConnector#shutdown shutdown} method.
      */
     activate()
     {
