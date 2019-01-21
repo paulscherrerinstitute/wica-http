@@ -6,7 +6,6 @@
 /**
  * Object defining the attributes of a wica-aware HTML element that are used when communicating with the Wica backend server.
  *
- * @typedef {module:shared-definitions.WicaElementConnectionAttributes}
  * @property {string} [channelName="data-wica-channel-name"] - The attribute which defines the channel name.
  * @property {string} [channelProperties="data-wica-channel-properties"] - The attribute which defines the channel
  *     properties.
@@ -64,7 +63,6 @@ export const WicaElementChannelRenderingProperties = {
 /**
  * Object defining the properties supported by a WicaStream. See also: {@link module:shared.DefaultWicaStreamProperties DefaultWicaStreamProperties}
  *
- * @type {module:shared-definitions.WicaStreamProperties}
  * @property {number} [heartbeatInterval=15000] - The interval in milliseconds between heartbeat messages.
  * @property {number} [channelValueUpdateInterval=100] The interval in milliseconds between channel value update messages.
  * @property {boolean} [includeAlarmState=true] - Whether alarm information should be included in channel
