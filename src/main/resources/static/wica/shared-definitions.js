@@ -4,10 +4,10 @@
  */
 
 /**
- * Object provides general purpose information about a channel.
+ * JS Object that provides channel metadata information.
  *
- * The properties that are available depends on the underlying data source (eg whether the channel data source
- * is an EPICS channel). The type property is always present.
+ * The available properties may vary according to the nature of the underlying data source. The type property is
+ * always present.
  *
  * @typedef module:shared-definitions.WicaChannelMetadata
  * @property type {string} - One of: "REAL", "INTEGER", "STRING", "REAL_ARRAY", "INTEGER_ARRAY", "STRING_ARRAY".
@@ -24,12 +24,16 @@
  */
 
 /**
- * Object providing the current value of the channel together with, optionally, the timestamp at which
- * the value snapshot was obtained and the alarm status.
+ * JS Object that provides channel value information.
+ *
+ * The value information includes the raw channel value, the timestamp at which the value was obtained, and the
+ * channel alarm status.
  *
  * @typedef module:shared-definitions.WicaChannelValue
+ *
  * @property val {string|null} - JSON String representation of the current value. Set to NULL if the channel's
  *     data source is offline, or otherwise unavailable.
+ *
  * @property sevr {number} - [Alarm Severity] -  Present if the WicaStreamProperty 'includeAlarmState' is true. The
  *    following values are defined (0 = No Alarm; 1 = Minor Alarm, 2 = Major Alarm)
  * @property ts {string} - [Timestamp] - present if the WicaStreamProperty 'includeTimeStamp' is true.
@@ -86,15 +90,18 @@ export const WicaElementConnectionAttributes = Object.freeze ({
 } );
 
 /**
- * Object defining the attributes of a wica-aware HTML element that are used to render its visual state. As used,
- * for example, by the {@link module:document-text-renderer.DocumentTextRenderer DocumentTextRenderer}.
+ * JS Object that defines the HTML element attributes used by the
+ * {@link module:document-text-renderer.DocumentTextRenderer DocumentTextRenderer} when rendering the element's
+ * visual state.
  *
- * @property {string} [rendererTooltips="data-wica-renderer-tooltips"] - The attribute which defines the tooltip
- *     that will be displayed when the browser's cursor hovers over the element. When not defined the channel
- *     name will be used.
- * @property {string} [rendererProperties="data-wica-renderer-props"] - The attribute which defines other general
- *     purpose properties which will affect the way the element is rendered.
- *     See {@link module:shared-definitions.WicaElementRenderingProperties WicaElementRenderingProperties}.
+ * @property {string} rendererTooltips="data-wica-renderer-tooltips" - The name of the attribute which
+ *     specifies the tooltip that will be displayed when the browser's cursor hovers over the element.
+ *     When not defined the wica channel name will be used instead. Format: JS string literal.
+ *
+ * @property {string} rendererProperties="data-wica-renderer-props" - The name of the attribute which specifies
+ *     other general purpose properties which affect the way the element is rendered. Format: JSON string literal
+ *     representing JS {@link module:shared-definitions.WicaElementRenderingProperties WicaElementRenderingProperties}
+ *     object.
  */
 export const WicaElementRenderingAttributes = Object.freeze ({
     rendererTooltips:   "data-wica-renderer-tooltips",
@@ -102,8 +109,9 @@ export const WicaElementRenderingAttributes = Object.freeze ({
 } );
 
 /**
- * Object defining properties needed for rendering the visual state of a wica-aware element, together with
- * their default values.
+ * JS Object that defines the properties and default values used by the
+ * {@link module:document-text-renderer.DocumentTextRenderer DocumentTextRenderer} when rendering the element's
+ * visual state.
  *
  * @property {boolean} [disable=false] - Disables the rendering for this channel.
  * @property {number} [prec=8] - The precision to be used when rendering numeric information in fixed decimal
@@ -118,7 +126,7 @@ export const WicaElementRenderingProperties = Object.freeze ({
 } );
 
 /**
- * Object defining the properties supported by a WicaStream, together with their default values.
+ * JS Object that defines the properties and default values supported by a WicaStream.
  *
  * @property {number} [heartbeatInterval=15000] - The interval in milliseconds between heartbeat messages.
  * @property {number} [channelValueUpdateInterval=100] The interval in milliseconds between channel value update messages.
@@ -135,7 +143,7 @@ export const WicaStreamProperties = Object.freeze ({
 } );
 
 /**
- * Object defining the properties supported by a WicaChannel, together with their default values.
+ * JS Object that defines the properties and default values supported by a WicaChannel.
  *
  * @property {number} [prec=8] - The precision to be used when sending numeric information.
  */
