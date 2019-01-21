@@ -93,13 +93,26 @@ export const WicaChannelProperties = {
  */
 export class Simon {
 
-    constructor( propA="A", propB="B" )
+    /**
+     *
+     * @param propA - override value for property A.
+     * @param propB - override value for property B.
+     */
+    constructor( propA = "A", propB = "B" )
     {
-        this.propA = propA;
-        this.propB = propB;
+        this.properties = { propA, propB }
     }
 
-    get propA() { return this.propA; }
-    get propB() { return this.propB; }
+    /**
+     * Property A
+     * @returns {*}
+     */
+    get propA() { return this.properties.propA; }
+
+    /**
+     * property B
+     * @returns {string}
+     */
+    get propB() { return this.properties.propB; }
 
 }
