@@ -3,6 +3,39 @@
  * @module
  */
 
+
+/**
+ * Object provides general purpose information about a channel.
+ *
+ * The properties that are available depends on the underlying data source (eg whether the channel data source
+ * is an EPICS channel). The type property is always present.
+ *
+ * @typedef WicaChannelMetadataObject
+ * @property type {string} - One of: "REAL", "INTEGER", "STRING", "REAL_ARRAY", "INTEGER_ARRAY", "STRING_ARRAY".
+ * @property egu {string} -  Engineering Units in which the channel's value will be expressed.
+ * @property prec {number} - The precision in which the channel's value will be expressed. Applies only to numeric types.
+ * @property hopr {number} - High Operating Range. EPICS channels only.
+ * @property lopr {number} - Low Operating Range. EPICS channels only.
+ * @property drvh {number} - Drive High Control Limit. EPICS channels only.
+ * @property drvl {number} - Drive Low Control Limit. EPICS channels only.
+ * @property hihi {number} - Upper Alarm Limit. EPICS channels only.
+ * @property lolo {number} - Lower Alarm Limit. EPICS channels only.
+ * @property high {number} - Upper Warning Limit. EPICS channels only.
+ * @property low {number} - Lower Warning Limit. EPICS channels only.
+ */
+
+/**
+ * Object providing the current value of the channel together with, optionally, the timestamp at which
+ * the value snapshot was obtained and the alarm status.
+ *
+ * @typedef WicaChannelValueObject
+ * @property val {string|null} - JSON String representation of the current value. Set to NULL if the channel's
+ *     data source is offline, or otherwise unavailable.
+ * @property sevr {number} - [Alarm Severity] -  Present if the WicaStreamProperty 'includeAlarmState' is true. The
+ *    following values are defined (0 = No Alarm; 1 = Minor Alarm, 2 = Major Alarm)
+ * @property ts {string} - [Timestamp] - present if the WicaStreamProperty 'includeTimeStamp' is true.
+ */
+
 /**
  * Object defining the attributes of a wica-aware HTML element that are used by the
  * {@link module:document-stream-connector.DocumentStreamConnector DocumentStreamConnector} when communicating
@@ -17,13 +50,15 @@
  * @property {string} [channelConnectionState="data-wica-channel-connection-state"] - The attribute which reflects
  *     the state of the connection between the backend server and the channel's data source.
  * @property {string} [channelMetadata="data-wica-channel-metadata"] - The attribute which reflects the metadata
- *     obtained from the channel.
+ *     obtained most recently from the channel.
+ *     See {@link module:shared-definitions.WicaChannelMetadataObject WicaChannelMetadataObject}.
  * @property {string} [channelValueArray="data-wica-channel-value-array"] - The attribute which reflects the values
  *     most recently obtained from the channel.
  * @property {string} [channelValueLatest="data-wica-channel-value-latest"] - The attribute which reflects the last
  *     value obtained from the channel.
+ *      See {@link module:shared-definitions.WicaChannelValueObject WicaChannelValueObject}.
  * @property {string} [channelAlarmState="data-wica-channel-alarm-state"] - The attribute which reflects the alarm
- *     status obtained from the channel.
+ *     status most recently obtained from the channel.
  */
 export const WicaElementConnectionAttributes = Object.freeze ({
     channelName:            "data-wica-channel-name",

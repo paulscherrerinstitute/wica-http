@@ -3,36 +3,6 @@
  * @module
  */
 
-
-/**
- * Provides general purpose information about a channel.
- *
- * The properties that are available depends on the underlying data source. The type property is always present.
- *
- * @typedef ChannelMetadataObject
- * @property type {string} - One of: "REAL", "INTEGER", "STRING", "REAL_ARRAY", "INTEGER_ARRAY", "STRING_ARRAY".
- * @property egu {string} -  Engineering Units in which the channel's value will be expressed.
- * @property prec {number} - The precision in which the channel's value will be expressed. Applies only to numeric types.
- * @property hopr {number} - High Operating Range. EPICS channels only.
- * @property lopr {number} - Low Operating Range. EPICS channels only.
- * @property drvh {number} - Drive High Control Limit. EPICS channels only.
- * @property drvl {number} - Drive Low Control Limit. EPICS channels only.
- * @property hihi {number} - Upper Alarm Limit. EPICS channels only.
- * @property lolo {number} - Lower Alarm Limit. EPICS channels only.
- * @property high {number} - Upper Warning Limit. EPICS channels only.
- * @property low {number} - Lower Warning Limit. EPICS channels only.
- */
-
-/**
- * Provides general purpose information about a channel.
- *
- * @typedef ChannelValueObject
- * @property val {string|null} - Json String representation of the current value. Set to null if the channel's
- *     data source in unavailable.
- * @property sevr {number} - [Alarm Severity] - present if the WicaStreamProperty includeAlarmState is true.
- * @property ts {string} - [Timestamp] - present if the WicaStreamProperty includeTimeStampis true.
- */
-
 /**
  * Provides support for creating a new WicaStream on the Wica backend server, for thereafter subscribing
  * to it and for publishing locally the received information.
