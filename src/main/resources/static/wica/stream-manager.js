@@ -3,30 +3,34 @@
  * @module
  */
 
-
 /**
- * Callback invoked when the stream manager starts its connect sequence.
+ * Callback invoked when the stream manager begins a new connect sequence. This occurs
+ * after the stream manager activate method has been invoked, or if the stream manager
+ * doesn't see a heartbeat message within the expected time interval.
+ *
  * @callback streamConnectCallback
- * @property {number} attempt - the number of times the stream manager has attempted to
+ * @property {number} attempt - The number of times the stream manager has attempted to
  *    connect to the Wica Server to establish the server sent event stream. This
  *    information is useful mainly for debug purposes (for example for outputting a
  *    message to the console).
  */
 
 /**
- * Callback invoked when the stream manager receives a stream open message from the Wica Server.
+ * Callback invoked when a new stream is opened. This occurs after the stream manager has received
+ * an open message from the Wica Server.
+ *
  * @callback streamOpenedCallback
- * @property {number} id - the ID of the stream that was allocated by the server. This
- *    information is useful mainly for debug purposes (for example for outputting a
- *    message to the console).
+ * @property {number} id - The ID of the stream that was opened. This information is useful mainly
+ *    for debug purposes (for example for outputting a message to the console).
  */
 
 /**
- * Callback invoked when the stream manager receives a stream close request from the Wica Server,
+ * Callback invoked when an existing stream is closed. This occurs after the stream manager has
+ * received a close message from the Wica Server,
+ *
  * @callback streamClosedCallback
- * @property {number} id - the ID of the stream that was allocated by the server. This
- *    information is useful mainly for debug purposes (for example for outputting a
- *    message to the console).
+ * @property {number} id - The ID of the stream that was closed. This information is useful mainly
+ *    for debug purposes (for example for outputting a message to the console).
  */
 
 
@@ -55,12 +59,11 @@ export class WicaStreamManager
      * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
      * @param {streamConnectCallback} connectionHandlers.streamConnect - Called each time this manager attempts to create
      *     and subscribe to a new stream. This callback has no arguments.
-     * @param {callback} connectionHandlers.streamOpened - Called when the stream is opened (that's to say
-     *     the connection with the server has been successfully established). The callback provides a
+     * @param {streamOpenedCallback} connectionHandlers.streamOpened - Called when the stream is opened (that's
+     *     to say the connection with the server has been successfully established). The callback provides a
      *     single argument specifying the id of the stream which has been opened (as obtained from the server).
-     * @param {callback} connectionHandlers.streamClosed - Called when the stream closes (that's to say the
-     *     connection with the server has been shut down). The callback provides a single argument specifying
-     *     the id of the stream which has been closed.
+     * @param {streamClosedCallback} connectionHandlers.streamClosed - see
+     *     {@link module:stream-manager.streamClosedCallback streamClosedCallback}.
      *
      * @param {Object} messageHandlers - Callbacks for handling data received from the SSE stream.
      * @param {callback} messageHandlers.channelMetadataUpdatedCallback -  Called when channel metadata
