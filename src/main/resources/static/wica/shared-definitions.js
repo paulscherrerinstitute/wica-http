@@ -4,6 +4,16 @@
  */
 
 /**
+ * JS Object that provides a map of channels and their associated metadata.
+ *
+ * @typedef module:shared-definitions.WicaChannelMetadataMap
+ * @property {Object} - The map.
+ * @property {Object.key[]} - The channel names.
+ * @property {Object.value[]} - The channel metadata.
+ *     See {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}
+ */
+
+/**
  * JS Object that provides channel metadata information for systems with diverse types of data channel.
  *
  * @typedef module:shared-definitions.WicaChannelMetadata
