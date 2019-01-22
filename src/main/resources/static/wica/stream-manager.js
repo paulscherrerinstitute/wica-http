@@ -8,9 +8,9 @@
  * JS Object that provides a map of channel names and channel metadata.
  *
  * @callback WicaChannelMetadataMap
- * @property {Object[]} map
- * @property {key} map[].channelName - the channelName
- * @property {WicaChannelMetadata} - the metadata for this channel.
+ * @property {Object} map
+ * @property {key} map[].channelName - the name of the channel.
+ * @property {value} map[].metadata - the metadata for this channel.
  *
  */
 
