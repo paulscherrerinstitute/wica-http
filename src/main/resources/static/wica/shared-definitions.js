@@ -80,8 +80,8 @@
  *     "closed-X"], where N represents the incrementing count of connection attempts and X represents the
  *     stream ID assigned by the server.
  *
- * @property {string} channelMetadata="data-wica-channel-metadata" - The name of the element attribute which is
- *     set to reflect the metadata obtained most recently from the wica channel. Format: JSON string literal,
+ * @property {string} channelMetadata="data-wica-channel-metadata" - The name of the element attribute which
+ *     reflects the metadata obtained most recently from the wica channel. Format: JSON string literal,
  *     representing JS {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata} object.
  *
  * @property {string} channelValueArray="data-wica-channel-value-array" - The name of the attribute which
@@ -118,7 +118,7 @@ export const WicaElementConnectionAttributes = Object.freeze ({
  *
  * @property {string} rendererProperties="data-wica-renderer-props" - The name of the attribute which provides
  *     other miscellaneous properties which affect the way the element is rendered. Format: JSON string literal
- *     representing JS {@link module:shared-definitions.WicaElementRenderingProperties WicaElementRenderingProperties}
+ *     representing JS {@link module:shared-definitions.WicaRendererProperties WicaRendererProperties}
  *     object.
  */
 export const WicaElementRenderingAttributes = Object.freeze ({
@@ -137,7 +137,7 @@ export const WicaElementRenderingAttributes = Object.freeze ({
  * @property {boolean} [exp=false] - Whether numeric information should be rendered in exponential format (when
  *     set TRUE) or in fixed decimal point format (when set FALSE).
  */
-export const WicaElementRenderingProperties = Object.freeze ({
+export const WicaRendererProperties = Object.freeze ({
     disable: false,
     exp: false,
     prec: 8
