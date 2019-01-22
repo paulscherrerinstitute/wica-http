@@ -6,9 +6,9 @@
 /**
  * Callback invoked when the stream manager begins a new connect sequence. This occurs
  * after the stream manager activate method has been invoked, or if the stream manager
- * doesn't see a heartbeat message within the expected time interval.
+ * doesn't see a stream heartbeat message within the expected time interval.
  *
- * @callback streamConnectCallback
+ * @callback module:stream-manager.StreamConnectCallback
  * @property {number} attempt - The number of times the stream manager has attempted to
  *    connect to the Wica Server to establish the server sent event stream. This
  *    information is useful mainly for debug purposes (for example for outputting a
@@ -57,12 +57,12 @@ export class WicaStreamManager
      * @param {WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
      *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
      * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
-     * @param {StreamConnectCallback} connectionHandlers.streamConnect - Called each time this manager attempts to create
-     *     and subscribe to a new stream. This callback has no arguments.
-     * @param {StreamOpenedCallback} connectionHandlers.streamOpened - Called when the stream is opened (that's
-     *     to say the connection with the server has been successfully established). The callback provides a
-     *     single argument specifying the id of the stream which has been opened (as obtained from the server).
-     * @param {module:stream-manager.StreamClosedCallback StreamClosedCallback} connectionHandlers.streamClosed - see
+     * @param {StreamConnectCallback} connectionHandlers.streamConnect - Called each time this manager attempts
+     *     to create and subscribe to a new stream. See
+     *     {@link module:stream-manager.StreamConnectCallback StreamConnectCallback}.
+     * @param {StreamOpenedCallback} connectionHandlers.streamOpened - Called when the stream is opened. See
+     *     {@link module:stream-manager.StreamOpenedCallback StreamOpenedCallback}.
+     * @param {StreamClosedCallback } connectionHandlers.streamClosed - Called when the stream is opened. See
      *     {@link module:stream-manager.StreamClosedCallback StreamClosedCallback}.
      *
      * @param {Object} messageHandlers - Callbacks for handling data received from the SSE stream.
