@@ -2,6 +2,7 @@
  * Provides helper functions for wica-aware html pages.
  * @module
  */
+console.debug( "Executing script in document-utils.js module...");
 
 export {
     findWicaElements,

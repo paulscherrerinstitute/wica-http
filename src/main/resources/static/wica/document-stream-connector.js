@@ -48,7 +48,7 @@ export class DocumentStreamConnector
      */
     activate()
     {
-        this.configureStreamConnectionHandlers_( this.wicaElementConnectionAttributes.CHANNEL_STREAM_STATE );
+        this.configureStreamConnectionHandlers_( this.wicaElementConnectionAttributes.channelConnectionState );
 
         this.configureStreamMessageHandlers_( this.wicaElementConnectionAttributes.channelMetadata,
                                               this.wicaElementConnectionAttributes.channelValueArray,
@@ -184,7 +184,8 @@ export class DocumentStreamConnector
 
         // Create an array of the associated channel names
         const channels = [];
-        wicaElements.forEach(function (widget) {
+        wicaElements.forEach(function (widget)
+        {
             const channelName = widget.getAttribute( channelNameAttribute );
             if (widget.hasAttribute( channelPropertiesAttribute )) {
                 const channelProps = widget.getAttribute( channelPropertiesAttribute );
@@ -201,13 +202,8 @@ export class DocumentStreamConnector
         };
 
         const streamConfiguration = { "channels": channels, "props": this.streamProperties };
-        this.wicaStreamManager = new WicaStreamManager( this.streamServerUrl, streamConfiguration, this.connectionHandlers, this.messageHandlers, streamOptions );
+        this.wicaStreamManager = new WicaStreamManager( this.streamServerUrl, streamConfiguration, this.streamConnectionHandlers, this.streamMessageHandlers, streamOptions );
 
-    }
-
-    activateStream_()
-    {
-        this.wicaStreamManager.activate();
     }
 
 }

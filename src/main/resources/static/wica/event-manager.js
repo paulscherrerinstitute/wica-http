@@ -2,6 +2,7 @@
  * Provides support for firing notification events on wica-aware elements in the current document.
  * @module
  */
+console.debug( "Executing script in event-manager.js module...");
 
 import * as DocumentUtilities from './document-utils.js'
 
@@ -88,4 +89,34 @@ export function fireEvents()
             element.dispatchEvent( customEvent );
         }
     });
+
+
+    function fireWicaEvents_()
+    {
+        try
+        {
+            WicaEventManager.fireEvents();
+        }
+        catch( err )
+        {
+            logExceptionData( "Programming Error: fireEvents threw an exception: ", err );
+        }
+
+        // Allow at least 100ms after each event firing cycle
+        setTimeout( fireWicaEvents, 100 );
+    }
+
+
+
+    function logExceptionData( msg, err )
+    {
+        let vDebug = "";
+        for ( const prop of err )
+        {
+            vDebug += "property: "+ prop + " value: ["+ err[prop]+ "]\n";
+        }
+        vDebug += "toString(): " + " value: [" + err.toString() + "]";
+        console.warn( msg + vDebug );
+    }
+
 }

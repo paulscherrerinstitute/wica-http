@@ -12,50 +12,75 @@ import {WicaElementConnectionAttributes,WicaElementRenderingAttributes} from './
  */
 const MAX_PRECISION = 8;
 
+
 /**
  * Renders the visual state of wica-aware elements in the current document based on attribute information
  * obtained from the Wica server on the backend.
  */
 export class DocumentTextRenderer
 {
-
     /**
      * Constructs a new instance.
      *
-     * @param context
-     * @param {!WicaElementRenderingAttributes} wicaElementConnectionAttributes - The names of the wica-aware
+     * @param {!WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware
+     *     element attributes that are to be used in the communication process.
+     *     See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
+     *
+     * @param {!WicaElementRenderingAttributes} wicaElementRenderingAttributes - The names of the wica-aware
      *     element attributes that are to be used in the communication process.
      *     See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
      *
      */
-    constructor( context, precision,  )
+    constructor( wicaElementConnectionAttributes, wicaElementRenderingAttributes,  )
     {
-        this.context=context;
-        this.precision = precision;
+        this.wicaElementConnectionAttributes= wicaElementConnectionAttributes;
+        this.wicaElementRenderingAttributes = wicaElementRenderingAttributes;
+
+    }
+
+    /**
+     *
+     */
+    activate()
+    {
+        DocumentTextRenderer.loadWicaCSS_();
+
+        try
+        {
+            this.renderWicaElements_();
+        }
+        catch( err )
+        {
+            logExceptionData( "Programming Error: renderWicaElements_ threw an exception: ", err );
+        }
+
+        // Allow at least 100ms after each rendering cycle
+        setTimeout( activate, 100 );
     }
 
     /**
      * Renders all wica-aware html elements in the current document.
      */
-    renderWicaElements() {
+    renderWicaElements_()
+    {
         DocumentUtilities.findWicaElements().forEach((element) => {
             // If we have no information about the channel's current value or the channel's metadata
             // then there is nothing useful that can be done so bail out.
-            if ((!element.hasAttribute(WicaElementConnectionAttributes.channelValueArray)) || (!element.hasAttribute(WicaElementConnectionAttributes.channelMetadata))) {
+            if ( (!element.hasAttribute(WicaElementConnectionAttributes.channelValueArray)) || (!element.hasAttribute(WicaElementConnectionAttributes.channelMetadata)) ) {
                 return;
             }
 
             // Obtain the object containing the array of recently received channel values.
-            const channelValueArrayObj = JSON.parse(element.getAttribute(WicaElementConnectionAttributes.channelValueArray));
+            const channelValueArrayObj = JSON.parse( element.getAttribute( WicaElementConnectionAttributes.channelValueArray ) );
 
             // Check that the received object was an array
-            if (!Array.isArray(channelValueArrayObj)) {
+            if ( !Array.isArray(channelValueArrayObj) ) {
                 console.warn("Stream error: received value object was not an array !");
                 return;
             }
 
             // If there isn't at least one value present bail out as there is nothing to be done.
-            if (channelValueArrayObj.length === 0) {
+            if ( channelValueArrayObj.length === 0 ) {
                 return;
             }
 
@@ -64,7 +89,7 @@ export class DocumentTextRenderer
             const channelValueObj = channelValueArrayObj.pop();
 
             // If the current value is not available because the channel is off line then bail out
-            if (channelValueObj.val === null) {
+            if ( channelValueObj.val === null ) {
                 return;
             }
 
@@ -72,7 +97,7 @@ export class DocumentTextRenderer
             const channelMetadataObj = JSON.parse(element.getAttribute(WicaElementConnectionAttributes.channelMetadata));
 
             // Now render the widget
-            renderWidget_(element, channelValueObj, channelMetadataObj);
+            this.renderWidget_(element, channelValueObj, channelMetadataObj);
         });
     }
 
@@ -88,7 +113,8 @@ export class DocumentTextRenderer
      * @param channelValueObj the value object associated with the element's underlying wica channel.
      * @param channelMetadataObj the metadata object associated with the element's underlying wica channel.
      */
-    renderWidget_(element, channelValueObj, channelMetadataObj) {
+    renderWidget_(element, channelValueObj, channelMetadataObj)
+    {
         const channelName = element.getAttribute(WicaElementConnectionAttributes.channelName);
         const renderingHintsAttribute = WicaElementRenderingAttributes.CHANNEL_RENDERING_HINTS;
         const renderingHintsString = element.hasAttribute(renderingHintsAttribute) ? element.getAttribute(renderingHintsAttribute) : "{}";
@@ -99,7 +125,7 @@ export class DocumentTextRenderer
             logExceptionData(channelName + ": Illegal JSON format in data-wica-rendering-hints attribute.\nDetails were as follows:\n", err);
             renderingHintsObj = {};
         }
-        let formattedValueText = buildFormattedValueText_(channelValueObj, channelMetadataObj, renderingHintsObj);
+        let formattedValueText = this.buildFormattedValueText_(channelValueObj, channelMetadataObj, renderingHintsObj);
 
         // Suppress manipulation of element text content if overridden by the rendering hint
         let disableRendering = renderingHintsObj.hasOwnProperty("disable") ? renderingHintsObj.disable : false;
@@ -112,8 +138,8 @@ export class DocumentTextRenderer
         // using the rules defined in the function
         const tooltipAttribute = WicaElementRenderingAttributes.channelTooltips;
         if (!element.hasAttribute(tooltipAttribute)) {
-            let tooltipText = buildFormattedTooltipText_(element, formattedValueText);
-            element.setAttribute(tooltipAttribute, tooltipText);
+            let tooltipText = this.buildFormattedTooltipText_( element, formattedValueText );
+            element.setAttribute( tooltipAttribute, tooltipText );
         }
     }
 
@@ -125,15 +151,14 @@ export class DocumentTextRenderer
      * @param channelMetadataObj the metadata object associated with the element's underlying wica channel.
      * @param renderingHintsObj an object containg various styling hints.
      *
-     * @returns {*} the formatted string.
-     *
+     * @returns {string} the formatted string.
      */
-    buildFormattedValueText_(channelValueObj, channelMetadataObj, renderingHintsObj) {
+    static buildFormattedValueText_( channelValueObj, channelMetadataObj, renderingHintsObj ) {
         // If the supplied value is non-scalar just return the string representation.
         if ((channelMetadataObj.type === "INTEGER_ARRAY") || (channelMetadataObj.type === "REAL_ARRAY") || (channelMetadataObj.type === "STRING_ARRAY")) {
-            return JSON.stringify(channelValueObj.val);
+            return JSON.stringify( channelValueObj.val );
         } else {
-            return formatScalarValue_(channelValueObj, channelMetadataObj, renderingHintsObj)
+            return DocumentTextRenderer.formatScalarValue_( channelValueObj, channelMetadataObj, renderingHintsObj )
         }
     }
 
@@ -146,10 +171,11 @@ export class DocumentTextRenderer
      * @returns {*}
      * @private
      */
-    formatScalarValue_(channelValueObj, channelMetadataObj, renderingHintsObj) {
+    static formatScalarValue_(channelValueObj, channelMetadataObj, renderingHintsObj)
+    {
         let rawValue = channelValueObj.val;
 
-        if (channelMetadataObj.type === "REAL") {
+        if ( channelMetadataObj.type === "REAL") {
             let exponential = renderingHintsObj.hasOwnProperty("exp") ? renderingHintsObj.exp : null;
             let precision = renderingHintsObj.hasOwnProperty("prec") ? renderingHintsObj.prec : channelMetadataObj.prec;
             let units = renderingHintsObj.hasOwnProperty("units") ? renderingHintsObj.units : channelMetadataObj.egu;
@@ -167,7 +193,9 @@ export class DocumentTextRenderer
             } else {
                 return rawValue.toExponential(exponential) + " " + units;
             }
-        } else if (channelMetadataObj.type === "INTEGER") {
+        }
+        else if (channelMetadataObj.type === "INTEGER")
+        {
             // TODO: look at more rigorous deserialisation of NaN's, Infinity etc
             if (rawValue === "Infinity") {
                 return rawValue;
@@ -216,7 +244,7 @@ export class DocumentTextRenderer
         }
         let alarmState = element.getAttribute(WicaElementConnectionAttributes.channelAlarmState);
 
-        let truncatedValueString = truncateValueString_(formattedValueText, MAX_TOOLTIP_VALUE_STRING_LENGTH);
+        let truncatedValueString = DocumentTextRenderer.truncateValueString_(formattedValueText, MAX_TOOLTIP_VALUE_STRING_LENGTH);
 
         return "Channel Name: " + channelName + "'\n" +
             "Stream Connect State: '" + streamConnectState + "'\n" +
@@ -225,7 +253,8 @@ export class DocumentTextRenderer
             "Channel Value Text: '" + truncatedValueString + "'";
     }
 
-    truncateValueString_(inputString, maxLength) {
+    static truncateValueString_(inputString, maxLength) {
         return (inputString.length <= maxLength) ? inputString : inputString.substring(0, maxLength - 1) + "...";
     }
+
 }
