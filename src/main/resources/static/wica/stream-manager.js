@@ -4,13 +4,6 @@
  */
 
 
-/**
- * JS Object that provides a map of channel names and channel metadata.
- *
- * @callback streamConnectCallback
- * @property {number} attempt - the number of times the stream manager has attempted to
- *    connect to the Wica Server to establish the server sent event stream.
- */
 
 /**
  * Provides support for creating a new WicaStream on the Wica backend server, for subscribing to it and for
@@ -18,6 +11,14 @@
  */
 export class WicaStreamManager
 {
+    /**
+     * JS Object that provides a map of channel names and channel metadata.
+     *
+     * @callback streamConnectCallback
+     * @property {number} attempt - the number of times the stream manager has attempted to
+     *    connect to the Wica Server to establish the server sent event stream.
+     */
+
     /**
      * Constructs a new instance.
      *
