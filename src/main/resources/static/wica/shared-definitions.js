@@ -10,7 +10,7 @@
  * @property {Object} - The map.
  * @property {Object.key[]} - The channel names.
  * @property {Object.value[]} - The channel metadata.
- *     See {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}
+ *     See {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}.
  */
 
 /**
@@ -50,6 +50,15 @@
  * @property low {number} - Lower Warning Limit.
  */
 
+/**
+ * JS Object that provides a map of channels and their associated values.
+ *
+ * @typedef module:shared-definitions.WicaChannelValueMap
+ * @property {Object} - The map.
+ * @property {Object.<key,value>} - The channel names.
+ * @property {Object.value[]} - The channel values.
+ *     See {@link module:shared-definitions.WicaChannelValueMap WicaChannelValueMap}.
+ */
 /**
  * JS Object that provides channel value information.
  *
