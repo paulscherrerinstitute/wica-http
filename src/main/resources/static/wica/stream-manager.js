@@ -28,7 +28,7 @@
  * Callback invoked when an existing stream is closed. This occurs after the stream manager has
  * received a close message from the Wica Server,
  *
- * @callback streamClosedCallback
+ * @callback module:stream-manager.streamClosedCallback
  * @property {number} id - The ID of the stream that was closed. This information is useful mainly
  *    for debug purposes (for example for outputting a message to the console).
  */
