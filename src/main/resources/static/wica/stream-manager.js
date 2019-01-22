@@ -5,12 +5,30 @@
 
 
 /**
- * JS Object that provides a map of channel names and channel metadata.
- *
- * @callback module:stream-manager.streamConnectCallback
+ * Callback invoked when the stream manager starts its connect sequence.
+ * @callback streamConnectCallback
  * @property {number} attempt - the number of times the stream manager has attempted to
- *    connect to the Wica Server to establish the server sent event stream.
+ *    connect to the Wica Server to establish the server sent event stream. This
+ *    information is useful mainly for debug purposes (for example for outputting a
+ *    message to the console).
  */
+
+/**
+ * Callback invoked when the stream manager receives a stream open message from the Wica Server.
+ * @callback streamOpenedCallback
+ * @property {number} id - the ID of the stream that was allocated by the server. This
+ *    information is useful mainly for debug purposes (for example for outputting a
+ *    message to the console).
+ */
+
+/**
+ * Callback invoked when the stream manager receives a stream close request from the Wica Server,
+ * @callback streamClosedCallback
+ * @property {number} id - the ID of the stream that was allocated by the server. This
+ *    information is useful mainly for debug purposes (for example for outputting a
+ *    message to the console).
+ */
+
 
 /**
  * Provides support for creating a new WicaStream on the Wica backend server, for subscribing to it and for
@@ -34,9 +52,8 @@ export class WicaStreamManager
      *     See {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties}.
      * @param {WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
      *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
-     *
      * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
-     * @param {module:stream-manager.streamConnectCallback} connectionHandlers.streamConnect - Called each time this manager attempts to create
+     * @param {streamConnectCallback} connectionHandlers.streamConnect - Called each time this manager attempts to create
      *     and subscribe to a new stream. This callback has no arguments.
      * @param {callback} connectionHandlers.streamOpened - Called when the stream is opened (that's to say
      *     the connection with the server has been successfully established). The callback provides a
