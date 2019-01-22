@@ -3,6 +3,17 @@
  * @module
  */
 
+
+/**
+ * JS Object that provides a map of channel names and channel metadata.
+ *
+ * @callback WicaChannelMetadataMap
+ * @property {Object[]} map
+ * @property {key} map[].channelName - the channelName
+ * @property {WicaChannelMetadata} - the metadata for this channel.
+ *
+ */
+
 /**
  * Provides support for creating a new WicaStream on the Wica backend server, for thereafter subscribing
  * to it and for publishing locally the received information.
@@ -38,9 +49,11 @@ export class WicaStreamManager
      *
      * @param {Object} messageHandlers - Callbacks for handling data received from the SSE stream.
      * @param {callback} messageHandlers.channelMetadataUpdated -  Called when channel metadata information
-     *     is received. The callback provides a single argument, the so-called ChannelMetadata object.
+     *     is received. The callback provides a single argument, the
+     *     {@link module:shared-definitions.WicaChannelMetadataMap WicaChannelMetadataMap} object.
      * @param {callback} messageHandlers.channelValuesUpdated - Called when channel value information
-     *     is received. The callback provides a single argument the ChannelValueArray object.
+     *     is received. The callback provides a single argument the,
+     *     {@link module:shared-definitions.WicaChannelValueMap WicaChannelValueMap} object.
      *
      * @param {Object} options - Provides additional client-side configuration options.
      * @param {number} [options.streamTimeoutIntervalInSeconds] - Periodicity with which the stream's heartbeat

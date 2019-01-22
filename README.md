@@ -109,8 +109,6 @@ ToDo: document the supported properties.
 The Wica JS library API documentation is [available](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/wica/) 
 in the Pages section of the GitLab repository.
 
-Note: currently there is a web certificate issue that AIT will work to resolve.
-
 # Wica REST Service API 
 
 ## Currently Supported Features 
