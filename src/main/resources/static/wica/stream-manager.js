@@ -7,10 +7,9 @@
  * Callback invoked when the stream manager begins a new connect sequence.
  *
  * @callback module:stream-manager.StreamConnectCallback
- * @property {number} attempt - The number of times the stream manager has attempted to
- *    connect to the Wica Server to establish the server sent event stream. This
- *    information is useful mainly for debug purposes (for example for outputting a
- *    message to the console).
+ * @property {number} connectionAttemptCounter - The number of times the stream manager instance has
+ *     attempted to connect to the server to establish the Server-Sent-Event (SSE) stream. This counter
+ *     is reset every time the connection is successfully established.
  */
 
 /**
@@ -18,16 +17,16 @@
  * has been successfully established).
  *
  * @callback module:stream-manager.StreamOpenedCallback
- * @property {number} id - The ID of the stream that was opened. This information is useful mainly
+ * @property {string} id - The ID of the stream that was opened. This information is useful mainly
  *    for debug purposes (for example for outputting a message to the console).
  */
 
 /**
- * Callback invoked when the stream is closed (that's to say the connection with the server has been
- * shut down).
+ * Callback invoked when the stream is closed (that's to say when the connection with the server
+ * has been shut down).
  *
  * @callback module:stream-manager.StreamClosedCallback
- * @property {number} id - The ID of the stream that was closed. This information is useful mainly
+ * @property {string} id - The ID of the stream that was closed. This information is useful mainly
  *    for debug purposes (for example for outputting a message to the console).
  */
 
@@ -94,6 +93,7 @@ export class WicaStreamManager
         this.streamTimeoutIntervalInSeconds = options.streamTimeoutIntervalInSeconds;
         this.crossOriginCheckEnabled = options.crossOriginCheckEnabled;
         this.countdownInSeconds = 0;
+        this.connectionAttemptCounter = 0;
     }
 
     /**
@@ -129,7 +129,7 @@ export class WicaStreamManager
     createStream_()
     {
         // Inform listeners that a stream connection attempt is in progress
-        this.streamConnect();
+        this.streamConnect( ++this.connectionAttemptCounter );
 
         // Create a request object which will be used to ask the server to create the new stream.
         const xhttp = new XMLHttpRequest();
@@ -203,6 +203,7 @@ export class WicaStreamManager
                 const id = WicaStreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
                 this.streamOpened( id );
                 console.warn("Event source: 'stream' - open event on stream with id: " + id );
+                this.connectionAttemptCounter = 0;
             }
         }, false);
 
