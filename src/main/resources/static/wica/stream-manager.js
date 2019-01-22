@@ -57,13 +57,13 @@ export class WicaStreamManager
      * @param {WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
      *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
      * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
-     * @param {streamConnectCallback} connectionHandlers.streamConnect - Called each time this manager attempts to create
+     * @param {StreamConnectCallback} connectionHandlers.streamConnect - Called each time this manager attempts to create
      *     and subscribe to a new stream. This callback has no arguments.
-     * @param {streamOpenedCallback} connectionHandlers.streamOpened - Called when the stream is opened (that's
+     * @param {StreamOpenedCallback} connectionHandlers.streamOpened - Called when the stream is opened (that's
      *     to say the connection with the server has been successfully established). The callback provides a
      *     single argument specifying the id of the stream which has been opened (as obtained from the server).
-     * @param {streamClosedCallback} connectionHandlers.streamClosed - see
-     *     {@link module:stream-manager.streamClosedCallback StreamClosedCallback}.
+     * @param {StreamClosedCallback} connectionHandlers.streamClosed - see
+     *     {@link module:stream-manager.StreamClosedCallback StreamClosedCallback}.
      *
      * @param {Object} messageHandlers - Callbacks for handling data received from the SSE stream.
      * @param {callback} messageHandlers.channelMetadataUpdatedCallback -  Called when channel metadata
