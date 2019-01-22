@@ -7,11 +7,9 @@
 /**
  * JS Object that provides a map of channel names and channel metadata.
  *
- * @callback WicaChannelMetadataMap
- * @property {Object} map
- * @property {key} map[].channelName - the name of the channel.
- * @property {value} map[].metadata - the metadata for this channel.
- *
+ * @callback streamConnectCallback
+ * @property {number} attempt - the number of times the stream manager has attempted to
+ *    connect to the Wica Server to establish the server sent event stream.
  */
 
 /**
@@ -38,7 +36,7 @@ export class WicaStreamManager
      *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
      *
      * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
-     * @param {callback} connectionHandlers.streamConnect - Called each time this manager attempts to create
+     * @param {streamConnectCallback} connectionHandlers.streamConnect - Called each time this manager attempts to create
      *     and subscribe to a new stream. This callback has no arguments.
      * @param {callback} connectionHandlers.streamOpened - Called when the stream is opened (that's to say
      *     the connection with the server has been successfully established). The callback provides a
@@ -48,8 +46,8 @@ export class WicaStreamManager
      *     the id of the stream which has been closed.
      *
      * @param {Object} messageHandlers - Callbacks for handling data received from the SSE stream.
-     * @param {callback} messageHandlers.channelMetadataUpdated -  Called when channel metadata information
-     *     is received. The callback provides a single argument, the
+     * @param {callback} messageHandlers.channelMetadataUpdatedCallback -  Called when channel metadata
+     *     information is received. The callback provides a single argument, the
      *     {@link module:shared-definitions.WicaChannelMetadataMap WicaChannelMetadataMap} object.
      * @param {callback} messageHandlers.channelValuesUpdated - Called when channel value information
      *     is received. The callback provides a single argument the,
