@@ -9,6 +9,9 @@ import {DocumentStreamConnector} from "./document-stream-connector";
 import {DocumentTextRenderer} from "./document-text-renderer";
 
 
+/**
+ * Loads and starts the modules and services required to support the current HTML document.
+ */
 export function load()
 {
     loadWicaCSS();
