@@ -4,9 +4,7 @@
  */
 
 /**
- * Callback invoked when the stream manager begins a new connect sequence. This occurs
- * after the stream manager activate method has been invoked, or if the stream manager
- * doesn't see a stream heartbeat message within the expected time interval.
+ * Callback invoked when the stream manager begins a new connect sequence.
  *
  * @callback module:stream-manager.StreamConnectCallback
  * @property {number} attempt - The number of times the stream manager has attempted to
@@ -16,8 +14,8 @@
  */
 
 /**
- * Callback invoked when the stream is opened (that's to say the connection with the server has been
- * successfully established).
+ * Callback invoked when the stream is opened (that's to say when the connection with the server
+ * has been successfully established).
  *
  * @callback module:stream-manager.StreamOpenedCallback
  * @property {number} id - The ID of the stream that was opened. This information is useful mainly
@@ -25,7 +23,7 @@
  */
 
 /**
- * Callback invoked when the stream closes (that's to say the connection with the server has been
+ * Callback invoked when the stream is closed (that's to say the connection with the server has been
  * shut down).
  *
  * @callback module:stream-manager.StreamClosedCallback
@@ -57,8 +55,9 @@ export class WicaStreamManager
      * @param {WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
      *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
      * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
-     * @param {StreamConnectCallback} connectionHandlers.streamConnect - Called each time this manager attempts
-     *     to create and subscribe to a new stream. See
+     * @param {StreamConnectCallback} connectionHandlers.streamConnect - Called when the stream manager begins
+     *     a new connect sequence. This occurs after the stream manager activate method has been invoked, or
+     *     if the stream manager doesn't see a stream heartbeat message within the expected time interval. See
      *     {@link module:stream-manager.StreamConnectCallback StreamConnectCallback}.
      * @param {StreamOpenedCallback} connectionHandlers.streamOpened - Called when the stream is opened. See
      *     {@link module:stream-manager.StreamOpenedCallback StreamOpenedCallback}.
