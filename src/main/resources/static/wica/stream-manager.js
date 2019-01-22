@@ -7,8 +7,7 @@
 /**
  * JS Object that provides a map of channel names and channel metadata.
  *
- * @typedef module:stream-manager.streamConnectCallback
- * @callback streamConnectCallback
+ * @callback module:stream-manager.streamConnectCallback
  * @property {number} attempt - the number of times the stream manager has attempted to
  *    connect to the Wica Server to establish the server sent event stream.
  */
