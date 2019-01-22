@@ -4,13 +4,9 @@
  */
 
 /**
- * JS Object that provides a map of channels and their associated metadata.
+ * JS string defining the name of a channel.
  *
- * @typedef module:shared-definitions.WicaChannelMetadataMap
- * @property {Object} - The map.
- * @property {Object.key[]} - The channel names.
- * @property {Object.value[]} - The channel metadata.
- *     See {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}.
+ * @typedef module:shared-definitions.WicaChannelName
  */
 
 /**
@@ -50,15 +46,6 @@
  * @property low {number} - Lower Warning Limit.
  */
 
-/**
- * JS Object that provides a map of channels and their associated values.
- *
- * @typedef module:shared-definitions.WicaChannelValueMap
- * @property {Object} - The map.
- * @property {string[]} - The channel names.
- * @property {Wi[]} - The channel values.
- *     See {@link module:shared-definitions.WicaChannelValueMap WicaChannelValueMap}.
- */
 /**
  * JS Object that provides channel value information.
  *

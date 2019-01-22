@@ -61,7 +61,7 @@ export class WicaStreamManager
      *     the configuration of each of the stream's channels, together with, optionally, the stream properties
      *     object.
      * @param {Object[]} streamConfiguration.channels - The configuration of each stream channel.
-     * @param {string} streamConfiguration.channels[].name - The name of the channel.
+     * @param {WicaChannelName} streamConfiguration.channels[].name - The name of the channel.
      * @param {WicaChannelProperties} [streamConfiguration.channels[].props] - The channel properties object.
      *     See {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties}.
      * @param {WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
