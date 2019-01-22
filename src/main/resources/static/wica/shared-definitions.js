@@ -55,8 +55,8 @@
  *
  * @typedef module:shared-definitions.WicaChannelValueMap
  * @property {Object} - The map.
- * @property {Object.<key,value>} - The channel names.
- * @property {Object.value[]} - The channel values.
+ * @property {string[]} - The channel names.
+ * @property {Wi[]} - The channel values.
  *     See {@link module:shared-definitions.WicaChannelValueMap WicaChannelValueMap}.
  */
 /**
