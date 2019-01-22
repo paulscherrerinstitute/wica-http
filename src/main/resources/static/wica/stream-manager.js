@@ -4,6 +4,13 @@
  */
 
 
+/**
+ * JS Object that provides a map of channel names and channel metadata.
+ *
+ * @callback streamConnectCallback
+ * @property {number} attempt - the number of times the stream manager has attempted to
+ *    connect to the Wica Server to establish the server sent event stream.
+ */
 
 /**
  * Provides support for creating a new WicaStream on the Wica backend server, for subscribing to it and for
@@ -11,14 +18,6 @@
  */
 export class WicaStreamManager
 {
-    /**
-     * JS Object that provides a map of channel names and channel metadata.
-     *
-     * @callback streamConnectCallback
-     * @property {number} attempt - the number of times the stream manager has attempted to
-     *    connect to the Wica Server to establish the server sent event stream.
-     */
-
     /**
      * Constructs a new instance.
      *
@@ -37,7 +36,7 @@ export class WicaStreamManager
      *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
      *
      * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
-     * @param {streamConnectCallback} connectionHandlers.streamConnect - Called each time this manager attempts to create
+     * @param {module:stream-manager.streamConnectCallback} connectionHandlers.streamConnect - Called each time this manager attempts to create
      *     and subscribe to a new stream. This callback has no arguments.
      * @param {callback} connectionHandlers.streamOpened - Called when the stream is opened (that's to say
      *     the connection with the server has been successfully established). The callback provides a
