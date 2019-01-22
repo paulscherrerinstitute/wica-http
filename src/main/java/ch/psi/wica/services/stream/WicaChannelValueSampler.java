@@ -40,47 +40,47 @@ public abstract class WicaChannelValueSampler
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
-   public class WicaAllValueSampler extends WicaChannelValueSampler
-   {
-      @Override
-      List<WicaChannelValue> sample(List<WicaChannelValue> inputList)
-      {
-         return inputList;
-      }
-   }
-
-   public class WicaLastValueSampler extends WicaChannelValueSampler
-   {
-      @Override
-      List<WicaChannelValue> sample( List<WicaChannelValue> inputList )
-      {
-         return inputList.size() == 0 ? List.of() : List.of( inputList.get( inputList.size() - 1 ) );
-      }
-   }
-
-   public class WicaPeriodicValueSampler extends WicaChannelValueSampler
-   {
-
-
-      @Override
-      List<WicaChannelValue> sample( List<WicaChannelValue> inputList )
-      {
-
-         return inputList.stream().
-
-                 IntStream.range( 0, inputList.size() )
-                  .map( e -> { return inputList.get( e ); } )
-              //    .filter( getSampleCount() % 1000 == 0 )
-                  .collect( Collectors.toList() );
-      }
-
-
-     int getSampleCount()
-     {
-
-     }
-
-   }
+//   public class WicaAllValueSampler extends WicaChannelValueSampler
+//   {
+//      @Override
+//      List<WicaChannelValue> sample(List<WicaChannelValue> inputList)
+//      {
+//         return inputList;
+//      }
+//   }
+//
+//   public class WicaLastValueSampler extends WicaChannelValueSampler
+//   {
+//      @Override
+//      List<WicaChannelValue> sample( List<WicaChannelValue> inputList )
+//      {
+//         return inputList.size() == 0 ? List.of() : List.of( inputList.get( inputList.size() - 1 ) );
+//      }
+//   }
+//
+//   public class WicaPeriodicValueSampler extends WicaChannelValueSampler
+//   {
+//
+//
+//      @Override
+//      List<WicaChannelValue> sample( List<WicaChannelValue> inputList )
+//      {
+//
+//         return inputList.stream().
+//
+//                 IntStream.range( 0, inputList.size() )
+//                  .map( e -> { return inputList.get( e ); } )
+//              //    .filter( getSampleCount() % 1000 == 0 )
+//                  .collect( Collectors.toList() );
+//      }
+//
+//
+//     int getSampleCount()
+//     {
+//
+//     }
+//
+//   }
 
 
 }

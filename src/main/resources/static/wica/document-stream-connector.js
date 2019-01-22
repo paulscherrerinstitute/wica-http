@@ -57,7 +57,7 @@ export class DocumentStreamConnector
                                               this.wicaElementConnectionAttributes.channelAlarmState );
 
         this.createStream_( this.wicaElementConnectionAttributes.channelName, this.wicaElementConnectionAttributes.channelProperties );
-        this.activateStream_();
+        this.wicaStreamManager.activate();
     }
 
     /**

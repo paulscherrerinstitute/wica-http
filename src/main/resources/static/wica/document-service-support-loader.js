@@ -4,10 +4,12 @@
  */
 console.debug( "Executing script in document-service-support-loader.js module...");
 
-import {WicaElementConnectionAttributes, WicaElementRenderingAttributes, WicaStreamProperties} from "./shared-definitions";
-import {DocumentStreamConnector} from "./document-stream-connector";
-import {DocumentTextRenderer} from "./document-text-renderer";
+import {WicaElementConnectionAttributes, WicaElementRenderingAttributes, WicaStreamProperties} from "./shared-definitions.js";
+import {DocumentStreamConnector} from "./document-stream-connector.js";
+import {DocumentTextRenderer} from "./document-text-renderer.js";
 
+
+const WICA_HOST="https://wica-dev.psi.ch";
 
 /**
  * Loads and starts the modules and services required to support the current HTML document.
