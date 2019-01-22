@@ -40,7 +40,8 @@
 
 /**
  * @callback module:stream-manager.ChannelValuesUpdatedCallback
- * @property {Object.<WicaChannelName,WicaChannelValue>} valueMap - Map of channel names and their associated values.
+ * @property {Object.<WicaChannelName,WicaChannelValue[]>} valueMap - Map of channel names and array of
+ *    associated values that have been received for the channel in chronological order.
  * See {@link module:shared-definitions.WicaChannelValue WicaChannelValue}.
  */
 
