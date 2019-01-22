@@ -62,7 +62,7 @@ export class WicaStreamManager
      * @param {StreamOpenedCallback} connectionHandlers.streamOpened - Called when the stream is opened (that's
      *     to say the connection with the server has been successfully established). The callback provides a
      *     single argument specifying the id of the stream which has been opened (as obtained from the server).
-     * @param {module:stream-manager.StreamClosedCallback} connectionHandlers.streamClosed - see
+     * @param {module:stream-manager.StreamClosedCallback StreamClosedCallback} connectionHandlers.streamClosed - see
      *     {@link module:stream-manager.StreamClosedCallback StreamClosedCallback}.
      *
      * @param {Object} messageHandlers - Callbacks for handling data received from the SSE stream.
