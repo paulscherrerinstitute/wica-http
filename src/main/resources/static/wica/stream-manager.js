@@ -15,8 +15,8 @@
  */
 
 /**
- * Provides support for creating a new WicaStream on the Wica backend server, for thereafter subscribing
- * to it and for publishing locally the received information.
+ * Provides support for creating a new WicaStream on the Wica backend server, for subscribing to it and for
+ * publishing the received information.
  */
 export class WicaStreamManager
 {
