@@ -33,12 +33,14 @@
 
 /**
  * @callback module:stream-manager.ChannelMetadataUpdatedCallback
- * @property {MetadataMap} metadataMap - map of channels and their associated metadata.
+ * @property {WicaChannelMetadataMap} metadataMap - Map of channels and their associated metadata.
+ * See {@link module:shared-definitions.WicaChannelMetadataMap WicaChannelMetadataMap}.
  */
 
 /**
  * @callback module:stream-manager.ChannelValuesUpdatedCallback
- * @property {ValueMap} valueMap - map of channels and their associated values.
+ * @property {WicaChannelValueMap} valueMap - Map of channels and their associated values.
+ * See {@link module:shared-definitions.WicaChannelValueMap WicaChannelValueMap}.
  */
 
 /**
