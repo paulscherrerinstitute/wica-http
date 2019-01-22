@@ -4,12 +4,13 @@
  */
 
 /**
- * Callback invoked when the stream manager begins a new connect sequence.
+ * Callback invoked when the stream connect sequence begins.
  *
  * @callback module:stream-manager.StreamConnectCallback
- * @property {number} connectionAttemptCounter - The number of times the stream manager instance has
- *     attempted to connect to the server to establish the Server-Sent-Event (SSE) stream. This counter
- *     is reset every time the connection is successfully established.
+ * @property {number} connectionAttemptCounter - A counter which starts at ONE and which increments
+ *     after every connection attempt. This counter is reset every time the connection is successfully
+ *     established. This information is useful mainly for debug purposes (for example for outputting
+ *     a message to the console).
  */
 
 /**
@@ -30,6 +31,15 @@
  *    for debug purposes (for example for outputting a message to the console).
  */
 
+/**
+ * @callback module:stream-manager.ChannelMetadataUpdatedCallback
+ * @property {MetadataMap} metadataMap - map of channels and their associated metadata.
+ */
+
+/**
+ * @callback module:stream-manager.ChannelValuesUpdatedCallback
+ * @property {ValueMap} valueMap - map of channels and their associated values.
+ */
 
 /**
  * Provides support for creating a new WicaStream on the Wica backend server, for subscribing to it and for
@@ -53,6 +63,7 @@ export class WicaStreamManager
      *     See {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties}.
      * @param {WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
      *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
+     *
      * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
      * @param {StreamConnectCallback} connectionHandlers.streamConnect - Called when the stream manager begins
      *     a new connect sequence. This occurs after the stream manager activate method has been invoked, or
@@ -60,16 +71,16 @@ export class WicaStreamManager
      *     {@link module:stream-manager.StreamConnectCallback StreamConnectCallback}.
      * @param {StreamOpenedCallback} connectionHandlers.streamOpened - Called when the stream is opened. See
      *     {@link module:stream-manager.StreamOpenedCallback StreamOpenedCallback}.
-     * @param {StreamClosedCallback } connectionHandlers.streamClosed - Called when the stream is opened. See
+     * @param {StreamClosedCallback} connectionHandlers.streamClosed - Called when the stream is opened. See
      *     {@link module:stream-manager.StreamClosedCallback StreamClosedCallback}.
      *
      * @param {Object} messageHandlers - Callbacks for handling data received from the SSE stream.
-     * @param {callback} messageHandlers.channelMetadataUpdatedCallback -  Called when channel metadata
-     *     information is received. The callback provides a single argument, the
-     *     {@link module:shared-definitions.WicaChannelMetadataMap WicaChannelMetadataMap} object.
-     * @param {callback} messageHandlers.channelValuesUpdated - Called when channel value information
-     *     is received. The callback provides a single argument the,
-     *     {@link module:shared-definitions.WicaChannelValueMap WicaChannelValueMap} object.
+     * @param {ChannelMetadataUpdatedCallback} messageHandlers.channelMetadataUpdated - Called when channel
+     *     metadata information is received. See
+     *     {@link module:stream-manager.ChannelMetadataUpdatedCallback ChannelMetadataUpdatedCallback}.
+     * @param {ChannelValuesUpdatedCallback} messageHandlers.channelValuesUpdated - Called when channel
+     *     value information is received. See
+     *     {@link module:stream-manager.ChannelValuesUpdatedCallback ChannelValuesUpdatedCallback}.
      *
      * @param {Object} options - Provides additional client-side configuration options.
      * @param {number} [options.streamTimeoutIntervalInSeconds] - Periodicity with which the stream's heartbeat
