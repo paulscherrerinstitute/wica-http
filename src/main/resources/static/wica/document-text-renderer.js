@@ -48,7 +48,7 @@ export class DocumentTextRenderer
         }
         catch( err )
         {
-            logExceptionData( "Programming Error: renderWicaElements_ threw an exception: ", err );
+            DocumentTextRenderer.logExceptionData( "Programming Error: renderWicaElements_ threw an exception: ", err );
         }
 
         // Allow at least 100ms after each rendering cycle
@@ -127,9 +127,9 @@ export class DocumentTextRenderer
         {
             rendererPropertiesObj = JSON.parse( rendererPropertiesString );
         }
-        catch (err)
+        catch( err )
         {
-            logExceptionData( channelName + ": Illegal JSON format in '" + rendererPropertiesAttribute + "' attribute.\nDetails were as follows:\n", err);
+            DocumentTextRenderer.logExceptionData( channelName + ": Illegal JSON format in '" + rendererPropertiesAttribute + "' attribute.\nDetails were as follows:\n", err);
             rendererPropertiesObj = {};
         }
         let formattedValueText = this.buildFormattedValueText_(channelValueObj, channelMetadataObj, rendererPropertiesObj);
@@ -263,6 +263,17 @@ export class DocumentTextRenderer
         {
             return rawValue;
         }
+    }
+
+    static logExceptionData( msg, err )
+    {
+        let vDebug = "";
+        for ( const prop of err )
+        {
+            vDebug += "property: "+ prop + " value: ["+ err[prop]+ "]\n";
+        }
+        vDebug += "toString(): " + " value: [" + err.toString() + "]";
+        console.warn( msg + vDebug );
     }
 
 }
