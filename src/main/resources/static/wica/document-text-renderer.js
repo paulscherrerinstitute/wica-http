@@ -52,7 +52,7 @@ export class DocumentTextRenderer
         }
 
         // Allow at least 100ms after each rendering cycle
-        setTimeout( activate, 100 );
+        setTimeout( this.activate, 100 );
     }
 
     /**
