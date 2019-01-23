@@ -99,8 +99,8 @@
  *     {@link module:shared-definitions.WicaChannelValue WicaChannelValue} object.
  *
  * @property {string} channelAlarmState="data-wica-channel-alarm-state" - The name of the attribute which reflects
- *     the alarm status most recently obtained from the channel. Format: JS string literal with possible values:
- *     ["NO_ALARM", "MINOR_ALARM", "MAJOR_ALARM", "INVALID_ALARM" ].
+ *     the alarm status most recently obtained from the channel. Format: JS number literal with possible values:
+ *     [ 0 (= "NO_ALARM"), 1 (= "MINOR_ALARM"), 2 (= "MAJOR_ALARM"), 3 (= "INVALID_ALARM") ].
  */
 export const WicaElementConnectionAttributes = Object.freeze ({
     channelName:            "data-wica-channel-name",

@@ -9,7 +9,7 @@ import {DocumentStreamConnector} from "./document-stream-connector.js";
 import {DocumentTextRenderer} from "./document-text-renderer.js";
 
 
-const WICA_HOST="https://wica-dev.psi.ch";
+const WICA_HOST="https://gfa-wica-dev.psi.ch";
 
 /**
  * Loads and starts the modules and services required to support the current HTML document.
