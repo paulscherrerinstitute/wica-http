@@ -6,7 +6,7 @@
 /**
  * JS string defining the name of a channel.
  *
- * @typedef module:shared-definitions.WicaChannelName
+ * @typedef {string} module:shared-definitions.WicaChannelName
  */
 
 /**

@@ -35,14 +35,16 @@
  * @callback module:stream-manager.ChannelMetadataUpdatedCallback
  * @property {Object.<WicaChannelName, WicaChannelMetadata>} metadataMap - Map of channel names and their
  *     associated metadata.
- * See {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}.
+ * See {@link module:shared-definitions.WicaChannelName WicaChannelName} and
+ *     {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}.
  */
 
 /**
  * @callback module:stream-manager.ChannelValuesUpdatedCallback
  * @property {Object.<WicaChannelName,WicaChannelValue[]>} valueMap - Map of channel names and array of
  *    associated values that have been received for the channel in chronological order.
- * See {@link module:shared-definitions.WicaChannelValue WicaChannelValue}.
+ * See {@link module:shared-definitions.WicaChannelName WicaChannelName} and
+ *     {@link module:shared-definitions.WicaChannelValue WicaChannelValue}.
  */
 
 /**
