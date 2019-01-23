@@ -143,11 +143,15 @@ export const WicaElementRenderingAttributes = Object.freeze ({
  *     point format.
  * @property {boolean} [exp=false] - Whether numeric information should be rendered in exponential format (when
  *     set TRUE) or in fixed decimal point format (when set FALSE).
+ * @property {string} [units=""] - The units to be displayed when rendering numeric information. When this
+ *     property is specified it will be used. When not specified an attempt will be made to obtain the units
+ *     from the metadata.
  */
 export const WicaRendererProperties = Object.freeze ({
     disable: false,
     exp: false,
-    prec: 8
+    prec: 8,
+    units: ""
 } );
 
 /**
