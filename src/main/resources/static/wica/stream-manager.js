@@ -116,9 +116,11 @@ export class WicaStreamManager
     }
 
     /**
-     * Activates the stream manager. That's to say sets up a controller for creating and managing
-     * an active event stream and for calling other handlers as required to track the evolving
-     * connection state and received data.
+     * Activates the stream manager.
+     *
+     * More specifically this sets up a state machine to create and managing an active event stream
+     * and for calling other handlers as required to track the evolving connection state and received
+     * data.
      *
      * See also: {@link module:stream-manager.WicaStreamManager#shutdown shutdown}.
      *
