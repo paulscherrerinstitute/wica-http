@@ -258,7 +258,7 @@ export class StreamManager
         eventSource.addEventListener( 'ev-wica-server-heartbeat', ev => {
             if ( this.crossOriginCheckOk_( ev ) ) {
                 const id = StreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
-                console.warn("Event source: 'wica stream' - open event on stream with id: " + id );
+                console.warn("Event source: 'wica stream' - heartbeat event on stream with id: " + id );
                 this.countdownInSeconds = this.streamTimeoutIntervalInSeconds;
             }
         }, false) ;

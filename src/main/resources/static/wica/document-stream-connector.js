@@ -131,7 +131,7 @@ export class DocumentStreamConnector
                 const metadataAsString = JSON.stringify(channelMetadata);
                 elements.forEach(ele => {
                     ele.setAttribute( channelMetadataAttribute, metadataAsString);
-                    console.log("Metadata updated: " + metadataAsString);
+                    console.log( "Metadata updated on channel: '" + key + "' has value: '" + metadataAsString + "'" );
                 });
             });
         };
