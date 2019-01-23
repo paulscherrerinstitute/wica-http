@@ -125,6 +125,8 @@ export class WicaStreamManager
      * that the connection to the data server is ok. If the message is not received within the
      * allowed time window then the existing stream will be closed and a new stream will be
      * negotiated with the server.
+     *
+     * See also: {@link module:stream-manager.WicaStreamManager#shutdown shutdown}.
      */
     activate()
     {
@@ -142,6 +144,8 @@ export class WicaStreamManager
 
     /**
      * Shuts down the stream manager.
+     *
+     * See also: {@link module:stream-manager.WicaStreamManager#activate activate}.
      */
     shutdown()
     {
