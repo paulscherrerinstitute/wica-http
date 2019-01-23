@@ -73,7 +73,7 @@ export class DocumentTextRenderer
         DocumentUtilities.findWicaElements().forEach((element) =>
         {
             // Always ensure the element's tooltips are available for rendering.
-            DocumentTextRenderer.configureWicaElementToolTips_( element, channelNameAttribute, rendererTooltipsAttribute );
+            DocumentTextRenderer.configureWicaElementToolTips_( element, rendererTooltipsAttribute, channelNameAttribute );
 
             // Get the element's renderer properties object if available
             // Note: since this attribute is configured by the user as a JSON string it's important
