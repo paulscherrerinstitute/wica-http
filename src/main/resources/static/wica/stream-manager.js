@@ -116,17 +116,17 @@ export class WicaStreamManager
     }
 
     /**
-     * Activates the stream manager. That's to say sets up a plan for creating and subscribing to a
-     * wica event stream and for calling other handlers as required to track the evolving connection
-     * state and received data.
+     * Activates the stream manager. That's to say sets up a controller for creating and managing
+     * an active event stream and for calling other handlers as required to track the evolving
+     * connection state and received data.
+     *
+     * See also: {@link module:stream-manager.WicaStreamManager#shutdown shutdown}.
      *
      * @implNote
      * The current implementation expects to receive a periodic "heartbeat" message to confirm
      * that the connection to the data server is ok. If the message is not received within the
      * allowed time window then the existing stream will be closed and a new stream will be
      * negotiated with the server.
-     *
-     * See also: {@link module:stream-manager.WicaStreamManager#shutdown shutdown}.
      */
     activate()
     {
