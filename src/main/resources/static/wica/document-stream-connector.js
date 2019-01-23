@@ -80,7 +80,7 @@ export class DocumentStreamConnector
      */
     configureStreamConnectionHandlers_( streamConnectionStateAttribute )
     {
-        this.streamConnectionHandlers.streamConnect = () => {
+        this.streamConnectionHandlers.streamConnect = ( attempt ) => {
             console.log("Event stream connection attempt: " + attempt );
             DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "connecting"));
         };

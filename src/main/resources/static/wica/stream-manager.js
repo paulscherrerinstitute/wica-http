@@ -257,6 +257,8 @@ export class StreamManager
         // and subscription cycle.
         eventSource.addEventListener( 'ev-wica-server-heartbeat', ev => {
             if ( this.crossOriginCheckOk_( ev ) ) {
+                const id = StreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
+                console.warn("Event source: 'wica stream' - open event on stream with id: " + id );
                 this.countdownInSeconds = this.streamTimeoutIntervalInSeconds;
             }
         }, false) ;
@@ -280,7 +282,7 @@ export class StreamManager
             if ( this.crossOriginCheckOk_( ev ) ) {
                 const id = StreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
                 this.streamOpened( id );
-                console.warn("Event source: 'stream' - open event on stream with id: " + id );
+                console.warn("Event source: 'wica stream' - open event on stream with id: " + id );
                 this.connectionAttemptCounter = 0;
                 this.activeStreamId = id;
             }
@@ -289,7 +291,7 @@ export class StreamManager
         eventSource.addEventListener( 'error', ev => {
             if ( this.crossOriginCheckOk_( ev ) ) {
                 const id = StreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
-                console.warn("Event source: 'stream'  - error event on stream with id: " + id );
+                console.warn("Event source: 'wica stream'  - error event on stream with id: " + id );
                 ev.target.close();  // close the event source that triggered this message
                 this.streamClosed( id );
             }
