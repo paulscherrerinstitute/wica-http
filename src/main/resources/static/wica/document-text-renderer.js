@@ -252,9 +252,12 @@ export class DocumentTextRenderer
     static logExceptionData_( msg, err )
     {
         let vDebug = "";
-        for ( const prop of err )
+        for ( const prop in err )
         {
-            vDebug += "property: "+ prop + " value: ["+ err[prop]+ "]\n";
+            if ( err.hasOwnProperty( prop ) )
+            {
+                vDebug += "property: " + prop + " value: [" + err[ prop ] + "]\n";
+            }
         }
         vDebug += "toString(): " + " value: [" + err.toString() + "]";
         console.warn( msg + vDebug );
