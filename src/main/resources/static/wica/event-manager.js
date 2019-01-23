@@ -6,6 +6,26 @@ console.debug( "Executing script in event-manager.js module...");
 
 import * as DocumentUtilities from './document-utils.js'
 
+
+/**
+ * Activates this event manager.
+ */
+export function activate()
+{
+    try
+    {
+        fireEvents();
+    }
+    catch( err )
+    {
+        logExceptionData( "Programming Error: fireEvents threw an exception: ", err );
+    }
+
+    // Allow at least 100ms after each event firing cycle
+    setTimeout( activate, 100 );
+}
+
+
 /**
  * Fires wica notification events on all wica-aware elements in the current document.
  *
@@ -30,7 +50,7 @@ import * as DocumentUtilities from './document-utils.js'
  * The current implementation obtains the event payload information by looking at the information in the
  * 'data-wica-channel-value-array' and 'data-wica-channel-metadata' html element attributes.
  */
-export function fireEvents()
+function fireEvents()
 {
     DocumentUtilities.findWicaElements().forEach( (element) => {
 
@@ -89,24 +109,6 @@ export function fireEvents()
             element.dispatchEvent( customEvent );
         }
     });
-
-
-    function fireWicaEvents_()
-    {
-        try
-        {
-            WicaEventManager.fireEvents();
-        }
-        catch( err )
-        {
-            logExceptionData( "Programming Error: fireEvents threw an exception: ", err );
-        }
-
-        // Allow at least 100ms after each event firing cycle
-        setTimeout( fireWicaEvents, 100 );
-    }
-
-
 
     function logExceptionData( msg, err )
     {
