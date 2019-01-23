@@ -34,16 +34,15 @@
 /**
  * @callback module:stream-manager.ChannelMetadataUpdatedCallback
  * @property {Object.<WicaChannelName, WicaChannelMetadata>} metadataMap - Map of channel names and their
- *     associated metadata.
- * See {@link module:shared-definitions.WicaChannelName WicaChannelName} and
+ *     associated metadata. See {@link module:shared-definitions.WicaChannelName WicaChannelName} and
  *     {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}.
  */
 
 /**
  * @callback module:stream-manager.ChannelValuesUpdatedCallback
  * @property {Object.<WicaChannelName,WicaChannelValue[]>} valueMap - Map of channel names and array of
- *    associated values that have been received for the channel in chronological order.
- * See {@link module:shared-definitions.WicaChannelName WicaChannelName} and
+ *     associated values that have been received for the channel in chronological order.
+ *     See {@link module:shared-definitions.WicaChannelName WicaChannelName} and
  *     {@link module:shared-definitions.WicaChannelValue WicaChannelValue}.
  */
 
@@ -51,7 +50,7 @@
  * Provides support for creating a new WicaStream on the Wica server, for subscribing to it and for
  * publishing the received information.
  */
-export class WicaStreamManager
+export class StreamManager
 {
     /**
      * Constructs a new instance.
@@ -63,10 +62,11 @@ export class WicaStreamManager
      * @param {Object} streamConfiguration - The stream specification to be sent to the server. This includes
      *     the configuration of each of the stream's channels, together with, optionally, the stream properties
      *     object.
-     * @param {Object[]} streamConfiguration.channels - The configuration of each stream channel.
-     * @param {WicaChannelName} streamConfiguration.channels[].name - The name of the channel.
-     * @param {WicaChannelProperties} [streamConfiguration.channels[].props] - The channel properties object.
-     *     See {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties}.
+     *
+     * @param {Object<WicaChannelName, WicaChannelProperties>} streamConfiguration.channels - The configuration
+     *     of each stream channel. See {@link module:shared-definitions.WicaChannelName WicaChannelName} and
+     *     {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties}.
+     *
      * @param {WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
      *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
      *
@@ -112,17 +112,16 @@ export class WicaStreamManager
         this.countdownInSeconds = 0;
         this.connectionAttemptCounter = 0;
         this.activeStreamId = undefined;
-        this.intervalTimer = undefined;
     }
 
     /**
-     * Activates the stream manager.
+     * Activates this stream manager instance.
      *
-     * More specifically this sets up a state machine to create and managing an active event stream
+     * More specifically this sets up a state machine to create and manage an active event stream
      * and for calling other handlers as required to track the evolving connection state and received
      * data.
      *
-     * See also: {@link module:stream-manager.WicaStreamManager#shutdown shutdown}.
+     * See also: {@link module:stream-manager.StreamManager#shutdown shutdown}.
      *
      * @implNote
      * The current implementation expects to receive a periodic "heartbeat" message to confirm
@@ -145,22 +144,22 @@ export class WicaStreamManager
     }
 
     /**
-     * Shuts down the stream manager.
+     * Shuts down this stream manager instance.
      *
-     * See also: {@link module:stream-manager.WicaStreamManager#activate activate}.
+     * See also: {@link module:stream-manager.StreamManager#activate activate}.
      */
     shutdown()
     {
         // If the stream manager is activated cancel the interval timer.
         if( this.intervalTimer !== undefined )
         {
-            clearInterval(this.intervalTimer);
+            clearInterval( this.intervalTimer );
         }
 
         // Cancel the most recently established stream (if one has been established).
         if ( this.activeStreamId !== undefined )
         {
-            deleteStream_( this.activeStreamId );
+            this.deleteStream_( this.activeStreamId );
         }
     }
 
@@ -257,13 +256,13 @@ export class WicaStreamManager
         // will be deemed to have failed, triggering a new stream creation
         // and subscription cycle.
         eventSource.addEventListener( 'ev-wica-server-heartbeat', ev => {
-            if ( this.crossOriginCheckOk( ev ) ) {
+            if ( this.crossOriginCheckOk_( ev ) ) {
                 this.countdownInSeconds = this.streamTimeoutIntervalInSeconds;
             }
         }, false) ;
 
         eventSource.addEventListener( 'ev-wica-channel-metadata',ev => {
-            if ( this.crossOriginCheckOk( ev ) ) {
+            if ( this.crossOriginCheckOk_( ev ) ) {
                 const metadataArrayObject = JSON.parse( ev.data );
                 this.channelMetadataUpdated( metadataArrayObject );
             }
@@ -271,15 +270,15 @@ export class WicaStreamManager
         }, false);
 
         eventSource.addEventListener( 'ev-wica-channel-value', ev => {
-            if ( this.crossOriginCheckOk( ev ) ) {
+            if ( this.crossOriginCheckOk_( ev ) ) {
                 const valueArrayObject = JSON.parse( ev.data );
                 this.channelValuesUpdated( valueArrayObject );
             }
         }, false);
 
         eventSource.addEventListener( 'open', ev => {
-            if ( this.crossOriginCheckOk( ev ) ) {
-                const id = WicaStreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
+            if ( this.crossOriginCheckOk_( ev ) ) {
+                const id = StreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
                 this.streamOpened( id );
                 console.warn("Event source: 'stream' - open event on stream with id: " + id );
                 this.connectionAttemptCounter = 0;
@@ -289,7 +288,7 @@ export class WicaStreamManager
 
         eventSource.addEventListener( 'error', ev => {
             if ( this.crossOriginCheckOk_( ev ) ) {
-                const id = WicaStreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
+                const id = StreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
                 console.warn("Event source: 'stream'  - error event on stream with id: " + id );
                 ev.target.close();  // close the event source that triggered this message
                 this.streamClosed( id );

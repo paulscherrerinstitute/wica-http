@@ -4,7 +4,7 @@
  */
 console.debug( "Executing script in document-stream-connector.js module...");
 
-import {WicaStreamManager} from './stream-manager.js'
+import {StreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
 
 /**
@@ -21,7 +21,7 @@ export class DocumentStreamConnector
      *
      * @param {!string} streamServerUrl - The URL of the backend server from whom information is to be obtained.
      *
-     * @param {!WicaStreamProperties} wicaStreamProperties - The properties of the stream that will be created to
+     * @param {!WicaStreamProperties} streamProperties - The properties of the stream that will be created to
      *     obtain the required information from the data sources.
      *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
      *
@@ -29,10 +29,10 @@ export class DocumentStreamConnector
      *     element attributes that are to be used in the communication process.
      *     See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
      */
-    constructor( streamServerUrl, wicaStreamProperties, wicaElementConnectionAttributes )
+    constructor( streamServerUrl, streamProperties, wicaElementConnectionAttributes )
     {
         this.streamServerUrl = streamServerUrl;
-        this.streamProperties = wicaStreamProperties;
+        this.streamProperties = streamProperties;
         this.wicaElementConnectionAttributes = wicaElementConnectionAttributes;
         this.lastOpenedStreamId = 0;
         this.streamConnectionHandlers = {};
@@ -57,7 +57,7 @@ export class DocumentStreamConnector
                                               this.wicaElementConnectionAttributes.channelAlarmState );
 
         this.createStream_( this.wicaElementConnectionAttributes.channelName, this.wicaElementConnectionAttributes.channelProperties );
-        this.wicaStreamManager.activate();
+        this.streamManager.activate();
     }
 
     /**
@@ -67,7 +67,7 @@ export class DocumentStreamConnector
      */
     shutdown()
     {
-        this.wicaStreamManager.shutdown();
+        this.streamManager.shutdown();
     }
 
     /**
@@ -180,18 +180,21 @@ export class DocumentStreamConnector
     {
         // Look for all wica-aware elements in the current page
         const wicaElements = DocumentUtilities.findWicaElements();
-        console.log("Number of Wica elements found: ", wicaElements.length);
+        console.log( "Number of Wica elements found: ", wicaElements.length );
 
         // Create an array of the associated channel names
         const channels = [];
         wicaElements.forEach(function (widget)
         {
             const channelName = widget.getAttribute( channelNameAttribute );
-            if (widget.hasAttribute( channelPropertiesAttribute )) {
+            if ( widget.hasAttribute( channelPropertiesAttribute ) )
+            {
                 const channelProps = widget.getAttribute( channelPropertiesAttribute );
                 channels.push({"name": channelName, "props": JSON.parse( channelProps ) });
-            } else {
-                channels.push({"name": channelName});
+            }
+            else
+            {
+                channels.push( {"name": channelName} );
             }
         });
 
@@ -202,7 +205,7 @@ export class DocumentStreamConnector
         };
 
         const streamConfiguration = { "channels": channels, "props": this.streamProperties };
-        this.wicaStreamManager = new WicaStreamManager( this.streamServerUrl, streamConfiguration, this.streamConnectionHandlers, this.streamMessageHandlers, streamOptions );
+        this.streamManager = new StreamManager( this.streamServerUrl, streamConfiguration, this.streamConnectionHandlers, this.streamMessageHandlers, streamOptions );
 
     }
 
