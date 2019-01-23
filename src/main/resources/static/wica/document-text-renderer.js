@@ -2,6 +2,8 @@
  * Provides support for rendering the textual content of wica-aware elements in the current document.
  * @module
  */
+console.debug( "Executing script in document-test-renderer.js module...");
+
 import * as DocumentUtilities from './document-utils.js'
 
 
@@ -55,7 +57,7 @@ export class DocumentTextRenderer
         }
 
         // Allow at least 100ms after each rendering cycle
-        setTimeout( this.activate, 100 );
+        setTimeout( () => this.activate(), 100 );
     }
 
     /**
@@ -246,8 +248,8 @@ export class DocumentTextRenderer
      *
      * @private
      *
-     * @param msg
-     * @param err
+     * @param {string} msg
+     * @param {Error} err
      */
     static logExceptionData_( msg, err )
     {
@@ -259,7 +261,6 @@ export class DocumentTextRenderer
                 vDebug += "property: " + prop + " value: [" + err[ prop ] + "]\n";
             }
         }
-        vDebug += "toString(): " + " value: [" + err.toString() + "]";
         console.warn( msg + vDebug );
     }
 

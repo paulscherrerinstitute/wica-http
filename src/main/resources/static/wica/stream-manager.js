@@ -2,7 +2,7 @@
  * Provides support for creating and using Wica streams.
  * @module
  */
-
+console.debug( "Executing script in stream-manager.js module...");
 /**
  * Callback invoked when the stream connect sequence begins.
  *
