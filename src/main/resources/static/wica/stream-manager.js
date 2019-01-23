@@ -48,7 +48,7 @@
  */
 
 /**
- * Provides support for creating a new WicaStream on the Wica backend server, for subscribing to it and for
+ * Provides support for creating a new WicaStream on the Wica server, for subscribing to it and for
  * publishing the received information.
  */
 export class WicaStreamManager
@@ -111,11 +111,14 @@ export class WicaStreamManager
         this.crossOriginCheckEnabled = options.crossOriginCheckEnabled;
         this.countdownInSeconds = 0;
         this.connectionAttemptCounter = 0;
+        this.activeStreamId = undefined;
+        this.intervalTimer = undefined;
     }
 
     /**
-     * Sets up a plan for managing the wica event stream and for calling other handlers
-     * as required to track the evolving connection state and received data.
+     * Activates the stream manager. That's to say sets up a plan for creating and subscribing to a
+     * wica event stream and for calling other handlers as required to track the evolving connection
+     * state and received data.
      *
      * @implNote
      * The current implementation expects to receive a periodic "heartbeat" message to confirm
@@ -126,7 +129,7 @@ export class WicaStreamManager
     activate()
     {
         const ONE_SECOND_IN_TIMER_UNITS = 1000;
-        setInterval( () => {
+        this.intervalTimer = setInterval( () => {
             if ( this.countdownInSeconds === 0 ) {
                 console.warn("Event source 'stream': creating new...");
                 this.createStream_();
@@ -135,6 +138,59 @@ export class WicaStreamManager
             }
             this.countdownInSeconds--;
         }, ONE_SECOND_IN_TIMER_UNITS );
+    }
+
+    /**
+     * Shuts down the stream manager.
+     */
+    shutdown()
+    {
+        // If the stream manager is activated cancel the interval timer.
+        if( this.intervalTimer !== undefined )
+        {
+            clearInterval(this.intervalTimer);
+        }
+
+        // Cancel the most recently established stream (if one has been established).
+        if ( this.activeStreamId !== undefined )
+        {
+            deleteStream_( this.activeStreamId );
+        }
+    }
+
+    /**
+     * Sends a DELETE request to the Wica Server to delete an existing stream.
+     *
+     * @private
+     * @param {string} streamId the ID of the stream to be deleted.
+     */
+    deleteStream_( streamId )
+    {
+        // Create a request object which will be used to ask the server to create the new stream.
+        const xhttp = new XMLHttpRequest();
+
+        // Add a handler which will print an error message if the stream couldn't be deleted.
+        xhttp.onerror = () => {
+            console.warn( "XHTTP error when sending request to delete event source" );
+        };
+
+        // Add a handler which will subscribe to the stream once it has been created.
+        xhttp.onreadystatechange = () => {
+            if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status === 200) {
+                const deletedId = xhttp.responseText;
+                console.warn( "Stream deleted, deleted id was: ", deletedId );
+            }
+            if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status !== 200) {
+                console.warn( "Error when sending delete stream request." );
+            }
+        };
+
+        // Now send off the request
+        const deleteUrl = this.serverUrl + "/ca/streams/" + streamId;
+        xhttp.withCredentials = true;
+        xhttp.open("DELETE", deleteUrl, true);
+        xhttp.setRequestHeader("Content-Type", "application/json");
+        xhttp.send();
     }
 
     /**
@@ -221,6 +277,7 @@ export class WicaStreamManager
                 this.streamOpened( id );
                 console.warn("Event source: 'stream' - open event on stream with id: " + id );
                 this.connectionAttemptCounter = 0;
+                this.activeStreamId = id;
             }
         }, false);
 
