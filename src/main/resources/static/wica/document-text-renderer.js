@@ -27,15 +27,13 @@ export class DocumentTextRenderer
      *     See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
      *
      * @param {!WicaElementRenderingAttributes} wicaElementRenderingAttributes - The names of the wica-aware
-     *     element attributes that are to be used in the communication process.
-     *     See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
-     *
+     *     element attributes that are to be used in the rendering process.
+     *     See {@link module:shared-definitions.WicaElementRenderingAttributes wicaElementRenderingAttributes}.
      */
     constructor( wicaElementConnectionAttributes, wicaElementRenderingAttributes,  )
     {
         this.wicaElementConnectionAttributes= wicaElementConnectionAttributes;
         this.wicaElementRenderingAttributes = wicaElementRenderingAttributes;
-
     }
 
     /**
@@ -48,8 +46,8 @@ export class DocumentTextRenderer
             this.renderWicaElements_( this.wicaElementConnectionAttributes.channelName,
                                       this.wicaElementConnectionAttributes.channelMetadata,
                                       this.wicaElementConnectionAttributes.channelValueArray,
-                                      this.wicaElementRenderingAttributes.rendererTooltip,
-                                      this.wicaElementRenderingAttributes.rendererProperties );
+                                      this.wicaElementRenderingAttributes.tooltip,
+                                      this.wicaElementRenderingAttributes.renderingProperties );
         }
         catch( err )
         {
@@ -67,23 +65,24 @@ export class DocumentTextRenderer
      * @param {string} channelNameAttribute - The name of the attribute which holds the channel name.
      * @param {string} channelMetadataAttribute - The name of the attribute which holds the channel metadata.
      * @param {string} channelValueArrayAttribute - The name of the attribute which holds channel value array.
-     * @param {string} rendererTooltipAttribute - The name of the attribute which holds the renderer's tooltip.
-     * @param {string} rendererPropertiesAttribute - The name of the attribute which holds the renderer's properties.
+     * @param {string} tooltipAttribute - The name of the attribute which holds the tooltip.
+     * @param {string} renderingPropertiesAttribute - The name of the attribute which holds the properties
+     *     needed for rendering.
      */
-    renderWicaElements_( channelNameAttribute, channelMetadataAttribute, channelValueArrayAttribute, rendererTooltipAttribute, rendererPropertiesAttribute )
+    renderWicaElements_( channelNameAttribute, channelMetadataAttribute, channelValueArrayAttribute, tooltipAttribute, renderingPropertiesAttribute )
     {
         DocumentUtilities.findWicaElements().forEach((element) =>
         {
             // Always ensure the element's tooltips are available for rendering.
-            DocumentTextRenderer.configureWicaElementToolTip_( element, rendererTooltipAttribute, channelNameAttribute );
+            DocumentTextRenderer.configureWicaElementToolTip_( element, tooltipAttribute, channelNameAttribute );
 
-            // Get the element's renderer properties object if available
+            // Get the element's rendering properties object if available
             // Note: since this attribute is configured by the user as a JSON string it's important
             // to validate the data and to output some diagnostic message if there is a problem.
-            const rendererProperties = DocumentTextRenderer.getRendererProperties( element, rendererPropertiesAttribute );
+            const renderingProperties = DocumentTextRenderer.getRenderingProperties( element, renderingPropertiesAttribute );
 
             // Bail out if rendering is disabled for this widget
-            const disableRendering = rendererProperties.hasOwnProperty("disable") ? rendererProperties.disable : false;
+            const disableRendering = renderingProperties.hasOwnProperty("disable") ? renderingProperties.disable : false;
             if ( disableRendering )
             {
                 return;
@@ -122,7 +121,7 @@ export class DocumentTextRenderer
             const channelMetadata = JSON.parse( element.getAttribute( channelMetadataAttribute ) );
 
             // Now render the widget's text content
-            DocumentTextRenderer.renderWicaElementTextContent_( element, channelMetadata, channelValueLatest, rendererProperties );
+            DocumentTextRenderer.renderWicaElementTextContent_( element, channelMetadata, channelValueLatest, renderingProperties );
         });
     }
 
@@ -132,12 +131,12 @@ export class DocumentTextRenderer
      * @param {Element} element - The element.
      * @param {WicaChannelMetadata} channelMetadata - the channel's metadata.
      * @param {WicaChannelValue} channelValueLatest - the channel's latest value.
-     * @param {WicaRendererProperties} rendererProperties - the channel's rendering properties.
+     * @param {WicaRenderingProperties} renderingProperties - the channel's rendering properties.
      */
-    static renderWicaElementTextContent_( element, channelMetadata, channelValueLatest, rendererProperties )
+    static renderWicaElementTextContent_( element, channelMetadata, channelValueLatest, renderingProperties )
     {
         const rawValue = channelValueLatest.val;
-        const units = rendererProperties.hasOwnProperty("units") ? rendererProperties.units :
+        const units = renderingProperties.hasOwnProperty("units") ? renderingProperties.units :
                       channelMetadata.hasOwnProperty( "egu") ? channelMetadata.egu : "";
 
         switch ( channelMetadata.type )
@@ -149,8 +148,8 @@ export class DocumentTextRenderer
                 break;
 
             case "REAL":
-                const useExponentialFormat = rendererProperties.hasOwnProperty("exp" ) ? rendererProperties.exp : false;
-                const precision = Math.min( rendererProperties.hasOwnProperty("prec") ? rendererProperties.prec : channelMetadata.prec, MAX_PRECISION );
+                const useExponentialFormat = renderingProperties.hasOwnProperty("exp" ) ? renderingProperties.exp : false;
+                const precision = Math.min( renderingProperties.hasOwnProperty("prec") ? renderingProperties.prec : channelMetadata.prec, MAX_PRECISION );
 
                 // TODO: look at more rigorous deserialisation of NaN's, Infinity etc
                 if ( (rawValue === "Infinity") || (rawValue === "NaN"))
@@ -175,7 +174,7 @@ export class DocumentTextRenderer
                 }
                 else
                 {
-                    const units = rendererProperties.hasOwnProperty("units" ) ? rendererProperties.units : channelMetadata.egu;
+                    const units = renderingProperties.hasOwnProperty("units" ) ? renderingProperties.units : channelMetadata.egu;
                     element.textContent =  rawValue + " " + units;
                 }
                 break;
@@ -205,40 +204,40 @@ export class DocumentTextRenderer
      * it will set the attribute to the name of the channel.
      *
      * @param {Element} element - The element.
-     * @param {string} rendererTooltipAttribute - The name of the attribute which contains the tooltip.
+     * @param {string} tooltipAttribute - The name of the attribute which contains the tooltip.
      * @param {string} channelNameAttribute - The name of the attribute which contains the channel name.
      * @private
      */
-    static configureWicaElementToolTip_( element, rendererTooltipAttribute, channelNameAttribute )
+    static configureWicaElementToolTip_( element, tooltipAttribute, channelNameAttribute )
     {
-        if ( ! element.hasAttribute( rendererTooltipAttribute ) )
+        if ( ! element.hasAttribute( tooltipAttribute ) )
         {
             const channelName = element.getAttribute( channelNameAttribute );
-            element.setAttribute( rendererTooltipAttribute, channelName );
+            element.setAttribute( tooltipAttribute, channelName );
         }
     }
 
     /**
-     * Attempts to return a JS WicaRendererProperties object using the JSON string that may optionally
-     * be present in the element's renderer properties attribute.
+     * Attempts to return a JS WicaRenderingProperties object using the JSON string that may optionally
+     * be present in the element's rendering properties attribute.
      *
      * @private
      * @param {Element} element - The element.
-     * @param {string} rendererPropertiesAttribute - The name of the element's HTML attribute which
-     *      contains the renderer properties.
-     * @return {WicaRendererProperties} - the object, or {} if for any reason it cannot be obtained
+     * @param {string} renderingPropertiesAttribute - The name of the element's HTML attribute which
+     *      contains the rendering properties.
+     * @return {WicaRenderingProperties} - the object, or {} if for any reason it cannot be obtained
      *     from the element's HTML attribute.
      */
-    static getRendererProperties( element, rendererPropertiesAttribute )
+    static getRenderingProperties( element, renderingPropertiesAttribute )
     {
-        const rendererPropertiesString = element.hasAttribute( rendererPropertiesAttribute ) ? element.getAttribute( rendererPropertiesAttribute ) : "{}";
+        const renderingPropertiesString = element.hasAttribute( renderingPropertiesAttribute ) ? element.getAttribute( renderingPropertiesAttribute ) : "{}";
         try
         {
-            return JSON.parse( rendererPropertiesString );
+            return JSON.parse( renderingPropertiesString );
         }
         catch( err )
         {
-            DocumentTextRenderer.logExceptionData_( channelName + ": Illegal JSON format in '" + rendererPropertiesAttribute + "' attribute.\nDetails were as follows:\n", err);
+            DocumentTextRenderer.logExceptionData_( channelName + ": Illegal JSON format in '" + renderingPropertiesAttribute + "' attribute.\nDetails were as follows:\n", err);
             return {};
         }
     }

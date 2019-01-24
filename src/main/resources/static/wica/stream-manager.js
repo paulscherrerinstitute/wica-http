@@ -7,10 +7,9 @@ console.debug( "Executing script in stream-manager.js module...");
  * Callback invoked when the stream connect sequence begins.
  *
  * @callback module:stream-manager.StreamConnectCallback
- * @property {number} connectionAttemptCounter - A counter which starts at ONE and which increments
- *     after every connection attempt. This counter is reset every time the connection is successfully
- *     established. This information is useful mainly for debug purposes (for example for outputting
- *     a message to the console).
+ * @property {number} count - The connection request counter. The counter, set to 1 initially, increments
+ *     after every stream connection attempt. This information is useful mainly for debug purposes (for
+ *     example for outputting a message to the console).
  */
 
 /**
@@ -110,7 +109,7 @@ export class StreamManager
         this.streamTimeoutIntervalInSeconds = options.streamTimeoutIntervalInSeconds;
         this.crossOriginCheckEnabled = options.crossOriginCheckEnabled;
         this.countdownInSeconds = 0;
-        this.connectionAttemptCounter = 0;
+        this.connectionRequestCounter = 1;
         this.activeStreamId = undefined;
     }
 
@@ -207,7 +206,7 @@ export class StreamManager
     createStream_()
     {
         // Inform listeners that a stream connection attempt is in progress
-        this.streamConnect( ++this.connectionAttemptCounter );
+        this.streamConnect( his.connectionRequestCounter++ );
 
         // Create a request object which will be used to ask the server to create the new stream.
         const xhttp = new XMLHttpRequest();
@@ -283,7 +282,6 @@ export class StreamManager
                 const id = StreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
                 this.streamOpened( id );
                 console.warn("Event source: 'wica stream' - open event on stream with id: " + id );
-                this.connectionAttemptCounter = 0;
                 this.activeStreamId = id;
             }
         }, false);

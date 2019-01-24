@@ -35,7 +35,6 @@
 [data-wica-stream-state*= 'connecting' ] {
     background-color: mintcream !important;
     color: darkgrey !important;
-    transition: color 2s;
     transition: background-color 2s;
 }
 
@@ -52,8 +51,8 @@
 /*- Wica General Purpose Styling Rules ---------------------------------------*/
 
 /* Styling for tooltip popup on hover */
-[data-wica-renderer-tooltip]:hover:before {
-    content: attr( data-wica-renderer-tooltip );
+[data-wica-tooltip]:hover:before {
+    content: attr( data-wica-tooltip );
     background-color: yellow;
     color: black;
     font-size: 0.75rem;

@@ -48,7 +48,7 @@ export class DocumentStreamConnector
      */
     activate()
     {
-        this.configureStreamConnectionHandlers_( this.wicaElementConnectionAttributes.channelConnectionState );
+        this.configureStreamConnectionHandlers_( this.wicaElementConnectionAttributes.channelStreamState );
 
         this.configureStreamMessageHandlers_( this.wicaElementConnectionAttributes.channelMetadata,
                                               this.wicaElementConnectionAttributes.channelValueArray,
@@ -80,25 +80,26 @@ export class DocumentStreamConnector
      */
     configureStreamConnectionHandlers_( streamConnectionStateAttribute )
     {
-        this.streamConnectionHandlers.streamConnect = ( attempt ) => {
-            console.log("Event stream connection attempt: " + attempt );
-            DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "connecting"));
+        this.streamConnectionHandlers.streamConnect = (count) => {
+            console.warn("Event stream connect: " + count );
+            console.warn("Setting wica stream state on all html elements to: 'connect-" + count + "'" );
+            DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "connect-" + count ) );
         };
 
         this.streamConnectionHandlers.streamOpened = (id) => {
-            console.log("Event stream opened: " + id);
-            console.log("Setting wica stream state on all html elements to: 'opened'");
+            console.warn("Event stream opened: " + id);
+            console.warn("Setting wica stream state on all html elements to: 'opened-" + id + "'" );
             DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "opened-" + id));
             this.lastOpenedStreamId = id;
         };
 
         this.streamConnectionHandlers.streamClosed = (id) => {
             console.log("Event stream closed: " + id);
-            if (id === this.lastOpenedStreamId) {
-                console.log("Setting wica stream state on all html elements to: 'closed'");
+            if ( id === this.lastOpenedStreamId ) {
+                console.warn("Setting wica stream state on all html elements to: 'closed'");
                 DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "closed-" + id));
             } else {
-                console.log("Wica stream state on all html elements will be left unchanged as a newer event source is already open !");
+                console.warn("Wica stream state on all html elements will be left unchanged as a newer event source is already open !");
             }
         };
     }
