@@ -129,7 +129,7 @@ export const WicaElementConnectionAttributes = Object.freeze ({
  *     object.
  */
 export const WicaElementRenderingAttributes = Object.freeze ({
-    rendererTooltip:   "data-wica-renderer-tooltip",
+    rendererTooltip:    "data-wica-renderer-tooltip",
     rendererProperties: "data-wica-renderer-props"
 } );
 
@@ -175,9 +175,10 @@ export const WicaStreamProperties = Object.freeze ({
  * JS Object that defines the properties and default values supported by a WicaChannel.
  *
  * @property {number} [prec=8] - The precision to be used when sending numeric information.
+ * @property {string} [filterType="allValue" | "periodic" | "changes" | "precision" ] - The type of filtering
+ *     to be used on the channel.
  */
 export const WicaChannelProperties = Object.freeze ({
-    disable: false,
-    exp: false,
-    prec: 8
+    prec: 8,
+    filterType
 } );
