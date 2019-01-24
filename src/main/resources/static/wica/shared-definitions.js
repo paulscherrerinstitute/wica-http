@@ -123,7 +123,7 @@ export const WicaElementConnectionAttributes = Object.freeze ({
  *     be displayed when the browser's cursor hovers over the element. When not explicitly set by the developer
  *     the wica channel name will be assigned to this attribute instead. Format: JS string literal.
  *
- * @property {string} rendererProperties="data-wica-rendering-props" - The name of the attribute which provides
+ * @property {string} renderingProperties="data-wica-rendering-props" - The name of the attribute which provides
  *     other miscellaneous properties which affect the way the element is rendered. Format: JSON string literal
  *     representing JS {@link module:shared-definitions.WicaRenderingProperties WicaRenderingProperties}
  *     object.
