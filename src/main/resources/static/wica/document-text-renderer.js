@@ -73,10 +73,11 @@ export class DocumentTextRenderer
     /**
      * Performs a single update cycle, then schedules the next one.
      *
+     * @private
      * @param {number} refreshRateInMilliseconds - The period to wait after every update scan before starting
      *     the next one.
      *
-     * @private
+
      */
     doScan_( refreshRateInMilliseconds )
     {
@@ -169,6 +170,7 @@ export class DocumentTextRenderer
     /**
      * Renders the element's textual content.
      *
+     * @private
      * @param {Element} element - The element.
      * @param {WicaChannelMetadata} channelMetadata - the channel's metadata.
      * @param {WicaChannelValue} channelValueLatest - the channel's latest value.

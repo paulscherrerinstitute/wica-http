@@ -206,7 +206,7 @@ export class StreamManager
     createStream_()
     {
         // Inform listeners that a stream connection attempt is in progress
-        this.streamConnect( his.connectionRequestCounter++ );
+        this.streamConnect( this.connectionRequestCounter++ );
 
         // Create a request object which will be used to ask the server to create the new stream.
         const xhttp = new XMLHttpRequest();
