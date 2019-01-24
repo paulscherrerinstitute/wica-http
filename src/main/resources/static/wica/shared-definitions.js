@@ -175,8 +175,8 @@ export const WicaStreamProperties = Object.freeze ({
  * JS Object that defines the properties and default values supported by a WicaChannel.
  *
  * @property {number} [prec=8] - The precision to be used when sending numeric information.
- * @property {string} [filterType="allValue" | "periodic" | "changes" | "precision" ] - The type of filtering
- *     to be used on the channel.
+ * @property {string} [filterType="allValue"] - The type of filtering to be used on the channel. Possible
+ *     values: [ "allValue" | "periodic" | "changes" | "precision" ].
  */
 export const WicaChannelProperties = Object.freeze ({
     prec: 8,
