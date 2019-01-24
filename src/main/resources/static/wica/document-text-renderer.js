@@ -37,9 +37,48 @@ export class DocumentTextRenderer
     }
 
     /**
+     * Starts periodically scanning the current document and updating the text content of all wica-aware
+     * elements to match the information obtained from the wica server.
      *
+     * @param {number} refreshRateInMilliseconds - The period to wait after each update scan before starting
+     *     the next one.
+     *
+     * See also: {@link module:document-text-renderer.DocumentTextRenderer#shutdown shutdown}.
      */
-    activate()
+    activate( refreshRateInMilliseconds )
+    {
+        // Start update process if not already active. Otherwise do nothing.
+        if ( this.intervalTimer === undefined )
+        {
+            this.doScan_( refreshRateInMilliseconds )
+        }
+    }
+
+    /**
+     * Shuts down the service offered by this class.
+     *
+     * See also: {@link module:document-text-renderer.DocumentTextRenderer#activate activate}.
+     */
+    shutdown()
+    {
+        // Stop update process if already active. otherwise do nothing.
+        if ( this.intervalTimer !== undefined )
+        {
+            clearInterval( this.intervalTimer );
+            this.intervalTimer = undefined;
+        }
+    }
+
+
+    /**
+     * Performs a single update cycle, then schedules the next one.
+     *
+     * @param {number} refreshRateInMilliseconds - The period to wait after every update scan before starting
+     *     the next one.
+     *
+     * @private
+     */
+    doScan_( refreshRateInMilliseconds )
     {
         try
         {
@@ -51,12 +90,14 @@ export class DocumentTextRenderer
         }
         catch( err )
         {
-            DocumentTextRenderer.logExceptionData_( "Programming Error: renderWicaElements_ threw an exception: ", err );
+            DocumentTextRenderer.logExceptionData_("Programming Error: renderWicaElements_ threw an exception: ", err );
         }
 
-        // Allow at least 100ms after each rendering cycle
-        setTimeout( () => this.activate(), 100 );
+        // Reschedule next update
+        this.intervalTimer = setTimeout(() => this.doScan_( refreshRateInMilliseconds ), refreshRateInMilliseconds );
     }
+
+
 
     /**
      * Renders all wica-aware html elements in the current document.

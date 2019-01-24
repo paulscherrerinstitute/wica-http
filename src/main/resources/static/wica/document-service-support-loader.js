@@ -22,7 +22,7 @@ export function load()
     documentStreamConnector.activate();
 
     const documentTextRenderer = new DocumentTextRenderer( WicaElementConnectionAttributes, WicaElementRenderingAttributes );
-    documentTextRenderer.activate();
+    documentTextRenderer.activate( 100 );
 }
 
 function loadWicaCSS()
