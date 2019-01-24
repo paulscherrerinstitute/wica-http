@@ -43,7 +43,7 @@ public class WicaStream implements WicaStreamMapper
 
    private LocalDateTime lastPublicationTime = LONG_AGO;
 
-   /*- Main ---------------------------------------------------------------------*/
+/*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    public WicaStream( WicaStreamId wicaStreamId,

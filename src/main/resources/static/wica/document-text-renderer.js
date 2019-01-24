@@ -2,7 +2,7 @@
  * Provides support for rendering the textual content of wica-aware elements in the current document.
  * @module
  */
-console.debug( "Executing script in document-test-renderer.js module...");
+console.debug( "Executing script in document-text-renderer.js module...");
 
 import * as DocumentUtilities from './document-utils.js'
 
@@ -48,7 +48,7 @@ export class DocumentTextRenderer
             this.renderWicaElements_( this.wicaElementConnectionAttributes.channelName,
                                       this.wicaElementConnectionAttributes.channelMetadata,
                                       this.wicaElementConnectionAttributes.channelValueArray,
-                                      this.wicaElementRenderingAttributes.rendererTooltips,
+                                      this.wicaElementRenderingAttributes.rendererTooltip,
                                       this.wicaElementRenderingAttributes.rendererProperties );
         }
         catch( err )
@@ -66,16 +66,16 @@ export class DocumentTextRenderer
      * @private
      * @param {string} channelNameAttribute - The name of the attribute which holds the channel name.
      * @param {string} channelMetadataAttribute - The name of the attribute which holds the channel metadata.
-     * @param {string} channelValueArrayAttribute - The name of the attribute which holds channel value array
-     * @param {string} rendererTooltipsAttribute - The name of the attribute which holds the renderer's tooltips
+     * @param {string} channelValueArrayAttribute - The name of the attribute which holds channel value array.
+     * @param {string} rendererTooltipAttribute - The name of the attribute which holds the renderer's tooltip.
      * @param {string} rendererPropertiesAttribute - The name of the attribute which holds the renderer's properties.
      */
-    renderWicaElements_( channelNameAttribute, channelMetadataAttribute, channelValueArrayAttribute, rendererTooltipsAttribute, rendererPropertiesAttribute )
+    renderWicaElements_( channelNameAttribute, channelMetadataAttribute, channelValueArrayAttribute, rendererTooltipAttribute, rendererPropertiesAttribute )
     {
         DocumentUtilities.findWicaElements().forEach((element) =>
         {
             // Always ensure the element's tooltips are available for rendering.
-            DocumentTextRenderer.configureWicaElementToolTips_( element, rendererTooltipsAttribute, channelNameAttribute );
+            DocumentTextRenderer.configureWicaElementToolTip_( element, rendererTooltipAttribute, channelNameAttribute );
 
             // Get the element's renderer properties object if available
             // Note: since this attribute is configured by the user as a JSON string it's important
@@ -150,7 +150,7 @@ export class DocumentTextRenderer
 
             case "REAL":
                 const useExponentialFormat = rendererProperties.hasOwnProperty("exp" ) ? rendererProperties.exp : false;
-                const precision = Math.max( rendererProperties.hasOwnProperty("prec") ? rendererProperties.prec : channelMetadata.prec, MAX_PRECISION );
+                const precision = Math.min( rendererProperties.hasOwnProperty("prec") ? rendererProperties.prec : channelMetadata.prec, MAX_PRECISION );
 
                 // TODO: look at more rigorous deserialisation of NaN's, Infinity etc
                 if ( (rawValue === "Infinity") || (rawValue === "NaN"))
@@ -192,7 +192,7 @@ export class DocumentTextRenderer
     }
 
     /**
-     * Configure the element's tooltips attribute.
+     * Configure the element's tooltip attribute.
      *
      * @implNote
      *
@@ -209,7 +209,7 @@ export class DocumentTextRenderer
      * @param {string} channelNameAttribute - The name of the attribute which contains the channel name.
      * @private
      */
-    static configureWicaElementToolTips_( element, rendererTooltipAttribute, channelNameAttribute )
+    static configureWicaElementToolTip_( element, rendererTooltipAttribute, channelNameAttribute )
     {
         if ( ! element.hasAttribute( rendererTooltipAttribute ) )
         {
@@ -242,7 +242,6 @@ export class DocumentTextRenderer
             return {};
         }
     }
-
 
     /**
      *

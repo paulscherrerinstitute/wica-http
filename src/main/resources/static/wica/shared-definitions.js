@@ -118,7 +118,7 @@ export const WicaElementConnectionAttributes = Object.freeze ({
  * {@link module:document-text-renderer.DocumentTextRenderer DocumentTextRenderer} when rendering the element's
  * visual state.
  *
- * @property {string} rendererTooltips="data-wica-renderer-tooltips" - The name of the attribute which
+ * @property {string} rendererTooltip="data-wica-renderer-tooltip" - The name of the attribute which
  *     specifies the tooltip to be displayed when the browser's cursor hovers over the element.
  *     When not explicitly set by the developer the wica channel name will be assigned to this
  *     attribute instead. Format: JS string literal.
@@ -129,7 +129,7 @@ export const WicaElementConnectionAttributes = Object.freeze ({
  *     object.
  */
 export const WicaElementRenderingAttributes = Object.freeze ({
-    rendererTooltips:   "data-wica-renderer-tooltips",
+    rendererTooltip:   "data-wica-renderer-tooltip",
     rendererProperties: "data-wica-renderer-props"
 } );
 

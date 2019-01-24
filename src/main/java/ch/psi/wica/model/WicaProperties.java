@@ -62,6 +62,13 @@ public class WicaProperties
       return map.get( propertyName );
    }
 
+   @Override
+   public String toString()
+   {
+      return "WicaProperties{" +
+            "map=" + map +
+            '}';
+   }
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 

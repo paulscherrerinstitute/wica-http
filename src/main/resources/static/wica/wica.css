@@ -52,8 +52,8 @@
 /*- Wica General Purpose Styling Rules ---------------------------------------*/
 
 /* Styling for tooltip popup on hover */
-[data-wica-tooltip]:hover:before {
-    content: attr( data-wica-tooltip );
+[data-wica-renderer-tooltip]:hover:before {
+    content: attr( data-wica-renderer-tooltip );
     background-color: yellow;
     color: black;
     font-size: 0.75rem;
