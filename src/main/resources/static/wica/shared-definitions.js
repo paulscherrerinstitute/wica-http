@@ -180,5 +180,5 @@ export const WicaStreamProperties = Object.freeze ({
  */
 export const WicaChannelProperties = Object.freeze ({
     prec: 8,
-    filterType
+    filterType: "allValue"
 } );
