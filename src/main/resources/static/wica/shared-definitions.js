@@ -30,7 +30,6 @@
  *     and {@link module:shared-definitions.WicaChannelMetadataEpics WicaChannelMetadataEpics}.
 */
 
-
 /**
  * Provides a union type definition for the filtering possibilities on a wica channel.
  *
@@ -57,7 +56,7 @@
  *
  * @typedef module:shared-definitions.WicaFilterTypeLatestValue
  * @property {string} filterType - "latest" - the string literal that configures this type of filter.
- * @property {number} maxSamples - The maximum number of values to pass through the filter on each update cycle.
+ * @property {number} numSamples - The maximum number of values to pass through the filter on each update cycle.
  */
 
 /**
@@ -90,18 +89,17 @@
  */
 
 /**
- * Provides a type definition for a JS Object that provides channel metadata information for systems of diverse
- * underlying data type.
+ * Provides a type definition for a union type which describes the metadata information associated with a wica channel.
+ *
+ * See {@link module:shared-definitions.WicaChannelMetadataOther WicaChannelMetadataOther},
+ * and {@link module:shared-definitions.WicaChannelMetadataEpics WicaChannelMetadataEpics}.
  *
  * @typedef module:shared-definitions.WicaChannelMetadata
- * @property {WicaChannelMetadataOther|WicaChannelMetadataEpics} - One or more metadata properties whose details
- *     depend on the data source.
- *     See {@link module:shared-definitions.WicaChannelMetadataOther WicaChannelMetadataOther},
- *     and {@link module:shared-definitions.WicaChannelMetadataEpics WicaChannelMetadataEpics}.
+ *
  */
 
 /**
- * Provides a type definition for a JS Object that provides channel metadata information for a data source with
+ * Provides a type definition to describe the metadata associated with channel based on a data source with
  * minimal additional information.
  *
  * @typedef module:shared-definitions.WicaChannelMetadataOther
@@ -110,9 +108,10 @@
  */
 
 /**
- * Provides a type definition for a JS Object that provides channel metadata for an EPICS IOC data source.
+ * Provides a type definition to describe the metadata associated with channel based on an EPICS data source.
  *
- * The available properties may vary according to the EPICS record that provides the EPICS channel.
+ * The published properties may vary according to the EPICS record that publishes the EPICS channel. A combination
+ * of any or all of the following properties is possible.
  *
  * @typedef module:shared-definitions.WicaChannelMetadataEpics
  * @property type {string} - One of: "REAL", "INTEGER", "STRING", "REAL_ARRAY", "INTEGER_ARRAY", "STRING_ARRAY".
@@ -255,14 +254,15 @@ export const WicaStreamProperties = Object.freeze ({
 } );
 
 /**
- * JS Object that defines the properties and default values supported by a WicaChannel.
+ * JS Object that defines the properties and supported by a WicaChannel and the default values
  *
  * @property {number} [prec=8] - The precision (= number of digits after the decimal point) to be used when
  *     sending numeric information.
  * @property {WicaChannelFilterTypes} [filterType=WicaFilterTypeAllValue] - The type of filtering to be used on the
- *     channel. See {@link module:shared-definitions.WicaChannelFilterTypes WicaChannelFilterTypes}.
+ *     channel. See {@link module:shared-definitions.WicaChannelFilterType WicaChannelFilterType}.
  */
 export const WicaChannelProperties = Object.freeze ({
     prec: 8,
-    filterType: "allValue"
+    filterType: "latest",
+    numSamples: 1
 } );
