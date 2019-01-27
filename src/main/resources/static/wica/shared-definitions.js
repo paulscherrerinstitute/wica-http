@@ -74,7 +74,7 @@
  *
  * @typedef module:shared-definitions.WicaFilterTypeRateLimiter
  * @property {string} filterType - "rate" - the string literal that configures this type of filter.
- * @property {number} ms - The minimum time duration between samples in milliseconds.
+ * @property {number} sampleGap - The minimum time duration between samples in milliseconds.
  */
 
 /**
