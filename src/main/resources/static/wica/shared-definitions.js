@@ -50,7 +50,7 @@
  * channel's data source.
  *
  * @typedef module:shared-definitions.WicaFilterTypeAllValue
- * @property {string} filterType - "allValue" - the string literal that configures this type of filter.
+ * @property {string} filterType - "none".
  */
 
 /**
@@ -58,7 +58,7 @@
  * channel during the wica server's previous value update sampling time window.
  *
  * @typedef module:shared-definitions.WicaFilterTypeLatestValue
- * @property {string} filterType - "last-n" - the string literal that configures this type of filter.
+ * @property {string} filterType - "latest".
  * @property {number} n - The maximum number of values to be passed through the filter on each update cycle.
  */
 
@@ -67,7 +67,7 @@
  * source based on a fixed sampling cycle length.
  *
  * @typedef module:shared-definitions.WicaFilterTypeDiscreteSampler
- * @property {string} filterType - "1-in-n" - the string literal that configures this type of filter.
+ * @property {string} filterType - "discrete".
  * @property {number} n - The sampling cycle length.
  */
 
@@ -76,24 +76,24 @@
  * on a minimum time period between successive samples.
  *
  * @typedef module:shared-definitions.WicaFilterTypeRateLimiter
- * @property {string} filterType - "rate" - the string literal that configures this type of filter.
+ * @property {string} filterType - "rate".
  * @property {number} ms - The minimum time duration between samples in milliseconds.
  */
 
 /**
  *  Provides a type definition for a filter that that passes through values every time the input signal makes a
- *  change whose absolute value exceeds the configured deadband. The filter operates only on channels whose
- *  underlying type is numeric.
+ *  transition whose absolute value exceeds the configured deadband. The filter operates only on channels whose
+ *  underlying type is numeric; the information for all other channel types passes through unchanged.
  *
  * @typedef module:shared-definitions.WicaFilterTypeChangeFilterer
- * @property {string} filterType - "changes" - the string literal that configures this type of filter.
+ * @property {string} filterType - "changes".
  * @property {number} deadband - Defines the absolute change in the input value which must occur in order for
  *     the new value to be passed through the filter.
  */
 
 /**
- * Provides a type definition for a JS Object that provides channel metadata information for systems with diverse
- * types of data channel.
+ * Provides a type definition for a JS Object that provides channel metadata information for systems of diverse
+ * underlying data type.
  *
  * @typedef module:shared-definitions.WicaChannelMetadata
  * @property {WicaChannelMetadataOther|WicaChannelMetadataEpics} - One or more metadata properties whose details
