@@ -27,7 +27,7 @@ public class WicaStreamCreator
    @Value( "${wica.default_heartbeat_flux_interval:9999}" )
    private int defaultHeartBeatFluxInterval;
 
-   @Value( "${wica.default_channel_value_update_flux_interval:100}" )
+   @Value( "${wica.default_channel_value_update_flux_interval:99}" )
    private int defaultChannelValueUpdateFluxInterval;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -47,6 +47,11 @@ public class WicaStreamCreator
       catch( Exception ex)
       {
          throw new IllegalArgumentException( "The JSON configuration string was invalid.", ex );
+      }
+
+      if ( decoder.getWicaChannels().size() == 0 )
+      {
+         throw new IllegalArgumentException( "The JSON configuration string did not define any channels.");
       }
 
       final WicaStreamId wicaStreamId = WicaStreamId.createNext();
