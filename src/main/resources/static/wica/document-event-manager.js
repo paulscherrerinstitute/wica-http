@@ -14,11 +14,21 @@ import * as DocumentUtilities from './document-utils.js'
  * @typedef module:document-event-manager.OnWicaEvent
  *
  * @property {Object} target - A reference to the target element on which the event was dispatched.
+ *
  * @property {Object} detail - An object providing the customised data payload for the event.
- * @property {string} detail.channelName - the name of the channel.
- * @property {WicaChannelMetadata} detail.channelMetadata - the most recent channel metadata.
- * @property {WicaChannelValue[]} detail.channelValueArray - the latest channel values.
- * @property {WicaChannelValue} detail.channelValueLatest - the most recent channel value.
+ *
+ * @property {string} detail.channelName - The name of the channel associated with the element on which the
+ *     event was fired.
+ *     {@link module:shared-definitions.WicaChannelName WicaChannelName}.
+ *
+ * @property {WicaChannelMetadata} detail.channelMetadata - The most recent channel metadata.
+ *     {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}.
+ *
+ * @property {WicaChannelValue[]} detail.channelValueArray - The latest channel values.
+ *     {@link module:shared-definitions.WicaChannelValue WicaChannelValue}.
+ *
+ * @property {WicaChannelValue} detail.channelValueLatest - The most recent channel value.
+ *     {@link module:shared-definitions.WicaChannelValue WicaChannelValue}.
  */
 
 /**
