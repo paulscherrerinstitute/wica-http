@@ -4,13 +4,14 @@
  */
 
 /**
- * JS string defining the name of a channel.
+ * Provides a type definition for a JS string which defines the name of a channel.
  *
  * @typedef {string} module:shared-definitions.WicaChannelName
  */
 
 /**
-* JS CustomEvent that is sent when a wica-aware element is updated with new information from the wica stream.
+ * Provides a type definition for a JS CustomEvent that is fired when a wica-aware element is updated with new
+ * information from the wica stream.
  *
  * @typedef module:shared-definitions.OnWica
  *
@@ -30,66 +31,67 @@
 */
 
 /**
- * JS Object that provides channel filtering configuration possibilities for systems with diverse types of
- * data channel.
+ * Provides a type definition for a JS Object that configures the filtering possibilities for a wica channel.
  *
  * @typedef module:shared-definitions.WicaChannelFilterTypes
  * @property {AllValueFilterType|LatestValueFilterType|DiscreteSamplingFilterType|RateLimitedSamplingFilterType|
  *     ChangeFilteringFilterType} - One or more metadata properties whose details depend on the data source.
  *     See {@link module:shared-definitions.AllValueFilterType AllValueFilterType},
- *     See {@link module:shared-definitions.LatestValueFilterType LatestValueFilterType},
- *     See {@link module:shared-definitions.DiscreteSamplingFilterType DiscreteSamplingFilterType},
- *     See {@link module:shared-definitions.RateLimitedSamplingFilterType RateLimitedSamplingFilterType},
+ *     {@link module:shared-definitions.LatestValueFilterType LatestValueFilterType},
+ *     {@link module:shared-definitions.DiscreteSamplingFilterType DiscreteSamplingFilterType},
+ *     {@link module:shared-definitions.RateLimitedSamplingFilterType RateLimitedSamplingFilterType},
  *     and {@link module:shared-definitions.ChangeFilteringFilterType ChangeFilteringFilterType}.
  */
 
 /**
- * A filter that "does nothing", passing through all values obtained from the channel's data source.
+ * Provides a type definition for a filter that "does nothing", passing through all values obtained from the
+ * channel's data source.
  *
- * @typedef module:shared-definitions.AllValueFilterType
+ * @typedef module:shared-definitions.WicaAllValueFilterType
  * @property {string} filterType="allValue"
  */
 
 /**
- * A filter that passes through only the most recent N values received from the channel during the
- * wica server's previous sampling interval.
+ * Provides a type definition for a filter that passes through only the most recent N values received from the
+ * channel during the wica server's previous value update sampling time window.
  *
- * @typedef module:shared-definitions.LatestValueFilterType
+ * @typedef module:shared-definitions.WicaLatestValueFilterType
  * @property {string} filterType="last-n" - The string literal that configures this filter type.
- * @property {number} n - The maximum number of values
+ * @property {number} n - The maximum number of values.
  */
 
 /**
- * A filter that passes through one-in-every-n values obtained from the channel's data source based on a fixed
- * sampling cycle length.
+ * Provides a type definition for a filter that passes through one-in-every-n values obtained from the channel's data
+ * source based on a fixed sampling cycle length.
  *
- * @typedef module:shared-definitions.DiscreteSamplingFilterType
+ * @typedef module:shared-definitions.WicaDiscreteSamplingFilterType
  * @property {string} filterType="1-in-n" - The string literal that configures this filter type.
  * @property {number} n - The sampling cycle length.
  */
 
 /**
- * A filter that passes through values obtained from the channel's data source based on a minimum time period
- * between successive samples.
+ * Provides a type definition for a filter that passes through values obtained from the channel's data source based
+ * on a minimum time period between successive samples.
  *
- * @typedef module:shared-definitions.RateLimitedSamplingFilterType
+ * @typedef module:shared-definitions.WicaRateLimitedSamplingFilterType
  * @property {string} filterType="rate" - The string literal that configures this filter type.
  * @property {number} ms - The minimum time duration between samples in milliseconds.
  */
 
 /**
- *  A filter that that writes a new value to the output list every time the input signal makes a change
- *  whose absolute value exceeds the configured deadband. The filter operates only on channels whose
+ *  Provides a type definition for a filter that that [asses through values every time the input signal makes a
+ *  change whose absolute value exceeds the configured deadband. The filter operates only on channels whose
  *  underlying type is numeric.
  *
- * @typedef module:shared-definitions.ChangeFilteringFilterType
+ * @typedef module:shared-definitions.WicaChangeFilteringFilterType
  * @property {string} filterType="changes" - The string literal that configures this filter type.
  * @property {number} deadband - Defines the absolute change in the input value which must
  *     occur in order for the new value to be transferred through the filter.
  */
 
 /**
- * JS Object that provides channel metadata information for systems with diverse types of data channel.
+ * Provides a type definition for a JS Object that provides channel metadata information for systems with diverse
+ * types of data channel.
  *
  * @typedef module:shared-definitions.WicaChannelMetadata
  * @property {WicaChannelMetadataOther|WicaChannelMetadataEpics} - One or more metadata properties
@@ -99,7 +101,8 @@
  */
 
 /**
- * JS Object that provides channel metadata information for a data source with minimal additional information.
+ * Provides a type definition for a JS Object that provides channel metadata information for a data source with
+ * minimal additional information.
  *
  * @typedef module:shared-definitions.WicaChannelMetadataOther
  * @property type {string} - One of: "REAL", "INTEGER", "STRING", "REAL_ARRAY", "INTEGER_ARRAY", "STRING_ARRAY".
@@ -107,7 +110,7 @@
  */
 
 /**
- * JS Object that provides channel metadata for an EPICS IOC data source.
+ * Provides a type definition for a JS Object that provides channel metadata for an EPICS IOC data source.
  *
  * The available properties may vary according to the EPICS record that provides the EPICS channel.
  *
@@ -126,7 +129,7 @@
  */
 
 /**
- * JS Object that provides channel value information.
+ * Provides a type definition for a JS Object that provides channel value information.
  *
  * The value information includes the raw channel value, the timestamp at which the value was obtained, and the
  * channel alarm status.
