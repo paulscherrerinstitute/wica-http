@@ -6,7 +6,7 @@
 /**
  * Provides a type definition for a JS string which defines the name of a channel.
  *
- * @typedef {string} module:shared-definitions.WicaChannelName
+ * @typedef module:shared-definitions.WicaChannelName
  */
 
 /**
@@ -32,12 +32,9 @@
 
 
 /**
- * Provides a type definition for a variety of types configures the filtering possibilities
- * for a wica channel.
+ * Provides a union type definition for the filtering possibilities on a wica channel.
  *
- * @typedef {WicaFilterTypeAllValue|WicaFilterTypeLatestValue|WicaFilterTypeFixedSampler|
- *     WicaFilterTypeRateLimiter|WicaFilterTypeChangeFilterer} module:shared-definitions.WicaChannelFilterTypes
- *
+ * @typedef module:shared-definitions.WicaFilterTypes
  * See {@link module:shared-definitions.WicaFilterTypeAllValue WicaFilterTypeAllValue},
  *     {@link module:shared-definitions.WicaFilterTypeLatestValue WicaFilterTypeLatestValue},
  *     {@link module:shared-definitions.WicaFilterTypeDiscreteSampler WicaFilterTypeFixedSampler},
@@ -59,16 +56,16 @@
  *
  * @typedef module:shared-definitions.WicaFilterTypeLatestValue
  * @property {string} filterType - "latest" - the string literal that configures this type of filter.
- * @property {number} n - The maximum number of values to be passed through the filter on each update cycle.
+ * @property {number} maxSamples - The maximum number of values to pass through the filter on each update cycle.
  */
 
 /**
  * Provides a type definition for a filter that passes through values obtained from the channel's data source
- * on a fixed 1-in-N sampling basis.
+ * on a fixed one-in-N sampling basis.
  *
  * @typedef module:shared-definitions.WicaFilterTypeFixedSampler
  * @property {string} filterType - "fixed" - the string literal that configures this type of filter.
- * @property {number} n - The sampling cycle length.
+ * @property {number} cycleLength - The sampling cycle length.
  */
 
 /**
