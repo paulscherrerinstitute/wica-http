@@ -7,6 +7,21 @@ console.debug( "Executing script in event-manager.js module...");
 import * as DocumentUtilities from './document-utils.js'
 
 
+
+/**
+ * Provides a type definition for a JS CustomEvent object that is fired when a wica-aware element is updated
+ * with new information from the wica stream.
+ *
+ * @typedef module:event-manager-definitions.OnWicaEvent
+ *
+ * @property {Object} target - A reference to the target element on which the event was dispatched.
+ * @property {Object} detail - An object providing the customised data payload for the event.
+ * @property {string} detail.channelName - the name of the channel.
+ * @property {WicaChannelMetadata} detail.channelMetadata - the most recent channel metadata.
+ * @property {WicaChannelValue[]} detail.channelValueArray - the latest channel values.
+ * @property {WicaChannelValue} detail.channelValueLatest - the most recent channel value.
+ */
+
 /**
  * Activates this event manager.
  */

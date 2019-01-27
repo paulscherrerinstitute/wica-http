@@ -10,27 +10,6 @@
  */
 
 /**
- * Provides a type definition for a JS CustomEvent that is fired when a wica-aware element is updated with new
- * information from the wica stream.
- *
- * @typedef module:shared-definitions.OnWica
- *
- * @property {}
- * @property {detail.streamState} -
- * @property {detail.channelName} -
- * @property {detail.channelProperties} -
- * @property {detail.channelConnectionState} -
- * @property {detail.channelValueArray} -
- * @property {detail.channelValueLatest} -
- * @property {detail.channelAlarmState} -
- *
- *
- *     whose details depend on the data source.
- *     See {@link module:shared-definitions.WicaChannelMetadataOther WicaChannelMetadataOther},
- *     and {@link module:shared-definitions.WicaChannelMetadataEpics WicaChannelMetadataEpics}.
-*/
-
-/**
  * Provides a union type definition for the filtering possibilities that may be configured on a wica channel.
  *
  * See {@link module:shared-definitions.WicaFilterTypeAllValue WicaFilterTypeAllValue},
