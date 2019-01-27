@@ -48,7 +48,7 @@
  * channel's data source.
  *
  * @typedef module:shared-definitions.WicaAllValueFilterType
- * @property {string} filterType - Value: "allValue": the string literal that configures this filter type.
+ * @property {string} filterType - = "allValue" - The string literal that configures this filter type.
  */
 
 /**
@@ -56,8 +56,8 @@
  * channel during the wica server's previous value update sampling time window.
  *
  * @typedef module:shared-definitions.WicaLatestValueFilterType
- * @property {string} filterType - Value: "last-n": the string literal that configures this filter type.
- * @property {number} n - The maximum number of values.
+ * @property {string} filterType - "last-n" - the string literal that configures this filter type.
+ * @property {number} n - The maximum number of values to be passed through the filter on each update cycle.
  */
 
 /**
