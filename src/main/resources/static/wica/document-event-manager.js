@@ -19,16 +19,16 @@ import * as DocumentUtilities from './document-utils.js'
  *
  * @property {string} detail.channelName - The name of the channel associated with the element on which the
  *     event was fired.
- *     {@link module:shared-definitions.WicaChannelName WicaChannelName}.
+ *     See {@link module:shared-definitions.WicaChannelName WicaChannelName}.
  *
  * @property {WicaChannelMetadata} detail.channelMetadata - The most recent channel metadata.
- *     {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}.
+ *     See {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}.
  *
  * @property {WicaChannelValue[]} detail.channelValueArray - The latest channel values.
- *     {@link module:shared-definitions.WicaChannelValue WicaChannelValue}.
+ *     See {@link module:shared-definitions.WicaChannelValue WicaChannelValue}.
  *
  * @property {WicaChannelValue} detail.channelValueLatest - The most recent channel value.
- *     {@link module:shared-definitions.WicaChannelValue WicaChannelValue}.
+ *     See {@link module:shared-definitions.WicaChannelValue WicaChannelValue}.
  */
 
 /**
@@ -116,7 +116,8 @@ export class DocumentEventManager
      * The current implementation obtains the event payload information by looking at the information in the
      * 'data-wica-channel-value-array' and 'data-wica-channel-metadata' html element attributes.
      */
-    doFireEvents_() {
+    doFireEvents_()
+    {
         DocumentUtilities.findWicaElements().forEach((element) => {
 
             // If we have no information about the channel's current value or the channel's metadata
