@@ -6,10 +6,8 @@ console.debug( "Executing script in document-text-renderer.js module...");
 
 import * as DocumentUtilities from './document-utils.js'
 
-
 /**
  * The default precision to be used when rendering a channel with a numeric value.
- * @type
  */
 const MAX_PRECISION = 8;
 
