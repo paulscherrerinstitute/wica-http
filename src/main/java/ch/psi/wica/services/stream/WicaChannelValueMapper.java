@@ -32,8 +32,11 @@ public interface WicaChannelValueMapper
     */
    List<WicaChannelValue> map( List<WicaChannelValue> inputList );
 
+
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
+
+
 
 
 }

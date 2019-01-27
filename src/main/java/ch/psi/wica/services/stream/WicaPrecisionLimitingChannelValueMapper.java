@@ -24,32 +24,30 @@ import static ch.psi.wica.model.WicaChannelType.REAL_ARRAY;
  * represented in the output list.
  *
  * If the input value is of type WicaChannelType.REAL or WicaChannelType.REAL_ARRAY
- * then the returned value will (additionally) be precision limited to the specified
- * number of digits.
+ * then the returned value will be precision limited to the specified number of
+ * digits.
  */
 @ThreadSafe
-class WicaAllValuePrecisionLimitingChannelValueMapper implements WicaChannelValueMapper
+class WicaPrecisionLimitingChannelValueMapper implements WicaChannelValueMapper
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private static final Logger logger = LoggerFactory.getLogger( WicaAllValuePrecisionLimitingChannelValueMapper.class);
-
-   private final int numberOfDigits;
+   private final int precision;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    /**
-    * Constructs a new instance based on the specified numberOfDigits.
+    * Constructs a new instance based on the specified precision.
     *
-    * @param numberOfDigits
+    * @param precision - the number of digits after the decimal point
     */
-   WicaAllValuePrecisionLimitingChannelValueMapper(int numberOfDigits )
+   WicaPrecisionLimitingChannelValueMapper( int precision )
    {
-      Validate.isTrue( numberOfDigits >= 0 );
-      this.numberOfDigits = numberOfDigits;
+      Validate.isTrue( precision >= 0 );
+      this.precision = precision;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -73,13 +71,13 @@ class WicaAllValuePrecisionLimitingChannelValueMapper implements WicaChannelValu
          if ( currentConnectedValue.getWicaChannelType() == REAL )
          {
             final double currentValueAsDouble = ((WicaChannelValue.WicaChannelValueConnectedReal) currentValue).getValue();
-            final WicaChannelValue convertedValue =  WicaChannelValue.createChannelValueConnected( currentValueAsDouble, numberOfDigits );
+            final WicaChannelValue convertedValue =  WicaChannelValue.createChannelValueConnected( currentValueAsDouble, precision );
             outputList.add( convertedValue );
          }
          else if ( currentConnectedValue.getWicaChannelType() == REAL_ARRAY )
          {
             final double[] currentValueAsDouble = ((WicaChannelValue.WicaChannelValueConnectedRealArray) currentValue).getValue();
-            final WicaChannelValue convertedValue =  WicaChannelValue.createChannelValueConnected( currentValueAsDouble, numberOfDigits );
+            final WicaChannelValue convertedValue =  WicaChannelValue.createChannelValueConnected( currentValueAsDouble, precision );
             outputList.add( convertedValue );
          }
          else
@@ -89,6 +87,7 @@ class WicaAllValuePrecisionLimitingChannelValueMapper implements WicaChannelValu
       }
       return outputList;
    }
+
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

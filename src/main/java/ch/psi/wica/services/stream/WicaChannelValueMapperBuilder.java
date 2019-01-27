@@ -4,159 +4,150 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.WicaChannelProperties;
+import ch.psi.wica.model.WicaChannelValue;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import java.util.List;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
 @Immutable
-public class WicaChannelValueMapperBuilder
+public class WicaChannelValueMapperBuilder implements WicaChannelValueMapper
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
    private static final Logger logger = LoggerFactory.getLogger( WicaChannelValueMapperBuilder.class );
-
    private static final int DEFAULT_PRECISION = 6;
+
+   private final WicaChannelValueMapper precisionMapper;
+   private final WicaChannelValueMapper filteringMapper;
 
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
+
+   /**
+    * Returns an instance based on the supplier mappers.
+    *
+    * @param filteringMapper the filtering mapper that will be applied to the initial input list.
+    * @param precisionMapper the precision mapper that is to be applied to the final result.
+    */
+   private WicaChannelValueMapperBuilder( WicaChannelValueMapper filteringMapper, WicaChannelValueMapper precisionMapper )
+   {
+      this.precisionMapper = precisionMapper;
+      this.filteringMapper = filteringMapper;
+   }
+
+
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
+
+   public static WicaChannelValueMapperBuilder createDefault()
+   {
+      WicaChannelProperties wicaChannelProperties = WicaChannelProperties.ofEmpty();
+      return WicaChannelValueMapperBuilder.createFromChannelProperties( wicaChannelProperties );
+   }
+
 
    /**
     * Returns a channel value mapper based on the supplied channel properties object.
     *
-    * @param wicaChannelProperties the channel properties obhject.
+    * @param wicaChannelProperties the channel properties object.
     * @return the returned mapper.
     */
-   public static WicaChannelValueMapper createFromChannelProperties( WicaChannelProperties wicaChannelProperties )
+   public static WicaChannelValueMapperBuilder createFromChannelProperties( WicaChannelProperties wicaChannelProperties )
    {
       Validate.notNull( wicaChannelProperties );
 
+      final WicaChannelValueMapper precisionMapper;
+      if ( wicaChannelProperties.hasProperty( "prec" ) )
+      {
+         final int numberOfDigits = Integer.parseInt( wicaChannelProperties.getPropertyValue("prec") );
+         logger.info( "Creating precision mapper with prec='{}'", numberOfDigits );
+         precisionMapper = new WicaPrecisionLimitingChannelValueMapper( numberOfDigits );
+      }
+      else
+      {
+         precisionMapper = new WicaPrecisionLimitingChannelValueMapper( DEFAULT_PRECISION );
+      }
+
+      final WicaChannelValueMapper filteringMapper;
       if ( wicaChannelProperties.hasProperty( "filterType" ) )
       {
          final String filterType = wicaChannelProperties.getPropertyValue("filterType" );
          switch ( filterType )
          {
             case "allValue":
-            {
-               logger.info("Creating wicaChannelValueMapper for filterType=allValue");
-               return new WicaAllValueChannelValueMapper();
-            }
+               logger.info("Creating filtering mapper with filterType='allValue'");
+               filteringMapper = new WicaAllValueChannelValueMapper();
+               break;
 
-           case "periodic":
-            {
-               logger.info("Creating wicaChannelValueMapper for filterType=periodic");
-               Validate.isTrue(wicaChannelProperties.hasProperty("interval"));
-               final int samplingInterval = Integer.parseInt(wicaChannelProperties.getPropertyValue("interval"));
-               return new WicaPeriodicSamplingChannelValueMapper(samplingInterval);
-            }
+            case "periodic":
+               Validate.isTrue(wicaChannelProperties.hasProperty("ms"));
+               final int samplingInterval = Integer.parseInt(wicaChannelProperties.getPropertyValue("ms") );
+               logger.info("Creating filtering mapper with filterType='periodic', ms='{}'", samplingInterval );
+               filteringMapper = new WicaRateLimitedSamplingChannelValueMapper(samplingInterval);
+               break;
+
+            case "1-in-n":
+               Validate.isTrue(wicaChannelProperties.hasProperty("n"));
+               final int samplingCycleLength = Integer.parseInt(wicaChannelProperties.getPropertyValue("n") );
+               logger.info("Creating filtering mapper with filterType='1-in-n', n='{}'", samplingCycleLength );
+               filteringMapper =  new WicaDiscreteSamplingChannelValueMapper( samplingCycleLength );
+               break;
+
+            case "last-n":
+               Validate.isTrue( wicaChannelProperties.hasProperty("n"));
+               final int maxNumberOfSamples = Integer.parseInt(wicaChannelProperties.getPropertyValue("n") );
+               logger.info("Creating filtering mapper with filterType='last-n', n='{}'", maxNumberOfSamples );
+               filteringMapper =  new WicaLatestValueChannelValueMapper( maxNumberOfSamples );
+               break;
 
             case "changes":
-            {
-               logger.info("Creating wicaChannelValueMapper for filterType=changes");
+               logger.info("Creating filtering mapper with filterType=changes");
                Validate.isTrue(wicaChannelProperties.hasProperty(("deadband")));
-               final double deadband = Double.parseDouble(wicaChannelProperties.getPropertyValue(("deadband")));
-               return new WicaChangeFilteringChannelValueMapper(deadband);
-            }
-
-            case "precision":
-            {
-               logger.info("Creating wicaChannelValueMapper for filterType=precision");
-               Validate.isTrue(wicaChannelProperties.hasProperty("digits"));
-               final int numberOfDigits = Integer.parseInt(wicaChannelProperties.getPropertyValue("digits"));
-               return new WicaAllValuePrecisionLimitingChannelValueMapper(numberOfDigits);
-            }
+               final double deadband = Double.parseDouble( wicaChannelProperties.getPropertyValue(( "deadband" )));
+               logger.info("Creating filtering mapper with filterType='changes', deadband='{}'", deadband );
+               filteringMapper =  new WicaChangeFilteringChannelValueMapper( deadband );
+               break;
 
             default:
-               logger.warn("The filterType parameter was not recognised. Using default mapper.");
-               return createDefault( wicaChannelProperties );
+               logger.warn("The filterType parameter was not recognised. Using default (last-n) mapper.");
+               final int defaultMaxNumberOfSamples = 1;
+               logger.info("Creating filtering mapper with filterType='last-n', n='{}'", defaultMaxNumberOfSamples );
+               filteringMapper = new WicaLatestValueChannelValueMapper( defaultMaxNumberOfSamples );
+               break;
          }
       }
       else
       {
-         logger.warn( "The filterType parameter was not specified. Using default mapper." );
-         return createDefault( wicaChannelProperties );
+         logger.warn( "The filterType parameter was not specified. Using default (last-n) mapper." );
+         final int defaultMaxNumberOfSamples = 1;
+         logger.info("Creating filtering mapper with filterType='last-n', n='{}'", defaultMaxNumberOfSamples );
+         filteringMapper = new WicaLatestValueChannelValueMapper( defaultMaxNumberOfSamples );
       }
+
+      return new WicaChannelValueMapperBuilder( precisionMapper, filteringMapper );
    }
 
    /**
-    * Returns the DEFAULT channel value mapper.
-    *
-    * @return the returned mapper.
+    * @inheritDoc
     */
-   public static WicaChannelValueMapper createDefault()
+   @Override
+   public List<WicaChannelValue> map( List<WicaChannelValue> inputList )
    {
-      final WicaChannelProperties defaultProps = WicaChannelProperties.of( Map.of("prec", "6" ) );
-      return createDefault( defaultProps );
-   }
-
-   /**
-    * Returns the DEFAULT channel value mapper, modified, optionally by the
-    * supplied properties object.
-    *
-    * @implNote
-    *
-    * The current implementation:
-    * - transfers only the last value from the input list.
-    * - precision limits WicaChannelType.REAL and WicaChannelType.REAL_ARRAY values.
-    * - transfers all other values unchanged.
-    */
-   public static WicaChannelValueMapper createDefault( WicaChannelProperties wicaChannelProperties )
-   {
-      logger.info( "Creating default wicaChannelValueMapper" );
-      if(  wicaChannelProperties.hasProperty("prec") )
-      {
-         final int numberOfDigits = Integer.parseInt(wicaChannelProperties.getPropertyValue("prec"));
-         logger.info( "Precison property was found and set to {} digits.", numberOfDigits );
-         return new WicaLastValuePrecisionLimitingChannelValueMapper( numberOfDigits );
-      }
-      else
-      {
-         logger.info( "Precison property NOT found. Set to default value of {} digits", DEFAULT_PRECISION );
-         return new WicaLastValuePrecisionLimitingChannelValueMapper( DEFAULT_PRECISION );
-      }
+      return precisionMapper.map( filteringMapper.map( inputList ) );
    }
 
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
-
-// TODO: clean up this failed attempt to dynamically build a processing chain
-//       based on the channel properties...
-
-//   public enum WicaChannelValueMappers
-//   {
-//      SAMPLE_ALL_VALUES( "allValue", WicaAllValueChannelValueMapper.class ),
-//      SAMPLE_LAST_VALUE( "allValue", WicaAllValueChannelValueMapper.class ),
-//      SAMPLE_PERIODIC  ( "periodic", WicaPeriodicSamplingChannelValueMapper.class ),
-//      FILTER_CHANGES   ( "changes",  WicaChangeFilteringChannelValueMapper.class),
-//      LIMIT_PRECISION  ( "prec",     WicaAllValuePrecisionLimitingChannelValueMapper.class );
-//
-//      private String propertyName;
-//      private Class mapper;
-//
-//      WicaChannelValueMappers( String propertyName, Class mapperClass  )
-//      {
-//         this.propertyName = propertyName;
-//         this.mapper = mapper;
-//      }
-//
-//      public boolean isKnownProperty( String property )
-//      {
-//         WicaChannelValueMappers.valueOf()
-//
-//      }
-//   }
-
 
 }

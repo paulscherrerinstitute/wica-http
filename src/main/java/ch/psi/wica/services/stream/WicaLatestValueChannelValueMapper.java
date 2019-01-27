@@ -4,12 +4,9 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.WicaChannelValue;
-import net.jcip.annotations.ThreadSafe;
+import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -18,23 +15,33 @@ import java.util.stream.IntStream;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@ThreadSafe
-class WicaPeriodicSamplingChannelValueMapper implements WicaChannelValueMapper
+/**
+ * A WicaChannelValueMapper that returns an output list with the most recent
+ * values from the input list.
+ */
+@Immutable
+class WicaLatestValueChannelValueMapper implements WicaChannelValueMapper
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final int samplingInterval;
-
+   private final int maxNumberOfSamples;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   WicaPeriodicSamplingChannelValueMapper( int samplingInterval )
+   /**
+    * Constructs a new instance which returns up to the specified maximum
+    * number of samples.
+    *
+    * @param maxNumberOfSamples - the maximum number of values to include
+    *     in the output list.
+    */
+   WicaLatestValueChannelValueMapper( int maxNumberOfSamples )
    {
-      Validate.isTrue( samplingInterval > 1 );
-      this.samplingInterval = Validate.notNull( samplingInterval );
+      Validate.isTrue( maxNumberOfSamples >= 0 );
+      this.maxNumberOfSamples = maxNumberOfSamples;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -43,13 +50,13 @@ class WicaPeriodicSamplingChannelValueMapper implements WicaChannelValueMapper
    @Override
    public List<WicaChannelValue> map( List<WicaChannelValue> inputList )
    {
-      final List<WicaChannelValue> outputList = new LinkedList<>();
+      final int startInclusive = Math.max( 0, inputList.size() - maxNumberOfSamples );
+      final int endExclusive = inputList.size();
 
-      return IntStream.range(0, inputList.size())
-            .filter(n -> n % samplingInterval == 0)
-            .mapToObj( inputList::get)
-            .collect( Collectors.toList() );
+      return IntStream.range( startInclusive, endExclusive ).mapToObj( inputList::get ).collect( Collectors.toList() );
+
    }
+
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
