@@ -27,11 +27,12 @@ export function activate()
 
 
 /**
- * Fires wica notification events on all wica-aware elements in the current document.
+ * Fires wica notification events on all wica-aware elements in the current document. The event which
+ * is fired includes full information about the current state of the channel.
  *
  * The following event types are supported:
  * - 'onwica': custom event.
- * - 'onchange': deprecated, provided only for backwards compatibility.
+ * - 'onchange': DEPRECATED, provided only for backwards compatibility.
  *
  * The event payload includes the most recently received stream notification information for the wica
  * channel's metadata and wica channel's value.
@@ -41,6 +42,7 @@ export function activate()
  * In the case of the 'onwica' event the following information is provided in the detail attribute:
  *
  *   - detail.channelName
+ *   - detail.streamState
  *   - detail.channelMetadata
  *   - detail.channelValueArray
  *   - detail.channelValueLatest
@@ -72,7 +74,7 @@ function fireEvents()
 
         // Check that the received value object really was an array
         if ( ! Array.isArray( channelValueArrayObj ) ) {
-            console.warn( "Stream error: received value object was not an array !" )
+            console.warn( "Stream error: received value object was not an array !" );
             return;
         }
 

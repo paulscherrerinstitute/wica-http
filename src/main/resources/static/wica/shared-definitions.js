@@ -34,13 +34,13 @@
  * Provides a type definition for a JS Object that configures the filtering possibilities for a wica channel.
  *
  * @typedef module:shared-definitions.WicaChannelFilterTypes
- * @property {AllValueFilterType|LatestValueFilterType|DiscreteSamplingFilterType|RateLimitedSamplingFilterType|
- *     ChangeFilteringFilterType} - One or more metadata properties whose details depend on the data source.
- *     See {@link module:shared-definitions.AllValueFilterType AllValueFilterType},
- *     {@link module:shared-definitions.LatestValueFilterType LatestValueFilterType},
- *     {@link module:shared-definitions.DiscreteSamplingFilterType DiscreteSamplingFilterType},
- *     {@link module:shared-definitions.RateLimitedSamplingFilterType RateLimitedSamplingFilterType},
- *     and {@link module:shared-definitions.ChangeFilteringFilterType ChangeFilteringFilterType}.
+ * @property {WicaAllValueFilterType|WicaLatestValueFilterType|WicaDiscreteSamplingFilterType|
+ *     WicaRateLimitedSamplingFilterType|WicaChangeFilteringFilterType} - The concrete filter type.
+ *     See {@link module:shared-definitions.WicaAllValueFilterType AllValueFilterType},
+ *     {@link module:shared-definitions.WicaLatestValueFilterType LatestValueFilterType},
+ *     {@link module:shared-definitions.WicaDiscreteSamplingFilterType DiscreteSamplingFilterType},
+ *     {@link module:shared-definitions.WicaRateLimitedSamplingFilterType RateLimitedSamplingFilterType},
+ *     and {@link module:shared-definitions.WicaChangeFilteringFilterType ChangeFilteringFilterType}.
  */
 
 /**
@@ -48,7 +48,7 @@
  * channel's data source.
  *
  * @typedef module:shared-definitions.WicaAllValueFilterType
- * @property {string} filterType="allValue"
+ * @property {string} filterType - Value: "allValue": the string literal that configures this filter type.
  */
 
 /**
@@ -56,7 +56,7 @@
  * channel during the wica server's previous value update sampling time window.
  *
  * @typedef module:shared-definitions.WicaLatestValueFilterType
- * @property {string} filterType="last-n" - The string literal that configures this filter type.
+ * @property {string} filterType - Value: "last-n": the string literal that configures this filter type.
  * @property {number} n - The maximum number of values.
  */
 
@@ -79,14 +79,14 @@
  */
 
 /**
- *  Provides a type definition for a filter that that [asses through values every time the input signal makes a
+ *  Provides a type definition for a filter that that passes through values every time the input signal makes a
  *  change whose absolute value exceeds the configured deadband. The filter operates only on channels whose
  *  underlying type is numeric.
  *
  * @typedef module:shared-definitions.WicaChangeFilteringFilterType
  * @property {string} filterType="changes" - The string literal that configures this filter type.
- * @property {number} deadband - Defines the absolute change in the input value which must
- *     occur in order for the new value to be transferred through the filter.
+ * @property {number} deadband - Defines the absolute change in the input value which must occur in order for
+ *     the new value to be passed through the filter.
  */
 
 /**
