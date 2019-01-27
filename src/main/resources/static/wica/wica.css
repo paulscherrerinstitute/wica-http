@@ -32,17 +32,17 @@
 
 /*- Wica Stream Connection State Rendering -----------------------------------*/
 
-[data-wica-stream-state*= 'connecting' ] {
+[data-wica-stream-state*= 'connect-' ] {
     background-color: mintcream !important;
     color: darkgrey !important;
-    transition: background-color 2s;
+    transition: color 2s, background-color 2s;
 }
 
-[data-wica-stream-state*= 'opened' ] {
+[data-wica-stream-state*= 'opened-' ] {
     /* nothing special for now */
 }
 
-[data-wica-stream-state*= 'closed' ] {
+[data-wica-stream-state*= 'closed-' ] {
     background-color: #ffe4e4 !important;
     color: darkgrey !important;
 }
