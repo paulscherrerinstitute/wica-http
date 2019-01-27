@@ -38,12 +38,12 @@ export class DocumentTextRenderer
      * Starts periodically scanning the current document and updating the text content of all wica-aware
      * elements to match the information obtained from the wica server.
      *
-     * @param {number} refreshRateInMilliseconds - The period to wait after each update scan before starting
-     *     the next one.
+     * @param {number} [refreshRateInMilliseconds=100] - The period to wait after each update scan before
+     *     starting the next one.
      *
      * See also: {@link module:document-text-renderer.DocumentTextRenderer#shutdown shutdown}.
      */
-    activate( refreshRateInMilliseconds )
+    activate( refreshRateInMilliseconds = 100 )
     {
         // Start update process if not already active. Otherwise do nothing.
         if ( this.intervalTimer === undefined )

@@ -43,12 +43,12 @@ export class DocumentEventManager
      * Starts periodically scanning the current document and firing events on all wica-aware elements
      * to publish their current state.
      *
-     * @param {number} refreshRateInMilliseconds - The period to wait after each document scan before
+     * @param {number} [refreshRateInMilliseconds=100] - The period to wait after each document scan before
      *     starting the next one.
      *
      * See also: {@link module:document-event-manager.DocumentEventManager#shutdown shutdown}.
      */
-    activate( refreshRateInMilliseconds )
+    activate( refreshRateInMilliseconds = 100 )
     {
         // Start update process if not already active. Otherwise do nothing.
         if ( this.intervalTimer === undefined )
