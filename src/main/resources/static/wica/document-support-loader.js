@@ -2,8 +2,6 @@
  * Loads the services that are required to provide Wica support for the current HTML document.
  * @module
  */
-import {DocumentEventManager} from "./document-event-manager";
-
 console.debug( "Executing script in document-support-loader.js module...");
 
 import {WicaElementConnectionAttributes, WicaElementRenderingAttributes, WicaStreamProperties} from "./shared-definitions.js";
@@ -20,10 +18,10 @@ const documentEventManager = new DocumentEventManager( WicaElementConnectionAttr
 /**
  * Loads support for the current document.
  *
- * @param {number} textRendererRefreshRate - the rate at which the document's text renderer should run to update the
+ * @param {number} [textRendererRefreshRate=100] - the rate at which the document's text renderer should run to update the
  *     visual state of the document's wica-aware elements.
  *
- * @param {number} eventManagerRefreshRate - the rate at which the document's event manager should run to fire
+ * @param {number} [eventManagerRefreshRate=100] - the rate at which the document's event manager should run to fire
  *    notification events on the state of the document's wica-aware elements.
  */
 export function load( textRendererRefreshRate = 100, eventManagerRefreshRate = 100 )
