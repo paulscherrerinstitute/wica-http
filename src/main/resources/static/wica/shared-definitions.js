@@ -83,7 +83,7 @@
  *  underlying type is numeric; the information for all other channel types passes through unchanged.
  *
  * @typedef module:shared-definitions.WicaFilterTypeChangeFilterer
- * @property {string} filterType - "changes".
+ * @property {string} filterType - "changes" - the string literal that configures this type of filter.
  * @property {number} deadband - Defines the absolute change which must occur in the input value in order for
  *     the new value to be passed through the filter.
  */
