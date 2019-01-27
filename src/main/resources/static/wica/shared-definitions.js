@@ -31,11 +31,11 @@
 */
 
 /**
- * Provides a union type definition for the filtering possibilities on a wica channel.
+ * Provides a union type definition for the filtering possibilities that may be configured on a wica channel.
  *
  * See {@link module:shared-definitions.WicaFilterTypeAllValue WicaFilterTypeAllValue},
  *     {@link module:shared-definitions.WicaFilterTypeLatestValue WicaFilterTypeLatestValue},
- *     {@link module:shared-definitions.WicaFilterTypeDiscreteSampler WicaFilterTypeFixedSampler},
+ *     {@link module:shared-definitions.WicaFilterTypeFixedSampler WicaFilterTypeFixedSampler},
  *     {@link module:shared-definitions.WicaFilterTypeRateLimiter WicaFilterTypeRateLimiter},
  *     and {@link module:shared-definitions.WicaFilterTypeChangeFilterer WicaFilterTypeChangeFilterer}.
  *
@@ -99,7 +99,7 @@
  */
 
 /**
- * Provides a type definition to describe the metadata associated with channel based on a data source with
+ * Provides a type definition to describe the metadata associated with a channel based on a data source with
  * minimal additional information.
  *
  * @typedef module:shared-definitions.WicaChannelMetadataOther
@@ -108,7 +108,7 @@
  */
 
 /**
- * Provides a type definition to describe the metadata associated with channel based on an EPICS data source.
+ * Provides a type definition to describe the metadata associated with a channel based on an EPICS data source.
  *
  * The published properties may vary according to the EPICS record that publishes the EPICS channel. A combination
  * of any or all of the following properties is possible.
