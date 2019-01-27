@@ -48,7 +48,7 @@ export class DocumentStreamConnector
      */
     activate()
     {
-        this.configureStreamConnectionHandlers_( this.wicaElementConnectionAttributes.channelStreamState );
+        this.configureStreamConnectionHandlers_( this.wicaElementConnectionAttributes.streamState );
 
         this.configureStreamMessageHandlers_( this.wicaElementConnectionAttributes.channelMetadata,
                                               this.wicaElementConnectionAttributes.channelValueArray,
