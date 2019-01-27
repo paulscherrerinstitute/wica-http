@@ -9,7 +9,7 @@ import * as DocumentUtilities from './document-utils.js'
 
 /**
  * The default precision to be used when rendering a channel with a numeric value.
- * @type {number}
+ * @type
  */
 const MAX_PRECISION = 8;
 
@@ -97,7 +97,6 @@ export class DocumentTextRenderer
         // Reschedule next update
         this.intervalTimer = setTimeout(() => this.doScan_( refreshRateInMilliseconds ), refreshRateInMilliseconds );
     }
-
 
 
     /**
@@ -286,11 +285,11 @@ export class DocumentTextRenderer
     }
 
     /**
+     * Log any error data generated in this class.
      *
      * @private
-     *
-     * @param {string} msg
-     * @param {Error} err
+     * @param {string} msg - custom error message.
+     * @param {Error} err - the Error object
      */
     static logExceptionData_( msg, err )
     {

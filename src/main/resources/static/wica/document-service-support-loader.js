@@ -2,12 +2,14 @@
  * Loads the services that are required to provide Wica support for the current HTML document.
  * @module
  */
+import {DocumentEventManager} from "./document-event-manager";
+
 console.debug( "Executing script in document-service-support-loader.js module...");
 
 import {WicaElementConnectionAttributes, WicaElementRenderingAttributes, WicaStreamProperties} from "./shared-definitions.js";
 import {DocumentStreamConnector} from "./document-stream-connector.js";
 import {DocumentTextRenderer} from "./document-text-renderer.js";
-
+import {DocumentEventManager} from "./document-event-manager.js";
 
 const WICA_HOST="https://gfa-wica-dev.psi.ch";
 
@@ -23,6 +25,10 @@ export function load()
 
     const documentTextRenderer = new DocumentTextRenderer( WicaElementConnectionAttributes, WicaElementRenderingAttributes );
     documentTextRenderer.activate( 100 );
+
+    const documentEventManager = new DocumentEventManager( WicaElementConnectionAttributes );
+    documentEventManager.activate( 100 );
+
 }
 
 function loadWicaCSS()
