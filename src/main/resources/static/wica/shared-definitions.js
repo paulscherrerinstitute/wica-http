@@ -237,7 +237,7 @@ export const WicaStreamProperties = Object.freeze ({
  *
  * @property {number} [prec=8] - The precision (= number of digits after the decimal point) to be used when
  *     sending numeric information.
- * @property {WicaChannelFilterTypes} [filterType=WicaFilterTypeAllValue] - The type of filtering to be used on the
+ * @property {WicaChannelFilterType} [filterType=WicaFilterTypeAllValue] - The type of filtering to be used on the
  *     channel. See {@link module:shared-definitions.WicaChannelFilterType WicaChannelFilterType}.
  */
 export const WicaChannelProperties = Object.freeze ({
