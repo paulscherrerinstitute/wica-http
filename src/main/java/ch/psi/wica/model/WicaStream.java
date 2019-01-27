@@ -26,9 +26,9 @@ public class WicaStream implements WicaStreamMapper
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaStream.class );
+   static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
 
-   private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
+   private final Logger logger = LoggerFactory.getLogger( WicaStream.class );
    private final int defaultHeartBeatFluxInterval;
    private final int defaultChannelValueUpdateFluxInterval;
 
@@ -154,17 +154,9 @@ public class WicaStream implements WicaStreamMapper
 
    public Map<WicaChannelName,List<WicaChannelValue>> map( Map<WicaChannelName,List<WicaChannelValue>> inputMap )
    {
-      Validate.isTrue( wicaChannels.stream().allMatch( c -> {
-         final boolean result = inputMap.containsKey( c.getName() );
-         if ( ! result )
-         {
-            logger.warn("No mapping function for channel: '{}'", c.getName());
-         }
-         return result;
-      } ), "no mapping function for one or more channels" );
+      Validate.isTrue(inputMap.keySet().stream().allMatch( channelMap::containsKey ), "One or more channels in the inputMap were unknown" );
 
       final Map<WicaChannelName,List<WicaChannelValue>> outputMap = new HashMap<>();
-
       inputMap.keySet().forEach( c -> {
          final List<WicaChannelValue> inputList = inputMap.get( c );
          final WicaChannel wicaChannel = this.channelMap.get( c );
