@@ -10,6 +10,85 @@
  */
 
 /**
+* JS CustomEvent that is sent when a wica-aware element is updated with new information from the wica stream.
+ *
+ * @typedef module:shared-definitions.OnWica
+ *
+ * @property {}
+ * @property {detail.streamState} -
+ * @property {detail.channelName} -
+ * @property {detail.channelProperties} -
+ * @property {detail.channelConnectionState} -
+ * @property {detail.channelValueArray} -
+ * @property {detail.channelValueLatest} -
+ * @property {detail.channelAlarmState} -
+ *
+ *
+ *     whose details depend on the data source.
+ *     See {@link module:shared-definitions.WicaChannelMetadataOther WicaChannelMetadataOther},
+ *     and {@link module:shared-definitions.WicaChannelMetadataEpics WicaChannelMetadataEpics}.
+*/
+
+/**
+ * JS Object that provides channel filtering configuration possibilities for systems with diverse types of
+ * data channel.
+ *
+ * @typedef module:shared-definitions.WicaChannelFilterTypes
+ * @property {AllValueFilterType|LatestValueFilterType|DiscreteSamplingFilterType|RateLimitedSamplingFilterType|
+ *     ChangeFilteringFilterType} - One or more metadata properties whose details depend on the data source.
+ *     See {@link module:shared-definitions.AllValueFilterType AllValueFilterType},
+ *     See {@link module:shared-definitions.LatestValueFilterType LatestValueFilterType},
+ *     See {@link module:shared-definitions.DiscreteSamplingFilterType DiscreteSamplingFilterType},
+ *     See {@link module:shared-definitions.RateLimitedSamplingFilterType RateLimitedSamplingFilterType},
+ *     and {@link module:shared-definitions.ChangeFilteringFilterType ChangeFilteringFilterType}.
+ */
+
+/**
+ * A filter that "does nothing", passing through all values obtained from the channel's data source.
+ *
+ * @typedef module:shared-definitions.AllValueFilterType
+ * @property {string} filterType="allValue"
+ */
+
+/**
+ * A filter that passes through only the most recent N values received from the channel during the
+ * wica server's previous sampling interval.
+ *
+ * @typedef module:shared-definitions.LatestValueFilterType
+ * @property {string} filterType="last-n" - The string literal that configures this filter type.
+ * @property {number} n - The maximum number of values
+ */
+
+/**
+ * A filter that passes through one-in-every-n values obtained from the channel's data source based on a fixed
+ * sampling cycle length.
+ *
+ * @typedef module:shared-definitions.DiscreteSamplingFilterType
+ * @property {string} filterType="1-in-n" - The string literal that configures this filter type.
+ * @property {number} n - The sampling cycle length.
+ */
+
+/**
+ * A filter that passes through values obtained from the channel's data source based on a minimum time period
+ * between successive samples.
+ *
+ * @typedef module:shared-definitions.RateLimitedSamplingFilterType
+ * @property {string} filterType="rate" - The string literal that configures this filter type.
+ * @property {number} ms - The minimum time duration between samples in milliseconds.
+ */
+
+/**
+ *  A filter that that writes a new value to the output list every time the input signal makes a change
+ *  whose absolute value exceeds the configured deadband. The filter operates only on channels whose
+ *  underlying type is numeric.
+ *
+ * @typedef module:shared-definitions.ChangeFilteringFilterType
+ * @property {string} filterType="changes" - The string literal that configures this filter type.
+ * @property {number} deadband - Defines the absolute change in the input value which must
+ *     occur in order for the new value to be transferred through the filter.
+ */
+
+/**
  * JS Object that provides channel metadata information for systems with diverse types of data channel.
  *
  * @typedef module:shared-definitions.WicaChannelMetadata
@@ -181,6 +260,20 @@ export const WicaStreamProperties = Object.freeze ({
  *     values: [ "allValue" | "periodic" | "changes" | "precision" ].
  */
 export const WicaChannelProperties = Object.freeze ({
+    prec: 8,
+    filterType: "allValue"
+} );
+
+/**
+ * JS Object that defines the properties and default values supported by a WicaChannel.
+ *
+ * @typedef
+ * @property {number} [prec=8] - The precision (= number of digits after the decimal point) to be used when
+ *     sending numeric information.
+ * @property {string} [filterType="allValue"] - The type of filtering to be used on the channel. Possible
+ *     values: [ "allValue" | "1-in-n" | "periodic" | "changes" | "precision" ].
+ */
+export const WicaChannelFilterTypes = Object.freeze ({
     prec: 8,
     filterType: "allValue"
 } );
