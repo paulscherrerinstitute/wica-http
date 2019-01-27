@@ -65,7 +65,7 @@ export class DocumentEventManager
         {
             try
             {
-                this.doFireEvents_();
+                this.doScan_( refreshRateInMilliseconds );
             }
             catch (err)
             {
@@ -90,6 +90,30 @@ export class DocumentEventManager
     }
 
     /**
+     * Performs a single update cycle, then schedules the next one.
+     *
+     * @private
+     * @param {number} refreshRateInMilliseconds - The period to wait after every update scan before starting the next one.
+     *
+     */
+    doScan_( refreshRateInMilliseconds )
+    {
+        try
+        {
+            this.fireEvents_( this.wicaElementConnectionAttributes.channelName,
+                              this.wicaElementConnectionAttributes.channelMetadata,
+                              this.wicaElementConnectionAttributes.channelValueArray );
+        }
+        catch( err )
+        {
+            DocumentTextRenderer.logExceptionData_( "Programming Error: renderWicaElements_ threw an exception: ", err );
+        }
+
+        // Reschedule next update
+        this.intervalTimer = setTimeout(() => this.doScan_( refreshRateInMilliseconds ), refreshRateInMilliseconds );
+    }
+
+    /**
      * Fires wica notification events on all wica-aware elements in the current document. The event which
      * is fired includes full information about the current state of the channel.
      *
@@ -111,30 +135,35 @@ export class DocumentEventManager
      *   - detail.channelValueLatest
      *
      * @private
+     *
+     * @param {string} channelNameAttribute - The name of the attribute which holds the channel name.
+     * @param {string} channelMetadataAttribute - The name of the attribute which holds the channel metadata.
+     * @param {string} channelValueArrayAttribute - The name of the attribute which holds channel value array.
+
      * @implNote
      *
      * The current implementation obtains the event payload information by looking at the information in the
      * 'data-wica-channel-value-array' and 'data-wica-channel-metadata' html element attributes.
      */
-    doFireEvents_()
+    fireEvents_( channelNameAttribute, channelMetadataAttribute, channelValueArrayAttribute )
     {
         DocumentUtilities.findWicaElements().forEach((element) => {
 
             // If we have no information about the channel's current value or the channel's metadata
             // then there is nothing useful that can be done so bail out.
-            if ((!element.hasAttribute(this.wicaElementConnectionAttributes.channelValueArray)) ||
-                (!element.hasAttribute(this.wicaElementConnectionAttributes.channelMetadata))) {
+            if ( (!element.hasAttribute( channelValueArrayAttribute )) || ( !element.hasAttribute( channelMetadataAttribute )))
+            {
                 return;
             }
 
             // Obtain the channel name object
-            const channelName = element.getAttribute(this.wicaElementConnectionAttributes.channelName);
+            const channelName = element.getAttribute( channelNameAttribute );
 
             // Obtain the channel metadata object
-            const channelMetadataObj = JSON.parse(element.getAttribute(this.wicaElementConnectionAttributes.channelMetadata));
+            const channelMetadataObj = JSON.parse(element.getAttribute(channelMetadataAttribute ));
 
             // Obtain the object containing the array of recently received channel values.
-            const channelValueArrayObj = JSON.parse(element.getAttribute(this.wicaElementConnectionAttributes.channelValueArray));
+            const channelValueArrayObj = JSON.parse(element.getAttribute( channelValueArrayAttribute ));
 
             // Check that the received value object really was an array
             if (!Array.isArray(channelValueArrayObj)) {
