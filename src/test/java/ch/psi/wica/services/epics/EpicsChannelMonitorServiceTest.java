@@ -160,17 +160,17 @@ class EpicsChannelMonitorServiceTest
    void testStopMonitoring_verifyConnectionCountChanges() throws InterruptedException
    {
       assertEquals( 0, EpicsChannelMonitorService.getChannelConnectionCount() );
-      epicsChannelMonitorService.startMonitoring(new WicaChannelName("test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
+      epicsChannelMonitorService.startMonitoring( new WicaChannelName( "test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
       Thread.sleep( 1_000 );
       assertEquals( 1, EpicsChannelMonitorService.getChannelConnectionCount() );
-      epicsChannelMonitorService.stopMonitoring( new WicaChannelName("test:db_ok" ) );
+      epicsChannelMonitorService.stopMonitoring( new WicaChannelName( "test:db_ok" ) );
       assertEquals( 0, EpicsChannelMonitorService.getChannelConnectionCount() );
    }
 
    @Test
    void testStopMonitoring_verifyIllegalArgumentExceptionWhenChannelNotRecognised() throws InterruptedException
    {
-      epicsChannelMonitorService.startMonitoring(new WicaChannelName("test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
+      epicsChannelMonitorService.startMonitoring(new WicaChannelName( "test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
       Thread.sleep( 1_000 );
       assertEquals( 1, EpicsChannelMonitorService.getChannelConnectionCount() );
       assertThrows( IllegalArgumentException.class, () ->  epicsChannelMonitorService.stopMonitoring( new WicaChannelName( "XXXXX" ) ) );
@@ -178,7 +178,7 @@ class EpicsChannelMonitorServiceTest
 
 
 
-   /*- Nested Classes -----------------------------------------------------------*/
+/*- Nested Classes -----------------------------------------------------------*/
 
    // Note: these interfaces exist to avoid the need for an unchecked cast in
    // some of the tests above

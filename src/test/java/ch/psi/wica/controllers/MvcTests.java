@@ -106,7 +106,7 @@ public class MvcTests
       final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest() ).andReturn();
       final String content = result.getResponse().getContentAsString();
       logger.info( "Returned Content was: '{}'", content );
-      assertEquals("The channel list cannot be empty.", content );
+      assertEquals("The JSON configuration string did not define any channels.", content );
    }
 
    @Test
