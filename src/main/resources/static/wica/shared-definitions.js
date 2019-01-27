@@ -34,12 +34,13 @@
 /**
  * Provides a union type definition for the filtering possibilities on a wica channel.
  *
- * @typedef module:shared-definitions.WicaFilterTypes
  * See {@link module:shared-definitions.WicaFilterTypeAllValue WicaFilterTypeAllValue},
  *     {@link module:shared-definitions.WicaFilterTypeLatestValue WicaFilterTypeLatestValue},
  *     {@link module:shared-definitions.WicaFilterTypeDiscreteSampler WicaFilterTypeFixedSampler},
  *     {@link module:shared-definitions.WicaFilterTypeRateLimiter WicaFilterTypeRateLimiter},
  *     and {@link module:shared-definitions.WicaFilterTypeChangeFilterer WicaFilterTypeChangeFilterer}.
+ *
+ * @typedef module:shared-definitions.WicaFilterType
  */
 
 /**
