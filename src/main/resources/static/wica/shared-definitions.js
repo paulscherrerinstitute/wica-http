@@ -12,20 +12,20 @@
 /**
  * Provides a union type definition for the filtering possibilities that may be configured on a wica channel.
  *
- * See {@link module:shared-definitions.WicaFilterTypeAllValue WicaFilterTypeAllValue},
- *     {@link module:shared-definitions.WicaFilterTypeLatestValue WicaFilterTypeLatestValue},
- *     {@link module:shared-definitions.WicaFilterTypeFixedSampler WicaFilterTypeFixedSampler},
- *     {@link module:shared-definitions.WicaFilterTypeRateLimiter WicaFilterTypeRateLimiter},
- *     and {@link module:shared-definitions.WicaFilterTypeChangeFilterer WicaFilterTypeChangeFilterer}.
+ * See {@link module:shared-definitions.WicaChannelFilterTypeAllValue WicaChannelFilterTypeAllValue},
+ *     {@link module:shared-definitions.WicaChannelFilterTypeLatestValue WicaChannelFilterTypeLatestValue},
+ *     {@link module:shared-definitions.WicaChannelFilterTypeFixedSampler WicaChannelFilterTypeFixedSampler},
+ *     {@link module:shared-definitions.WicaChannelFilterTypeRateLimiter WicaChannelFilterTypeRateLimiter},
+ *     and {@link module:shared-definitions.WicaChannelFilterTypeChangeFilterer WicaChannelFilterTypeChangeFilterer}.
  *
- * @typedef module:shared-definitions.WicaFilterType
+ * @typedef module:shared-definitions.WicaChannelFilterType
  */
 
 /**
  * Provides a type definition for a filter that "does nothing", passing through all values obtained from the
  * channel's data source.
  *
- * @typedef module:shared-definitions.WicaFilterTypeAllValue
+ * @typedef module:shared-definitions.WicaChannelFilterTypeAllValue
  * @property {string} filterType - "none" - the string literal that configures this type of filter.
  */
 
@@ -33,7 +33,7 @@
  * Provides a type definition for a filter that passes through only the latest values received from the
  * channel during the wica server's previous value update sampling time window.
  *
- * @typedef module:shared-definitions.WicaFilterTypeLatestValue
+ * @typedef module:shared-definitions.WicaChannelFilterTypeLatestValue
  * @property {string} filterType - "latest" - the string literal that configures this type of filter.
  * @property {number} numSamples - The maximum number of values to pass through the filter on each update cycle.
  */
@@ -42,7 +42,7 @@
  * Provides a type definition for a filter that passes through values obtained from the channel's data source
  * on a fixed one-in-N sampling basis.
  *
- * @typedef module:shared-definitions.WicaFilterTypeFixedSampler
+ * @typedef module:shared-definitions.WicaChannelFilterTypeFixedSampler
  * @property {string} filterType - "fixed" - the string literal that configures this type of filter.
  * @property {number} cycleLength - The sampling cycle length.
  */
@@ -51,7 +51,7 @@
  * Provides a type definition for a filter that passes through values obtained from the channel's data source based
  * on a minimum time interval between successive samples.
  *
- * @typedef module:shared-definitions.WicaFilterTypeRateLimiter
+ * @typedef module:shared-definitions.WicaChannelFilterTypeRateLimiter
  * @property {string} filterType - "rate" - the string literal that configures this type of filter.
  * @property {number} sampleGap - The minimum time duration between samples in milliseconds.
  */
@@ -61,7 +61,7 @@
  *  transition whose absolute value exceeds the configured deadband. The filter operates only on channels whose
  *  underlying type is numeric; the information for all other channel types passes through unchanged.
  *
- * @typedef module:shared-definitions.WicaFilterTypeChangeFilterer
+ * @typedef module:shared-definitions.WicaChannelFilterTypeChangeFilterer
  * @property {string} filterType - "changes" - the string literal that configures this type of filter.
  * @property {number} deadband - Defines the absolute change which must occur in the input value in order for
  *     the new value to be passed through the filter.
@@ -237,8 +237,8 @@ export const WicaStreamProperties = Object.freeze ({
  *
  * @property {number} [prec=8] - The precision (= number of digits after the decimal point) to be used when
  *     sending numeric information.
- * @property {WicaFilterType} [filterType=WicaFilterTypeAllValue] - The type of filtering to be used on the
- *     channel. See {@link module:shared-definitions.WicaFilterType WicaFilterType}.
+ * @property {WicaChannelFilterType} [filterType=WicaChannelFilterTypeAllValue] - The type of filtering to be used on the
+ *     channel. See {@link module:shared-definitions.WicaChannelFilterType WicaChannelFilterType}.
  */
 export const WicaChannelProperties = Object.freeze ({
     prec: 8,
