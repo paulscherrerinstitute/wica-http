@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /*- Class Declaration --------------------------------------------------------*/
 
 @SpringBootTest
-class WicaChangeFilteringChannelValueMapperTest
+class WicaChannelValueMapperChangeFilteringSamplerTest
 {
 
 /*- Public attributes --------------------------------------------------------*/

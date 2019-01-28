@@ -12,10 +12,10 @@
 /**
  * Provides a union type definition for the filtering possibilities that may be configured on a wica channel.
  *
- * See {@link module:shared-definitions.WicaChannelFilterTypeAllValue WicaChannelFilterTypeAllValue},
- *     {@link module:shared-definitions.WicaChannelFilterTypeLatestValue WicaChannelFilterTypeLatestValue},
- *     {@link module:shared-definitions.WicaChannelFilterTypeFixedSampler WicaChannelFilterTypeFixedSampler},
- *     {@link module:shared-definitions.WicaChannelFilterTypeRateLimiter WicaChannelFilterTypeRateLimiter},
+ * See {@link module:shared-definitions.WicaChannelFilterTypeAllValueSampler WicaChannelFilterTypeAllValueSampler},
+ *     {@link module:shared-definitions.WicaChannelFilterTypeLatestValueSampler WicaChannelFilterTypeLatestValueSampler},
+ *     {@link module:shared-definitions.WicaChannelFilterTypeFixedCycleSampler WicaChannelFilterTypeFixedCycleSampler},
+ *     {@link module:shared-definitions.WicaChannelFilterTypeRateLimitingSampler WicaChannelFilterTypeRateLimitingSampler},
  *     and {@link module:shared-definitions.WicaChannelFilterTypeChangeFilterer WicaChannelFilterTypeChangeFilterer}.
  *
  * @typedef module:shared-definitions.WicaChannelFilterType
@@ -25,7 +25,7 @@
  * Provides a type definition for a filter that "does nothing", passing through all values obtained from the
  * channel's data source.
  *
- * @typedef module:shared-definitions.WicaChannelFilterTypeAllValue
+ * @typedef module:shared-definitions.WicaChannelFilterTypeAllValueSampler
  * @property {string} filterType - "all-value" - the string literal that configures this type of filter.
  */
 
@@ -33,7 +33,7 @@
  * Provides a type definition for a filter that passes through only the latest values received from the
  * channel during the wica server's previous value update sampling time window.
  *
- * @typedef module:shared-definitions.WicaChannelFilterTypeLatestValue
+ * @typedef module:shared-definitions.WicaChannelFilterTypeLatestValueSampler
  * @property {string} filterType - "last-n" - the string literal that configures this type of filter.
  * @property {number} n - The maximum number of values to pass through the filter on each update cycle.
  */
@@ -42,7 +42,7 @@
  * Provides a type definition for a filter that passes through values obtained from the channel's data source
  * on a fixed one-in-N sampling basis.
  *
- * @typedef module:shared-definitions.WicaChannelFilterTypeFixedSampler
+ * @typedef module:shared-definitions.WicaChannelFilterTypeFixedCycleSampler
  * @property {string} filterType - "one-in-n" - the string literal that configures this type of filter.
  * @property {number} n - The sampling cycle length.
  */
@@ -51,7 +51,7 @@
  * Provides a type definition for a filter that passes through values obtained from the channel's data source based
  * on a minimum time interval between successive samples.
  *
- * @typedef module:shared-definitions.WicaChannelFilterTypeRateLimiter
+ * @typedef module:shared-definitions.WicaChannelFilterTypeRateLimitingSampler
  * @property {string} filterType - "rate-limiter" - the string literal that configures this type of filter.
  * @property {number} interval - The minimum time duration between samples in milliseconds.
  */
@@ -237,7 +237,7 @@ export const WicaStreamProperties = Object.freeze ({
  *
  * @property {number} [prec=8] - The precision (= number of digits after the decimal point) to be used when
  *     sending numeric information.
- * @property {WicaChannelFilterType} [filterType=WicaChannelFilterTypeAllValue] - The type of filtering to be used on the
+ * @property {WicaChannelFilterType} [filterType=WicaChannelFilterTypeAllValueSampler] - The type of filtering to be used on the
  *     channel. See {@link module:shared-definitions.WicaChannelFilterType WicaChannelFilterType}.
  */
 export const WicaChannelProperties = Object.freeze ({
