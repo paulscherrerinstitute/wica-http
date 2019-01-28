@@ -125,14 +125,27 @@
 
 /**
  * JS Object that defines the HTML element attributes used by the
+ * {@link module:document-event-manager.DocumentStreamBuffer DocumentStreamBuffer} .
+ *
+ * @property {number} [bufferSize=32] - The name of the attribute which determines the size of
+ *     the stream buffer. When not present the element's information will be omitted from the
+ *     documen'ts stream buffer.
+ */
+export const wicaElementStreamBufferingAttributes = Object.freeze ({
+    bufferSize: "data-wica-stream-buffer-size"
+} );
+
+
+/**
+ * JS Object that defines the HTML element attributes used by the
  * {@link module:document-event-manager.DocumentEventManager DocumentEventManager} in its mission to fire
  * events on wica-aware elements.
  *
- * @property {string} onwicaHandler="onwica" - The name of the attribute which will be examined to look for
- *     a wica custom event handler.
+ * @property {string} onwicaHandler="data-wica-event-handler" - The name of the attribute which will be
+ *     examined to look for a wica custom event handler.
  */
 export const WicaElementEventAttributes = Object.freeze ({
-    onwicaHandler: "onwica"
+    onwicaHandler: "data-wica-event-handler"
 } );
 
 /**

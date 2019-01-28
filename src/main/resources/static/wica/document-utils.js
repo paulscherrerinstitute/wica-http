@@ -4,28 +4,58 @@
  */
 console.debug( "Executing script in document-utils.js module...");
 
+import {WicaElementConnectionAttributes} from "shared-definitions.js";
+
 export {
     findWicaElements,
-    findWicaElementsWithChannelName
+    findWicaElementsWithChannelName,
+    findWicaElementsWithAttributeName,
+    findWicaElementsWithAttributeValue
 }
 
 /**
- * Finds all wica-aware HTML elements in the current document.
+ * Finds all "wica-aware" HTML elements in the current document. That's to say, all elements
+ * which include an attribute which defines the name of the wica channel.
  *
- * @returns {NodeListOf<Element>} the result list.
+ * @returns {NodeListOf<Element>} - The result list.
  */
-function findWicaElements() {
-    const elements = document.querySelectorAll('[data-wica-channel-name]');
-    return elements;
+function findWicaElements()
+{
+    return findWicaElementsWithAttributeName( WicaElementConnectionAttributes.channelName );
 }
 
 /**
  * Finds all wica-aware HTML elements in the current document with the specified wica channel name.
  *
- * @param {!string} target the channel name to search for.
- * @returns {NodeListOf<Element>}  the result list.
+ * @param {!string} channelName - The channel name to search for.
+ * @returns {NodeListOf<Element>} - The result list.
  */
-function findWicaElementsWithChannelName( target ) {
-    let selector = "*[data-wica-channel-name = \'" + target + "\']";
-    return document.querySelectorAll(selector);
+function findWicaElementsWithChannelName( channelName )
+{
+    return findWicaElementsWithAttributeValue( WicaElementConnectionAttributes.channelName, channelName );
+}
+
+/**
+ * Finds all wica-aware HTML elements in the current document whose attribute name matches the specified value.
+ *
+ * @param {!string} attributeName - The attribute name to target.
+ * @param {!string} attributeValue - The attribute value to target.
+ * @returns {NodeListOf<Element>} - The result list.
+ */
+function findWicaElementsWithAttributeValue( attributeName, attributeValue )
+{
+    const selector = "*[" + attributeName + " = \'" + attributeValue + "\']";
+    return document.querySelectorAll( selector );
+}
+
+/**
+* Finds all wica-aware HTML elements in the current document with the given attribute name.
+*
+* @param {!string} attributeName - The attribute name to search for.
+* @returns {NodeListOf<Element>} - The result list.
+*/
+function findWicaElementsWithAttributeName( attributeName )
+{
+    const selector = "[" + attributeName + "]";
+    return document.querySelectorAll( selector );
 }

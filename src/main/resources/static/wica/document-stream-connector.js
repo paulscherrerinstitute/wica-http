@@ -37,6 +37,10 @@ export class DocumentStreamConnector
         this.lastOpenedStreamId = 0;
         this.streamConnectionHandlers = {};
         this.streamMessageHandlers = {};
+        this.maximumBufferSize = maximumBufferSize;
+        this.metadataMap = {};
+        this.valueMap = {};
+        this.bufferedValueMap = {};
     }
 
     /**
@@ -69,43 +73,6 @@ export class DocumentStreamConnector
     shutdown()
     {
         this.streamManager.shutdown();
-    }
-
-    /**
-     * Returns a map containing the most recently received channel metadata.
-     *
-     * @return {Object.<WicaChannelName, WicaChannelMetadata>} metadataMap - Map of channel names and their
-     *     associated metadata. See {@link module:shared-definitions.WicaChannelName WicaChannelName} and
-     *     {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}.
-     *
-     */
-    getMetadataMap()
-    {
-        return this.metadataMap;
-    }
-
-    /**
-     * Returns a map containing the most recently received channel values.
-     *
-     * @return {Object.<WicaChannelName,WicaChannelValue[]>} valueMap - Map of channel names and array of values that
-     *     have been received for the channel in chronological order.
-     *     See {@link module:shared-definitions.WicaChannelName WicaChannelName} and
-     *     {@link module:shared-definitions.WicaChannelValue WicaChannelValue}.
-     */
-    getValueMap()
-    {
-        return this.valueMap;
-    }
-
-    /**
-     * Returns a map containing the buffered channel values.
-     *
-     * @return {Object.<WicaChannelName, WicaChannelMetadata>} metadataMap - Map of channel names and their
-     *     associated metadata.
-     */
-    getBufferedValueMap()
-    {
-        return this.bufferedValueMap;
     }
 
     /**
@@ -158,13 +125,10 @@ export class DocumentStreamConnector
                                      channelAlarmStateAttribute )
     {
         this.streamMessageHandlers.channelMetadataUpdated = metadataMap => {
-            this.metadataMap = metadataMap;
-            this.updateDocumentMetadataAttributes_(metadataMap, channelMetadataAttribute);
+            this.updateDocumentMetadataAttributes_( metadataMap, channelMetadataAttribute);
         };
 
         this.streamMessageHandlers.channelValuesUpdated = valueMap => {
-            this.valueMap = valueMap;
-            this.updateValueBuffer_( valueMap );
             this.updateDocumentValueAttributes_( valueMap, channelValueArrayAttribute, channelValueLatestAttribute,
                                                  channelConnectionStateAttribute, channelAlarmStateAttribute);
         }
@@ -284,17 +248,5 @@ export class DocumentStreamConnector
             });
         });
     };
-
-
-    /**
-     *
-     * @private
-     * @param valueMap
-     * @private
-     */
-    updateValueBuffer_( valueMap )
-    {
-        this.getBufferedValueMap = valueMap;
-    }
 
 }
