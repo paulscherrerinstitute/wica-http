@@ -43,8 +43,8 @@ export class DocumentEventManager
      * Constructs a new instance.
      *
      * @param {!WicaElementEventManagerAttributes} wicaElementEventManagerAttributes - The names of the wica-aware
-     *     element attributes that can be examined to determine whether a wica-aware element has any attached
-     *     handlers. See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
+     *     element attributes that can be examined to determine whether a wica-aware element has any attached handlers.
+     *     See {@link module:shared-definitions.wicaElementEventManagerAttributes wicaElementEventManagerAttributes}.
      *
      * @param {!WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware
      *     element attributes that can be examined to determine the name of the channel and its current status.
