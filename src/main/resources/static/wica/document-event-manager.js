@@ -71,8 +71,8 @@ export class DocumentEventManager
      * @param {number} [refreshRateInMilliseconds=100] - The period to wait after each document scan before
      *     starting the next one.
      *
-     * @param {boolean} supportEventListeners - Determines whether events are fired ONLY on elements which have
-     *     defined event handlers or whether they are fired unconditionally on all elements (as is required to
+     * @param {boolean} [supportEventListeners=false] - Determines whether events are fired ONLY on elements which
+     *     have defined event handlers or whether they are fired unconditionally on all elements (as is required to
      *     support any attached event listeners).
      *
      * See also: {@link module:document-event-manager.DocumentEventManager#shutdown shutdown}.
