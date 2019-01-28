@@ -22,10 +22,10 @@ const documentEventManager = new DocumentEventManager( WicaElementConnectionAttr
 /**
  * Loads support for the current document.
  *
- * @param {number} [textRendererRefreshRate=100] - the rate at which the document's text renderer should run to update the
+ * @param {number} [textRendererRefreshRate=100] - The rate at which the document's text renderer should run to update the
  *     visual state of the document's wica-aware elements.
  *
- * @param {number} [eventManagerRefreshRate=100] - the rate at which the document's event manager should run to fire
+ * @param {number} [eventManagerRefreshRate=100] - The rate at which the document's event manager should run to fire
  *    notification events on the state of the document's wica-aware elements.
  */
 export function load( textRendererRefreshRate = 100, eventManagerRefreshRate = 100 )
@@ -46,8 +46,9 @@ export function unload()
     documentEventManager.shutdown();
 }
 
-
 /**
+ * Loads the CSS that is used to render the visual state of wica-aware elements
+ * using information in the element's attributes.
  * @private
  */
 function loadWicaCSS_()

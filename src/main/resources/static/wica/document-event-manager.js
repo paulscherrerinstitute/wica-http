@@ -128,7 +128,7 @@ export class DocumentEventManager
         }
         catch( err )
         {
-            DocumentTextRenderer.logExceptionData_( "Programming Error: renderWicaElements_ threw an exception: ", err );
+            DocumentEventManager.logExceptionData_( "Programming Error: fireEvents_ threw an exception: ", err );
         }
 
         // Reschedule next update
@@ -182,7 +182,7 @@ export class DocumentEventManager
             }
 
             // If there isn't at least one value present bail out as there is nothing useful to be done
-            if ( channelValueArrayObj.length === 0 ) {
+            if ( channelValueArray.length === 0 ) {
                 return;
             }
 
