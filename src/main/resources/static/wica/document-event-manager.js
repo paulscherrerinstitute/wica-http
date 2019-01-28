@@ -42,13 +42,13 @@ export class DocumentEventManager
     /**
      * Constructs a new instance.
      *
-     * @param {!WicaElementEventManagerAttributes} wicaElementEventManagerAttributes - The names of the wica-aware
-     *     element attributes that can be examined to determine whether a wica-aware element has any attached handlers.
-     *     See {@link module:shared-definitions.WicaElementEventManagerAttributes WicaElementEventManagerAttributes}.
-     *
      * @param {!WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware
      *     element attributes that can be examined to determine the name of the channel and its current status.
      *     See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
+     *
+     * @param {!WicaElementEventAttributes} wicaElementEventAttributes - The names of the wica-aware
+     *     element attributes that can be examined to determine whether a wica-aware element has any attached handlers.
+     *     See {@link module:shared-definitions.WicaElementEventAttributes WicaElementEventManagerAttributes}.
      *
      * @implNote
      *
@@ -56,10 +56,10 @@ export class DocumentEventManager
      * with attached event listeners. This is because it is impossible to detect programmatically the presence
      * of attached event listeners.
      */
-    constructor( wicaElementEventManagerAttributes, wicaElementConnectionAttributes )
+    constructor( wicaElementConnectionAttributes, wicaElementEventAttributes )
     {
-        this.wicaElementEventManagerAttributes = wicaElementEventManagerAttributes;
         this.wicaElementConnectionAttributes = wicaElementConnectionAttributes;
+        this.wicaElementEventAttributes = wicaElementEventAttributes;
     }
 
     /**
@@ -120,10 +120,10 @@ export class DocumentEventManager
     {
         try
         {
-            this.fireEvents_( this.wicaElementEventManagerAttributes.handler,
-                              this.wicaElementConnectionAttributes.channelName,
+            this.fireEvents_( this.wicaElementConnectionAttributes.channelName,
                               this.wicaElementConnectionAttributes.channelMetadata,
                               this.wicaElementConnectionAttributes.channelValueArray,
+                              this.wicaElementEventAttributes.onwicaHandler,
                               this.supportEventListeners );
         }
         catch( err )
@@ -146,16 +146,16 @@ export class DocumentEventManager
      *
      * @private
      *
-     * @param {string} eventHandlerAttribute - The name of the attribute which determines whether an element has
-     *    a defined event handler.
      * @param {string} channelNameAttribute - The name of the attribute which holds the channel name.
      * @param {string} channelMetadataAttribute - The name of the attribute which holds the channel metadata.
      * @param {string} channelValueArrayAttribute - The name of the attribute which holds the channel value array.
+     * @param {string} eventHandlerAttribute - The name of the attribute which determines whether an element has
+     *    a defined event handler.
      * @param {boolean} supportEventListeners - Whether events are to be fired unconditionally to support event
      *     listeners or in a more optimised way which supports event handlers only.
      */
-    fireEvents_( eventHandlerAttribute, channelNameAttribute, channelMetadataAttribute, channelValueArrayAttribute,
-                 supportEventListeners )
+    fireEvents_( channelNameAttribute, channelMetadataAttribute, channelValueArrayAttribute,
+                 eventHandlerAttribute, supportEventListeners )
     {
         DocumentUtilities.findWicaElements().forEach((element) => {
 

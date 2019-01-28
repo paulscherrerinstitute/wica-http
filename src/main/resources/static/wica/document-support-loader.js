@@ -6,7 +6,7 @@ console.debug( "Executing script in document-support-loader.js module...");
 
 import {WicaElementConnectionAttributes,
         WicaElementRenderingAttributes,
-        WicaElementEventManagerAttributes,
+        WicaElementEventAttributes,
         WicaStreamProperties} from "./shared-definitions.js";
 
 import {DocumentStreamConnector} from "./document-stream-connector.js";
@@ -17,7 +17,7 @@ const WICA_HOST="https://gfa-wica-dev.psi.ch";
 
 const documentStreamConnector = new DocumentStreamConnector( WICA_HOST, WicaStreamProperties, WicaElementConnectionAttributes );
 const documentTextRenderer = new DocumentTextRenderer( WicaElementConnectionAttributes, WicaElementRenderingAttributes );
-const documentEventManager = new DocumentEventManager( WicaElementEventManagerAttributes, WicaWicaElementConnectionAttributes );
+const documentEventManager = new DocumentEventManager( WicaElementConnectionAttributes, WicaElementEventAttributes );
 
 /**
  * Loads support for the current document.

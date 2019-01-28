@@ -131,8 +131,8 @@
  * @property {string} handler="onwica" - The name of the attribute which will be examined to look for
  *     a wica custom event handler.
  */
-export const WicaElementEventManagerAttributes = Object.freeze ({
-    handler: "onwica"
+export const WicaElementEventAttributes = Object.freeze ({
+    onwicaHandler: "onwica"
 } );
 
 /**
