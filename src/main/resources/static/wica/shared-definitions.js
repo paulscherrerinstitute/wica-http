@@ -120,8 +120,20 @@
  * @property sevr {number} - [Alarm Severity] -  Present if the WicaStreamProperty 'includeAlarmInfo' is true. The
  *    following values are defined (0 = No Alarm; 1 = Minor Alarm, 2 = Major Alarm)
  *
- * @property ts {string} - [Timestamp] - present if the WicaStreamProperty 'includeTimeStamp' is true.
+ * @property ts {string} - [Timestamp] - present if the WicaStreamProperty 'includeTimestamp' is true.
  */
+
+/**
+ * JS Object that defines the HTML element attributes used by the
+ * {@link module:document-event-manager.DocumentEventManager DocumentEventManager} in its mission to fire
+ * events on wica-aware elements.
+ *
+ * @property {string} handler="onwica" - The name of the attribute which will be examined to look for
+ *     a wica event handler.
+ */
+export const WicaElementEventManagerAttributes = Object.freeze ({
+    handler: "onwica"
+} );
 
 /**
  * JS Object that defines the HTML element attributes used by the
@@ -222,14 +234,14 @@ export const WicaRenderingProperties = Object.freeze ({
  *     update messages.
  * @property {boolean} [includeAlarmInfo=true] - Whether alarm information should be included in channel
  *     value updates. Needed if the visual state of the element should change when in the alarm state.
- * @property {boolean} [includeTimeStamp=false] - Whether timestamp information should be included in channel
+ * @property {boolean} [includeTimestamp=false] - Whether timestamp information should be included in channel
  *     value updates. Needed for time plots.
  */
 export const WicaStreamProperties = Object.freeze ({
     heartBeatInterval: 15000,
     channelValueUpdateInterval: 100,
     includeAlarmInfo: true,
-    includeTimeStamp: false
+    includeTimestamp: false
 } );
 
 /**

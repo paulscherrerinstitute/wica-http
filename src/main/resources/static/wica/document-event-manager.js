@@ -1,6 +1,7 @@
 /**
- * Provides support for firing notification events on wica-aware elements in the current document that have defined
- * handlers.
+ * Provides support for firing custom notification events on wica-aware elements in the current document to
+ * update interested third-parties on the latest status received from the wica event stream.
+ *
  * @module
  */
 console.debug( "Executing script in document-event-manager.js module...");
@@ -8,8 +9,8 @@ console.debug( "Executing script in document-event-manager.js module...");
 import * as DocumentUtilities from './document-utils.js'
 
 /**
- * Provides a type definition for a JS CustomEvent object that is fired when a wica-aware element is updated
- * with new information from the wica stream.
+ * Provides a type definition for a JS CustomEvent object that is fired to inform observers of the
+ * latest metadata and value information received on a wica-aware element.
  *
  * @typedef module:document-event-manager.OnWicaEvent
  *
@@ -18,8 +19,7 @@ import * as DocumentUtilities from './document-utils.js'
  * @property {Object} detail - An object providing the customised data payload for the event.
  *
  * @property {string} detail.channelName - The name of the channel associated with the element on which the
- *     event was fired.
- *     See {@link module:shared-definitions.WicaChannelName WicaChannelName}.
+ *     event was fired. See {@link module:shared-definitions.WicaChannelName WicaChannelName}.
  *
  * @property {WicaChannelMetadata} detail.channelMetadata - The most recent channel metadata.
  *     See {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}.
@@ -32,26 +32,46 @@ import * as DocumentUtilities from './document-utils.js'
  */
 
 /**
- * Renders the visual state of wica-aware elements in the current document based on attribute information
- * obtained from the Wica server on the backend.
+ * Provides support for periodically scanning the current document for wica-aware elements with attached
+ * event handlers or event listeners. Fires a custom {@link module:document-event-manager.OnWicaEvent
+ * OnWicaEvent} to inform the attached observers of the latest status received from the wica event
+ * stream.
  */
 export class DocumentEventManager
 {
     /**
      * Constructs a new instance.
      *
+     * @param {!WicaElementEventManagerAttributes} wicaElementEventManagerAttributes - The names of the wica-aware
+     *     element attributes that can be examined to determine whether a wica-aware element has any attached
+     *     handlers. See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
+     *
      * @param {!WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware
-     *     element attributes that are to be used in the communication process.
+     *     element attributes that can be examined to determine the name of the channel and its current status.
      *     See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
+     *
+     * @param {boolean} supportEventListeners - Determines whether events are fired ONLY on elements which have
+     *     defined event handlers or whether they are fired unconditionally on all elements (as is required to
+     *     support any attached event listeners).
+     *
+     * @implNote
+     *
+     * It is currently (2019-01-29) impossible to optimise the firing of events to trigger them only on elements
+     * with attached event listeners. This is because it is impossible to detect programmatically the presence
+     * of attached event listeners.
      */
-    constructor( wicaElementConnectionAttributes )
+    constructor( wicaElementEventManagerAttributes, wicaElementConnectionAttributes, supportEventListeners = false )
     {
+        this.wicaElementEventManagerAttributes = wicaElementEventManagerAttributes;
         this.wicaElementConnectionAttributes = wicaElementConnectionAttributes;
+        this.supportEventListeners = supportEventListeners;
     }
 
     /**
      * Starts periodically scanning the current document and firing events on all wica-aware elements
      * to publish their current state.
+     *
+     * The event that will be published is a 'onwica'
      *
      * @param {number} [refreshRateInMilliseconds=100] - The period to wait after each document scan before
      *     starting the next one.
@@ -100,7 +120,8 @@ export class DocumentEventManager
     {
         try
         {
-            this.fireEvents_( this.wicaElementConnectionAttributes.channelName,
+            this.fireEvents_( this.wicaElementEventManagerAttributes.handler,
+                              this.wicaElementConnectionAttributes.channelName,
                               this.wicaElementConnectionAttributes.channelMetadata,
                               this.wicaElementConnectionAttributes.channelValueArray );
         }
@@ -114,38 +135,23 @@ export class DocumentEventManager
     }
 
     /**
-     * Fires wica notification events on all wica-aware elements in the current document. The event which
-     * is fired includes full information about the current state of the channel.
+     * Fires a custom {@link module:document-event-manager.OnWicaEvent OnWicaEvent} on all wica-aware elements in the
+     * current document to inform any attached event handlers or event listeners of the latest state.
      *
-     * The following event types are supported:
-     * - 'onwica': custom event.
-     * - 'onchange': DEPRECATED, provided only for backwards compatibility.
-     *
-     * The event payload includes the most recently received stream notification information for the wica
-     * channel's metadata and wica channel's value.
+     * The event payload includes the most recently received stream notification information for the wica channel's
+     * metadata and wica channel's value.
      *
      * No events will be fired until both the channel's metadata and value have been obtained.
      *
-     * In the case of the 'onwica' event the following information is provided in the detail attribute:
-     *
-     *   - detail.channelName
-     *   - detail.streamState
-     *   - detail.channelMetadata
-     *   - detail.channelValueArray
-     *   - detail.channelValueLatest
-     *
      * @private
      *
+     * @param {string} eventHandlerAttribute - The name of the attribute which determines whether an element has
+     *    a defined event handler.
      * @param {string} channelNameAttribute - The name of the attribute which holds the channel name.
      * @param {string} channelMetadataAttribute - The name of the attribute which holds the channel metadata.
-     * @param {string} channelValueArrayAttribute - The name of the attribute which holds channel value array.
-
-     * @implNote
-     *
-     * The current implementation obtains the event payload information by looking at the information in the
-     * 'data-wica-channel-value-array' and 'data-wica-channel-metadata' html element attributes.
+     * @param {string} channelValueArrayAttribute - The name of the attribute which holds the channel value array.
      */
-    fireEvents_( channelNameAttribute, channelMetadataAttribute, channelValueArrayAttribute )
+    fireEvents_( eventHandlerAttribute, channelNameAttribute, channelMetadataAttribute, channelValueArrayAttribute )
     {
         DocumentUtilities.findWicaElements().forEach((element) => {
 
@@ -160,10 +166,10 @@ export class DocumentEventManager
             const channelName = element.getAttribute( channelNameAttribute );
 
             // Obtain the channel metadata object
-            const channelMetadataObj = JSON.parse(element.getAttribute(channelMetadataAttribute ));
+            const channelMetadata = JSON.parse( element.getAttribute(channelMetadataAttribute ));
 
             // Obtain the object containing the array of recently received channel values.
-            const channelValueArrayObj = JSON.parse(element.getAttribute( channelValueArrayAttribute ));
+            const channelValueArray = JSON.parse( element.getAttribute( channelValueArrayAttribute ));
 
             // Check that the received value object really was an array
             if (!Array.isArray(channelValueArrayObj)) {
@@ -172,35 +178,22 @@ export class DocumentEventManager
             }
 
             // If there isn't at least one value present bail out as there is nothing useful to be done
-            if (channelValueArrayObj.length === 0) {
+            if ( channelValueArrayObj.length === 0 ) {
                 return;
             }
 
-            // If an onchange event handler IS defined then delegate the handling
-            // of the event (typically performing some calculation or rendering a plot) to
-            // the defined method.
-            if (element.onchange !== null) {
-                let event = new Event('change');
-                event.channelName = channelName;
-                event.channelMetadata = channelMetadataObj;
-                event.channelValueArray = channelValueArrayObj;
-                event.channelValueLatest = channelValueArrayObj[channelValueArrayObj.length - 1];
-                element.dispatchEvent(event);
-            }
-
-            // If an wica event handler IS defined then delegate the handling
-            // of the event (typically performing some calculation or rendering
-            // a plot) to the defined method.
-            if (element.onwica !== null) {
+            // Events are fired unconditionally if event listener support is required. Otherwise they
+            // are fired only on elements with defined function handlers.
+            if ( ( typeof element[ eventHandlerAttribute ] == "function" ) || this.supportEventListeners ) {
                 const customEvent = new CustomEvent('wica', {
                     detail: {
                         "channelName": channelName,
-                        "channelMetadata": channelMetadataObj,
-                        "channelValueArray": channelValueArrayObj,
-                        "channelValueLatest": channelValueArrayObj[channelValueArrayObj.length - 1]
+                        "channelMetadata": channelMetadata,
+                        "channelValueArray": channelValueArray,
+                        "channelValueLatest": channelValueArray[channelValueArray.length - 1]
                     }
                 });
-                element.dispatchEvent(customEvent);
+                element.dispatchEvent( customEvent );
             }
         });
     }
