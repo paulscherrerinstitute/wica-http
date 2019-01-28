@@ -128,10 +128,10 @@
  * {@link module:document-event-manager.DocumentEventManager DocumentEventManager} in its mission to fire
  * events on wica-aware elements.
  *
- * @property {string} handler="onwicaHandler" - The name of the attribute which will be examined to look for
+ * @property {string} onwicaHandler="onwica" - The name of the attribute which will be examined to look for
  *     a wica custom event handler.
  */
-export const WicaElementEventAttributes = Object.freeze ({
+export const WicaEventAttributes = Object.freeze ({
     onwicaHandler: "onwica"
 } );
 

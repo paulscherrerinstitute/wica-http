@@ -48,7 +48,7 @@ export class DocumentEventManager
      *
      * @param {!WicaElementEventAttributes} wicaElementEventAttributes - The names of the wica-aware
      *     element attributes that can be examined to determine whether a wica-aware element has any attached handlers.
-     *     See {@link module:shared-definitions.WicaElementEventAttributes WicaElementEventManagerAttributes}.
+     *     See {@link module:shared-definitions.WicaElementEventAttributes WicaElementEventAttributes}.
      *
      * @implNote
      *
@@ -114,7 +114,6 @@ export class DocumentEventManager
      *
      * @private
      * @param {number} refreshRateInMilliseconds - The period to wait after every update scan before starting the next one.
-     *
      */
     doScan_( refreshRateInMilliseconds )
     {
