@@ -50,21 +50,16 @@ export class DocumentEventManager
      *     element attributes that can be examined to determine the name of the channel and its current status.
      *     See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
      *
-     * @param {boolean} supportEventListeners - Determines whether events are fired ONLY on elements which have
-     *     defined event handlers or whether they are fired unconditionally on all elements (as is required to
-     *     support any attached event listeners).
-     *
      * @implNote
      *
      * It is currently (2019-01-29) impossible to optimise the firing of events to trigger them only on elements
      * with attached event listeners. This is because it is impossible to detect programmatically the presence
      * of attached event listeners.
      */
-    constructor( wicaElementEventManagerAttributes, wicaElementConnectionAttributes, supportEventListeners = false )
+    constructor( wicaElementEventManagerAttributes, wicaElementConnectionAttributes )
     {
         this.wicaElementEventManagerAttributes = wicaElementEventManagerAttributes;
         this.wicaElementConnectionAttributes = wicaElementConnectionAttributes;
-        this.supportEventListeners = supportEventListeners;
     }
 
     /**
@@ -76,15 +71,20 @@ export class DocumentEventManager
      * @param {number} [refreshRateInMilliseconds=100] - The period to wait after each document scan before
      *     starting the next one.
      *
+     * @param {boolean} supportEventListeners - Determines whether events are fired ONLY on elements which have
+     *     defined event handlers or whether they are fired unconditionally on all elements (as is required to
+     *     support any attached event listeners).
+     *
      * See also: {@link module:document-event-manager.DocumentEventManager#shutdown shutdown}.
      */
-    activate( refreshRateInMilliseconds = 100 )
+    activate( refreshRateInMilliseconds = 100, supportEventListeners = false )
     {
         // Start update process if not already active. Otherwise do nothing.
         if ( this.intervalTimer === undefined )
         {
             try
             {
+                this.supportEventListeners = supportEventListeners;
                 this.doScan_( refreshRateInMilliseconds );
             }
             catch (err)
@@ -123,7 +123,8 @@ export class DocumentEventManager
             this.fireEvents_( this.wicaElementEventManagerAttributes.handler,
                               this.wicaElementConnectionAttributes.channelName,
                               this.wicaElementConnectionAttributes.channelMetadata,
-                              this.wicaElementConnectionAttributes.channelValueArray );
+                              this.wicaElementConnectionAttributes.channelValueArray,
+                              this.supportEventListeners );
         }
         catch( err )
         {
@@ -150,8 +151,11 @@ export class DocumentEventManager
      * @param {string} channelNameAttribute - The name of the attribute which holds the channel name.
      * @param {string} channelMetadataAttribute - The name of the attribute which holds the channel metadata.
      * @param {string} channelValueArrayAttribute - The name of the attribute which holds the channel value array.
+     * @param {boolean} supportEventListeners - Whether events are to be fired unconditionally to support event
+     *     listeners or in a more optimised way which supports event handlers only.
      */
-    fireEvents_( eventHandlerAttribute, channelNameAttribute, channelMetadataAttribute, channelValueArrayAttribute )
+    fireEvents_( eventHandlerAttribute, channelNameAttribute, channelMetadataAttribute, channelValueArrayAttribute,
+                 supportEventListeners )
     {
         DocumentUtilities.findWicaElements().forEach((element) => {
 
@@ -172,7 +176,7 @@ export class DocumentEventManager
             const channelValueArray = JSON.parse( element.getAttribute( channelValueArrayAttribute ));
 
             // Check that the received value object really was an array
-            if (!Array.isArray(channelValueArrayObj)) {
+            if (!Array.isArray( channelValueArray )) {
                 console.warn("Stream error: received value object was not an array !");
                 return;
             }
@@ -184,7 +188,7 @@ export class DocumentEventManager
 
             // Events are fired unconditionally if event listener support is required. Otherwise they
             // are fired only on elements with defined function handlers.
-            if ( ( typeof element[ eventHandlerAttribute ] == "function" ) || this.supportEventListeners ) {
+            if ( ( typeof element[ eventHandlerAttribute ] == "function" ) || supportEventListeners ) {
                 const customEvent = new CustomEvent('wica', {
                     detail: {
                         "channelName": channelName,
