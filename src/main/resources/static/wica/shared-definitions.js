@@ -16,7 +16,7 @@
  *     {@link module:shared-definitions.WicaChannelFilterTypeLatestValueSampler WicaChannelFilterTypeLatestValueSampler},
  *     {@link module:shared-definitions.WicaChannelFilterTypeFixedCycleSampler WicaChannelFilterTypeFixedCycleSampler},
  *     {@link module:shared-definitions.WicaChannelFilterTypeRateLimitingSampler WicaChannelFilterTypeRateLimitingSampler},
- *     and {@link module:shared-definitions.WicaChannelFilterTypeChangeFilterer WicaChannelFilterTypeChangeFilterer}.
+ *     and {@link module:shared-definitions.WicaChannelFilterTypeChangeFilteringSampler WicaChannelFilterTypeChangeFilteringSampler}.
  *
  * @typedef module:shared-definitions.WicaChannelFilterType
  */
@@ -61,7 +61,7 @@
  *  transition whose absolute value exceeds the configured deadband. The filter operates only on channels whose
  *  underlying type is numeric; the information for all other channel types passes through unchanged.
  *
- * @typedef module:shared-definitions.WicaChannelFilterTypeChangeFilterer
+ * @typedef module:shared-definitions.WicaChannelFilterTypeChangeFilteringSampler
  * @property {string} filterType - "change-filterer" - the string literal that configures this type of filter.
  * @property {number} deadband - Defines the absolute change which must occur in the input value in order for
  *     the new value to be passed through the filter.
