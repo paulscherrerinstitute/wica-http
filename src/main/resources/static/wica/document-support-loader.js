@@ -4,7 +4,11 @@
  */
 console.debug( "Executing script in document-support-loader.js module...");
 
-import {WicaElementConnectionAttributes, WicaElementRenderingAttributes, WicaStreamProperties} from "./shared-definitions.js";
+import {WicaElementConnectionAttributes,
+        WicaElementRenderingAttributes,
+        WicaElementEventManagerAttributes,
+        WicaStreamProperties} from "./shared-definitions.js";
+
 import {DocumentStreamConnector} from "./document-stream-connector.js";
 import {DocumentTextRenderer} from "./document-text-renderer.js";
 import {DocumentEventManager} from "./document-event-manager.js";
@@ -13,7 +17,7 @@ const WICA_HOST="https://gfa-wica-dev.psi.ch";
 
 const documentStreamConnector = new DocumentStreamConnector( WICA_HOST, WicaStreamProperties, WicaElementConnectionAttributes );
 const documentTextRenderer = new DocumentTextRenderer( WicaElementConnectionAttributes, WicaElementRenderingAttributes );
-const documentEventManager = new DocumentEventManager( WicaElementConnectionAttributes );
+const documentEventManager = new DocumentEventManager( WicaElementEventManagerAttributes, WicaWicaElementConnectionAttributes );
 
 /**
  * Loads support for the current document.
