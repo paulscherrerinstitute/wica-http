@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /*- Class Declaration --------------------------------------------------------*/
 
 @SpringBootTest
-class WicaRateLimitedSamplingChannelValueMapperTest
+class WicaChannelValueMapperRateLimitingSamplerTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -30,7 +30,7 @@ class WicaRateLimitedSamplingChannelValueMapperTest
    @Test
    void testConstructorIllegalSamplingInterval()
    {
-      assertThrows( IllegalArgumentException.class, () -> new WicaRateLimitedSamplingChannelValueMapper(0 ) );
+      assertThrows( IllegalArgumentException.class, () -> new WicaChannelValueMapperRateLimitingSampler(0 ) );
    }
 
    @Test
@@ -47,7 +47,7 @@ class WicaRateLimitedSamplingChannelValueMapperTest
       final WicaChannelValue strValue5 = WicaChannelValue.createChannelValueConnected( "mno" );
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4, strValue5 );
-      final WicaChannelValueMapper mapper = new WicaRateLimitedSamplingChannelValueMapper(90 );
+      final WicaChannelValueMapper mapper = new WicaChannelValueMapperRateLimitingSampler(90 );
       final List<WicaChannelValue> outputList  = mapper.map( inputList );
       assertEquals( 5 , outputList.size() );
       assertEquals( inputList.get( 0 ), outputList.get( 0 ) );
@@ -71,7 +71,7 @@ class WicaRateLimitedSamplingChannelValueMapperTest
       final WicaChannelValue strValue5 = WicaChannelValue.createChannelValueConnected( "mno" );
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4, strValue5 );
-      final WicaChannelValueMapper mapper = new WicaRateLimitedSamplingChannelValueMapper(110 );
+      final WicaChannelValueMapper mapper = new WicaChannelValueMapperRateLimitingSampler(110 );
       final List<WicaChannelValue> outputList  = mapper.map( inputList );
       assertEquals( 3 , outputList.size() );
       assertEquals( inputList.get( 0 ), outputList.get( 0 ) );
@@ -84,7 +84,7 @@ class WicaRateLimitedSamplingChannelValueMapperTest
    {
       final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnected( "abc" );
       final List<WicaChannelValue> inputList1 = List.of( strValue1 );
-      final WicaChannelValueMapper mapper = new WicaRateLimitedSamplingChannelValueMapper(110 );
+      final WicaChannelValueMapper mapper = new WicaChannelValueMapperRateLimitingSampler(110 );
       final List<WicaChannelValue> outputList1  = mapper.map( inputList1 );
       assertEquals( 1 , outputList1.size() );
       assertEquals( inputList1.get( 0 ), outputList1.get( 0 ) );

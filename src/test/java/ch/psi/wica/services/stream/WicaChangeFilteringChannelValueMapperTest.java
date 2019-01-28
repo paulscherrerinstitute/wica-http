@@ -4,13 +4,9 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.WicaChannelValue;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
@@ -40,7 +36,7 @@ class WicaChangeFilteringChannelValueMapperTest
 
    private static Stream<Arguments> getStringArgs()
    {
-      mapper = new WicaChangeFilteringChannelValueMapper( 1 );
+      mapper = new WicaChannelValueMapperChangeFilteringSampler(1 );
 
       return Stream.of( Arguments.of( List.of(), List.of() ),
                         Arguments.of( List.of( "abc" ), List.of( "abc") ),
@@ -61,7 +57,7 @@ class WicaChangeFilteringChannelValueMapperTest
 
    private static Stream<Arguments> getIntegerArgs()
    {
-      mapper = new WicaChangeFilteringChannelValueMapper( 1 );
+      mapper = new WicaChannelValueMapperChangeFilteringSampler(1 );
 
       return Stream.of( Arguments.of( List.of(), List.of() ),
                         Arguments.of( List.of( 0 ), List.of( 0 ) ),
@@ -93,7 +89,7 @@ class WicaChangeFilteringChannelValueMapperTest
 
    private static Stream<Arguments> getDoubleArgs()
    {
-      mapper = new WicaChangeFilteringChannelValueMapper( 1 );
+      mapper = new WicaChannelValueMapperChangeFilteringSampler(1 );
 
       return Stream.of( Arguments.of( List.of(), List.of() ),
                         Arguments.of( List.of( 5.0 ), List.of( 5.0 ) ),
@@ -124,7 +120,7 @@ class WicaChangeFilteringChannelValueMapperTest
 
    private static Stream<Arguments> getMultipleMapIntegerArgs()
    {
-      mapper = new WicaChangeFilteringChannelValueMapper( 1 );
+      mapper = new WicaChannelValueMapperChangeFilteringSampler(1 );
       return Stream.of( Arguments.of( List.of( 0, 0, 0, 0 ), List.of( 0 ), List.of( 0, 3, 5 ), List.of( 3, 5 ) ),
                         Arguments.of( List.of( 0, 0, 0, 2 ), List.of( 0, 2 ), List.of( 0, 1, 4 ), List.of( 0, 4 ) ) );
    }
@@ -160,7 +156,7 @@ class WicaChangeFilteringChannelValueMapperTest
 
    private static Stream<Arguments> getMultipleMapMixedTypeArgs()
    {
-      mapper = new WicaChangeFilteringChannelValueMapper( 1 );
+      mapper = new WicaChannelValueMapperChangeFilteringSampler(1 );
 
       return Stream.of( Arguments.of( List.of( 0, 0, 0, 0 ), List.of( 0 ), List.of( "abc", "def", "ghi" ), List.of( "abc", "def", "ghi" ) ),
                         Arguments.of( List.of( 5, 5, 0, 2, 0 ), List.of( 5, 0, 2, 0 ), List.of( "jkl" ), List.of( "jkl" ) ));

@@ -71,11 +71,11 @@ public class WicaChannelValueMapperBuilder implements WicaChannelValueMapper
       {
          final int numberOfDigits = Integer.parseInt( wicaChannelProperties.getPropertyValue("prec") );
          logger.info( "Creating precision mapper with prec='{}'", numberOfDigits );
-         precisionMapper = new WicaPrecisionLimitingChannelValueMapper( numberOfDigits );
+         precisionMapper = new WicaChannelValueMapperPrecisionLimitingSampler(numberOfDigits );
       }
       else
       {
-         precisionMapper = new WicaPrecisionLimitingChannelValueMapper( DEFAULT_PRECISION );
+         precisionMapper = new WicaChannelValueMapperPrecisionLimitingSampler(DEFAULT_PRECISION );
       }
 
       final WicaChannelValueMapper filteringMapper;
@@ -84,54 +84,53 @@ public class WicaChannelValueMapperBuilder implements WicaChannelValueMapper
          final String filterType = wicaChannelProperties.getPropertyValue("filterType" );
          switch ( filterType )
          {
-            case "allValue":
-               logger.info("Creating filtering mapper with filterType='allValue'");
-               filteringMapper = new WicaAllValueChannelValueMapper();
+            case "all-value":
+               logger.info("Creating channel filter with filterType='all-value'");
+               filteringMapper = new WicaChannelValueMapperAllValueSampler();
                break;
 
-            case "periodic":
-               Validate.isTrue(wicaChannelProperties.hasProperty("ms"));
-               final int samplingInterval = Integer.parseInt(wicaChannelProperties.getPropertyValue("ms") );
-               logger.info("Creating filtering mapper with filterType='periodic', ms='{}'", samplingInterval );
-               filteringMapper = new WicaRateLimitedSamplingChannelValueMapper(samplingInterval);
+            case "rate-limiter":
+               Validate.isTrue(wicaChannelProperties.hasProperty("interval"));
+               final int sampleGap = Integer.parseInt(wicaChannelProperties.getPropertyValue("interval") );
+               logger.info("Creating channel filter with filterType='rate-limiter', interval='{}'", sampleGap );
+               filteringMapper = new WicaChannelValueMapperRateLimitingSampler(sampleGap);
                break;
 
-            case "1-in-n":
+            case "one-in-n":
                Validate.isTrue(wicaChannelProperties.hasProperty("n"));
-               final int samplingCycleLength = Integer.parseInt(wicaChannelProperties.getPropertyValue("n") );
-               logger.info("Creating filtering mapper with filterType='1-in-n', n='{}'", samplingCycleLength );
-               filteringMapper =  new WicaDiscreteSamplingChannelValueMapper( samplingCycleLength );
+               final int cycleLength = Integer.parseInt(wicaChannelProperties.getPropertyValue("n") );
+               logger.info("Creating channel filter with filterType='one-in-n', n='{}'", cycleLength );
+               filteringMapper =  new WicaChannelValueMapperFixedCycleSampler( cycleLength );
                break;
 
             case "last-n":
                Validate.isTrue( wicaChannelProperties.hasProperty("n"));
-               final int maxNumberOfSamples = Integer.parseInt(wicaChannelProperties.getPropertyValue("n") );
-               logger.info("Creating filtering mapper with filterType='last-n', n='{}'", maxNumberOfSamples );
-               filteringMapper =  new WicaLatestValueChannelValueMapper( maxNumberOfSamples );
+               final int numSamples = Integer.parseInt(wicaChannelProperties.getPropertyValue("n") );
+               logger.info("Creating channel filter with filterType='last-n', n='{}'", numSamples );
+               filteringMapper =  new WicaChannelValueMapperLatestValueSampler( numSamples );
                break;
 
-            case "changes":
-               logger.info("Creating filtering mapper with filterType=changes");
+            case "change-filterer":
                Validate.isTrue(wicaChannelProperties.hasProperty(("deadband")));
                final double deadband = Double.parseDouble( wicaChannelProperties.getPropertyValue(( "deadband" )));
-               logger.info("Creating filtering mapper with filterType='changes', deadband='{}'", deadband );
-               filteringMapper =  new WicaChangeFilteringChannelValueMapper( deadband );
+               logger.info("Creating channel filter with filterType='change-filterer', deadband='{}'", deadband );
+               filteringMapper =  new WicaChannelValueMapperChangeFilteringSampler(deadband );
                break;
 
             default:
-               logger.warn("The filterType parameter was not recognised. Using default (last-n) mapper.");
+               logger.warn("The filterType parameter was not recognised. Using default (last-n) filter.");
                final int defaultMaxNumberOfSamples = 1;
-               logger.info("Creating filtering mapper with filterType='last-n', n='{}'", defaultMaxNumberOfSamples );
-               filteringMapper = new WicaLatestValueChannelValueMapper( defaultMaxNumberOfSamples );
+               logger.info("Creating channel filter with filterType='last-n', n='{}'", defaultMaxNumberOfSamples );
+               filteringMapper = new WicaChannelValueMapperLatestValueSampler(defaultMaxNumberOfSamples );
                break;
          }
       }
       else
       {
-         logger.warn( "The filterType parameter was not specified. Using default (last-n) mapper." );
+         logger.warn( "The filterType parameter was not specified. Using default (last-n) filter." );
          final int defaultMaxNumberOfSamples = 1;
-         logger.info("Creating filtering mapper with filterType='last-n', n='{}'", defaultMaxNumberOfSamples );
-         filteringMapper = new WicaLatestValueChannelValueMapper( defaultMaxNumberOfSamples );
+         logger.info("Creating channel filter with filterType='last-n', n='{}'", defaultMaxNumberOfSamples );
+         filteringMapper = new WicaChannelValueMapperLatestValueSampler(defaultMaxNumberOfSamples );
       }
 
       return new WicaChannelValueMapperBuilder( precisionMapper, filteringMapper );

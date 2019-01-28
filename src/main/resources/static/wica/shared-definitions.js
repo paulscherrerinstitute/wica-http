@@ -26,7 +26,7 @@
  * channel's data source.
  *
  * @typedef module:shared-definitions.WicaChannelFilterTypeAllValue
- * @property {string} filterType - "none" - the string literal that configures this type of filter.
+ * @property {string} filterType - "all-value" - the string literal that configures this type of filter.
  */
 
 /**
@@ -34,8 +34,8 @@
  * channel during the wica server's previous value update sampling time window.
  *
  * @typedef module:shared-definitions.WicaChannelFilterTypeLatestValue
- * @property {string} filterType - "latest" - the string literal that configures this type of filter.
- * @property {number} numSamples - The maximum number of values to pass through the filter on each update cycle.
+ * @property {string} filterType - "last-n" - the string literal that configures this type of filter.
+ * @property {number} n - The maximum number of values to pass through the filter on each update cycle.
  */
 
 /**
@@ -43,8 +43,8 @@
  * on a fixed one-in-N sampling basis.
  *
  * @typedef module:shared-definitions.WicaChannelFilterTypeFixedSampler
- * @property {string} filterType - "fixed" - the string literal that configures this type of filter.
- * @property {number} cycleLength - The sampling cycle length.
+ * @property {string} filterType - "one-in-n" - the string literal that configures this type of filter.
+ * @property {number} n - The sampling cycle length.
  */
 
 /**
@@ -52,8 +52,8 @@
  * on a minimum time interval between successive samples.
  *
  * @typedef module:shared-definitions.WicaChannelFilterTypeRateLimiter
- * @property {string} filterType - "rate" - the string literal that configures this type of filter.
- * @property {number} sampleGap - The minimum time duration between samples in milliseconds.
+ * @property {string} filterType - "rate-limiter" - the string literal that configures this type of filter.
+ * @property {number} interval - The minimum time duration between samples in milliseconds.
  */
 
 /**
@@ -62,7 +62,7 @@
  *  underlying type is numeric; the information for all other channel types passes through unchanged.
  *
  * @typedef module:shared-definitions.WicaChannelFilterTypeChangeFilterer
- * @property {string} filterType - "changes" - the string literal that configures this type of filter.
+ * @property {string} filterType - "change-filterer" - the string literal that configures this type of filter.
  * @property {number} deadband - Defines the absolute change which must occur in the input value in order for
  *     the new value to be passed through the filter.
  */
@@ -242,6 +242,6 @@ export const WicaStreamProperties = Object.freeze ({
  */
 export const WicaChannelProperties = Object.freeze ({
     prec: 8,
-    filterType: "latest",
-    numSamples: 1
+    filterType: "last-n",
+    n: 1
 } );

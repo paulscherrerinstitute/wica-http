@@ -71,9 +71,15 @@ public class WicaStream implements WicaStreamMapper
       this.defaultHeartBeatFluxInterval = defaultHeartBeatFluxInterval;
       this.defaultChannelValueUpdateFluxInterval = defaultChannelValueUpdateFluxInterval;
 
-      boolean isPlotStream = wicaStreamProperties.hasProperty( "plotStream" ) && wicaStreamProperties.getPropertyValue( "plotStream" ).equals( "true" );
-      logger.info( "Is this stream a plot stream: '{}'", isPlotStream );
-      final Set<String> fieldSelectors = isPlotStream ? Set.of( "val", "sevr", "ts" ) : Set.of( "val", "sevr" );
+      final boolean includeAlarmInfo = wicaStreamProperties.hasProperty( "includeAlarmInfo" ) && wicaStreamProperties.getPropertyValue( "includeAlarmInfo" ).equals( "true" );
+      logger.info( "includeAlarmInfo is : '{}'", includeAlarmInfo );
+
+      final boolean includeTimestamp = wicaStreamProperties.hasProperty( "includeTimestamp" ) && wicaStreamProperties.getPropertyValue( "includeTimestamp" ).equals( "true" );
+      logger.info( "includeTimestamp is : '{}'", includeTimestamp );
+
+      final Set<String> fieldSelectors = includeAlarmInfo ? includeTimestamp ? Set.of( "val", "sevr", "ts" ) : Set.of( "val", "sevr" ) :
+                                                            includeTimestamp ? Set.of( "val", "ts" ) : Set.of( "val" );
+
       logger.info( "Fields selected for value serialization are '{}'", fieldSelectors );
       this.serializer = new WicaObjectToJsonSerializer( fieldSelectors, 2 );
 

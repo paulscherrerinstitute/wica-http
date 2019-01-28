@@ -18,7 +18,7 @@ import java.util.List;
  * passed through unchanged.
  */
 @Immutable
-class WicaAllValueChannelValueMapper implements WicaChannelValueMapper
+class WicaChannelValueMapperAllValueSampler implements WicaChannelValueMapper
 {
 
 /*- Public attributes --------------------------------------------------------*/

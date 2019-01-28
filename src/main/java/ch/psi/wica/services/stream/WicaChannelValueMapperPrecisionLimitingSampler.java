@@ -28,7 +28,7 @@ import static ch.psi.wica.model.WicaChannelType.REAL_ARRAY;
  * digits.
  */
 @ThreadSafe
-class WicaPrecisionLimitingChannelValueMapper implements WicaChannelValueMapper
+class WicaChannelValueMapperPrecisionLimitingSampler implements WicaChannelValueMapper
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -44,7 +44,7 @@ class WicaPrecisionLimitingChannelValueMapper implements WicaChannelValueMapper
     *
     * @param precision - the number of digits after the decimal point
     */
-   WicaPrecisionLimitingChannelValueMapper( int precision )
+   WicaChannelValueMapperPrecisionLimitingSampler( int precision )
    {
       Validate.isTrue( precision >= 0 );
       this.precision = precision;

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /*- Class Declaration --------------------------------------------------------*/
 
 @SpringBootTest
-class WicaLatestValueChannelValueMapperTest
+class WicaChannelValueMapperLatestValueSamplerTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -36,7 +36,7 @@ class WicaLatestValueChannelValueMapperTest
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4 );
 
-      final WicaChannelValueMapper mapper = new WicaLatestValueChannelValueMapper( 0 );
+      final WicaChannelValueMapper mapper = new WicaChannelValueMapperLatestValueSampler(0 );
       final List<WicaChannelValue> outputList  = mapper.map( inputList );
       assertEquals( 0, outputList.size() );
    }
@@ -51,7 +51,7 @@ class WicaLatestValueChannelValueMapperTest
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4 );
 
-      final WicaChannelValueMapper mapper = new WicaLatestValueChannelValueMapper( 1 );
+      final WicaChannelValueMapper mapper = new WicaChannelValueMapperLatestValueSampler(1 );
       final List<WicaChannelValue> outputList  = mapper.map( inputList );
       assertEquals( 1, outputList.size() );
       assertEquals( inputList.get( 3), outputList.get( 0 ) );
@@ -67,7 +67,7 @@ class WicaLatestValueChannelValueMapperTest
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4 );
 
-      final WicaChannelValueMapper mapper = new WicaLatestValueChannelValueMapper( Integer.MAX_VALUE );
+      final WicaChannelValueMapper mapper = new WicaChannelValueMapperLatestValueSampler(Integer.MAX_VALUE );
       final List<WicaChannelValue> outputList  = mapper.map( inputList );
       assertEquals( 4, outputList.size() );
       assertEquals( inputList.get( 0 ), outputList.get( 0 ) );

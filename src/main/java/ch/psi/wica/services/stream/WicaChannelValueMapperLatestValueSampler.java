@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
  * values from the input list.
  */
 @Immutable
-class WicaLatestValueChannelValueMapper implements WicaChannelValueMapper
+class WicaChannelValueMapperLatestValueSampler implements WicaChannelValueMapper
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -38,7 +38,7 @@ class WicaLatestValueChannelValueMapper implements WicaChannelValueMapper
     * @param maxNumberOfSamples - the maximum number of values to include
     *     in the output list.
     */
-   WicaLatestValueChannelValueMapper( int maxNumberOfSamples )
+   WicaChannelValueMapperLatestValueSampler( int maxNumberOfSamples )
    {
       Validate.isTrue( maxNumberOfSamples >= 0 );
       this.maxNumberOfSamples = maxNumberOfSamples;

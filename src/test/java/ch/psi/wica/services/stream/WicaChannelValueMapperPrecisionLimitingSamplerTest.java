@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /*- Class Declaration --------------------------------------------------------*/
 
 @SpringBootTest
-class WicaPrecisionLimitingChannelValueMapperTest
+class WicaChannelValueMapperPrecisionLimitingSamplerTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -38,7 +38,7 @@ class WicaPrecisionLimitingChannelValueMapperTest
 
       final List<WicaChannelValue> inputList = List.of( strValue, intValue, dblValue1, dblValue2 );
 
-      final WicaChannelValueMapper mapper = new WicaPrecisionLimitingChannelValueMapper( 2 );
+      final WicaChannelValueMapper mapper = new WicaChannelValueMapperPrecisionLimitingSampler(2 );
       final List<WicaChannelValue> outputList  = mapper.map( inputList );
       assertEquals( 4, outputList.size() );
       assertEquals( inputList.get( 0 ), outputList.get( 0 ) );
@@ -57,7 +57,7 @@ class WicaPrecisionLimitingChannelValueMapperTest
    {
       final WicaChannelValue dblValueArray = WicaChannelValue.createChannelValueConnected( new double[] { 1234.5678, 9876.5432 } );
       final List<WicaChannelValue> inputList = List.of( dblValueArray );
-      final WicaChannelValueMapper mapper = new WicaPrecisionLimitingChannelValueMapper( 2 );
+      final WicaChannelValueMapper mapper = new WicaChannelValueMapperPrecisionLimitingSampler(2 );
       final List<WicaChannelValue> outputList  = mapper.map( inputList );
       assertEquals( 1, outputList.size() );
       Assertions.assertArrayEquals( new double[] { 1234.57, 9876.54 }, ( (WicaChannelValue.WicaChannelValueConnectedRealArray) outputList.get( 0 ) ).getValue()  );

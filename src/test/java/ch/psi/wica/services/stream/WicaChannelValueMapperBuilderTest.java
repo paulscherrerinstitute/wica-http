@@ -29,7 +29,7 @@ class WicaChannelValueMapperBuilderTest
 /*- Public methods -----------------------------------------------------------*/
 
    @Test
-   void testDefaultMap()
+   void testDefault()
    {
       final WicaChannelValue dblValue1 = WicaChannelValue.createChannelValueConnected( 129.386 );
       final WicaChannelValue dblValue2 = WicaChannelValue.createChannelValueConnected( 14.2  );
@@ -44,14 +44,14 @@ class WicaChannelValueMapperBuilderTest
    }
 
    @Test
-   void testPrecisionMapper1()
+   void testPrecisionLimitingSampler1()
    {
       final WicaChannelValue dblValue1 = WicaChannelValue.createChannelValueConnected( 129.386 );
       final WicaChannelValue dblValue2 = WicaChannelValue.createChannelValueConnected( 14.2  );
       final WicaChannelValue dblValue3 = WicaChannelValue.createChannelValueConnected( 15.87666666 );
       final WicaChannelValue dblValue4 = WicaChannelValue.createChannelValueConnected( 111.1111 );
 
-      WicaChannelValueMapper mapper = WicaChannelValueMapperBuilder.createFromChannelProperties( WicaChannelProperties.of( Map.of( "prec", "1", "filterType", "allValue" ) ) );
+      WicaChannelValueMapper mapper = WicaChannelValueMapperBuilder.createFromChannelProperties( WicaChannelProperties.of( Map.of( "prec", "1", "filterType", "all-value" ) ) );
       final List<WicaChannelValue> inputList = List.of( dblValue1, dblValue2, dblValue3, dblValue4 );
       final List<WicaChannelValue> outputList  = mapper.map( inputList );
       assertEquals( 4, outputList.size() );
@@ -62,14 +62,14 @@ class WicaChannelValueMapperBuilderTest
    }
 
    @Test
-   void testPrecisionMapper2()
+   void testPrecisionLimitingSampler2()
    {
       final WicaChannelValue dblValue1 = WicaChannelValue.createChannelValueConnected( 129.386, 10 );
       final WicaChannelValue dblValue2 = WicaChannelValue.createChannelValueConnected( 14.2, 10 );
       final WicaChannelValue dblValue3 = WicaChannelValue.createChannelValueConnected( 15.87666666, 10 );
       final WicaChannelValue dblValue4 = WicaChannelValue.createChannelValueConnected( 111.1111, 10 );
 
-      WicaChannelValueMapper mapper = WicaChannelValueMapperBuilder.createFromChannelProperties( WicaChannelProperties.of( Map.of( "prec", "10", "filterType", "allValue" ) ) );
+      WicaChannelValueMapper mapper = WicaChannelValueMapperBuilder.createFromChannelProperties( WicaChannelProperties.of( Map.of( "prec", "10", "filterType", "all-value" ) ) );
       final List<WicaChannelValue> inputList = List.of( dblValue1, dblValue2, dblValue3, dblValue4 );
       final List<WicaChannelValue> outputList  = mapper.map( inputList );
       assertEquals( 4, outputList.size() );
@@ -80,7 +80,7 @@ class WicaChannelValueMapperBuilderTest
    }
 
    @Test
-   void testLatestValueMapper()
+   void testLatestValueSampler()
    {
       final WicaChannelValue dblValue1 = WicaChannelValue.createChannelValueConnected( 129.386 );
       final WicaChannelValue dblValue2 = WicaChannelValue.createChannelValueConnected( 14.2  );
@@ -96,14 +96,14 @@ class WicaChannelValueMapperBuilderTest
    }
 
    @Test
-   void testDiscreteValueMapper()
+   void testFixedCycleSampler()
    {
       final WicaChannelValue dblValue1 = WicaChannelValue.createChannelValueConnected( 129.386 );
       final WicaChannelValue dblValue2 = WicaChannelValue.createChannelValueConnected( 14.2 );
       final WicaChannelValue dblValue3 = WicaChannelValue.createChannelValueConnected( 15.87666666 );
       final WicaChannelValue dblValue4 = WicaChannelValue.createChannelValueConnected( 111.1111 );
 
-      WicaChannelValueMapper mapper = WicaChannelValueMapperBuilder.createFromChannelProperties( WicaChannelProperties.of( Map.of( "prec", "1", "filterType", "1-in-n", "n", "2" ) ) );
+      WicaChannelValueMapper mapper = WicaChannelValueMapperBuilder.createFromChannelProperties( WicaChannelProperties.of( Map.of( "prec", "1", "filterType", "one-in-n", "n", "2" ) ) );
       final List<WicaChannelValue> inputList = List.of( dblValue1, dblValue2, dblValue3, dblValue4 );
       final List<WicaChannelValue> outputList  = mapper.map( inputList );
       assertEquals( 2, outputList.size() );

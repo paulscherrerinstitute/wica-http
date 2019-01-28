@@ -36,13 +36,13 @@ import java.util.List;
  *
  */
 @ThreadSafe
-class WicaChangeFilteringChannelValueMapper implements WicaChannelValueMapper
+class WicaChannelValueMapperChangeFilteringSampler implements WicaChannelValueMapper
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private static final Logger logger = LoggerFactory.getLogger( WicaChangeFilteringChannelValueMapper.class);
+   private static final Logger logger = LoggerFactory.getLogger( WicaChannelValueMapperChangeFilteringSampler.class);
 
    private final double deadband;
    private WicaChannelValue previousValue;
@@ -57,7 +57,7 @@ class WicaChangeFilteringChannelValueMapper implements WicaChannelValueMapper
     *     occur in order for the new value to be transferred from the input list
     *     to the output list.
     */
-   WicaChangeFilteringChannelValueMapper( double deadband )
+   WicaChannelValueMapperChangeFilteringSampler( double deadband )
    {
       Validate.isTrue( deadband > 0 );
       this.deadband = deadband;
