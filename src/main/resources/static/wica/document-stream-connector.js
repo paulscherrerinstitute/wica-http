@@ -56,7 +56,8 @@ export class DocumentStreamConnector
                                               this.wicaElementConnectionAttributes.channelConnectionState,
                                               this.wicaElementConnectionAttributes.channelAlarmState );
 
-        this.createStream_( this.wicaElementConnectionAttributes.channelName, this.wicaElementConnectionAttributes.channelProperties );
+        this.streamConfiguration = this.buildStreamConfiguration_( this.wicaElementConnectionAttributes.channelName, this.wicaElementConnectionAttributes.channelProperties );
+        this.createStream_();
         this.streamManager.activate();
     }
 
@@ -68,6 +69,43 @@ export class DocumentStreamConnector
     shutdown()
     {
         this.streamManager.shutdown();
+    }
+
+    /**
+     * Returns a map containing the most recently received channel metadata.
+     *
+     * @return {Object.<WicaChannelName, WicaChannelMetadata>} metadataMap - Map of channel names and their
+     *     associated metadata. See {@link module:shared-definitions.WicaChannelName WicaChannelName} and
+     *     {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}.
+     *
+     */
+    getMetadataMap()
+    {
+        return this.metadataMap;
+    }
+
+    /**
+     * Returns a map containing the most recently received channel values.
+     *
+     * @return {Object.<WicaChannelName,WicaChannelValue[]>} valueMap - Map of channel names and array of values that
+     *     have been received for the channel in chronological order.
+     *     See {@link module:shared-definitions.WicaChannelName WicaChannelName} and
+     *     {@link module:shared-definitions.WicaChannelValue WicaChannelValue}.
+     */
+    getValueMap()
+    {
+        return this.valueMap;
+    }
+
+    /**
+     * Returns a map containing the buffered channel values.
+     *
+     * @return {Object.<WicaChannelName, WicaChannelMetadata>} metadataMap - Map of channel names and their
+     *     associated metadata.
+     */
+    getBufferedValueMap()
+    {
+        return this.bufferedValueMap;
     }
 
     /**
@@ -119,65 +157,42 @@ export class DocumentStreamConnector
                                      channelValueLatestAttribute, channelConnectionStateAttribute,
                                      channelAlarmStateAttribute )
     {
-        this.streamMessageHandlers.channelMetadataUpdated = metadataObject => {
-            console.log("Event stream received new channel metadata map.");
-
-            // Go through all the elements in the update object and assign
-            // each element's metadata to the element's "data-wica-channel-metadata"
-            // attribute.
-            Object.keys(metadataObject).forEach((key) => {
-                const channelName = key;
-                const channelMetadata = metadataObject[key];
-                const elements = DocumentUtilities.findWicaElementsWithChannelName(channelName);
-                const metadataAsString = JSON.stringify(channelMetadata);
-                elements.forEach(ele => {
-                    ele.setAttribute( channelMetadataAttribute, metadataAsString);
-                    console.log( "Metadata updated on channel: '" + key + "', new value: '" + metadataAsString + "'" );
-                });
-            });
+        this.streamMessageHandlers.channelMetadataUpdated = metadataMap => {
+            this.metadataMap = metadataMap;
+            this.updateDocumentMetadataAttributes_(metadataMap, channelMetadataAttribute);
         };
 
-        this.streamMessageHandlers.channelValuesUpdated = valueObject => {
-            //console.log( "WicaStream received new channel value map.");
-
-            // Go through all the elements in the update object and assign
-            // each element's value to the element's "data-wica-channel-value-latest"
-            // and "data-wica-channel-value-array" attributes. Update the
-            // "data-wica-channel-connection-state" attribute to reflect the
-            // channel's underlying connection state.
-            Object.keys(valueObject).forEach((key) => {
-                const channelName = key;
-                const channelValueArray = valueObject[key];
-                const elements = DocumentUtilities.findWicaElementsWithChannelName(channelName);
-                const channelValueArrayAsString = JSON.stringify(channelValueArray);
-
-                if (!Array.isArray(channelValueArray)) {
-                    console.warn("Stream Error: not an array !");
-                    return;
-                }
-                const channelValueLatest = channelValueArray.pop();
-                const channelValueLatestAsString = JSON.stringify(channelValueLatest);
-                const channelConnectionState = (channelValueLatest.val === null) ? "disconnected" : "connected";
-                elements.forEach(ele => {
-                    ele.setAttribute( channelValueArrayAttribute, channelValueArrayAsString);
-                    ele.setAttribute( channelValueLatestAttribute, channelValueLatestAsString);
-                    ele.setAttribute( channelConnectionStateAttribute, channelConnectionState);
-                    ele.setAttribute( channelAlarmStateAttribute, channelValueLatest.sevr);
-                    //console.log("Value updated: " + channelValueLatest);
-                });
-            });
-        };
+        this.streamMessageHandlers.channelValuesUpdated = valueMap => {
+            this.valueMap = valueMap;
+            this.updateValueBuffer_( valueMap );
+            this.updateDocumentValueAttributes_( valueMap, channelValueArrayAttribute, channelValueLatestAttribute,
+                                                 channelConnectionStateAttribute, channelAlarmStateAttribute);
+        }
     }
 
     /**
      * Creates the stream based on the wica-aware elements in the current document.
      *
      * @private
+     */
+    createStream_()
+    {
+        const streamManagerOptions = {
+            streamReconnectIntervalInSeconds: 15,
+            streamTimeoutIntervalInSeconds: 20,
+            crossOriginCheckEnabled: false,
+        };
+        this.streamManager = new StreamManager( this.streamServerUrl, this.streamConfiguration, this.streamConnectionHandlers, this.streamMessageHandlers, streamManagerOptions );
+    }
+
+    /**
+     * Builds the stream configuration based on the wica-aware elements in the current document.
+     *
+     * @private
      * @param channelNameAttribute
      * @param channelPropertiesAttribute
-     * @private
      */
-    createStream_( channelNameAttribute, channelPropertiesAttribute )
+    buildStreamConfiguration_( channelNameAttribute, channelPropertiesAttribute )
     {
         // Look for all wica-aware elements in the current page
         const wicaElements = DocumentUtilities.findWicaElements();
@@ -191,23 +206,95 @@ export class DocumentStreamConnector
             if ( widget.hasAttribute( channelPropertiesAttribute ) )
             {
                 const channelProps = widget.getAttribute( channelPropertiesAttribute );
-                channels.push({"name": channelName, "props": JSON.parse( channelProps ) });
+                const channelConfiguration = { "name": channelName, "props": JSON.parse( channelProps ) };
+                channels.push( channelConfiguration );
             }
             else
             {
-                channels.push( {"name": channelName} );
+                const channelConfiguration = { "name": channelName };
+                channels.push( channelConfiguration );
             }
         });
 
-        const streamOptions = {
-            streamReconnectIntervalInSeconds: 15,
-            streamTimeoutIntervalInSeconds: 20,
-            crossOriginCheckEnabled: false,
-        };
+        this.streamConfiguration = { "channels": channels, "props": this.streamProperties };
+    }
 
-        const streamConfiguration = { "channels": channels, "props": this.streamProperties };
-        this.streamManager = new StreamManager( this.streamServerUrl, streamConfiguration, this.streamConnectionHandlers, this.streamMessageHandlers, streamOptions );
 
+    /**
+     * Handles the arrival of a new metadata map from the stream-manager.
+     *
+     * @private
+     * @param metadataMap
+     * @param channelMetadataAttribute
+     */
+    updateDocumentMetadataAttributes_(metadataMap, channelMetadataAttribute,  )
+    {
+        console.log("Event stream received new channel metadata map.");
+
+        // Go through all the elements in the update object and assign each element's metadata to
+        // the element's metadata attribute attribute.
+        Object.keys( metadataMap ).forEach((key) => {
+            const channelName = key;
+            const channelMetadata = metadataMap[key];
+            const elements = DocumentUtilities.findWicaElementsWithChannelName( channelName );
+            const metadataAsString = JSON.stringify(channelMetadata);
+            elements.forEach(ele => {
+                ele.setAttribute( channelMetadataAttribute, metadataAsString);
+                console.log( "Metadata updated on channel: '" + key + "', new value: '" + metadataAsString + "'" );
+            });
+        });
+    }
+
+    /**
+     * Handles the arrival of a new value map from the stream manager.
+     *
+     * @private
+     * @param valueMap
+     * @param channelValueArrayAttribute
+     * @param channelValueLatestAttribute
+     * @param channelConnectionStateAttribute
+     * @param channelAlarmStateAttribute
+     */
+    updateDocumentValueAttributes_(valueMap, channelValueArrayAttribute, channelValueLatestAttribute,
+                                   channelConnectionStateAttribute, channelAlarmStateAttribute )
+    {
+        //console.log( "WicaStream received new channel value map.");
+
+        // Go through all the elements in the update object and assign each element's value information
+        // to the relevant element attributes.
+        Object.keys( valueMap).forEach((key) => {
+            const channelName = key;
+            const channelValueArray = valueMap[key];
+            const elements = DocumentUtilities.findWicaElementsWithChannelName(channelName);
+            const channelValueArrayAsString = JSON.stringify(channelValueArray);
+
+            if (!Array.isArray(channelValueArray)) {
+                console.warn("Stream Error: not an array !");
+                return;
+            }
+            const channelValueLatest = channelValueArray.pop();
+            const channelValueLatestAsString = JSON.stringify(channelValueLatest);
+            const channelConnectionState = (channelValueLatest.val === null) ? "disconnected" : "connected";
+            elements.forEach(ele => {
+                ele.setAttribute( channelValueArrayAttribute, channelValueArrayAsString);
+                ele.setAttribute( channelValueLatestAttribute, channelValueLatestAsString);
+                ele.setAttribute( channelConnectionStateAttribute, channelConnectionState);
+                ele.setAttribute( channelAlarmStateAttribute, channelValueLatest.sevr);
+                //console.log("Value updated: " + channelValueLatest);
+            });
+        });
+    };
+
+
+    /**
+     *
+     * @private
+     * @param valueMap
+     * @private
+     */
+    updateValueBuffer_( valueMap )
+    {
+        this.getBufferedValueMap = valueMap;
     }
 
 }
