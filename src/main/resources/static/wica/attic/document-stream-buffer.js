@@ -135,11 +135,10 @@ export class DocumentStreamBuffer
 
             if ( mutation.type === "attributes" ) {
                 const element = mutation.target;
-                const wicaChannelName = element.getAttribute( "data-wica-channel-name" )
+                const wicaChannelName = element.getAttribute( "data-wica-channel-name" );
                 console.log(  "Mutation on attribute: '" + mutation.attributeName + "' of wica element: '" + wicaChannelName + "'" );
             }
 
-            console.log (mutation.type );
         });
     }
 
@@ -184,15 +183,13 @@ export class DocumentStreamBuffer
     /**
      *
      * @private
-     * @param htmlElementId
+     * @param targetNode
      * @param handler
      * @private
      */
-    static registerMutationObserver_( htmlElementId, handler )
+    static registerMutationObserver_( targetNode, handler )
     {
-        const targetNode = document.getElementById( htmlElementId );
-
-        // Define options for the observer (which mutations to observe)
+         // Define options for the observer (which mutations to observe)
         const config = { attributes: true, childList: false, subtree: false };
 
         // Create a mutation observer with the defined options that will invoke the specified handler
