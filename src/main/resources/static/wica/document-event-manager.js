@@ -185,9 +185,19 @@ export class DocumentEventManager
                 return;
             }
 
-            // Events are fired unconditionally if event listener support is required. Otherwise they
-            // are fired only on elements with defined function handlers.
-            if ( ( typeof element[ eventHandlerAttribute ] == "function" ) || supportEventListeners ) {
+            // If an onchange event handler IS defined then dispatch an onchange event to trigger
+            // the handler.
+            if ( typeof element[ eventHandlerAttribute ] == "function" ) {
+                const event = new Event('change');
+                event.channelName = channelName;
+                event.channelMetadata = channelMetadata;
+                event.channelValueArray = channelValueArray;
+                event.channelValueLatest = channelValueArray[channelValueArray.length - 1];
+                element.dispatchEvent( event );
+            }
+
+            // Events are fired unconditionally if event listener support is required.
+            if ( supportEventListeners ) {
                 const customEvent = new CustomEvent('wica', {
                     detail: {
                         "channelName": channelName,
