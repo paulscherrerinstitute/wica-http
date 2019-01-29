@@ -24,7 +24,7 @@ export class DocumentStreamBuffer
      *     element attributes whose mutations will be observed to obtain the required information.
      *     See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
      *
-     * @param {!wicaElementPlotAttributes} wicaElementBufferingAttributes - The names of the wica-aware
+     * @param {!WicaElementBufferingAttributes} wicaElementBufferingAttributes - The names of the wica-aware
      *     element attributes that control the buffering behaviour.
      *     See {@link module:shared-definitions.WicaElementBufferingAttributes WicaElementBufferingAttributes}.
      */
