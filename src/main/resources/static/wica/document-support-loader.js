@@ -17,7 +17,7 @@ const WICA_HOST="https://gfa-wica-dev.psi.ch";
 const documentStreamConnector = new DocumentStreamConnector( WICA_HOST, WicaStreamProperties, WicaElementConnectionAttributes );
 const documentTextRenderer = new DocumentTextRenderer( WicaElementConnectionAttributes, WicaElementRenderingAttributes );
 const documentEventManager = new DocumentEventManager( WicaElementConnectionAttributes, WicaElementEventAttributes );
-const documentStreamBuffer = new DocumentStreamBuffer( WicaElementConnectionAttributes, wicaElementBufferingAttributes );
+const documentStreamBuffer = new DocumentStreamBuffer( WicaElementConnectionAttributes, WicaElementBufferingAttributes );
 
 /**
  * Loads support for the current document.
