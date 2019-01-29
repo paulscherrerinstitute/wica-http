@@ -50,7 +50,7 @@ export class DocumentStreamBuffer
 
             if ( ( bufferSize > 0 ) && element.hasAttribute( this.wicaElementConnectionAttributes.channelName ) )
             {
-                this.registerMutationObserver_( element, this.mutationHandler_ );
+                DocumentStreamBuffer.registerMutationObserver_( element, this.mutationHandler_ );
             }
         }
     }
