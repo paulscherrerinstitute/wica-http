@@ -39,7 +39,7 @@ export class PlotBuffer
         // TODO: Check here that element exists and that is is data-aware
         for ( const htmlElementId of this.htmlElementIds )
         {
-            this.register_( htmlElementId, this.mutationHandler_ );
+            this.register_( htmlElementId );
         }
     }
 
@@ -169,10 +169,10 @@ export class PlotBuffer
      *
      * @private
      */
-    updateBufferedChannelValues_( channelName, channelValues )
+    updateBufferedChannelValues_( channelName, channelValueArray )
     {
         // Now add the most recently received channel values
-        for ( const channelValue of channelValues )
+        for ( const channelValue of channelValueArray )
         {
             this.streamValuesBuffer[ channelName ].push( channelValue );
         }
