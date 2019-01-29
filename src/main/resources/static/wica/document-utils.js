@@ -4,7 +4,7 @@
  */
 console.debug( "Executing script in document-utils.js module...");
 
-import {WicaElementConnectionAttributes} from 'shared-definitions.js';
+import {WicaElementConnectionAttributes} from './shared-definitions.js';
 
 export {
     findWicaElements,
