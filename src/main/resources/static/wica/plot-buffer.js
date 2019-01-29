@@ -15,7 +15,7 @@ export class PlotBuffer
     /**
      * Constructs a new instance based on the specified DOM elements and buffer size.
      *
-     * @param {Object} htmlElementIds the elements to listen to.
+     * @param {string[]} htmlElementIds the names of the elements to listen to.
      *
      * @param maximumBufferSize the number of entries that will be buffered. Beyond this limit the oldest values
      *     will be silently thrown away.
@@ -24,8 +24,33 @@ export class PlotBuffer
     {
         this.htmlElementIds = htmlElementIds;
         this.maximumBufferSize = maximumBufferSize;
-        this.streamValuesBuffer = {};
-        this.streamMetadata = {};
+        this.htmlElements = [];
+        this.metadataMap = {};
+        this.valueMap = {};
+
+        // TODO: Check here that element exists and that is is data-aware
+        for ( const htmlElementId of this.htmlElementIds )
+        {
+            const ele = document.getElementById( htmlElementId );
+            if ( ele !== null )
+            {
+                if ( ele.hasAttribute( "data-wica-channel-name") )
+                {
+                    const channelName = ele.getAttribute("data-wica-channel-name" );
+                    this.valueMap[ channelName ]= [];
+                    this.htmlElements.push( ele );
+                }
+                else {
+                    console.warn( "One or more element ID's did not correspond to a wica-aware element" );
+                }
+            }
+            else
+            {
+                console.warn( "One or more element ID's were not found " );
+            }
+        }
+
+        this.observer = new MutationObserver(( mutationList ) => this.mutationHandler_( mutationList ) );
     }
 
     /**
@@ -33,13 +58,14 @@ export class PlotBuffer
      */
     activate()
     {
-        // Create a mutation observer instance
-        this.observer = new MutationObserver( this.mutationHandler_ );
+        const mutationObserverOptions = { attributes: true,
+                                          attributeFilter: [ "data-wica-channel-metadata", "data-wica-channel-value-array" ],
+                                          childList: false,
+                                          subtree: false };
 
-        // TODO: Check here that element exists and that is is data-aware
-        for ( const htmlElementId of this.htmlElementIds )
+        for ( const htmlElement of this.htmlElements )
         {
-            this.register_( htmlElementId );
+            this.observer.observe( htmlElement, mutationObserverOptions );
         }
     }
 
@@ -76,17 +102,17 @@ export class PlotBuffer
      */
     isDataAvailable()
     {
-        if ( Object.values( this.streamMetadata ).length === 0 )
+        if ( Object.values( this.metadataMap ).length === 0 )
         {
             return false;
         }
 
-        if ( Object.values( this.streamValuesBuffer ).length === 0 )
+        if ( Object.values( this.valueMap ).length === 0 )
         {
             return false;
         }
 
-        for ( const channelValueArray of Object.values( this.streamValuesBuffer ) )
+        for ( const channelValueArray of Object.values( this.valueMap ) )
         {
             if ( channelValueArray[ channelValueArray.length - 1 ].val === null  )
             {
@@ -97,41 +123,34 @@ export class PlotBuffer
     }
 
     /**
-     * Returns the most recently received Metadata for every channel in the buffer.
-     */
-    getChannelMetadata()
-    {
-        return this.streamMetadata;
-    }
-
-    /**
-     * Returns the most recently received values for every channel in the buffer.
-     */
-    getChannelValues()
-    {
-        return this.streamValuesBuffer;
-    }
-
-
-    /**
-     * register_ for events
+     * Returns a map containing the most recently received channel metadata.
      *
+     * @return metadataMap - Map of channel names and their associated metadata. See
+     *     {@link module:shared-definitions.WicaChannelName WicaChannelName} and
+     *     {@link module:shared-definitions.WicaChannelMetadata WicaChannelMetadata}.
+     *
+     */
+    getMetadataMap()
+    {
+        return this.metadataMap;
+    }
+
+    /**
+     * Returns a map containing the most recently received channel values.
+     *
+     * @return valueMap - Map of channel names and array of values that have been received for the channel in
+     *     chronological order. See {@link module:shared-definitions.WicaChannelName WicaChannelName} and
+     *     {@link module:shared-definitions.WicaChannelValue WicaChannelValue}.
+     */
+    getValueMap()
+    {
+        return this.valueMap;
+    }
+
+    /**
+     * @param mutationList
      * @private
      */
-    register_( htmlElementId )
-    {
-        const targetNode = document.getElementById( htmlElementId );
-
-        // Options for the observer (which mutations to observe)
-        const config = { attributes: true,
-            attributeFilter: [ "data-wica-channel-metadata", "data-wica-channel-value-array" ],
-            childList: false,
-            subtree: false };
-
-        // Start monitoring the element withg the specified id.
-        this.observer.observe( targetNode, config );
-    }
-
     mutationHandler_( mutationList )
     {
         mutationList.forEach( mutation =>
@@ -145,7 +164,7 @@ export class PlotBuffer
                 {
                     const metadataAsJsonString = element.getAttribute( "data-wica-channel-metadata" );
                     const metadata = JSON.parse( metadataAsJsonString );
-                    this.streamMetadata[ channelName ] = metadata;
+                    this.metadataMap[ channelName ] = metadata;
                 }
 
                 if ( mutation.attributeName === "data-wica-channel-value-array" )
@@ -174,14 +193,14 @@ export class PlotBuffer
         // Now add the most recently received channel values
         for ( const channelValue of channelValueArray )
         {
-            this.streamValuesBuffer[ channelName ].push( channelValue );
+            this.valueMap[ channelName ].push( channelValue );
         }
 
         // If the previous notification buffer is full throw away the oldest values until
         // it is the right size again.
-        while ( this.streamValuesBuffer[ channelName ].length > this.maximumBufferSize )
+        while ( this.valueMap[ channelName ].length > this.maximumBufferSize )
         {
-            this.streamValuesBuffer[ channelName ].shift();
+            this.valueMap[ channelName ].shift();
         }
     }
 

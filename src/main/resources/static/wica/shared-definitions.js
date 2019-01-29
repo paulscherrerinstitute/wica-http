@@ -250,7 +250,7 @@ export const WicaStreamProperties = Object.freeze ({
     heartBeatInterval: 15000,
     channelValueUpdateInterval: 100,
     includeAlarmInfo: true,
-    includeTimestamp: false
+    includeTimestamp: true
 } );
 
 /**

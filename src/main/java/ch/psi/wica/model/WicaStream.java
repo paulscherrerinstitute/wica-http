@@ -77,8 +77,9 @@ public class WicaStream implements WicaStreamMapper
       final boolean includeTimestamp = wicaStreamProperties.hasProperty( "includeTimestamp" ) && wicaStreamProperties.getPropertyValue( "includeTimestamp" ).equals( "true" );
       logger.info( "includeTimestamp is : '{}'", includeTimestamp );
 
-      final Set<String> fieldSelectors = includeAlarmInfo ? includeTimestamp ? Set.of( "val", "sevr", "ts" ) : Set.of( "val", "sevr" ) :
-                                                            includeTimestamp ? Set.of( "val", "ts" ) : Set.of( "val" );
+      final Set<String> fieldSelectors = includeAlarmInfo ?
+            ( includeTimestamp ? Set.of( "val", "sevr", "ts" ) : Set.of( "val", "sevr" ) ) :
+            ( includeTimestamp ? Set.of( "val", "ts" ) : Set.of( "val" ) );
 
       logger.info( "Fields selected for value serialization are '{}'", fieldSelectors );
       this.serializer = new WicaObjectToJsonSerializer( fieldSelectors, 2 );
