@@ -37,10 +37,6 @@ export class DocumentStreamConnector
         this.lastOpenedStreamId = 0;
         this.streamConnectionHandlers = {};
         this.streamMessageHandlers = {};
-        this.maximumBufferSize = maximumBufferSize;
-        this.metadataMap = {};
-        this.valueMap = {};
-        this.bufferedValueMap = {};
     }
 
     /**
@@ -191,12 +187,12 @@ export class DocumentStreamConnector
      * @param metadataMap
      * @param channelMetadataAttribute
      */
-    updateDocumentMetadataAttributes_(metadataMap, channelMetadataAttribute,  )
+    updateDocumentMetadataAttributes_( metadataMap, channelMetadataAttribute )
     {
         console.log("Event stream received new channel metadata map.");
 
         // Go through all the elements in the update object and assign each element's metadata to
-        // the element's metadata attribute attribute.
+        // the element's metadata attribute.
         Object.keys( metadataMap ).forEach((key) => {
             const channelName = key;
             const channelMetadata = metadataMap[key];
@@ -219,8 +215,8 @@ export class DocumentStreamConnector
      * @param channelConnectionStateAttribute
      * @param channelAlarmStateAttribute
      */
-    updateDocumentValueAttributes_(valueMap, channelValueArrayAttribute, channelValueLatestAttribute,
-                                   channelConnectionStateAttribute, channelAlarmStateAttribute )
+    updateDocumentValueAttributes_( valueMap, channelValueArrayAttribute, channelValueLatestAttribute,
+                                    channelConnectionStateAttribute, channelAlarmStateAttribute )
     {
         //console.log( "WicaStream received new channel value map.");
 

@@ -3,6 +3,10 @@
  * @module
  */
 
+/*---------------------------------------------------------------------------*/
+/* 1.0 SHARED TYPEDEFS                                                       */
+/*---------------------------------------------------------------------------*/
+
 /**
  * Provides a type definition for a JS string which defines the name of a channel.
  *
@@ -123,6 +127,11 @@
  * @property ts {string} - [Timestamp] - present if the WicaStreamProperty 'includeTimestamp' is true.
  */
 
+
+/*---------------------------------------------------------------------------*/
+/* 2.0 SHARED OBJECT LITERALS                                                */
+/*---------------------------------------------------------------------------*/
+
 /**
  * JS Object that defines the HTML element attributes used by the
  * {@link module:document-event-manager.DocumentStreamBuffer DocumentStreamBuffer} in its mission to fire
@@ -141,11 +150,11 @@ export const wicaElementBufferingAttributes = Object.freeze ({
  * {@link module:document-event-manager.DocumentEventManager DocumentEventManager} in its mission to fire
  * events on wica-aware elements.
  *
- * @property {string} onwicaHandler="data-wica-event-handler" - The name of the attribute which will be
+ * @property {string} eventHandler="data-wica-event-handler" - The name of the attribute which will be
  *     examined to look for a wica custom event handler.
  */
 export const WicaElementEventAttributes = Object.freeze ({
-    onwicaHandler: "data-wica-event-handler"
+    eventHandler: "data-wica-event-handler"
 } );
 
 /**
@@ -258,7 +267,7 @@ export const WicaStreamProperties = Object.freeze ({
 } );
 
 /**
- * JS Object that defines the properties and supported by a WicaChannel and the default values
+ * JS Object that defines the properties supported by a WicaChannel and the default values.
  *
  * @property {number} [prec=8] - The precision (= number of digits after the decimal point) to be used when
  *     sending numeric information.
@@ -272,8 +281,10 @@ export const WicaChannelProperties = Object.freeze ({
 } );
 
 /**
+ * JS Object that defines the buffering properties supported by a WicaChannel and the default values
  *
- * @type {Readonly<{enable: boolean, bufferSize: number}>}
+ * @property {boolean} [enable=true] - The default state of enablement.
+ * @property {number} [bufferSize=32] - The default buffer size.
  */
 export const WicaBufferingProperties = Object.freeze ({
     enable: true,

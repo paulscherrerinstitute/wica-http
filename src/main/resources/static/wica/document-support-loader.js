@@ -8,7 +8,7 @@ import {WicaElementConnectionAttributes,
         WicaElementRenderingAttributes,
         WicaElementEventAttributes,
         wicaElementBufferingAttributes,
-        WicaStreamProperties} from "./shared-definitions.js";
+        WicaStreamProperties} from './shared-definitions.js';
 
 import {DocumentStreamConnector} from "./document-stream-connector.js";
 import {DocumentStreamBuffer} from "./document-stream-buffer.js";

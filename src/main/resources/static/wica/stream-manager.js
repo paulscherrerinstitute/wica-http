@@ -3,6 +3,7 @@
  * @module
  */
 console.debug( "Executing script in stream-manager.js module...");
+
 /**
  * Callback invoked when the stream connect sequence begins.
  *

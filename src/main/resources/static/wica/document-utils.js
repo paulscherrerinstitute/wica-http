@@ -4,12 +4,12 @@
  */
 console.debug( "Executing script in document-utils.js module...");
 
-import {WicaElementConnectionAttributes} from "shared-definitions.js";
+import {WicaElementConnectionAttributes} from 'shared-definitions.js';
 
 export {
     findWicaElements,
-    findWicaElementsWithChannelName,
     findWicaElementsWithAttributeName,
+    findWicaElementsWithChannelName,
     findWicaElementsWithAttributeValue
 }
 
@@ -22,6 +22,18 @@ export {
 function findWicaElements()
 {
     return findWicaElementsWithAttributeName( WicaElementConnectionAttributes.channelName );
+}
+
+/**
+ * Finds all wica-aware HTML elements in the current document with the given attribute name.
+ *
+ * @param {!string} attributeName - The attribute name to search for.
+ * @returns {NodeListOf<Element>} - The result list.
+ */
+function findWicaElementsWithAttributeName( attributeName )
+{
+    const selector = "[" + attributeName + "]";
+    return document.querySelectorAll( selector );
 }
 
 /**
@@ -45,17 +57,5 @@ function findWicaElementsWithChannelName( channelName )
 function findWicaElementsWithAttributeValue( attributeName, attributeValue )
 {
     const selector = "*[" + attributeName + " = \'" + attributeValue + "\']";
-    return document.querySelectorAll( selector );
-}
-
-/**
-* Finds all wica-aware HTML elements in the current document with the given attribute name.
-*
-* @param {!string} attributeName - The attribute name to search for.
-* @returns {NodeListOf<Element>} - The result list.
-*/
-function findWicaElementsWithAttributeName( attributeName )
-{
-    const selector = "[" + attributeName + "]";
     return document.querySelectorAll( selector );
 }
