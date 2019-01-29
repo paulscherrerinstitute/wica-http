@@ -98,8 +98,6 @@ export class PlotBuffer
 
     /**
      * Returns the most recently received Metadata for every channel in the buffer.
-     *
-     * @returns {*}
      */
     getChannelMetadata()
     {
@@ -108,13 +106,12 @@ export class PlotBuffer
 
     /**
      * Returns the most recently received values for every channel in the buffer.
-     *
-     * @returns {*}
      */
     getChannelValues()
     {
         return this.streamValuesBuffer;
     }
+
 
     /**
      * register_ for events
@@ -158,30 +155,12 @@ export class PlotBuffer
                     this.updateBufferedChannelValues_( channelName, valueArray );
                 }
 
-                console.log(  "Mutation on attribute: '" + mutation.attributeName + "' of wica element: '" + wicaChannelName + "'" );
+                console.log(  "Mutation on attribute: '" + mutation.attributeName + "' of wica element: '" + channelName + "'" );
             }
         } );
 
     }
 
-
-    /**
-     * Internal handler used for capturing stream value updates.
-     *
-     * @private
-     */
-    handleStreamValuesUpdated( vObj )
-    {
-        //console.log( "Datasource received new channel values map.");
-
-        // For each channel update the array of stored channel values
-        // with any new information provided in the notification object.
-        // Where necessary throw away the oldest data to make space.
-        for ( const channelName of Object.keys( vObj ) )
-        {
-           this.updateChannelValues( channelName, vObj[ channelName ] );
-        }
-    }
 
     /**
      * Captures the most recent value information for a channel, where
