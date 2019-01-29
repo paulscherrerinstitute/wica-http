@@ -36,6 +36,7 @@ export class PlotBuffer
         // Create a mutation observer instance
         this.observer = new MutationObserver( this.mutationHandler_ );
 
+        // TODO: Check here that element exists and that is is data-aware
         for ( const htmlElementId of this.htmlElementIds )
         {
             this.register_( htmlElementId, this.mutationHandler_ );
@@ -63,7 +64,6 @@ export class PlotBuffer
         //return this.streamOpened;
     }
 
-
     /**
      * Returns an indication of whether data has been received from ALL the data
      * sources in the stream.
@@ -76,12 +76,12 @@ export class PlotBuffer
      */
     isDataAvailable()
     {
-        if ( this.streamMetadata == null )
+        if ( Object.values( this.streamMetadata ).length === 0 )
         {
             return false;
         }
 
-        if ( this.streamValuesBuffer == null )
+        if ( Object.values( this.streamValuesBuffer ).length === 0 )
         {
             return false;
         }
@@ -126,18 +126,42 @@ export class PlotBuffer
         const targetNode = document.getElementById( htmlElementId );
 
         // Options for the observer (which mutations to observe)
-        const config = { attributes: true, childList: false, subtree: false };
+        const config = { attributes: true,
+            attributeFilter: [ "data-wica-channel-metadata", "data-wica-channel-value-array" ],
+            childList: false,
+            subtree: false };
 
         // Start monitoring the element withg the specified id.
         this.observer.observe( targetNode, config );
     }
 
-    mutationHandler_( mutationList, observer )
+    mutationHandler_( mutationList )
     {
-        observer.
-        mutationList.forEach( function( mutation ) {
-            console.log (mutation.type );
-        });
+        mutationList.forEach( mutation =>
+        {
+            if ( mutation.type === "attributes" )
+            {
+                const element = mutation.target;
+                const channelName = element.getAttribute( "data-wica-channel-name" );
+
+                if ( mutation.attributeName === "data-wica-channel-metadata" )
+                {
+                    const metadataAsJsonString = element.getAttribute( "data-wica-channel-metadata" );
+                    const metadata = JSON.parse( metadataAsJsonString );
+                    this.streamMetadata[ channelName ] = metadata;
+                }
+
+                if ( mutation.attributeName === "data-wica-channel-value-array" )
+                {
+                    const valueArrayAsJsonString = element.getAttribute( "data-wica-channel-value-array" );
+                    const valueArray = JSON.parse( valueArrayAsJsonString );
+                    this.updateBufferedChannelValues_( channelName, valueArray );
+                }
+
+                console.log(  "Mutation on attribute: '" + mutation.attributeName + "' of wica element: '" + wicaChannelName + "'" );
+            }
+        } );
+
     }
 
 
