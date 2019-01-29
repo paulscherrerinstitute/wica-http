@@ -66,7 +66,7 @@ public class EpicsChannelValuePublisher
    {
       if ( ! WicaChannelType.isRecognisedType( valueObj.getValue() ) )
       {
-         logger.trace("'{}' - the value received was of an unrecopgnised type. ", epicsChannelName );
+         logger.trace("'{}' - the value received was of an unrecognised type. ", epicsChannelName );
          return;
       }
       

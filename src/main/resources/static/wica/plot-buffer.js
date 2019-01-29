@@ -174,7 +174,7 @@ export class PlotBuffer
                     this.updateBufferedChannelValues_( channelName, valueArray );
                 }
 
-                console.log(  "Mutation on attribute: '" + mutation.attributeName + "' of wica element: '" + channelName + "'" );
+                // console.log( "Mutation on attribute: '" + mutation.attributeName + "' of wica element: '" + channelName + "'" );
             }
         } );
 
