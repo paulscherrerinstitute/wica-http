@@ -122,7 +122,7 @@ export class DocumentEventManager
             this.fireEvents_( this.wicaElementConnectionAttributes.channelName,
                               this.wicaElementConnectionAttributes.channelMetadata,
                               this.wicaElementConnectionAttributes.channelValueArray,
-                              this.wicaElementEventAttributes.onwicaHandler,
+                              this.wicaElementEventAttributes.eventHandler,
                               this.supportEventListeners );
         }
         catch( err )

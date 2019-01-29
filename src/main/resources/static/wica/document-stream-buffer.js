@@ -42,11 +42,11 @@ export class DocumentStreamBuffer
      */
     activate()
     {
-        const bufferingElements = DocumentUtilities.findWicaElementsWithAttributeName( this.wicaElementBufferingAttributes.bufferingPropeties );
+        const bufferingElements = DocumentUtilities.findWicaElementsWithAttributeName( this.wicaElementBufferingAttributes.bufferingProperties );
 
         for ( const element of bufferingElements )
         {
-            const bufferSize = element.getAttribute( this.wicaElementBufferingAttributes.bufferingPropeties );
+            const bufferSize = element.getAttribute( this.wicaElementBufferingAttributes.bufferingProperties );
 
             if ( ( bufferSize > 0 ) && element.hasAttribute( this.wicaElementConnectionAttributes.channelName ) )
             {

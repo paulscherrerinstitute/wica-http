@@ -140,7 +140,7 @@
  * @property {string} bufferingProperties="data-wica-buffering-props" - The name of the attribute which will be
  *     examined to look for a wica custom event handler.
  */
-export const wicaElementBufferingAttributes = Object.freeze ({
+export const WicaElementBufferingAttributes = Object.freeze ({
     bufferingProperties: "data-wica-buffering-props"
 } );
 
@@ -281,7 +281,7 @@ export const WicaChannelProperties = Object.freeze ({
 } );
 
 /**
- * JS Object that defines the buffering properties supported by a WicaChannel and the default values
+ * JS Object that defines the buffering properties supported by a WicaChannel and the default values.
  *
  * @property {boolean} [enable=true] - The default state of enablement.
  * @property {number} [bufferSize=32] - The default buffer size.
