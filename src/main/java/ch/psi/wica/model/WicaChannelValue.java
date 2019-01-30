@@ -4,6 +4,7 @@ package ch.psi.wica.model;
 /*- Imported packages --------------------------------------------------------*/
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import net.jcip.annotations.Immutable;
@@ -16,6 +17,7 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
@@ -35,6 +37,7 @@ public abstract class WicaChannelValue
 
    private final boolean connected;
    private final LocalDateTime wicaServerTimestamp;
+   private final Set<String> serializableFields;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -44,6 +47,7 @@ public abstract class WicaChannelValue
    {
       this.connected = connected;
       this.wicaServerTimestamp = Validate.notNull( wicaServerTimestamp, "wicaServerTimestamp cannot be null" );
+      this.serializableFields= Set.of( "valr", "vali", "sevr", "dsts" );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -142,6 +146,12 @@ public abstract class WicaChannelValue
    public long getWicaServerTimestampAlt()
    {
       return this.wicaServerTimestamp.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli();
+   }
+
+   @JsonIgnore
+   public Set<String> getSerializableFields()
+   {
+      return serializableFields;
    }
 
 
@@ -338,6 +348,7 @@ public abstract class WicaChannelValue
    {
       private final String value;
 
+      // TODO work out inconsistent use of hascode and equals override in this class
       @Override
       public boolean equals(Object o)
       {
@@ -374,7 +385,7 @@ public abstract class WicaChannelValue
 
 /*- Nested Class: WicaChannelValueConnectedStringArray ----------------------*/
 
-   private static class WicaChannelValueConnectedStringArray extends WicaChannelValueConnected
+   public static class WicaChannelValueConnectedStringArray extends WicaChannelValueConnected
    {
       private final String[] value;
 

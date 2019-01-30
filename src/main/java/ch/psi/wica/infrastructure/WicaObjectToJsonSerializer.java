@@ -3,33 +3,28 @@ package ch.psi.wica.infrastructure;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.WicaChannel;
 import ch.psi.wica.model.WicaChannelMetadata;
 import ch.psi.wica.model.WicaChannelName;
+import ch.psi.wica.model.WicaChannelType;
 import ch.psi.wica.model.WicaChannelValue;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.ser.BeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.PropertyFilter;
-import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter.SerializeExceptFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,6 +55,14 @@ public class WicaObjectToJsonSerializer
 
       final SimpleModule simpleModule = new SimpleModule();
       simpleModule.addSerializer( Double.class, new MyDoubleSerializer( numberOfDigits ) );
+      simpleModule.addSerializer (WicaChannelValue.WicaChannelValueConnected.class, new MyWicaChannelValueConnectedSerializer() );
+      simpleModule.addSerializer(WicaChannelValue.WicaChannelValueConnectedReal.class, new MyWicaChannelValueConnectedRealSerializer( "valr" ) );
+      simpleModule.addSerializer(WicaChannelValue.WicaChannelValueConnectedInteger.class, new MyWicaChannelValueConnectedIntegerSerializer( "vali" ) );
+      simpleModule.addSerializer(WicaChannelValue.WicaChannelValueConnectedString.class, new MyWicaChannelValueConnectedStringSerializer( "vals" ) );
+      simpleModule.addSerializer(WicaChannelValue.WicaChannelValueConnectedRealArray.class, new MyWicaChannelValueConnectedRealArraySerializer( "valra" ) );
+      simpleModule.addSerializer(WicaChannelValue.WicaChannelValueConnectedIntegerArray.class, new MyWicaChannelValueConnectedIntegerArraySerializer( "valia" ) );
+      simpleModule.addSerializer(WicaChannelValue.WicaChannelValueConnectedStringArray.class, new MyWicaChannelValueConnectedStringArraySerializer( "valsa" ) );
+
       jsonObjectMapper = new Jackson2ObjectMapperBuilder().createXmlMapper( false ).build();
       jsonObjectMapper.configure( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false );
       jsonObjectMapper.configure( SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false );
@@ -70,7 +73,7 @@ public class WicaObjectToJsonSerializer
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public String convertWicaChannelMetadataToJsonRepresentation( WicaChannelMetadata channelMetadata )
+   String convertWicaChannelMetadataToJsonRepresentation( WicaChannelMetadata channelMetadata )
    {
       Validate.notNull( channelMetadata );
       try
@@ -96,7 +99,7 @@ public class WicaObjectToJsonSerializer
       }
    }
 
-   public String convertWicaChannelValueToJsonRepresentation( WicaChannelValue channelValue )
+   String convertWicaChannelValueToJsonRepresentation( WicaChannelValue channelValue )
    {
       Validate.notNull( channelValue );
       try
@@ -109,13 +112,12 @@ public class WicaObjectToJsonSerializer
       }
    }
 
-   public String convertWicaChannelValueListToJsonRepresentation( List<WicaChannelValue> channelValueList )
+   String convertWicaChannelValueListToJsonRepresentation( List<WicaChannelValue> channelValueList )
    {
       Validate.notNull( channelValueList );
       try
       {
-         final String result = jsonObjectMapper.writeValueAsString( channelValueList );
-         return result;
+         return jsonObjectMapper.writeValueAsString( channelValueList );
       }
       catch ( JsonProcessingException ex )
       {
@@ -128,8 +130,7 @@ public class WicaObjectToJsonSerializer
       Validate.notNull( channelValueMap );
       try
       {
-         final String result = jsonObjectMapper.writeValueAsString( channelValueMap );
-         return result;
+         return jsonObjectMapper.writeValueAsString( channelValueMap );
       }
       catch ( JsonProcessingException ex )
       {
@@ -158,5 +159,157 @@ public class WicaObjectToJsonSerializer
          gen.writeNumber( bd.toPlainString());
       }
    }
+
+   public static class MyWicaChannelValueConnectedRealSerializer extends JsonSerializer<WicaChannelValue.WicaChannelValueConnectedReal>
+   {
+      private final String fieldName;
+      MyWicaChannelValueConnectedRealSerializer( String fieldName ) { this.fieldName = fieldName; }
+
+      @Override
+      public void serialize( WicaChannelValue.WicaChannelValueConnectedReal value, JsonGenerator gen, SerializerProvider serializers )
+            throws IOException
+      {
+         if ( value.getSerializableFields().contains( fieldName ) )
+         {
+            gen.writeStartObject();
+            gen.writeFieldName( fieldName );
+            gen.writeNumber(value.getValue());
+            gen.writeEndObject();
+         }
+      }
+   }
+   
+   public static class MyWicaChannelValueConnectedRealArraySerializer extends JsonSerializer<WicaChannelValue.WicaChannelValueConnectedRealArray>
+   {
+      private final String fieldName;
+      MyWicaChannelValueConnectedRealArraySerializer( String fieldName ) { this.fieldName = fieldName; }
+
+      @Override
+      public void serialize( WicaChannelValue.WicaChannelValueConnectedRealArray value, JsonGenerator gen, SerializerProvider serializers )
+            throws IOException
+      {
+         if ( value.getSerializableFields().contains( fieldName ) )
+         {
+            gen.writeStartObject();
+            gen.writeFieldName(fieldName);
+            double[] valToWrite = value.getValue();
+            gen.writeArray(valToWrite, 0, valToWrite.length);
+            gen.writeEndObject();
+         }
+      }
+   }
+
+   public static class MyWicaChannelValueConnectedIntegerSerializer extends JsonSerializer<WicaChannelValue.WicaChannelValueConnectedInteger>
+   {
+      private final String fieldName;
+      MyWicaChannelValueConnectedIntegerSerializer( String fieldName ) { this.fieldName = fieldName; }
+
+      @Override
+      public void serialize( WicaChannelValue.WicaChannelValueConnectedInteger value, JsonGenerator gen, SerializerProvider serializers )
+            throws IOException
+      {
+         if ( value.getSerializableFields().contains( fieldName ) )
+         {
+            gen.writeStartObject();
+            gen.writeFieldName(fieldName);
+            gen.writeNumber(value.getValue());
+            gen.writeEndObject();
+         }
+      }
+   }
+
+   public static class MyWicaChannelValueConnectedIntegerArraySerializer extends JsonSerializer<WicaChannelValue.WicaChannelValueConnectedIntegerArray>
+   {
+      private final String fieldName;
+      MyWicaChannelValueConnectedIntegerArraySerializer( String fieldName ) { this.fieldName = fieldName; }
+
+      @Override
+      public void serialize( WicaChannelValue.WicaChannelValueConnectedIntegerArray value, JsonGenerator gen, SerializerProvider serializers )
+            throws IOException
+      {
+         if ( value.getSerializableFields().contains( fieldName ) )
+         {
+            gen.writeStartObject();
+            gen.writeFieldName(fieldName);
+            int[] valToWrite = value.getValue();
+            gen.writeArray(valToWrite, 0, valToWrite.length);
+            gen.writeEndObject();
+         }
+      }
+   }
+
+   public static class MyWicaChannelValueConnectedStringSerializer extends JsonSerializer<WicaChannelValue.WicaChannelValueConnectedString>
+   {
+      private final String fieldName;
+      MyWicaChannelValueConnectedStringSerializer( String fieldName ) { this.fieldName = fieldName; }
+
+      @Override
+      public void serialize( WicaChannelValue.WicaChannelValueConnectedString value, JsonGenerator gen, SerializerProvider serializers )
+            throws IOException
+      {
+         gen.writeStartObject();
+         gen.writeFieldName( fieldName );
+         gen.writeString( value.getValue() );
+         gen.writeEndObject();
+      }
+   }
+
+   public static class MyWicaChannelValueConnectedStringArraySerializer extends JsonSerializer<WicaChannelValue.WicaChannelValueConnectedStringArray>
+   {
+      private final String fieldName;
+      MyWicaChannelValueConnectedStringArraySerializer( String fieldName ) { this.fieldName = fieldName; }
+
+      @Override
+      public void serialize( WicaChannelValue.WicaChannelValueConnectedStringArray value, JsonGenerator gen, SerializerProvider serializers )
+            throws IOException
+      {
+         if ( value.getSerializableFields().contains( fieldName ) )
+         {
+            gen.writeStartObject();
+            final String[] valToWrite = value.getValue();
+            if ( valToWrite.length > 0 )
+            {
+               gen.writeFieldName(fieldName);
+               for ( String strVal : valToWrite )
+               {
+                  gen.writeString(strVal);
+               }
+            }
+            gen.writeEndObject();
+         }
+      }
+   }
+
+   public static class MyWicaChannelValueConnectedSerializer extends JsonSerializer<WicaChannelValue.WicaChannelValueConnected>
+   {
+      @Override
+      public void serialize( WicaChannelValue.WicaChannelValueConnected value, JsonGenerator gen, SerializerProvider serializers )
+            throws IOException
+      {
+         gen.writeStartObject();
+
+         final WicaChannelType type = value.getWicaChannelType();
+
+         if ( value.getSerializableFields().contains( "dsts" ) )
+         {
+            gen.writeFieldName( "dsts" );
+            final LocalDateTime dsts = value.getDataSourceTimestamp();
+            gen.writeObject( dsts );
+         }
+
+         if ( value.getSerializableFields().contains( "sevr" ) )
+         {
+            gen.writeFieldName( "sevr" );
+            gen.writeNumber( value.getWicaAlarmSeverity() );
+         }
+
+         if ( value.getSerializableFields().contains( "stat" ) )
+         {
+            gen.writeFieldName( "stat" );
+            gen.writeNumber( value.getWicaChannelAlarmStatus() );
+         }
+      }
+   }
+
 
 }

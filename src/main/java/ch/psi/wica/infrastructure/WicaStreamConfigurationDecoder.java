@@ -29,7 +29,7 @@ public class WicaStreamConfigurationDecoder
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(WicaChannelValueStash.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaStreamConfigurationDecoder.class );
 
    private Map<String,String> streamPropertiesMap;
 
