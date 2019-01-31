@@ -35,7 +35,7 @@ public class EpicsChannelValuePublisher
    /**
     * Obtains the widest possible set of information (eg alarm limits,
     * control limits, precision, units...) from the supplied EPICS channel,
-    * creates a WicaChannelMetadata object from it and publishes the
+    * creates a WicaChannelValue object from it and publishes the
     * information to the supplied Consumer.
     *
     * Precondition: the supplied channel should already be created
@@ -58,7 +58,7 @@ public class EpicsChannelValuePublisher
       logger.debug("'{}' - getting epics TIMESTAMPED value data...", epicsChannelName);
       final Timestamped<Object> valueObj = channel.get(Timestamped.class);
       logger.debug("'{}' - EPICS TIMESTAMPED value data received.", epicsChannelName);
-      
+
       publishValue( epicsChannelName, valueObj, valueChangeHandler );
    }
    
@@ -69,7 +69,8 @@ public class EpicsChannelValuePublisher
          logger.trace("'{}' - the value received was of an unrecognised type. ", epicsChannelName );
          return;
       }
-      
+
+
       final WicaChannelAlarmSeverity wicaChannelAlarmSeverity = EpicsConversionUtilities.fromEpics( valueObj.getAlarmSeverity() );
       final WicaChannelAlarmStatus wicaChannelAlarmStatus = EpicsConversionUtilities.fromEpics( valueObj.getAlarmStatus() );
       final LocalDateTime wicaDataSourceTimestamp  = EpicsConversionUtilities.getEpicsTimestamp( valueObj.getSeconds(), valueObj.getNanos() );

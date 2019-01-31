@@ -24,6 +24,9 @@ public class EpicsConversionUtilities
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
+   // TODO this is a kludge which allows a channel to be used multiple times
+   // in the same stream. It breaks the Principle of Least Surprise and
+   // should be refactored into something less intuitive.
    private static final String EPICS_END_OF_STRING_MARKER = "##";
 
 /*- Main ---------------------------------------------------------------------*/

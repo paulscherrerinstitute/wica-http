@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,14 +40,15 @@ class WicaObjectToJsonSerializerTest
    @BeforeEach
    void setUp()
    {
-      wicaObjectToJsonSerializer = new WicaObjectToJsonSerializer( Set.of( "val" ), 4 );
+      wicaObjectToJsonSerializer = new WicaObjectToJsonSerializer( Map.of( WicaChannelName.of( "simon" ), Set.of( "val", "sevr", "ts", "type" ),
+                                                                           WicaChannelName.of( "simon2" ), Set.of( "val", "stat", "conn") ), 4 );
    }
 
    @Test
    void testValueSerialisation()
    {
       final WicaChannelValue disconnValue = WicaChannelValue.createChannelValueDisconnected();
-      logger.info("JSON DISCONNECTED Value serialisation looks like this: '{}'", wicaObjectToJsonSerializer.convertWicaChannelValueToJsonRepresentation( disconnValue ) );
+      logger.info("JSON DISCONNECTED Value serialisation looks like this: '{}'", wicaObjectToJsonSerializer.convertWicaChannelValueToJsonRepresentation(disconnValue ) );
 
       final WicaChannelValue strValue = WicaChannelValue.createChannelValueConnected( "abc" );
       logger.info("JSON STRING Value serialisation looks like this: '{}'", wicaObjectToJsonSerializer.convertWicaChannelValueToJsonRepresentation(strValue ) );
@@ -110,7 +110,7 @@ class WicaObjectToJsonSerializerTest
       final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnected( "def" );
 
       final List<WicaChannelValue> list = List.of( strValue1, strValue2 );
-      logger.info("JSON List serialisation looks like this: '{}'", wicaObjectToJsonSerializer.convertWicaChannelValueListToJsonRepresentation( list ));
+      logger.info("JSON List serialisation looks like this: '{}'", wicaObjectToJsonSerializer.convertWicaChannelValueListToJsonRepresentation(list ));
    }
 
    @Test
@@ -120,7 +120,7 @@ class WicaObjectToJsonSerializerTest
       final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnected( 56.78 );
 
       final List<WicaChannelValue> list = List.of( strValue1, strValue2 );
-      logger.info("JSON List serialisation looks like this: '{}'", wicaObjectToJsonSerializer.convertWicaChannelValueListToJsonRepresentation( list ));
+      logger.info("JSON List serialisation looks like this: '{}'", wicaObjectToJsonSerializer.convertWicaChannelValueListToJsonRepresentation(list ));
    }
 
    @Test
@@ -130,7 +130,7 @@ class WicaObjectToJsonSerializerTest
       final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnected( 56 );
 
       final List<WicaChannelValue> list = List.of( strValue1, strValue2 );
-      logger.info("JSON List serialisation looks like this: '{}'", wicaObjectToJsonSerializer.convertWicaChannelValueListToJsonRepresentation( list ));
+      logger.info("JSON List serialisation looks like this: '{}'", wicaObjectToJsonSerializer.convertWicaChannelValueListToJsonRepresentation(list ));
    }
 
    @Test
@@ -140,19 +140,24 @@ class WicaObjectToJsonSerializerTest
       final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueDisconnected();
       final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnected( 56 );
       final List<WicaChannelValue> list = List.of( strValue1, strValue2, strValue3 );
-      logger.info("JSON List serialisation looks like this: '{}'", wicaObjectToJsonSerializer.convertWicaChannelValueListToJsonRepresentation( list ));
+      logger.info("JSON List serialisation looks like this: '{}'", wicaObjectToJsonSerializer.convertWicaChannelValueListToJsonRepresentation(list ));
    }
 
 
    @Test
    void testChannelMapSerialisation1()
    {
-      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnected( 12.34 );
-      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnected( 56 );
-      final List<WicaChannelValue> list = List.of( strValue1, strValue2, strValue3 );
-      final Map<WicaChannelName,List<WicaChannelValue>> map = Map.of( WicaChannelName.of( "simon" ), list );
-      logger.info("JSON Map serialisation looks like this: '{}'", wicaObjectToJsonSerializer.convertWicaChannelValueMapToJsonRepresentation( map ) );
+      final WicaChannelValue value1 = WicaChannelValue.createChannelValueConnected( 12.34 );
+      final WicaChannelValue value2 = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue value3 = WicaChannelValue.createChannelValueConnected( 56 );
+      final List<WicaChannelValue> list1 = List.of( value1, value2, value3 );
+      final WicaChannelValue value4 = WicaChannelValue.createChannelValueConnected( 12.34 );
+      final WicaChannelValue value5 = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue value6 = WicaChannelValue.createChannelValueConnected( 56 );
+      final List<WicaChannelValue> list2 = List.of( value4, value5, value6 );
+      final Map<WicaChannelName,List<WicaChannelValue>> map = Map.of( WicaChannelName.of( "simon" ), list1,
+                                                                      WicaChannelName.of( "simon2" ), list2 );
+      logger.info("JSON Map serialisation looks like this: '{}'", wicaObjectToJsonSerializer.convertWicaChannelValueMapToJsonRepresentation(map ) );
 
    }
 

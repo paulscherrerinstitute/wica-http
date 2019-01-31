@@ -37,7 +37,7 @@ public abstract class WicaChannelValue
 
    private final boolean connected;
    private final LocalDateTime wicaServerTimestamp;
-   private final Set<String> serializableFields;
+   private Set<String> serializableFields;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -47,7 +47,7 @@ public abstract class WicaChannelValue
    {
       this.connected = connected;
       this.wicaServerTimestamp = Validate.notNull( wicaServerTimestamp, "wicaServerTimestamp cannot be null" );
-      this.serializableFields= Set.of( "valr", "vali", "sevr", "dsts" );
+      this.serializableFields= Set.of();
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -67,9 +67,14 @@ public abstract class WicaChannelValue
       return new WicaChannelValueConnectedReal( WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value, precision );
    }
 
-   public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double value  )
+   public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double value )
    {
       return new WicaChannelValueConnectedReal( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
+   }
+
+   public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double value, int precision  )
+   {
+      return new WicaChannelValueConnectedReal( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value, precision );
    }
 
    public static WicaChannelValue createChannelValueConnected( double[] value )
@@ -82,9 +87,14 @@ public abstract class WicaChannelValue
       return new WicaChannelValueConnectedRealArray( WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value, precision );
    }
 
-   public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double[] value  )
+   public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double[] value )
    {
       return new WicaChannelValueConnectedRealArray( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
+   }
+
+   public static WicaChannelValue createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double[] value, int precision  )
+   {
+      return new WicaChannelValueConnectedRealArray( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value, precision );
    }
 
    public static WicaChannelValue createChannelValueConnected( int value )
@@ -149,11 +159,16 @@ public abstract class WicaChannelValue
    }
 
    @JsonIgnore
+   public void setSerializableFields( Set<String> serializableFields )
+   {
+      this.serializableFields = serializableFields;
+   }
+
+   @JsonIgnore
    public Set<String> getSerializableFields()
    {
       return serializableFields;
    }
-
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
@@ -189,15 +204,27 @@ public abstract class WicaChannelValue
       }
 
       @JsonProperty( "sevr" )
-      public int getWicaAlarmSeverity()
+      public int getWicaAlarmSeverityAsInt()
       {
          return wicaChannelAlarmSeverity.ordinal();
       }
 
       @JsonProperty( "stat" )
-      public int getWicaChannelAlarmStatus()
+      public int getWicaChannelAlarmStatusAsInt()
       {
          return wicaChannelAlarmStatus.getStatusCode();
+      }
+
+      @JsonIgnore
+      public WicaChannelAlarmSeverity getWicaAlarmSeverity()
+      {
+         return wicaChannelAlarmSeverity;
+      }
+
+      @JsonIgnore
+      public WicaChannelAlarmStatus getWicaChannelAlarmStatus()
+      {
+         return wicaChannelAlarmStatus;
       }
 
       @JsonProperty( "ts" )

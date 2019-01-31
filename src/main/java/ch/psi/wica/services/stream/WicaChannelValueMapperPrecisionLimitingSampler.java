@@ -3,12 +3,15 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.WicaChannelAlarmSeverity;
+import ch.psi.wica.model.WicaChannelAlarmStatus;
 import ch.psi.wica.model.WicaChannelValue;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -71,13 +74,19 @@ class WicaChannelValueMapperPrecisionLimitingSampler implements WicaChannelValue
          if ( currentConnectedValue.getWicaChannelType() == REAL )
          {
             final double currentValueAsDouble = ((WicaChannelValue.WicaChannelValueConnectedReal) currentValue).getValue();
-            final WicaChannelValue convertedValue =  WicaChannelValue.createChannelValueConnected( currentValueAsDouble, precision );
+            final WicaChannelValue convertedValue =  WicaChannelValue.createChannelValueConnected( currentConnectedValue.getWicaAlarmSeverity(),
+                                                                                                   currentConnectedValue.getWicaChannelAlarmStatus(),
+                                                                                                   currentConnectedValue.getDataSourceTimestamp(),
+                                                                                                   currentValueAsDouble, precision );
             outputList.add( convertedValue );
          }
          else if ( currentConnectedValue.getWicaChannelType() == REAL_ARRAY )
          {
             final double[] currentValueAsDouble = ((WicaChannelValue.WicaChannelValueConnectedRealArray) currentValue).getValue();
-            final WicaChannelValue convertedValue =  WicaChannelValue.createChannelValueConnected( currentValueAsDouble, precision );
+            final WicaChannelValue convertedValue =  WicaChannelValue.createChannelValueConnected( currentConnectedValue.getWicaAlarmSeverity(),
+                                                                                                   currentConnectedValue.getWicaChannelAlarmStatus(),
+                                                                                                   currentConnectedValue.getDataSourceTimestamp(),
+                                                                                                   currentValueAsDouble, precision );
             outputList.add( convertedValue );
          }
          else

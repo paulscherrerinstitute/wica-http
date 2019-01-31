@@ -82,7 +82,7 @@ public class WicaStream implements WicaStreamMapper
             ( includeTimestamp ? Set.of( "val", "ts" ) : Set.of( "val" ) );
 
       logger.info( "Fields selected for value serialization are '{}'", fieldSelectors );
-      this.serializer = new WicaObjectToJsonSerializer( fieldSelectors, 2 );
+      this.serializer = new WicaObjectToJsonSerializer( getFieldSerialisationSelectorMap(), 2 );
 
       logger.info( "Created new WicaStream with properties as follows: '{}'", this );
    }
@@ -176,7 +176,29 @@ public class WicaStream implements WicaStreamMapper
       return outputMap;
    }
 
+
 /*- Private methods ----------------------------------------------------------*/
+
+   private Map<WicaChannelName,Set<String>> getFieldSerialisationSelectorMap()
+   {
+      final Map<WicaChannelName,Set<String>> outputMap = new HashMap<>();
+      channelMap.keySet().forEach( c -> {
+         final WicaChannel wicaChannel = this.channelMap.get( c );
+         final WicaChannelProperties props = wicaChannel.getProperties();
+         final String fieldSpecifierString = props.hasProperty( "fields" ) ? props.getPropertyValue("fields") : "val;sevr";
+         final Set<String> fieldSpecifierSet = buildFieldSerialisationSelectors( fieldSpecifierString );
+         outputMap.put( c, fieldSpecifierSet );
+      } );
+
+      return outputMap;
+   }
+
+   static private Set<String> buildFieldSerialisationSelectors( String fieldSpecifierList )
+   {
+      final String[] arr = fieldSpecifierList.split(";");
+      return Set.of( arr );
+   }
+
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

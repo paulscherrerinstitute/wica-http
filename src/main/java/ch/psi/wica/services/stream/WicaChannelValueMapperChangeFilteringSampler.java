@@ -47,8 +47,8 @@ class WicaChannelValueMapperChangeFilteringSampler implements WicaChannelValueMa
    private final double deadband;
    private WicaChannelValue previousValue;
 
-   /*- Main ---------------------------------------------------------------------*/
-   /*- Constructor --------------------------------------------------------------*/
+/*- Main ---------------------------------------------------------------------*/
+/*- Constructor --------------------------------------------------------------*/
 
    /**
     * Constructs a new instance based on the specified deadband.

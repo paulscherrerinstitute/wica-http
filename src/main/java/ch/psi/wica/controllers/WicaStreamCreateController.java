@@ -5,6 +5,7 @@ package ch.psi.wica.controllers;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.infrastructure.WicaObjectToJsonSerializer;
+import ch.psi.wica.infrastructure.WicaObjectToJsonSerializerOld;
 import ch.psi.wica.infrastructure.WicaServerSentEventBuilder;
 import ch.psi.wica.model.*;
 import ch.psi.wica.services.epics.EpicsChannelDataService;
@@ -169,7 +170,7 @@ class WicaStreamCreateController
             .map( l -> {
                logger.trace( "channel-metadata flux is publishing new SSE..." );
                final Map<WicaChannelName, WicaChannelMetadata> channelMetadataMap = epicsChannelDataService.getChannelMetadata( wicaStream );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build ( wicaStream.getWicaStreamId(), wicaStream.getSerializer().convertWicaChannelMetadataMapToJsonRepresentation(channelMetadataMap ) );
+               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build ( wicaStream.getWicaStreamId(), wicaStream.getSerializer().convertWicaChannelMetadataMapToJsonRepresentation( channelMetadataMap ) );
             } )
             .doOnCancel( () -> logger.warn( "channel-metadata flux was cancelled" ) );
       //.log();
@@ -187,7 +188,6 @@ class WicaStreamCreateController
     */
    private Flux<ServerSentEvent<String>> createChannelValueUpdateFlux( WicaStream wicaStream )
    {
-
       return Flux.interval( Duration.ofMillis( wicaStream.getChannelValueUpdateFluxInterval() ) )
             .map( l -> {
                logger.trace( "channel-value-update flux is publishing new SSE..." );

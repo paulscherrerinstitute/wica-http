@@ -4,6 +4,7 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.WicaChannelValue;
+import ch.psi.wica.model.WicaStream;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
@@ -18,15 +19,10 @@ import java.util.List;
  * passed through unchanged.
  */
 @Immutable
-class WicaChannelValueMapperAllValueSampler implements WicaChannelValueMapper
+class WicaChannelValueMapperFieldSerializationChooser implements WicaChannelValueMapper
 {
 
 /*- Public attributes --------------------------------------------------------*/
-/*- Private attributes -------------------------------------------------------*/
-/*- Main ---------------------------------------------------------------------*/
-/*- Constructor --------------------------------------------------------------*/
-/*- Class methods ------------------------------------------------------------*/
-/*- Public methods -----------------------------------------------------------*/
 
    @Override
    public List<WicaChannelValue> map( List<WicaChannelValue> inputList )
@@ -35,8 +31,18 @@ class WicaChannelValueMapperAllValueSampler implements WicaChannelValueMapper
       return inputList;
    }
 
+/*- Private attributes -------------------------------------------------------*/
+/*- Main ---------------------------------------------------------------------*/
+/*- Constructor --------------------------------------------------------------*/
 
-   /*- Private methods ----------------------------------------------------------*/
+   WicaChannelValueMapperFieldSerializationChooser( WicaStream  wicaStream )
+   {
+
+   }
+
+/*- Class methods ------------------------------------------------------------*/
+/*- Public methods -----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
