@@ -163,7 +163,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.0.1</version>
                 <configuration>
-                    <additionalOptions>-html5</additionalOptions>
+                    <!--<additionalOptions>-html5</additionalOptions>-->
                     <show>private</show>
                     <javadocExecutable>/usr/lib/jvm/java-1.8-openjdk/bin/javadoc</javadocExecutable>
                     <tags>
