@@ -14,7 +14,6 @@ pages:
     - node --version
     - npm install jsdoc -g
     - apk add openjdk8
-    - apk add maven
 
   script:
     - echo "Building Site using Docker Executor"
@@ -22,8 +21,7 @@ pages:
     - ls src/main/resources/static/wica/*
     - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public/js
     - ls .public/js/wica
-    - which java
-    - mvn javadoc:javadoc
+    - javadoc -private -splitindex -tag "implNote.:a:Implementation Note:" -d .public/java
     - ls target/site/apidocs
     - mv target/site/apidocs .public/java/
     - ls .public/js/java
