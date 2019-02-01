@@ -17,8 +17,8 @@ public enum WicaChannelType
 
 /*- Public attributes --------------------------------------------------------*/
 
-   UNKNOWN, // Can be used to represent the type of a channel which has not yet
-            // received any information from the underlying data source.
+   UNKNOWN, // Initial state: used to represent the type of a channel which has
+            // not yet received any information from the underlying data source.
    INTEGER,
    REAL,
    STRING,
@@ -57,8 +57,8 @@ public enum WicaChannelType
     *
     * @return the WicaChannelType
     *
-    * @throws NullPointerException if the supplied argument was null
-    * @throws
+    * @throws NullPointerException if the supplied argument was null.
+    * @throws IllegalArgumentException if the type of the object was not recognised.
     */
    public static WicaChannelType getTypeFromObject( Object obj )
    {

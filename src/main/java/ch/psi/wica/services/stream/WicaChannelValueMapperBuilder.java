@@ -75,7 +75,7 @@ public class WicaChannelValueMapperBuilder implements WicaChannelValueMapper
       }
       else
       {
-         precisionMapper = new WicaChannelValueMapperPrecisionLimitingSampler(DEFAULT_PRECISION );
+         precisionMapper = new WicaChannelValueMapperPrecisionLimitingSampler( DEFAULT_PRECISION );
       }
 
       final WicaChannelValueMapper filteringMapper;
@@ -137,7 +137,7 @@ public class WicaChannelValueMapperBuilder implements WicaChannelValueMapper
    }
 
    /**
-    * @inheritDoc
+    * {@inheritDoc}
     */
    @Override
    public List<WicaChannelValue> map( List<WicaChannelValue> inputList )

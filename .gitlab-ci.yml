@@ -13,7 +13,7 @@ pages:
     - apk add --no-cache npm
     - node --version
     - npm install jsdoc -g
-    - apk add mvn
+    - apk add maven
 
   script:
     - echo "Building Site using Docker Executor"

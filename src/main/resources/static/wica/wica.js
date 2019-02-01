@@ -7,5 +7,5 @@ console.debug( "Executing script in wica.js module...");
 
 import * as DocumentServiceSupportLoader from './document-support-loader.js'
 
-DocumentServiceSupportLoader.load();
+DocumentServiceSupportLoader.load( 200, 1000 );
 

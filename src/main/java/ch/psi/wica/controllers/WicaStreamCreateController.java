@@ -53,6 +53,12 @@ class WicaStreamCreateController
 
    /**
     * Constructs a new controller which to handle all REST operations associated with EPICS event streams.
+    *
+    * @param epicsChannelDataService reference to the service object which provides
+    *        the source of EPICS data for this controller.
+    *
+    * @param wicaStreamCreator reference to the service object which can be used
+    *        to create the reactive streams.
     */
    private WicaStreamCreateController( @Autowired EpicsChannelDataService epicsChannelDataService,
                                        @Autowired WicaStreamCreator wicaStreamCreator )
@@ -140,6 +146,7 @@ class WicaStreamCreateController
     * This may then lead to closing the event stream on the client side and sending a
     * request to the server to recreate the stream.
     *
+    * @param wicaStream the stream.
     * @return the flux.
     */
    private Flux<ServerSentEvent<String>> createHeartbeatFlux( WicaStream wicaStream )
@@ -162,6 +169,7 @@ class WicaStreamCreateController
     *
     * This flux runs just once and delivers its payload on inital connection to the stream.
     *
+    * @param wicaStream the stream.
     * @return the flux.
     */
    private Flux<ServerSentEvent<String>> createChannelMetadataFlux( WicaStream wicaStream )
@@ -184,6 +192,7 @@ class WicaStreamCreateController
     *
     * This flux runs with a periodicity defined by the channelValueUpdateFluxInterval.
     *
+    * @param wicaStream the stream.
     * @return the flux.
     */
    private Flux<ServerSentEvent<String>> createChannelValueUpdateFlux( WicaStream wicaStream )
@@ -211,6 +220,7 @@ class WicaStreamCreateController
     *
     * This flux runs with a  periodicity defined by the channelValueFluxInterval.
     *
+    * @param wicaStream the stream.
     * @return the flux.
     */
    private Flux<ServerSentEvent<String>> createChannelValueFlux( WicaStream wicaStream )

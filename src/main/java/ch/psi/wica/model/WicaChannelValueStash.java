@@ -54,7 +54,7 @@ public class WicaChannelValueStash
    /**
     * Updates the value associated with the specified channel.
     *
-    * @implNote
+    * @implNote.
     *
     * Even though the stash and queue are synchronized collections the synchronization
     * on this method IS necessary to achieve the @ThreadSafe contractual promise.

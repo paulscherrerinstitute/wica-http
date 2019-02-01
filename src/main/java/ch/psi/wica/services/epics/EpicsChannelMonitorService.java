@@ -30,7 +30,7 @@ import java.util.function.Consumer;
  * Provides a service to facilitate the monitoring of a single EPICS channel
  * and to subsequently inform interested third-parties of changes of interest.
  *
- * @implNote
+ * @implNote.
  * The current implementation creates a single Context per class instance.
  * The context is disposed of when the service instance is closed.
  */

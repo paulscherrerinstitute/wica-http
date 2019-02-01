@@ -161,10 +161,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.0.1</version>
                 <configuration>
+                    <additionalOptions>-html5</additionalOptions>
                     <show>private</show>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                    <tags>
+                        <tag>
+                            <name>implNote.</name>
+                            <placement>a</placement>
+                            <head>Implementation Note:</head>
+                        </tag>
+                    </tags>
                 </configuration>
             </plugin>
             <plugin>

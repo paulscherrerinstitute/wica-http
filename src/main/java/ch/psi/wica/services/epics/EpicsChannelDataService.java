@@ -124,7 +124,7 @@ public class EpicsChannelDataService
     * @param wicaChannelName the name of the channel which is no longer
     *                        of interest.
     *
-    * @throws IllegalStateException
+    * @throws IllegalStateException if the channel name was never previously monitored.
     */
    private void stopMonitoring( WicaChannelName wicaChannelName )
    {
