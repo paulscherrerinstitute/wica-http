@@ -25,7 +25,7 @@ pages:
     - mvn javadoc:javadoc
     - ls target/site/apidocs
     - mv target/site/apidocs .public/java/
-    - ls .public/js/java
+    - ls .public/java
     - mv .public public
     - ls public/wica
 
