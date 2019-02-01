@@ -165,7 +165,7 @@
                 <configuration>
                     <additionalOptions>-html5</additionalOptions>
                     <show>private</show>
-                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                    <javadocExecutable>/usr/lib/jvm/java-1.8-openjdk/bin/javadoc</javadocExecutable>
                     <tags>
                         <tag>
                             <name>implNote.</name>
