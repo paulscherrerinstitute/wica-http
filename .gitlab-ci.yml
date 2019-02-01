@@ -13,6 +13,7 @@ pages:
     - apk add --no-cache npm
     - node --version
     - npm install jsdoc -g
+    - apk add java
     - apk add maven
 
   script:
