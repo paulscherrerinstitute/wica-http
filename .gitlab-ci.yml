@@ -23,11 +23,10 @@ pages:
     - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public/js
     - ls .public/js/wica
     - mvn javadoc:javadoc
-    - ls target/site/apidocs
     - mv target/site/apidocs .public/java/
     - ls .public/java
     - mv .public public
-    - ls public/wica
+
 
   artifacts:
     paths:
