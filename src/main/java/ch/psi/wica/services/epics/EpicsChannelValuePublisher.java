@@ -3,7 +3,10 @@ package ch.psi.wica.services.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.*;
+import ch.psi.wica.model.WicaChannelAlarmSeverity;
+import ch.psi.wica.model.WicaChannelAlarmStatus;
+import ch.psi.wica.model.WicaChannelType;
+import ch.psi.wica.model.WicaChannelValue;
 import net.jcip.annotations.Immutable;
 import org.epics.ca.Channel;
 import org.epics.ca.data.Timestamped;

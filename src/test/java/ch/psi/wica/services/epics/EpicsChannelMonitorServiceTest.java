@@ -7,7 +7,6 @@ package ch.psi.wica.services.epics;
 import ch.psi.wica.model.WicaChannelMetadata;
 import ch.psi.wica.model.WicaChannelName;
 import ch.psi.wica.model.WicaChannelValue;
-import ch.psi.wica.services.epics.EpicsChannelMonitorService;
 import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

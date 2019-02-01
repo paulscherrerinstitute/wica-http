@@ -4,10 +4,12 @@ package ch.psi.wica.ca;
 /*- Imported packages --------------------------------------------------------*/
 
 import org.apache.commons.lang3.time.StopWatch;
-
 import org.epics.ca.Channels;
 import org.epics.ca.Context;
-import org.junit.*;
+import org.junit.After;
+import org.junit.FixMethodOrder;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.runners.MethodSorters;

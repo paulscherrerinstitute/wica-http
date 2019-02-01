@@ -5,7 +5,6 @@ package ch.psi.wica.controllers;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.infrastructure.WicaObjectToJsonSerializer;
-import ch.psi.wica.infrastructure.WicaObjectToJsonSerializerOld;
 import ch.psi.wica.infrastructure.WicaServerSentEventBuilder;
 import ch.psi.wica.model.*;
 import ch.psi.wica.services.epics.EpicsChannelDataService;

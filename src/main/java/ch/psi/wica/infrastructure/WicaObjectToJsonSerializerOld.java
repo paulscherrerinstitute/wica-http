@@ -5,7 +5,6 @@ package ch.psi.wica.infrastructure;
 
 import ch.psi.wica.model.WicaChannelMetadata;
 import ch.psi.wica.model.WicaChannelName;
-import ch.psi.wica.model.WicaChannelType;
 import ch.psi.wica.model.WicaChannelValue;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,9 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;

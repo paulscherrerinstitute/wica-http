@@ -6,9 +6,7 @@ package ch.psi.wica.model;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/

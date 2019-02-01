@@ -4,7 +4,12 @@
  */
 console.debug( "Executing script in document-support-loader.js module...");
 
-import {WicaElementConnectionAttributes,WicaElementRenderingAttributes,WicaElementEventAttributes,WicaStreamProperties} from './shared-definitions.js';
+import {
+    WicaElementConnectionAttributes,
+    WicaElementEventAttributes,
+    WicaElementRenderingAttributes,
+    WicaStreamProperties
+} from './shared-definitions.js';
 
 import {DocumentStreamConnector} from "./document-stream-connector.js";
 import {DocumentTextRenderer} from "./document-text-renderer.js";

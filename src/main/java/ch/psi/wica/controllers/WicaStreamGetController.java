@@ -4,7 +4,8 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.*;
+import ch.psi.wica.model.WicaStream;
+import ch.psi.wica.model.WicaStreamId;
 import ch.psi.wica.services.stream.WicaStreamCreator;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;

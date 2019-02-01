@@ -3,7 +3,10 @@ package ch.psi.wica.infrastructure;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.*;
+import ch.psi.wica.model.WicaChannel;
+import ch.psi.wica.model.WicaChannelName;
+import ch.psi.wica.model.WicaChannelProperties;
+import ch.psi.wica.model.WicaStreamProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.jcip.annotations.Immutable;

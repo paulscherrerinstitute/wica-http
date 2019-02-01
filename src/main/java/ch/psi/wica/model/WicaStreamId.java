@@ -4,6 +4,7 @@ package ch.psi.wica.model;
 /*- Imported packages --------------------------------------------------------*/
 
 import org.apache.commons.lang3.Validate;
+
 import java.util.Objects;
 
 

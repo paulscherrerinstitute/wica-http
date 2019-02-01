@@ -3,9 +3,6 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import org.epics.ca.data.AlarmStatus;
-
-
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
