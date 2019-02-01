@@ -18,8 +18,12 @@ pages:
     - echo "Building Site using Docker Executor"
     - mkdir .public
     - ls src/main/resources/static/wica/*
-    - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public
-    - ls .public/wica
+    - jsdoc src/main/resources/static/wica/* -c src/main/resources/static/wica/conf.json -d .public/js
+    - ls .public/js/wica
+    - mvn javadoc:javadoc
+    - ls target/site/apidocs
+    - mv target/site/apidocs .public/java/
+    - ls .public/js/java
     - mv .public public
     - ls public/wica
 
