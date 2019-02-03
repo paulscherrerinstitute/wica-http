@@ -375,7 +375,7 @@ public abstract class WicaChannelValue
    {
       private final String value;
 
-      // TODO work out inconsistent use of hascode and equals override in this class
+      // TODO work out inconsistent use of hashcode and equals override in this class
       @Override
       public boolean equals(Object o)
       {

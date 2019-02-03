@@ -7,9 +7,9 @@ console.debug( "Executing script in document-text-renderer.js module...");
 import * as DocumentUtilities from './document-utils.js'
 
 /**
- * The default precision to be used when rendering a channel with a numeric value.
+ * The default precision to be used when rendering a wica-aware widget's text content with a numeric value.
  */
-const MAX_PRECISION = 8;
+const DEFAULT_PRECISION = 8;
 
 /**
  * Renders the visual state of wica-aware elements in the current document based on attribute information
@@ -176,6 +176,9 @@ export class DocumentTextRenderer
     static renderWicaElementTextContent_( element, channelMetadata, channelValueLatest, renderingProperties )
     {
         const rawValue = channelValueLatest.val;
+
+        // The renderer assigns units either from either the rendering properties "units" field if
+        // available or from the metadata "egu" field if available. Otherwise it assigns blank.
         const units = renderingProperties.hasOwnProperty("units") ? renderingProperties.units :
                       channelMetadata.hasOwnProperty( "egu") ? channelMetadata.egu : "";
 
@@ -189,11 +192,16 @@ export class DocumentTextRenderer
 
             case "REAL":
                 const useExponentialFormat = renderingProperties.hasOwnProperty("exp" ) ? renderingProperties.exp : false;
-                const precision = Math.min( renderingProperties.hasOwnProperty("prec") ? renderingProperties.prec : channelMetadata.prec, MAX_PRECISION );
-
-                // TODO: look at more rigorous deserialisation of NaN's, Infinity etc
+                const precision = Math.min( renderingProperties.hasOwnProperty("prec") ? renderingProperties.prec : channelMetadata.prec, DEFAULT_PRECISION );
+                // TODO: Look at improved deserialisation of NaN's, Infinity etc
+                // TODO: The backend serialiser has been changed (2019-02-02) to the more rigorous implementation of
+                // TODO: sending Nan and Infinity as numbers not strings. Need to check whether the implementation
+                // TODO: here still works.
                 if ( (rawValue === "Infinity") || (rawValue === "NaN"))
                 {
+                    // This was required in earlier versions of the backend server where Infinity
+                    // and Nan was sent as a JSON string. Since 2019-02-02 should no longer be required.
+                    logger.warn( "Programming error: unexpected JSON String format for numeric value of NaN or Infinity." );
                     element.textContent = rawValue;
                 }
                 else if ( useExponentialFormat )
@@ -207,15 +215,20 @@ export class DocumentTextRenderer
                 break;
 
             case "INTEGER":
-                // TODO: look at more rigorous deserialisation of NaN's, Infinity etc
+                // TODO: Look at improved deserialisation of NaN's, Infinity etc
+                // TODO: The backend serialiser has been changed (2019-02-02) to the more rigorous implementation of
+                // TODO: sending Nan and Infinity as numbers not strings. Need to check whether the implementation
+                // TODO: here still works.
                 if ( rawValue === "Infinity" )
                 {
+                    // This was required in earlier versions of the backend server where Infinity
+                    // and Nan was sent as a JSON string. Since 2019-02-02 should no longer be required.
+                    logger.warn( "Programming error: unexpected JSON String format for numeric value of NaN or Infinity." );
                     element.textContent = rawValue;
                 }
                 else
                 {
-                    const units = renderingProperties.hasOwnProperty("units" ) ? renderingProperties.units : channelMetadata.egu;
-                    element.textContent =  rawValue + " " + units;
+                    element.textContent = rawValue + " " + units;
                 }
                 break;
 

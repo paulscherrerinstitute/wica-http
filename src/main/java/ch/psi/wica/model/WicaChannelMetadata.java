@@ -3,6 +3,7 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
@@ -10,6 +11,9 @@ import org.apache.commons.lang3.Validate;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+// Note the Filter Id in the annotation here must match the definition in
+// the WicaChannelMetadataSerializer.
+@JsonFilter( "WicaChannelMetadataFilter" )
 @Immutable
 public abstract class WicaChannelMetadata
 {
@@ -96,7 +100,6 @@ public abstract class WicaChannelMetadata
    }
 
 /*- Private methods ----------------------------------------------------------*/
-
 /*- Nested Classes -----------------------------------------------------------*/
 
 /*- Nested Class: EpicsChannelMetadataUnknown --------------------------------*/
@@ -160,14 +163,14 @@ public abstract class WicaChannelMetadata
       {
          super( subType );
          this.units = Validate.notNull( units );
-         this.upperDisplay = Validate.notNull( upperDisplay );
-         this.lowerDisplay = Validate.notNull( lowerDisplay );
-         this.upperControl = Validate.notNull( upperControl );
-         this.lowerControl = Validate.notNull( lowerControl );
-         this.upperAlarm =   Validate.notNull( upperAlarm );
-         this.lowerAlarm =   Validate.notNull( lowerAlarm );
-         this.upperWarning = Validate.notNull( upperWarning );
-         this.lowerWarning = Validate.notNull( lowerWarning );
+         this.upperDisplay = upperDisplay;
+         this.lowerDisplay = lowerDisplay;
+         this.upperControl = upperControl;
+         this.lowerControl = lowerControl;
+         this.upperAlarm =   upperAlarm;
+         this.lowerAlarm =   lowerAlarm;
+         this.upperWarning = upperWarning;
+         this.lowerWarning = lowerWarning;
       }
       private EpicsChannelMetadataInteger( String units,
                                           int upperDisplay, int lowerDisplay,
@@ -290,14 +293,14 @@ public abstract class WicaChannelMetadata
          super( subType );
          this.units = Validate.notNull( units );
          this.precision = precision;
-         this.upperDisplay = Validate.notNull( upperDisplay );
-         this.lowerDisplay = Validate.notNull( lowerDisplay );
-         this.upperControl = Validate.notNull( upperControl );
-         this.lowerControl = Validate.notNull( lowerControl );
-         this.upperAlarm =   Validate.notNull( upperAlarm );
-         this.lowerAlarm =   Validate.notNull( lowerAlarm );
-         this.upperWarning = Validate.notNull( upperWarning );
-         this.lowerWarning = Validate.notNull( lowerWarning );
+         this.upperDisplay = upperDisplay;
+         this.lowerDisplay = lowerDisplay;
+         this.upperControl = upperControl;
+         this.lowerControl = lowerControl;
+         this.upperAlarm =   upperAlarm;
+         this.lowerAlarm =   lowerAlarm;
+         this.upperWarning = upperWarning;
+         this.lowerWarning = lowerWarning;
       }
 
       private EpicsChannelMetadataReal( String units,

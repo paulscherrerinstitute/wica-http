@@ -3,7 +3,8 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.infrastructure.WicaObjectToJsonSerializer;
+import ch.psi.wica.infrastructure.WicaChannelMetadataSerializer;
+import ch.psi.wica.infrastructure.WicaChannelValueMapSerializer;
 import ch.psi.wica.services.stream.WicaStreamMapper;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
@@ -24,6 +25,10 @@ public class WicaStream implements WicaStreamMapper
 {
 
 /*- Public attributes --------------------------------------------------------*/
+
+   static public final String DEFAULT_FIELD_SERIALIZATION = "val;sevr";
+
+
 /*- Private attributes -------------------------------------------------------*/
 
    static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
@@ -36,7 +41,8 @@ public class WicaStream implements WicaStreamMapper
 
    private final WicaStreamProperties wicaStreamProperties;
    private final Set<WicaChannel> wicaChannels;
-   private final WicaObjectToJsonSerializer serializer;
+   private final WicaChannelMetadataSerializer wicaChannelMetadataSerializer;
+   private final WicaChannelValueMapSerializer wicaChannelValueMapSerializer;
    private final Map<WicaChannelName,WicaChannel> channelMap;
 
    private Flux<ServerSentEvent<String>> flux;
@@ -81,8 +87,11 @@ public class WicaStream implements WicaStreamMapper
             ( includeTimestamp ? Set.of( "val", "sevr", "ts" ) : Set.of( "val", "sevr" ) ) :
             ( includeTimestamp ? Set.of( "val", "ts" ) : Set.of( "val" ) );
 
+      logger.info( "Fields selected for metadata serialization are '{}'", fieldSelectors );
+      this.wicaChannelMetadataSerializer = new WicaChannelMetadataSerializer(2 );
+
       logger.info( "Fields selected for value serialization are '{}'", fieldSelectors );
-      this.serializer = new WicaObjectToJsonSerializer( getFieldSerialisationSelectorMap(), 2 );
+      this.wicaChannelValueMapSerializer = new WicaChannelValueMapSerializer( getValueFieldMap(), 2 );
 
       logger.info( "Created new WicaStream with properties as follows: '{}'", this );
    }
@@ -125,10 +134,16 @@ public class WicaStream implements WicaStreamMapper
       this.flux = flux;
    }
 
-   public WicaObjectToJsonSerializer getSerializer()
+   public WicaChannelMetadataSerializer getWicaChannelMetadataSerializer()
    {
-      return this.serializer;
+      return this.wicaChannelMetadataSerializer;
    }
+
+   public WicaChannelValueMapSerializer getWicaChannelValueMapSerializer()
+   {
+      return this.wicaChannelValueMapSerializer;
+   }
+
 
    @Override
    public String toString()
@@ -179,23 +194,24 @@ public class WicaStream implements WicaStreamMapper
 
 /*- Private methods ----------------------------------------------------------*/
 
-   private Map<WicaChannelName,Set<String>> getFieldSerialisationSelectorMap()
+   private Map<WicaChannelName,Set<String>> getValueFieldMap()
    {
       final Map<WicaChannelName,Set<String>> outputMap = new HashMap<>();
       channelMap.keySet().forEach( c -> {
          final WicaChannel wicaChannel = this.channelMap.get( c );
          final WicaChannelProperties props = wicaChannel.getProperties();
          final String fieldSpecifierString = props.hasProperty( "fields" ) ? props.getPropertyValue("fields") : "val;sevr";
-         final Set<String> fieldSpecifierSet = buildFieldSerialisationSelectors( fieldSpecifierString );
-         outputMap.put( c, fieldSpecifierSet );
+         final Set<String> fieldSerialisationSelectorSet = buildFieldSerialisationSelectorSet(fieldSpecifierString );
+         outputMap.put( c, fieldSerialisationSelectorSet );
       } );
 
       return outputMap;
    }
 
-   static private Set<String> buildFieldSerialisationSelectors( String fieldSpecifierList )
+
+   static private Set<String> buildFieldSerialisationSelectorSet( String fieldSerialsationSelectorString )
    {
-      final String[] arr = fieldSpecifierList.split(";");
+      final String[] arr = fieldSerialsationSelectorString.split(";");
       return Set.of( arr );
    }
 
