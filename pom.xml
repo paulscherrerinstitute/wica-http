@@ -11,6 +11,7 @@
     <name>wica2</name>
     <description>Web Interface for EPICS Channel Access Protocol</description>
 
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -21,7 +22,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>10</java.version>
+        <java.version>11</java.version>
+        <javadoc.home>/usr/lib/jvm/java-1.8-openjdk/bin/</javadoc.home>
     </properties>
 
     <dependencies>
@@ -164,8 +166,8 @@
                 <version>3.0.1</version>
                 <configuration>
                     <!--<additionalOptions>-html5</additionalOptions>-->
-                    <show>private</show>
-                    <javadocExecutable>/usr/lib/jvm/java-1.8-openjdk/bin/javadoc</javadocExecutable>
+                    <show>public</show>
+                    <javadocExecutable>${javadoc.home}/javadoc</javadocExecutable>
                     <tags>
                         <tag>
                             <name>implNote.</name>
