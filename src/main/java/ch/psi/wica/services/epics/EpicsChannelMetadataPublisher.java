@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  */
 @Service
 @Immutable
-public class EpicsChannelMetadataPublisher
+class EpicsChannelMetadataPublisher
 {
 
 /*- Public attributes --------------------------------------------------------*/
