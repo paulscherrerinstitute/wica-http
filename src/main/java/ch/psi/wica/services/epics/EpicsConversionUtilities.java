@@ -18,6 +18,10 @@ import java.time.ZonedDateTime;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Utilities for converting EPICS data entities to data entities in the
+ * more general Wica data abstraction.
+ */
 public class EpicsConversionUtilities
 {
 

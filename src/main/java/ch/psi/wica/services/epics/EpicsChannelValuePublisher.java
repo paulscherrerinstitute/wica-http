@@ -20,6 +20,10 @@ import java.util.function.Consumer;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Publishes value information obtained from a previously connected
+ * EPICS channel to listening consumers.
+ */
 @Service
 @Immutable
 public class EpicsChannelValuePublisher
@@ -49,7 +53,7 @@ public class EpicsChannelValuePublisher
     * @param channel the EPICS channel.
     * @param valueChangeHandler the event consumer.
     */
-   public void getAndPublishValue( Channel<Object> channel, Consumer<WicaChannelValue> valueChangeHandler  )
+   void getAndPublishValue( Channel<Object> channel, Consumer<WicaChannelValue> valueChangeHandler  )
    {
       final String epicsChannelName = channel.getName();
       logger.debug("'{}' - getting first value...", epicsChannelName);
@@ -65,7 +69,7 @@ public class EpicsChannelValuePublisher
       publishValue( epicsChannelName, valueObj, valueChangeHandler );
    }
    
-   public void publishValue( String epicsChannelName, Timestamped<Object> valueObj, Consumer<WicaChannelValue> valueChangeHandler  )
+   void publishValue( String epicsChannelName, Timestamped<Object> valueObj, Consumer<WicaChannelValue> valueChangeHandler  )
    {
       if ( ! WicaChannelType.isRecognisedType( valueObj.getValue() ) )
       {
@@ -113,7 +117,6 @@ public class EpicsChannelValuePublisher
       logger.warn( "'{}' - first value was of an unsupported type", epicsChannelName );
    }
 
-   
 
 /*- Private methods ----------------------------------------------------------*/
    private void publishTimestampedValueDouble( Timestamped<Object> valueObj, WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus,

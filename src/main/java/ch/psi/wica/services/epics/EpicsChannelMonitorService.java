@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Provides a service to facilitate the monitoring of a single EPICS channel
+ * A service that facilitates the monitoring of a single EPICS channel
  * and to subsequently inform interested third-parties of changes of interest.
  *
  * @implNote.

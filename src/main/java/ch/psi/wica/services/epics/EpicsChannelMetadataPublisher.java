@@ -18,6 +18,10 @@ import java.util.function.Consumer;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Publishes metadata information obtained from a previously connected
+ * EPICS channel to listening consumers.
+ */
 @Service
 @Immutable
 public class EpicsChannelMetadataPublisher
@@ -60,7 +64,7 @@ public class EpicsChannelMetadataPublisher
       {
          case STRING:
             logger.debug("'{}' - first value was STRING.", wicaChannelName);
-            publishMetadataString(metadataChangeHandler );
+            publishMetadataString( metadataChangeHandler );
             return;
 
          case STRING_ARRAY:
@@ -97,6 +101,9 @@ public class EpicsChannelMetadataPublisher
       }
       logger.warn( "'{}' - first value was of an unsupported type", wicaChannelName);
    }
+
+
+/*- Private methods ----------------------------------------------------------*/
 
    private void publishMetadataString( Consumer<WicaChannelMetadata> metadataChangeHandler )
    {
@@ -176,8 +183,6 @@ public class EpicsChannelMetadataPublisher
       metadataChangeHandler.accept(wicaChannelMetadata);
    }
 
-
-/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

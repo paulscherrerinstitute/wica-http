@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Provides a service to facilitate the monitoring of multiple EPICS channels,
+ * A service that facilitates the monitoring of multiple EPICS channels,
  * and to cache the received information making it available subsequently
  * to multiple service clients.
  *
