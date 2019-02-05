@@ -3,11 +3,9 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.services.stream.WicaStreamCreator;
+import ch.psi.wica.services.stream.WicaStreamManager;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,17 +25,14 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith( SpringRunner.class)
 @SpringBootTest
-class WicaStreamCreatorTest
+class WicaStreamManagerTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaStreamCreatorTest.class );
-   private WicaChannelValueStash stash;
-
    @Autowired
-   public WicaStreamCreator creator;
+   public WicaStreamManager creator;
 
    @Value( "${wica.default_heartbeat_flux_interval}" )
    private int defaultHeartBeatFluxInterval;
@@ -133,7 +128,7 @@ class WicaStreamCreatorTest
       final WicaStream stream = creator.create( testString );
 
       final Map<WicaChannelName, List<WicaChannelValue>> myInputMap = Map.of();
-      final Map<WicaChannelName, List<WicaChannelValue>> myOutputMap = stream.map( myInputMap );
+      final Map<WicaChannelName, List<WicaChannelValue>> myOutputMap = stream.getWicaChannelValueMapTransformer().map( myInputMap );
       assertEquals( 0, myOutputMap.size() );
    }
 
@@ -146,7 +141,7 @@ class WicaStreamCreatorTest
       final Map<WicaChannelName, List<WicaChannelValue>> myInputMap1 = Map.of( WicaChannelName.of( "MHC1:IST:2" ), Arrays.asList( WicaChannelValue.createChannelValueConnected( "abc" ) ),
                                                                                WicaChannelName.of( "MHC2:IST:2" ), Arrays.asList( WicaChannelValue.createChannelValueConnected( "def" ) ) );
 
-      final Map<WicaChannelName, List<WicaChannelValue>> myOutputMap1 = stream.map( myInputMap1 );
+      final Map<WicaChannelName, List<WicaChannelValue>> myOutputMap1 = stream.getWicaChannelValueMapTransformer().map( myInputMap1 );
       assertEquals( 2, myOutputMap1.size() );
       assertTrue( myOutputMap1.containsKey( WicaChannelName.of( "MHC1:IST:2" ) ) );
       assertEquals( "abc", ((WicaChannelValue.WicaChannelValueConnectedString) myOutputMap1.get( WicaChannelName.of( "MHC1:IST:2" ) ).get( 0 ) ).getValue() );

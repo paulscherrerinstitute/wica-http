@@ -3,8 +3,8 @@ package ch.psi.wica.infrastructure;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.WicaChannelMetadata;
 import ch.psi.wica.model.WicaChannelName;
-import ch.psi.wica.model.WicaChannelValue;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +15,6 @@ import net.jcip.annotations.Immutable;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +23,7 @@ import java.util.Set;
 /*- Class Declaration --------------------------------------------------------*/
 
 @Immutable
-public class WicaChannelValueMapSerializer
+public class WicaChannelMetadataMapSerializer
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -35,13 +34,13 @@ public class WicaChannelValueMapSerializer
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelValueMapSerializer( NumericScaleSupplier numericScaleSupplier,
-                                         boolean writeNanAsString,
-                                         boolean writeInfinityAsString,
-                                         FieldsOfInterestSupplier fieldsOfInterestSupplier )
+   public WicaChannelMetadataMapSerializer( int numericScale,
+                                            boolean writeNanAsString,
+                                            boolean writeInfinityAsString,
+                                            FieldsOfInterestSupplier fieldsOfInterestSupplier )
    {
         final SimpleModule module = new SimpleModule();
-        module.addSerializer( new MyCustomWicaChannelValueMapSerializer( numericScaleSupplier, writeNanAsString, writeInfinityAsString, fieldsOfInterestSupplier ) );
+        module.addSerializer( new MyCustomWicaChannelMetadataMapSerializer(numericScale, writeNanAsString, writeInfinityAsString, fieldsOfInterestSupplier ) );
         mapper = new Jackson2ObjectMapperBuilder().createXmlMapper( false ).build();
         mapper.registerModule(module );
    }
@@ -49,11 +48,11 @@ public class WicaChannelValueMapSerializer
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-    public String serialize( Map<WicaChannelName,List<WicaChannelValue>> channelValueMap )
-   {
+    public String serialize( Map<WicaChannelName, WicaChannelMetadata> channelMetadataMap )
+    {
       try
       {
-         return mapper.writeValueAsString( channelValueMap );
+         return mapper.writeValueAsString( channelMetadataMap );
       }
       catch( JsonProcessingException ex )
       {
@@ -65,11 +64,6 @@ public class WicaChannelValueMapSerializer
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Interfaces --------------------------------------------------------*/
 
-   public interface NumericScaleSupplier
-   {
-      int supplyForChannelNamed( WicaChannelName wicaChannelName );
-   }
-
    public interface FieldsOfInterestSupplier
    {
       Set<String> supplyForChannelNamed( WicaChannelName wicaChannelName );
@@ -77,20 +71,21 @@ public class WicaChannelValueMapSerializer
 
 /*- Nested Classes -----------------------------------------------------------*/
 
-   private static class MyCustomWicaChannelValueMapSerializer extends StdSerializer<Map>
+   private static class MyCustomWicaChannelMetadataMapSerializer extends StdSerializer<Map>
    {
-      final NumericScaleSupplier numericScaleSupplier;
+
+      final int numericScale;
       final boolean writeNanAsString;
       final boolean writeInfinityAsString;
       final FieldsOfInterestSupplier fieldsOfInterestSupplier;
 
-      MyCustomWicaChannelValueMapSerializer( NumericScaleSupplier numericScaleSupplier,
-                                             boolean writeNanAsString,
-                                             boolean writeInfinityAsString,
-                                             FieldsOfInterestSupplier fieldsOfInterestSupplier )
+      MyCustomWicaChannelMetadataMapSerializer( int numericScale,
+                                                boolean writeNanAsString,
+                                                boolean writeInfinityAsString,
+                                                FieldsOfInterestSupplier fieldsOfInterestSupplier )
       {
          super( Map.class );
-         this.numericScaleSupplier = numericScaleSupplier;
+         this.numericScale = numericScale;
          this.writeNanAsString  = writeNanAsString;
          this.writeInfinityAsString = writeInfinityAsString;
          this.fieldsOfInterestSupplier = fieldsOfInterestSupplier;
@@ -104,8 +99,6 @@ public class WicaChannelValueMapSerializer
          {
             final WicaChannelName wicaChannelName = (WicaChannelName) channelName;
 
-            final int numericScale = numericScaleSupplier.supplyForChannelNamed( wicaChannelName );
-
             final WicaChannelDataSerializer serializer;
             if ( fieldsOfInterestSupplier.supplyForChannelNamed( wicaChannelName ).size() == 0 )
             {
@@ -118,18 +111,9 @@ public class WicaChannelValueMapSerializer
             }
 
             gen.writeFieldName( wicaChannelName.toString() );
-
-            // This cast is ok. Unfortunately this method cannot be generified because
-            // then it would not satisfy the requirements of the interface.
-            @SuppressWarnings( "unchecked")
-            final List<WicaChannelValue> wicaChannelValueList = (List<WicaChannelValue>) value.get( wicaChannelName );
-            gen.writeStartArray();
-            for ( WicaChannelValue wicaChannelValue : wicaChannelValueList )
-            {
-               final String str = serializer.serialize( wicaChannelValue );
-               gen.writeRawValue(str);
-            }
-            gen.writeEndArray();
+            final WicaChannelMetadata wicaChannelMetadata = (WicaChannelMetadata) value.get( wicaChannelName );
+            final String str = serializer.serialize( wicaChannelMetadata );
+            gen.writeRawValue( str );
          }
          gen.writeEndObject();
       }

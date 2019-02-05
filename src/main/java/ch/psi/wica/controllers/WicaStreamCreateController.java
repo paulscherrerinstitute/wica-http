@@ -7,7 +7,7 @@ package ch.psi.wica.controllers;
 import ch.psi.wica.infrastructure.WicaServerSentEventBuilder;
 import ch.psi.wica.model.*;
 import ch.psi.wica.services.epics.EpicsChannelDataService;
-import ch.psi.wica.services.stream.WicaStreamCreator;
+import ch.psi.wica.services.stream.WicaStreamManager;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,6 @@ import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 
@@ -44,7 +43,7 @@ class WicaStreamCreateController
    private final Logger logger = LoggerFactory.getLogger( WicaStreamCreateController.class );
 
    private final EpicsChannelDataService epicsChannelDataService;
-   private final WicaStreamCreator wicaStreamCreator;
+   private final WicaStreamManager wicaStreamManager;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -55,15 +54,16 @@ class WicaStreamCreateController
     * @param epicsChannelDataService reference to the service object which provides
     *        the source of EPICS data for this controller.
     *
-    * @param wicaStreamCreator reference to the service object which can be used
+    * @param wicaStreamManager reference to the service object which can be used
     *        to create the reactive streams.
     */
    private WicaStreamCreateController( @Autowired EpicsChannelDataService epicsChannelDataService,
-                                       @Autowired WicaStreamCreator wicaStreamCreator )
+                                       @Autowired WicaStreamManager wicaStreamManager
+   )
    {
       //logger.info( "Created new event stream with heartbeat interval of {} seconds.", eventStreamHeartBeatInterval );
       this.epicsChannelDataService = Validate.notNull( epicsChannelDataService );
-      this.wicaStreamCreator = Validate.notNull( wicaStreamCreator );
+      this.wicaStreamManager = Validate.notNull(wicaStreamManager);
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -92,7 +92,7 @@ class WicaStreamCreateController
       final WicaStream wicaStream;
       try
       {
-         wicaStream = wicaStreamCreator.create( jsonStreamConfiguration );
+         wicaStream = wicaStreamManager.create(jsonStreamConfiguration );
       }
       catch( Exception ex )
       {
@@ -101,7 +101,7 @@ class WicaStreamCreateController
          return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
       }
 
-      wicaStream.setLastPublicationTime();
+      wicaStream.updateLastPublicationTime();
 
       final Flux<ServerSentEvent<String>> heartbeatFlux = createHeartbeatFlux( wicaStream );
       final Flux<ServerSentEvent<String>> channelMetadataFlux = createChannelMetadataFlux( wicaStream );
@@ -118,7 +118,7 @@ class WicaStreamCreateController
                                                                          } );
                                                                          //.log();
       // Store it in the stream map
-      wicaStream.setFlux( eventStreamFlux );
+      wicaStream.saveCombinedFluxReference(eventStreamFlux );
 
       // Lastly set up monitors on all the channels of interest.
       epicsChannelDataService.startMonitoring( wicaStream );
@@ -177,7 +177,7 @@ class WicaStreamCreateController
             .map( l -> {
                logger.trace( "channel-metadata flux is publishing new SSE..." );
                final Map<WicaChannelName, WicaChannelMetadata> channelMetadataMap = epicsChannelDataService.getChannelMetadata( wicaStream );
-               final String jsonMetadataString = wicaStream.getWicaChannelMetadataSerializer().serialize(channelMetadataMap );
+               final String jsonMetadataString = wicaStream.getWicaChannelMetadataMapSerializer().serialize( channelMetadataMap );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build ( wicaStream.getWicaStreamId(),jsonMetadataString );
             } )
             .doOnCancel( () -> logger.warn( "channel-metadata flux was cancelled" ) );
@@ -200,10 +200,10 @@ class WicaStreamCreateController
       return Flux.interval( Duration.ofMillis( wicaStream.getChannelValueUpdateFluxInterval() ) )
             .map( l -> {
                logger.trace( "channel-value-update flux is publishing new SSE..." );
-               final Map<WicaChannelName, List<WicaChannelValue>> updatedChannelValueMap = epicsChannelDataService.getLaterThan( wicaStream, wicaStream.getLastPublicationTime() );
-               wicaStream.setLastPublicationTime();
-               final Map<WicaChannelName, List<WicaChannelValue>> transformedChannelValueMap = wicaStream.map( updatedChannelValueMap );
-               final String jsonValueString = wicaStream.getWicaChannelValueMapSerializer().serialize( transformedChannelValueMap );
+               final var updatedChannelValueMap = epicsChannelDataService.getLaterThan( wicaStream, wicaStream.getLastPublicationTime() );
+               wicaStream.updateLastPublicationTime();
+               final var transformedChannelValueMap = wicaStream.getWicaChannelValueMapTransformer().map( updatedChannelValueMap );
+               final var jsonValueString = wicaStream.getWicaChannelValueMapSerializer().serialize( transformedChannelValueMap );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUE_CHANGES.build(  wicaStream.getWicaStreamId(), jsonValueString );
             } )
             .doOnCancel( () -> logger.warn( "channel-value-update flux was cancelled" ) );
@@ -226,9 +226,9 @@ class WicaStreamCreateController
       return Flux.range(1, 1)
             .map(l -> {
                logger.trace("channel-value flux is publishing new SSE...");
-               final Map<WicaChannelName, List<WicaChannelValue>> allChannelValues = epicsChannelDataService.getLaterThan( wicaStream, LONG_AGO );
-               wicaStream.setLastPublicationTime();
-               final Map<WicaChannelName, List<WicaChannelValue>> transformedChannelValueMap = wicaStream.map( allChannelValues );
+               final var allChannelValues = epicsChannelDataService.getLaterThan( wicaStream, LONG_AGO );
+               wicaStream.updateLastPublicationTime();
+               final var transformedChannelValueMap = wicaStream.getWicaChannelValueMapTransformer().map( allChannelValues );
                final String jsonValueString = wicaStream.getWicaChannelValueMapSerializer().serialize( transformedChannelValueMap );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUE_ALLDATA.build( wicaStream.getWicaStreamId(), jsonValueString );
             })

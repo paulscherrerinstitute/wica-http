@@ -4,10 +4,10 @@ package ch.psi.wica.infrastructure;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.WicaChannelMetadata;
-import ch.psi.wica.model.WicaChannelName;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -69,7 +68,7 @@ class WicaChannelMetadataSerializerTest
    }
 
    @Test
-   void test_serializeMetadataUnknown() throws IOException
+   void test_serializeMetadataUnknown()
    {
       final var serializer = new WicaChannelMetadataSerializer(5 );
       logger.info("JSON Metadata UNKNOWN serialisation like this: '{}'", serializer.serialize( unkMetadata ) );
@@ -149,35 +148,65 @@ class WicaChannelMetadataSerializerTest
    }
 
    @Test
-   void test_serializeMetadataRealIncludesNan() throws IOException
+   void test_serializeMetadataRealIncludesNanSerializedAsNumber() throws IOException
    {
-      final var serializer = new WicaChannelMetadataSerializer( 5 );
+      final var serializer = new WicaChannelMetadataSerializer( 5, false, false, "type", "hopr" );
       final var jsonStr =  serializer.serialize( realNanMetadata );
       logger.info("JSON Metadata REAL serialisation including NAN field looks like this: '{}'", jsonStr );
       final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "type") );
       assertEquals( "REAL", rootNode.get( "type" ).textValue() );
+      assertEquals(JsonNodeType.NUMBER, rootNode.get("hopr" ).getNodeType() );
       assertEquals( Double.NaN, rootNode.get( "hopr" ).asDouble() );
    }
 
    @Test
-   void test_serializeMetadataRealIncludesInfinity() throws IOException
+   void test_serializeMetadataRealIncludesNanSerializedAsString() throws IOException
    {
-      final var serializer = new WicaChannelMetadataSerializer( 5 );
-      final var jsonStr =  serializer.serialize( realInfMetadata );
-      logger.info("JSON Metadata REAL serialisation including INFINITY field looks like this: '{}'", jsonStr );
-      final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
+      final var serializer = new WicaChannelMetadataSerializer( 5, true, false, "type", "hopr" );
+      final var jsonStr =  serializer.serialize( realNanMetadata );
+      logger.info("JSON Metadata REAL serialisation including NAN field looks like this: '{}'", jsonStr );
+      final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "type") );
-      assertEquals( "REAL", rootNode.findValue( "type" ).textValue() );
+      assertEquals( "REAL", rootNode.get( "type" ).textValue() );
+      assertEquals( JsonNodeType.STRING, rootNode.get("hopr" ).getNodeType() );
+      assertEquals( Double.NaN, rootNode.get( "hopr" ).asDouble() );
+   }
+
+   @Test
+   void test_serializeMetadataRealIncludesInfinitySerializesAsNumber() throws IOException
+   {
+      final var serializer = new WicaChannelMetadataSerializer( 5, false, false, "type", "hopr" );
+      final var jsonStr =  serializer.serialize( realInfMetadata );
+      logger.info("JSON Metadata REAL serialisation including INFINITY field looks like this: '{}'", jsonStr );
+      final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
+      assertTrue( rootNode.isObject() );
+      assertTrue( rootNode.has( "type") );
+      assertEquals( "REAL", rootNode.get( "type" ).textValue() );
+      assertEquals( JsonNodeType.NUMBER, rootNode.get("hopr" ).getNodeType() );
+      assertEquals( Double.POSITIVE_INFINITY, rootNode.get( "hopr" ).asDouble() );
+   }
+
+   @Test
+   void test_serializeMetadataRealIncludesInfinitySerializesAsString() throws IOException
+   {
+      final var serializer = new WicaChannelMetadataSerializer( 5, false, true, "type", "hopr" );
+      final var jsonStr =  serializer.serialize( realInfMetadata );
+      logger.info("JSON Metadata REAL serialisation including INFINITY field looks like this: '{}'", jsonStr );
+      final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
+      assertTrue( rootNode.isObject() );
+      assertTrue( rootNode.has( "type") );
+      assertEquals( "REAL", rootNode.get( "type" ).textValue() );
+      assertEquals( JsonNodeType.STRING, rootNode.get("hopr" ).getNodeType() );
       assertEquals( Double.POSITIVE_INFINITY, rootNode.get( "hopr" ).asDouble() );
    }
 
    @Test
    void test_serializeMetadataRealCheckFieldsOfInterestFeature() throws IOException
    {
-      final var serializer = new WicaChannelMetadataSerializer( 5, "lopr", "hopr" );
+      final var serializer = new WicaChannelMetadataSerializer( 5, false, false,"lopr", "hopr" );
       final var jsonStr =  serializer.serialize( realMetadata );
       logger.info("JSON Metadata REAL serialisation of LOPR/HOPR fields looks like this: '{}'", jsonStr );
       final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
@@ -190,13 +219,8 @@ class WicaChannelMetadataSerializerTest
    @Test
    void test_serializeMetadataRealWithIllegalPrecision()
    {
-      assertDoesNotThrow(  () -> {
-         new WicaChannelMetadataSerializer(0 );
-      } );
-
-      assertThrows( IllegalArgumentException.class, () -> {
-         new WicaChannelMetadataSerializer(-1 );
-      } );
+      assertDoesNotThrow( () -> new WicaChannelMetadataSerializer(0 ));
+      assertThrows( IllegalArgumentException.class, () -> new WicaChannelMetadataSerializer(-1 ));
    }
 
    @Test
@@ -260,22 +284,6 @@ class WicaChannelMetadataSerializerTest
       assertEquals( "0.12", rootNode2.get( "hopr" ).asText() );
    }
 
-   @Test
-   void test_serializeMetadataMap()
-   {
-      final Map<WicaChannelName,WicaChannelMetadata> map = Map.of( WicaChannelName.of( "UnknownTypeChannel" ), unkMetadata,
-                                                                   WicaChannelName.of( "StringTypeChannel" ), strMetadata,
-                                                                   WicaChannelName.of( "StringArrayType" ), strArrMetadata,
-                                                                   WicaChannelName.of( "IntegerTypeChannel" ), intMetadata,
-                                                                   WicaChannelName.of( "IntegerArrayTypeChannel" ), intArrMetadata,
-                                                                   WicaChannelName.of( "RealTypeChannel" ), realMetadata,
-                                                                   WicaChannelName.of( "RealInfTypeChannel" ), realInfMetadata,
-                                                                   WicaChannelName.of( "RealNanTypeChannel" ), realNanMetadata,
-                                                                   WicaChannelName.of( "RealArrayTypeChannel" ), realArrMetadata );
-
-      final var serializer = new WicaChannelMetadataSerializer(5 );
-      logger.info("JSON Metadata MAP serialisation like this: '{}'", serializer.serialize( map ) );
-   }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

@@ -15,7 +15,7 @@ import org.apache.commons.lang3.Validate;
 // the WicaChannelMetadataSerializer.
 @JsonFilter( "WicaChannelMetadataFilter" )
 @Immutable
-public abstract class WicaChannelMetadata
+public abstract class WicaChannelMetadata extends WicaChannelData
 {
 
 /*- Public attributes --------------------------------------------------------*/

@@ -6,7 +6,7 @@ package ch.psi.wica.controllers;
 
 import ch.psi.wica.model.WicaStream;
 import ch.psi.wica.model.WicaStreamId;
-import ch.psi.wica.services.stream.WicaStreamCreator;
+import ch.psi.wica.services.stream.WicaStreamManager;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,15 +34,15 @@ class WicaStreamGetController
 
    private final Logger logger = LoggerFactory.getLogger(WicaStreamGetController.class );
 
-   private final WicaStreamCreator wicaStreamCreator;
+   private final WicaStreamManager wicaStreamManager;
 
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   private WicaStreamGetController( @Autowired WicaStreamCreator wicaStreamCreator )
+   private WicaStreamGetController( @Autowired WicaStreamManager wicaStreamManager )
    {
-      this.wicaStreamCreator = Validate.notNull( wicaStreamCreator, "The 'wicaStreamCreator' argument was null" );
+      this.wicaStreamManager = Validate.notNull(wicaStreamManager, "The 'wicaStreamCreator' argument was null" );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -63,7 +63,7 @@ class WicaStreamGetController
       logger.info( "GET: Handling get stream request for ID: '{}'", id );
 
       // Handle the situation where an unknown WicaStreamId is given
-      if ( ! wicaStreamCreator.isKnownId( WicaStreamId.of( id ) ) )
+      if ( ! wicaStreamManager.isKnownId(WicaStreamId.of(id ) ) )
       {
          final String errorMessage = "the event stream 'id' was not recognised";
          logger.warn( "GET: Rejected request because {}", errorMessage  );
@@ -71,10 +71,10 @@ class WicaStreamGetController
       }
 
       // Handle the normal case
-      final WicaStream wicaStream = wicaStreamCreator.getFromId( WicaStreamId.of( id ) );
+      final WicaStream wicaStream = wicaStreamManager.getFromId(WicaStreamId.of(id ) );
 
       logger.info( "Returning event stream with id: '{}'", id );
-      return new ResponseEntity<>( wicaStream.getFlux(), HttpStatus.OK );
+      return new ResponseEntity<>(wicaStream.getCombinedFluxReference(), HttpStatus.OK );
    }
 
    @ExceptionHandler( Exception.class )

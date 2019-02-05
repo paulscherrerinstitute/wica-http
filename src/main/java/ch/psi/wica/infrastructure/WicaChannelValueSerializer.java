@@ -3,7 +3,7 @@ package ch.psi.wica.infrastructure;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.WicaChannelMetadata;
+import ch.psi.wica.model.WicaChannelValue;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,11 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 /*- Class Declaration --------------------------------------------------------*/
 
 @Immutable
-public class WicaChannelMetadataSerializer
+public class WicaChannelValueSerializer
 {
 
-/*- Public attributes --------------------------------------------------------*/
-/*- Private attributes -------------------------------------------------------*/
+   /*- Public attributes --------------------------------------------------------*/
+   /*- Private attributes -------------------------------------------------------*/
 
    /**
     * Controls the serialized representation of double Nan values. Set to
@@ -37,10 +37,10 @@ public class WicaChannelMetadataSerializer
 
    private final WicaChannelDataSerializer wicaChannelDataSerializer;
 
-/*- Main ---------------------------------------------------------------------*/
-/*- Constructor --------------------------------------------------------------*/
+   /*- Main ---------------------------------------------------------------------*/
+   /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelMetadataSerializer( int numericScale )
+   public WicaChannelValueSerializer( int numericScale )
    {
       this.wicaChannelDataSerializer = new WicaChannelDataSerializer( numericScale,
                                                                       writeNanAsStringDefault,
@@ -48,7 +48,7 @@ public class WicaChannelMetadataSerializer
    }
 
 
-   WicaChannelMetadataSerializer( int numericScale, String... fieldsOfInterest )
+   WicaChannelValueSerializer( int numericScale, String... fieldsOfInterest )
    {
       this.wicaChannelDataSerializer = new WicaChannelDataSerializer( numericScale,
                                                                       writeNanAsStringDefault,
@@ -56,10 +56,10 @@ public class WicaChannelMetadataSerializer
                                                                       fieldsOfInterest );
    }
 
-   WicaChannelMetadataSerializer( int numericScale,
-                                         boolean writeNanAsString,
-                                         boolean writeInfinityAsString,
-                                         String... fieldsOfInterest )
+   WicaChannelValueSerializer( int numericScale,
+                               boolean writeNanAsString,
+                               boolean writeInfinityAsString,
+                               String... fieldsOfInterest )
    {
       this.wicaChannelDataSerializer = new WicaChannelDataSerializer( numericScale,
                                                                       writeNanAsString,
@@ -67,23 +67,23 @@ public class WicaChannelMetadataSerializer
                                                                       fieldsOfInterest );
    }
 
-/*- Class methods ------------------------------------------------------------*/
-/*- Public methods -----------------------------------------------------------*/
+   /*- Class methods ------------------------------------------------------------*/
+   /*- Public methods -----------------------------------------------------------*/
 
    /**
-    * Serializes the supplied WicaChannelMetadata object according to the
+    * Serializes the supplied WicaChannelValue object according to the
     * configuration rules specified in the class constructor.
     *
-    * @param channelMetadata the object to serialize.
+    * @param channelValue the object to serialize.
     * @return the JSON serialized representation.
     */
-   public String serialize( WicaChannelMetadata channelMetadata )
+   public String serialize( WicaChannelValue channelValue )
    {
-      Validate.notNull( channelMetadata );
-      return wicaChannelDataSerializer.serialize( channelMetadata );
+      Validate.notNull( channelValue );
+      return wicaChannelDataSerializer.serialize( channelValue );
    }
 
-/*- Private methods ----------------------------------------------------------*/
-/*- Nested Classes -----------------------------------------------------------*/
+   /*- Private methods ----------------------------------------------------------*/
+   /*- Nested Classes -----------------------------------------------------------*/
 
 }

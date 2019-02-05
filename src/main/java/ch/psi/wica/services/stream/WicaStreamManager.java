@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class WicaStreamCreator
+public class WicaStreamManager
 {
 
 /*- Public attributes --------------------------------------------------------*/

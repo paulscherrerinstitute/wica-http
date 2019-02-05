@@ -72,7 +72,7 @@ class WicaChannelValueMapperPrecisionLimitingSampler implements WicaChannelValue
             final WicaChannelValue convertedValue =  WicaChannelValue.createChannelValueConnected( currentConnectedValue.getWicaAlarmSeverity(),
                                                                                                    currentConnectedValue.getWicaChannelAlarmStatus(),
                                                                                                    currentConnectedValue.getDataSourceTimestamp(),
-                                                                                                   currentValueAsDouble, precision );
+                                                                                                   currentValueAsDouble );
             outputList.add( convertedValue );
          }
          else if ( currentConnectedValue.getWicaChannelType() == REAL_ARRAY )
@@ -81,7 +81,7 @@ class WicaChannelValueMapperPrecisionLimitingSampler implements WicaChannelValue
             final WicaChannelValue convertedValue =  WicaChannelValue.createChannelValueConnected( currentConnectedValue.getWicaAlarmSeverity(),
                                                                                                    currentConnectedValue.getWicaChannelAlarmStatus(),
                                                                                                    currentConnectedValue.getDataSourceTimestamp(),
-                                                                                                   currentValueAsDouble, precision );
+                                                                                                   currentValueAsDouble );
             outputList.add( convertedValue );
          }
          else

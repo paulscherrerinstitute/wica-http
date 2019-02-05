@@ -24,9 +24,7 @@ public class WicaChannelValueMapperBuilder implements WicaChannelValueMapper
 /*- Private attributes -------------------------------------------------------*/
 
    private static final Logger logger = LoggerFactory.getLogger( WicaChannelValueMapperBuilder.class );
-   private static final int DEFAULT_PRECISION = 6;
 
-   private final WicaChannelValueMapper precisionMapper;
    private final WicaChannelValueMapper filteringMapper;
 
 
@@ -37,11 +35,9 @@ public class WicaChannelValueMapperBuilder implements WicaChannelValueMapper
     * Returns an instance based on the supplier mappers.
     *
     * @param filteringMapper the filtering mapper that will be applied to the initial input list.
-    * @param precisionMapper the precision mapper that is to be applied to the final result.
     */
-   private WicaChannelValueMapperBuilder( WicaChannelValueMapper filteringMapper, WicaChannelValueMapper precisionMapper )
+   private WicaChannelValueMapperBuilder( WicaChannelValueMapper filteringMapper )
    {
-      this.precisionMapper = precisionMapper;
       this.filteringMapper = filteringMapper;
    }
 
@@ -65,18 +61,6 @@ public class WicaChannelValueMapperBuilder implements WicaChannelValueMapper
    public static WicaChannelValueMapperBuilder createFromChannelProperties( WicaChannelProperties wicaChannelProperties )
    {
       Validate.notNull( wicaChannelProperties );
-
-      final WicaChannelValueMapper precisionMapper;
-      if ( wicaChannelProperties.hasProperty( "prec" ) )
-      {
-         final int numberOfDigits = Integer.parseInt( wicaChannelProperties.getPropertyValue("prec") );
-         logger.info( "Creating precision mapper with prec='{}'", numberOfDigits );
-         precisionMapper = new WicaChannelValueMapperPrecisionLimitingSampler(numberOfDigits );
-      }
-      else
-      {
-         precisionMapper = new WicaChannelValueMapperPrecisionLimitingSampler( DEFAULT_PRECISION );
-      }
 
       final WicaChannelValueMapper filteringMapper;
       if ( wicaChannelProperties.hasProperty( "filterType" ) )
@@ -133,7 +117,7 @@ public class WicaChannelValueMapperBuilder implements WicaChannelValueMapper
          filteringMapper = new WicaChannelValueMapperLatestValueSampler(defaultMaxNumberOfSamples );
       }
 
-      return new WicaChannelValueMapperBuilder( precisionMapper, filteringMapper );
+      return new WicaChannelValueMapperBuilder( filteringMapper );
    }
 
    /**
@@ -142,7 +126,7 @@ public class WicaChannelValueMapperBuilder implements WicaChannelValueMapper
    @Override
    public List<WicaChannelValue> map( List<WicaChannelValue> inputList )
    {
-      return precisionMapper.map( filteringMapper.map( inputList ) );
+      return filteringMapper.map( inputList );
    }
 
 
