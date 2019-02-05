@@ -239,6 +239,7 @@ public class EpicsChannelMonitorService implements AutoCloseable
       // CA library via the Metadata<Timestamped> class.
       logger.debug("'{}' - adding monitor...", epicsChannelName);
 
+      @SuppressWarnings( "unchecked" )
       final Monitor<Timestamped> monitor = channel.addMonitor( Timestamped.class, valueObj -> {
          logger.trace("'{}' - publishing new value...", epicsChannelName);
          epicsChannelValuePublisher.publishValue( epicsChannelName, valueObj, valueChangeHandler);
