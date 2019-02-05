@@ -166,7 +166,7 @@
                 <version>3.0.1</version>
                 <configuration>
                     <!--<additionalOptions>-html5</additionalOptions>-->
-                    <show>public</show>
+                    <show>package</show>
                     <javadocExecutable>${javadoc.home}/javadoc</javadocExecutable>
                     <tags>
                         <tag>
