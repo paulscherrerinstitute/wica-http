@@ -47,7 +47,7 @@ class WicaChannelPropertiesTest
    {
       final ObjectMapper mapper = new ObjectMapper();
 
-      final String inputString = "{" + "\"filter\"" + ":" + "LAST_N" + "," +
+      final String inputString = "{" + "\"filter\"" + ":" + "\"last-n\"" + "," +
                                        "\"fparam\"" + ":" + 99 + "," +
                                        "\"fields\"" + ":" + "\"abc;def\"" + "," +
                                        "\"prec\"" + ":" + 9 + "}";

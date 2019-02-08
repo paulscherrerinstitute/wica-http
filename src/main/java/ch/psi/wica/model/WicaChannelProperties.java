@@ -18,9 +18,9 @@ public class WicaChannelProperties
 
 /*- Public attributes --------------------------------------------------------*/
 
-   private static final int DEFAULT_NUMERIC_PRECISION = 8;
-   private static final FilterType DEFAULT_FILTER_TYPE = FilterType.LAST_N;
-   private static final String DEFAULT_FILTER_PARAMETER = "1";
+   public static final int DEFAULT_NUMERIC_PRECISION = 8;
+   public static final FilterType DEFAULT_FILTER_TYPE = FilterType.LAST_N;
+   public static final String DEFAULT_FILTER_PARAMETER = "1";
    public static final String DEFAULT_FIELDS_OF_INTEREST = "val;sevr";
 
 /*- Private attributes -------------------------------------------------------*/
@@ -78,20 +78,20 @@ public class WicaChannelProperties
 
    public enum FilterType
    {
-      ALL_VALUE       ("all-value", "" ),
-      RATE_LIMITER    ("rate-limiter", "interval"),
-      ONE_IN_N        ("one-in-n", "n"),
-      LAST_N          ("last-n", "n"),
-      CHANGE_FILTERER ("change-filterer", "deadband" ),
-      DEFAULT         ("last-n", "n");
+      @JsonProperty( "all-value" )       ALL_VALUE,
+      @JsonProperty( "rate-limiter" )    RATE_LIMITER,
+      @JsonProperty( "one-in-n" )        ONE_IN_N,
+      @JsonProperty( "last-n" )          LAST_N,
+      @JsonProperty( "change-filterer" ) CHANGE_FILTERER,
+      @JsonProperty( "default" )         DEFAULT;
 
       String filterName;
       String filterParameterName;
 
-      FilterType( String filterName, String filterParameterName )
-      {
-         this.filterName = filterName;
-         this.filterParameterName = filterParameterName;
-      }
+//      FilterType( String filterName, String filterParameterName )
+//      {
+//         this.filterName = filterName;
+//         this.filterParameterName = filterParameterName;
+//      }
    }
 }
