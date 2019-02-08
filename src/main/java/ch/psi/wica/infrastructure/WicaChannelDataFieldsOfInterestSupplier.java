@@ -2,10 +2,7 @@
 package ch.psi.wica.infrastructure;
 
 /*- Imported packages --------------------------------------------------------*/
-import ch.psi.wica.model.WicaChannel;
-import ch.psi.wica.model.WicaChannelName;
-import ch.psi.wica.model.WicaChannelProperties;
-import ch.psi.wica.model.WicaStream;
+import ch.psi.wica.model.*;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -19,26 +16,28 @@ import java.util.Set;
 /*- Class Declaration --------------------------------------------------------*/
 
 @Immutable
-public class WicaChannelDataFieldsOfInterestSupplier implements  WicaChannelValueMapSerializer.FieldsOfInterestSupplier
+public class WicaChannelDataFieldsOfInterestSupplier implements FieldsOfInterestSupplier
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(WicaStreamConfigurationDecoder.class );
-   private final WicaStream wicaStream;
+   private final Logger logger = LoggerFactory.getLogger( WicaChannelDataFieldsOfInterestSupplier.class );
 
+   private final WicaStreamProperties wicaStreamProperties;
+   private final Set<WicaChannel> wicaChannels;
    private final Map<WicaChannelName, Set<String>> map = new HashMap<>();
-
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    public WicaChannelDataFieldsOfInterestSupplier( WicaStream wicaStream )
    {
-      this.wicaStream = Validate.notNull(wicaStream );
-      addWicaStreamDefaultValues();
-      addWicaChannelPropertiesOverrides();
+      Validate.notNull( wicaStream );
+      this.wicaStreamProperties = wicaStream.getWicaStreamProperties();
+      this.wicaChannels = wicaStream.getWicaChannels();
+      addWicaStreamPropertyDefaultValues();
+      addWicaChannelPropertyOverrides();
    }
 
 
@@ -52,58 +51,26 @@ public class WicaChannelDataFieldsOfInterestSupplier implements  WicaChannelValu
    }
 
 
-
 /*- Private methods ----------------------------------------------------------*/
 
-   private void addWicaStreamDefaultValues()
+   private void addWicaStreamPropertyDefaultValues()
    {
-      final var wicaStreamProperties = wicaStream.getWicaStreamProperties();
-
-      final boolean includeAlarmInfo = wicaStreamProperties.hasProperty( "includeAlarmInfo" )
-            && wicaStreamProperties.getPropertyValue( "includeAlarmInfo" ).equals( "true" );
-      logger.info( "includeAlarmInfo is : '{}'", includeAlarmInfo );
-
-      final boolean includeTimestamp = wicaStreamProperties.hasProperty( "includeTimestamp" )
-            && wicaStreamProperties.getPropertyValue( "includeTimestamp" ).equals( "true" );
-      logger.info( "includeTimestamp is : '{}'", includeTimestamp );
-
-      final Set<String> wicaChannelValueFieldSelectors = includeAlarmInfo ?
-            ( includeTimestamp ? Set.of( "val", "sevr", "ts" ) : Set.of( "val", "sevr" ) ) :
-            ( includeTimestamp ? Set.of( "val", "ts" ) : Set.of( "val" ) );
-
-      logger.info( "Default fields selected for value serialization are '{}'", wicaChannelValueFieldSelectors );
-
-      map.keySet().forEach( (c) -> map.put( c, wicaChannelValueFieldSelectors ) );
+      final Set<String> fieldsOfInterest = wicaStreamProperties.getFieldsOfInterest();
+      logger.info( "Stream default fieldsOfInterest for are: '{}'", fieldsOfInterest );
+      map.keySet().forEach( ch -> map.put( ch, fieldsOfInterest ) );
    }
 
-   private void addWicaChannelPropertiesOverrides()
+   private void addWicaChannelPropertyOverrides()
    {
-      //wicaStream.getWicaChannels().stream().map( c -> c.getName(), c -> c. ).
+      wicaChannels.stream()
+                  .filter( ch -> ch.getProperties().getFieldsOfInterest() == null)
+                  .forEach( ch -> {
+                     final Set<String> fieldsOfInterestOverride = ch.getProperties().getFieldsOfInterest();
+                     logger.info("Channel '{}' had fieldsOfInterest override '{}'", ch, fieldsOfInterestOverride );
+                     map.put( ch.getName(), fieldsOfInterestOverride);
+                  } );
    }
 
-
-//
-//   private Map<WicaChannelName,Set<String>> getValueFieldMap()
-//   {
-//      final Map<WicaChannelName,Set<String>> outputMap = new HashMap<>();
-//      channelMap.keySet().forEach( c -> {
-//         final WicaChannel wicaChannel = this.channelMap.get(c );
-//         final WicaChannelProperties props = wicaChannel.getProperties();
-//         final String fieldSpecifierString = props.hasProperty( "fields" ) ? props.getPropertyValue("fields") : "val;sevr";
-//         final Set<String> fieldSerialisationSelectorSet = buildFieldSerialisationSelectorSet(fieldSpecifierString );
-//         outputMap.put( c, fieldSerialisationSelectorSet );
-//      } );
-//
-//      return outputMap;
-//   }
-
-
-   static private Set<String> buildFieldSerialisationSelectorSet( String fieldSerialsationSelectorString )
-   {
-      final String[] arr = fieldSerialsationSelectorString.split(";");
-      return Set.of( arr );
-   }
-
-   /*- Nested Classes -----------------------------------------------------------*/
+/*- Nested Classes -----------------------------------------------------------*/
 
 }

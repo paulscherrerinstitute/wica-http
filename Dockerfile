@@ -2,11 +2,30 @@
 # 1.0 Create a cutdown JDK image tailored to the needs of the application
 ###############################################################################
 
+FROM alpine:3.7 as build_jdk
+
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+RUN ZULU_ARCH=zulu11.2.3-jdk11.0.1-linux_musl_x64.tar.gz && \
+    INSTALL_DIR=/usr/lib/jvm && \
+	BIN_DIR=/usr/bin && \
+	MAN_DIR=/usr/share/man/man1 && \
+	ZULU_DIR=$( basename ${ZULU_ARCH} .tar.gz ) && \
+	wget -q https://cdn.azul.com/zulu/bin/${ZULU_ARCH} && \
+	mkdir -p ${INSTALL_DIR} && \
+	tar -xf ./${ZULU_ARCH} -C ${INSTALL_DIR} && rm -f ${ZULU_ARCH} && \
+	cd ${BIN_DIR} && find ${INSTALL_DIR}/${ZULU_DIR}/bin -type f -perm -a=x -exec ln -s {} . \; && \
+	mkdir -p ${MAN_DIR} && \
+	cd ${MAN_DIR} && find ${INSTALL_DIR}/${ZULU_DIR}/man/man1 -type f -name "*.1" -exec ln -s {} . \; && \
+	java -version
+
+
 # Start with the Standard OpenJDK release
 # FROM openjdk:9-jdk as build_jdk
 #FROM openjdk:10-jdk as build_jdk
 #
-#WORKDIR /app
+WORKDIR /app
 #
 ## Create a reduced JVM with just those modules that are required by the
 ## wica application.
@@ -15,13 +34,13 @@
 ## tool to analyse the dependencies in the wica über jar. Obviously the
 ## list will need to be adjusted when/if new features are added.
 #
-#RUN jlink --module-path $JAVA_HOME/jmods \
-#          --add-modules java.base,java.desktop,java.instrument,java.logging,java.management,java.naming,java.prefs,java.rmi,java.security.jgss,java.scripting,java.sql,java.transaction,java.xml,java.xml.bind,java.xml.ws,java.xml.ws.annotation,jdk.httpserver \
-#          --output my_java \
-#          --compress 2 \
-#          --strip-debug \
-#          --no-header-files \
-#          --no-man-pages
+RUN jlink --module-path $JAVA_HOME/jmods \
+          --add-modules java.base,java.desktop,java.instrument,java.logging,java.management,java.naming,java.prefs,java.rmi,java.security.jgss,java.scripting,java.sql,java.xml,jdk.httpserver \
+          --output my_java \
+          --compress 2 \
+          --strip-debug \
+          --no-header-files \
+          --no-man-pages
 
 ###############################################################################
 # 2.0 Get support for EPICS
@@ -55,7 +74,9 @@
 # 3.0 Now create a debian image for deploying the application
 ###############################################################################
 
-FROM openjdk:10-jdk as build_jdk
+FROM alpine:3.7
+
+#FROM openjdk:10-jdk as build_jdk
 #FROM debian:stable-slim
 
 # This script takes one argument - the name of the jar file containing
@@ -64,10 +85,10 @@ ARG JAR_FILE
 
 # Copy over the cutdown Java runtime that was created in the first stage
 # of the build above.
-#ENV JAVA_HOME=/opt/jdk \
-#    PATH=${PATH}:/opt/jdk/bin
-#
-#COPY --from=build_jdk /app/my_java/ $JAVA_HOME
+ENV JAVA_HOME=/opt/jdk \
+    PATH=${PATH}:/opt/jdk/bin
+
+COPY --from=build_jdk /app/my_java/ $JAVA_HOME
 
 ##
 ## Enable the following block when EPICS is needed in the container for eg
@@ -122,10 +143,16 @@ WORKDIR /root
 
 # Add the dependencies of the deploy scripts, including python and git
 # Added basic vim editor to ease debugging (can be removed later in production).
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-    apt-get install -y openssh-client &&             \
-    apt-get clean &&                                 \
-    rm -rf /var/lib/apt/lists/* /tmp/*
+#RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+#    apt-get install -y openssh-client &&             \
+#    apt-get clean &&                                 \
+#    rm -rf /var/lib/apt/lists/* /tmp/*
+
+
+RUN apk update && \
+    apk add --no-cache bash && \
+    apk add --no-cache openssh-client
+
 
 ###############################################################################
 # 5.0 Set up the application project structure

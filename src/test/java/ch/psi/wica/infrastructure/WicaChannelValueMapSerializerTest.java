@@ -6,6 +6,7 @@ package ch.psi.wica.infrastructure;
 import ch.psi.wica.model.WicaChannelName;
 import ch.psi.wica.model.WicaChannelValue;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +45,6 @@ class WicaChannelValueMapSerializerTest
    private WicaChannelValue intArrValue;
    private WicaChannelValue strArrValue;
    private WicaChannelValue realArrValue;
-
 
    private ObjectMapper jsonDecoder;
 
@@ -84,12 +85,14 @@ class WicaChannelValueMapSerializerTest
                                                                       WicaChannelName.of( "RealNanTypeChannel" ),  List.of( realNanValue ),
                                                                       WicaChannelName.of( "RealArrayTypeChannel" ),  List.of( realArrValue  ) );
 
-      final var serializer = new WicaChannelValueMapSerializer( 5, false, false, (c) -> Set.of( "val" ) );
+      final var serializer = new WicaChannelValueMapSerializer( (c) -> Set.of( "val" ), (c) -> 5, false );
       final String jsonStr = serializer.serialize( map );
-      logger.info("JSON Value MAP serialisation like this: '{}'", jsonStr );
+      logger.info("JSON Value MAP serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
    }
 
 /*- Private methods ----------------------------------------------------------*/
+
+
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

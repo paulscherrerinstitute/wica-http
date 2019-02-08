@@ -169,10 +169,10 @@ export class DocumentEventManager
             const channelName = element.getAttribute( channelNameAttribute );
 
             // Obtain the channel metadata object
-            const channelMetadata = JSON.parse( element.getAttribute(channelMetadataAttribute ));
+            const channelMetadata = JSON5.parse( element.getAttribute(channelMetadataAttribute ));
 
             // Obtain the object containing the array of recently received channel values.
-            const channelValueArray = JSON.parse( element.getAttribute( channelValueArrayAttribute ));
+            const channelValueArray = JSON5.parse( element.getAttribute( channelValueArrayAttribute ));
 
             // Check that the received value object really was an array
             if (!Array.isArray( channelValueArray )) {

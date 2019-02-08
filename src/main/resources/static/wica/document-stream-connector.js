@@ -166,7 +166,7 @@ export class DocumentStreamConnector
             if ( widget.hasAttribute( channelPropertiesAttribute ) )
             {
                 const channelProps = widget.getAttribute( channelPropertiesAttribute );
-                const channelConfiguration = { "name": channelName, "props": JSON.parse( channelProps ) };
+                const channelConfiguration = { "name": channelName, "props": JSON5.parse( channelProps ) };
                 channels.push( channelConfiguration );
             }
             else
@@ -197,7 +197,7 @@ export class DocumentStreamConnector
             const channelName = key;
             const channelMetadata = metadataMap[key];
             const elements = DocumentUtilities.findWicaElementsWithChannelName( channelName );
-            const metadataAsString = JSON.stringify(channelMetadata);
+            const metadataAsString = JSON5.stringify(channelMetadata);
             elements.forEach(ele => {
                 ele.setAttribute( channelMetadataAttribute, metadataAsString);
                 console.log( "Metadata updated on channel: '" + key + "', new value: '" + metadataAsString + "'" );
@@ -226,14 +226,14 @@ export class DocumentStreamConnector
             const channelName = key;
             const channelValueArray = valueMap[key];
             const elements = DocumentUtilities.findWicaElementsWithChannelName(channelName);
-            const channelValueArrayAsString = JSON.stringify(channelValueArray);
+            const channelValueArrayAsString = JSON5.stringify(channelValueArray);
 
             if (!Array.isArray(channelValueArray)) {
                 console.warn("Stream Error: not an array !");
                 return;
             }
             const channelValueLatest = channelValueArray.pop();
-            const channelValueLatestAsString = JSON.stringify(channelValueLatest);
+            const channelValueLatestAsString = JSON5.stringify(channelValueLatest);
             const channelConnectionState = (channelValueLatest.val === null) ? "disconnected" : "connected";
             elements.forEach(ele => {
                 ele.setAttribute( channelValueArrayAttribute, channelValueArrayAsString);

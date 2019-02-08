@@ -4,10 +4,14 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.WicaStream;
 import ch.psi.wica.model.WicaStreamId;
+import ch.psi.wica.services.stream.WicaStreamService;
+import ch.psi.wica.services.stream.WicaStreamPublisher;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +37,24 @@ class WicaStreamDeleteController
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger(WicaStreamDeleteController.class );
-   private final Map<WicaStreamId, Flux<ServerSentEvent<String>>> eventStreamFluxMap = new ConcurrentHashMap<>();
+   private final WicaStreamService wicaStreamService;
 
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
-/*- Class methods ------------------------------------------------------------*/
+
+   /**
+    * Constructs a new controller for handling stream DELETE requests.
+    *
+    * @param wicaStreamService reference to the service object which can be used
+    *        to delete the reactive stream.
+    */
+   private WicaStreamDeleteController( @Autowired WicaStreamService wicaStreamService )
+   {
+      this.wicaStreamService = Validate.notNull( wicaStreamService );
+   }
+
+   /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
    @DeleteMapping( value="/{id}", produces=MediaType.TEXT_PLAIN_VALUE )
@@ -51,19 +67,14 @@ class WicaStreamDeleteController
 
       // Handle the situation where an unknown WicaStreamId is given
       final WicaStreamId wicaStreamId = WicaStreamId.of(id );
-      if ( ! eventStreamFluxMap.containsKey(wicaStreamId) )
+      if ( ! wicaStreamService.isKnownId( wicaStreamId ) )
       {
          logger.info( "GET: Rejected request because the event stream 'id' was not recognised." );
          return new ResponseEntity<>( HttpStatus.BAD_REQUEST );
       }
 
-      // Handle the normal case
-      // Remove all monitors on all the channels of interest.
-      // TODO: work out best way of getting stream back from Id
-      //epicsChannelValueStashService.stopMonitoring( eventStreamFluxMap.get( wicaStreamId ) );
-
-      // Note: this generates an IntelliJ warning about unassigned flux. But it is ok.
-      eventStreamFluxMap.remove(wicaStreamId);
+      // TODO: need to add error handling here
+      wicaStreamService.delete( wicaStreamId );
 
       logger.info( "DELETE: deleted stream with id: '{}'", id );
       return new ResponseEntity<>( id, HttpStatus.OK );

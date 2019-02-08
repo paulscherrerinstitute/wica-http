@@ -4,6 +4,7 @@ package ch.psi.wica.infrastructure;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.WicaChannelData;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -13,8 +14,12 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -30,7 +35,7 @@ class WicaChannelDataSerializer
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final ObjectMapper jsonObjectMapper;
+   private ObjectMapper jsonObjectMapper;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -44,7 +49,9 @@ class WicaChannelDataSerializer
     * (= number of digits after the decimal point).
     *
     * Special double values such a Nan and Infinity will be written as
-    * either numbers or strings depending on the specified settings.
+    * either numbers or strings depending on the quoteNumericStrings
+    * setting.
+    *
     * For strict JSON compliance string format should be selected, although
     * this may imply extra work on the decoding end to reconstruct the
     * original types. For JSON5 compliance number format can be selected.
@@ -53,20 +60,14 @@ class WicaChannelDataSerializer
     *     digits to appear after the decimal point in the serialized
     *     representation.
     *
-    * @param writeNanAsString - determines whether the special value
-    *     Double.NAN will be serialised as a number or a string.
+    * @param quoteNumericStrings - determines whether the special double
+    *     values NaN and Infinity will be serialised as numbers or strings.
     *
-    * @param writeInfinityAsString - determines whether the special values
-    *     Double.POSITIVE_INFINITY and DOUBLE.NEGATIVE_INFINITY will be
-    *     serialised as a number or a string.
-
     * @throws IllegalArgumentException if the numericScale was negative.
     */
-   WicaChannelDataSerializer( int numericScale,
-                              boolean writeNanAsString,
-                              boolean writeInfinityAsString )
+   WicaChannelDataSerializer( int numericScale, boolean quoteNumericStrings )
    {
-      this( numericScale, writeNanAsString, writeInfinityAsString, getSerializeAllFieldsFilterProvider() );
+      this( getSerializeAllFieldsFilterProvider(), numericScale, quoteNumericStrings );
    }
 
    /**
@@ -78,82 +79,89 @@ class WicaChannelDataSerializer
     * (= number of digits after the decimal point).
     *
     * Special double values such a Nan and Infinity will be written as
-    * either numbers or strings depending on the specified settings.
+    * either numbers or strings depending on the quoteNumericStrings
+    * setting.
+    *
     * For strict JSON compliance string format should be selected, although
     * this may imply extra work on the decoding end to reconstruct the
     * original types. For JSON5 compliance number format can be selected.
     *
+    * @param fieldsOfInterest specifies the fields that are to be serialised
+    *     according to the @JsonProperty annotations in the ChannelDataObject.
+
     * @param numericScale a non-negative number specifying the number of
     *     digits to appear after the decimal point in the serialized
     *     representation.
     *
-    * @param writeNanAsString - determines whether the special value
-    *     Double.NAN will be serialised as a number or a string.
-    *
-    * @param writeInfinityAsString - determines whether the special values
-    *     Double.POSITIVE_INFINITY and DOUBLE.NEGATIVE_INFINITY will be
-    *     serialised as a number or a string.
-    *
-    * @param fieldsOfInterest specifies the fields that are to be serialised
-    *     according to the @JsonProperty annotations in the ChannelDataObject.
+    * @param quoteNumericStrings - determines whether the special double
+    *     values NaN and Infinity will be serialised as numbers or strings.
     *
     * @throws IllegalArgumentException if the numericScale was negative.
+    * @throws NullPointerException if the supplied filterProvider was null.
     */
-   WicaChannelDataSerializer( int numericScale,
-                              boolean writeNanAsString,
-                              boolean writeInfinityAsString,
-                              String... fieldsOfInterest )
+   WicaChannelDataSerializer(  Set<String> fieldsOfInterest, int numericScale, boolean quoteNumericStrings )
    {
-      this( numericScale, writeNanAsString, writeInfinityAsString,
-            getSerializeSelectedFieldsFilterProvider( fieldsOfInterest) );
+      this( getSerializeSelectedFieldsFilterProvider( fieldsOfInterest), numericScale, quoteNumericStrings );
    }
+
+
+/*- Private Constructor ------------------------------------------------------*/
 
    /**
     * Private constructor that selects the fields to serialize according to the
-    * supplied filterProvider and where the representation of Nan's/Infinity
-    * can be configured.
+    * supplied filterProvider and where the serialized representation of
+    * Nan's/Infinity can be configured to be of either type number or string.
+    *
+    * @param filterProvider the filter provider defining the field selection
+    *     rules.
     *
     * @param numericScale a non-negative number specifying the number of
     *     digits to appear after the decimal point in the serialized
     *     representation.
     *
-    * @param writeNanAsString - determines whether the special value
-    *     Double.NAN will be serialised as a number or a string.
-    *
-    * @param writeInfinityAsString - determines whether the special values
-    *     Double.POSITIVE_INFINITY and DOUBLE.NEGATIVE_INFINITY will be
-    *     serialised as a number or a string.
-    *
-    * @param filterProvider the filter provider defining the field selection rules.
+    * @param quoteNumericStrings - determines whether the special double
+    *     values NaN and Infinity will be serialised as numbers or strings.
     *
     * @throws IllegalArgumentException if the numericScale was negative.
     * @throws NullPointerException if the supplied filterProvider was null.
 
     */
-   private WicaChannelDataSerializer( int numericScale,
-                                      boolean writeNanAsString,
-                                      boolean writeInfinityAsString,
-                                      FilterProvider filterProvider )
+   private WicaChannelDataSerializer( FilterProvider filterProvider,
+                                      int numericScale,
+                                      boolean quoteNumericStrings )
    {
       Validate.isTrue(numericScale >= 0, String.format( "numericScale ('%d') cannot be negative", numericScale ) );
       Validate.notNull( filterProvider );
 
-      // Start defining the special properties of the metadata serialiser
-      final SimpleModule metadataModule = new SimpleModule();
+      // Start defining the special properties of this serialiser
+      final SimpleModule module = new SimpleModule();
 
       // It is "special" because (a) it is possible to control the number of digits
       // sent down the wire when representing doubles.
-      metadataModule.addSerializer( double.class, new WicaDoubleSerializer( numericScale, writeNanAsString, writeInfinityAsString ) );
+      module.addSerializer( double.class, new WicaDoubleSerializer( numericScale ) );
       jsonObjectMapper = new Jackson2ObjectMapperBuilder().createXmlMapper(false ).build();
-      jsonObjectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false );
+
+      // Turn off the feature whereby date/time values are written as timestamps.
+      jsonObjectMapper.configure( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false );
       jsonObjectMapper.configure( SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false );
 
-      // It is special because (b) we can select the fields of interest that get
-      // sent down the wire
+      // It is "special" because (b) it is possible to control programmatically
+      // the serialized representation of NaN and Infinity.
+      if ( quoteNumericStrings )
+      {
+         jsonObjectMapper.enable( JsonGenerator.Feature.QUOTE_NON_NUMERIC_NUMBERS);
+      }
+      else
+      {
+         jsonObjectMapper.disable(JsonGenerator.Feature.QUOTE_NON_NUMERIC_NUMBERS);
+      }
+
+      // It is special because (c) we can select the fields of interest that get
+      // sent down the wire.
       jsonObjectMapper.setFilterProvider(filterProvider );
 
       // Complete the registration of our special serializer.
-      jsonObjectMapper.registerModule(metadataModule );
+      jsonObjectMapper.registerModule( module );
 
    }
 
@@ -182,16 +190,16 @@ class WicaChannelDataSerializer
 
 /*- Private methods ----------------------------------------------------------*/
 
-   private static FilterProvider getSerializeSelectedFieldsFilterProvider( String... fieldsOfInterest )
+   private static FilterProvider getSerializeSelectedFieldsFilterProvider( Set<String> fieldsOfInterest )
    {
-      final SimpleBeanPropertyFilter metadataFilter = SimpleBeanPropertyFilter.filterOutAllExcept( fieldsOfInterest );
-      return new SimpleFilterProvider().addFilter( "WicaChannelDataFilter", metadataFilter );
+      final SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept( fieldsOfInterest );
+      return new SimpleFilterProvider().addFilter( "WicaChannelDataFilter", filter );
    }
 
    private static FilterProvider getSerializeAllFieldsFilterProvider()
    {
-      final SimpleBeanPropertyFilter metadataFilter = SimpleBeanPropertyFilter.serializeAll();
-      return new SimpleFilterProvider().addFilter( "WicaChannelDataFilter", metadataFilter );
+      final SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAll();
+      return new SimpleFilterProvider().addFilter( "WicaChannelDataFilter", filter );
    }
 
 /*- Nested Classes -----------------------------------------------------------*/

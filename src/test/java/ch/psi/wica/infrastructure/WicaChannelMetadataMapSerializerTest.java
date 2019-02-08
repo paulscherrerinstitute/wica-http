@@ -6,6 +6,7 @@ package ch.psi.wica.infrastructure;
 import ch.psi.wica.model.WicaChannelMetadata;
 import ch.psi.wica.model.WicaChannelName;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
@@ -80,9 +81,9 @@ class WicaChannelMetadataMapSerializerTest
                                                                    WicaChannelName.of( "RealNanTypeChannel" ), realNanMetadata,
                                                                    WicaChannelName.of( "RealArrayTypeChannel" ), realArrMetadata );
 
-      final var serializer = new WicaChannelMetadataMapSerializer( 5, false, false, (c) -> Set.of() );
+      final var serializer = new WicaChannelMetadataMapSerializer( c -> Set.of(), c -> 5,  false );
       final String jsonStr = serializer.serialize( map );
-      logger.info("JSON Metadata MAP serialisation like this: '{}'", jsonStr );
+      logger.info("JSON Metadata MAP serialisation like this: '{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
    }
 
 

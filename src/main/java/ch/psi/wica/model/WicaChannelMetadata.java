@@ -13,7 +13,7 @@ import org.apache.commons.lang3.Validate;
 
 // Note the Filter Id in the annotation here must match the definition in
 // the WicaChannelMetadataSerializer.
-@JsonFilter( "WicaChannelMetadataFilter" )
+@JsonFilter( "WicaChannelDataFilter" )
 @Immutable
 public abstract class WicaChannelMetadata extends WicaChannelData
 {

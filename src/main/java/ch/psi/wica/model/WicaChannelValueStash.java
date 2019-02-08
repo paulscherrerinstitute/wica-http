@@ -90,7 +90,7 @@ public class WicaChannelValueStash
    /**
     * Gets all channel values for the specified stream which arrived after the specified timestamp.
     *
-    * @param wicaStream the stream of interest.
+    * @param wicaChannels the channels of interest.
     * @param since the timestamp.
     *
     * @return the map of channel names and values which satisfy the arrival timing constraint.
@@ -98,13 +98,13 @@ public class WicaChannelValueStash
     * @throws IllegalStateException if the stash has no previously stored values any of the channels
     *         in this stream.
     */
-   public synchronized Map<WicaChannelName, List<WicaChannelValue>> getLaterThan( WicaStream wicaStream, LocalDateTime since )
+   public synchronized Map<WicaChannelName, List<WicaChannelValue>> getLaterThan( Set<WicaChannel> wicaChannels, LocalDateTime since )
    {
-      Validate.notNull( wicaStream );
+      Validate.notNull( wicaChannels );
       Validate.notNull( since );
 
       final Map<WicaChannelName, List<WicaChannelValue>> outputMap = new ConcurrentHashMap<>();
-      wicaStream.getWicaChannels().forEach( c -> {
+      wicaChannels.forEach( c -> {
          final List<WicaChannelValue> laterThanList = getLaterThan( c.getName(), since );
          if ( laterThanList.size() > 0  )
          {

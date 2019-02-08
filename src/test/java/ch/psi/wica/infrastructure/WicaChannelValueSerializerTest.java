@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.util.Set;
 
 import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
@@ -72,16 +73,17 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueUnconnected()
    {
-      final var serializer = new WicaChannelValueSerializer(5 );
-      logger.info("JSON Value UNCONNECTED serialisation like this: '{}'", serializer.serialize( unconnValue ) );
+      final var serializer = new WicaChannelValueSerializer( 5, false );
+      final var jsonStr =  serializer.serialize( unconnValue );
+      logger.info("JSON Value UNCONNECTED serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
    }
 
    @Test
    void test_serializeValueString() throws IOException
    {
-      final var serializer = new WicaChannelValueSerializer(5 );
+      final var serializer = new WicaChannelValueSerializer( 5, false );
       final var jsonStr =  serializer.serialize( strValue );
-      logger.info("JSON Value STRING serialisation like this: '{}'", jsonStr );
+      logger.info("JSON Value STRING serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
       final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "val") );
@@ -92,9 +94,9 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueStringArray() throws IOException
    {
-      final var serializer = new WicaChannelValueSerializer(5 );
+      final var serializer = new WicaChannelValueSerializer( 5, false );
       final var jsonStr =  serializer.serialize( strArrValue );
-      logger.info("JSON Value STRING ARRAY serialisation like this: '{}'", jsonStr );
+      logger.info("JSON Value STRING ARRAY serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
       final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "val") );
@@ -107,9 +109,9 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueInteger() throws IOException
    {
-      final var serializer = new WicaChannelValueSerializer(5 );
+      final var serializer = new WicaChannelValueSerializer( 5, false);
       final var jsonStr =  serializer.serialize( intValue );
-      logger.info("JSON Value INTEGER serialisation like this: '{}'", jsonStr );
+      logger.info("JSON Value INTEGER serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
       final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "val") );
@@ -120,9 +122,9 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueIntegerArray() throws IOException
    {
-      final var serializer = new WicaChannelValueSerializer(5 );
+      final var serializer = new WicaChannelValueSerializer( 5, false );
       final var jsonStr =  serializer.serialize( intArrValue );
-      logger.info("JSON Value INTEGER ARRAY serialisation like this: '{}'", serializer.serialize( intArrValue ) );
+      logger.info("JSON Value INTEGER ARRAY serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr )  );
       final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "val") );
@@ -135,9 +137,9 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueReal() throws IOException
    {
-      final var serializer = new WicaChannelValueSerializer(6 );
+      final var serializer = new WicaChannelValueSerializer( 6, false );
       final var jsonStr =  serializer.serialize( realValue );
-      logger.info("JSON Value REAL serialisation like this: '{}'", jsonStr );
+      logger.info("JSON Value REAL serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
       final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "val") );
@@ -148,9 +150,9 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueRealArray() throws IOException
    {
-      final var serializer = new WicaChannelValueSerializer(5 );
+      final var serializer = new WicaChannelValueSerializer( 5, false );
       final var jsonStr =  serializer.serialize( realArrValue );
-      logger.info("JSON Value REAL ARRAY serialisation like this: '{}'", jsonStr );
+      logger.info("JSON Value REAL ARRAY serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
       final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "val") );
@@ -163,9 +165,9 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueRealIncludesNanSerializedAsNumber() throws IOException
    {
-      final var serializer = new WicaChannelValueSerializer( 5, false, false, "type", "val" );
+      final var serializer = new WicaChannelValueSerializer( Set.of("type", "val" ),5, false );
       final var jsonStr =  serializer.serialize( realNanValue );
-      logger.info("JSON Value REAL serialisation including NAN field looks like this: '{}'", jsonStr );
+      logger.info("JSON Value REAL serialisation including NAN field looks like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
       final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "val") );
@@ -177,9 +179,9 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueRealIncludesNanSerializedAsString() throws IOException
    {
-      final var serializer = new WicaChannelValueSerializer( 5, true, false, "type", "val" );
+      final var serializer = new WicaChannelValueSerializer( Set.of( "type", "val" ), 5, true );
       final var jsonStr =  serializer.serialize( realNanValue );
-      logger.info("JSON Value REAL serialisation including NAN field looks like this: '{}'", jsonStr );
+      logger.info("JSON Value REAL serialisation including NAN field looks like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
       final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "type") );
@@ -191,9 +193,9 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueRealIncludesInfinitySerializesAsNumber() throws IOException
    {
-      final var serializer = new WicaChannelValueSerializer( 5, false, false, "type", "val" );
+      final var serializer = new WicaChannelValueSerializer( Set.of( "type", "val" ), 5, false );
       final var jsonStr =  serializer.serialize( realInfValue );
-      logger.info("JSON Value REAL serialisation including INFINITY field looks like this: '{}'", jsonStr );
+      logger.info("JSON Value REAL serialisation including INFINITY field looks like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
       final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "type") );
@@ -205,9 +207,9 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueRealIncludesInfinitySerializesAsString() throws IOException
    {
-      final var serializer = new WicaChannelValueSerializer( 5, false, true, "type", "val" );
+      final var serializer = new WicaChannelValueSerializer( Set.of("type", "val" ), 5, true );
       final var jsonStr =  serializer.serialize( realInfValue );
-      logger.info("JSON Value REAL serialisation including INFINITY field looks like this: '{}'", jsonStr );
+      logger.info("JSON Value REAL serialisation including INFINITY field looks like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr )  );
       final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "type") );
@@ -219,9 +221,9 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueRealCheckFieldsOfInterestFeature() throws IOException
    {
-      final var serializer = new WicaChannelValueSerializer( 5, false, false,"val", "sevr" );
+      final var serializer = new WicaChannelValueSerializer( Set.of( "sevr", "val" ),5, false );
       final var jsonStr =  serializer.serialize( realValue );
-      logger.info("JSON Value REAL serialisation of VAL/SEVR fields looks like this: '{}'", jsonStr );
+      logger.info("JSON Value REAL serialisation of VAL/SEVR fields looks like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr )  );
       final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
       assertTrue( rootNode.isObject() );
       assertEquals( 2,  rootNode.size() );
@@ -232,8 +234,8 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueRealWithIllegalPrecision()
    {
-      assertDoesNotThrow( () -> new WicaChannelValueSerializer(0 ));
-      assertThrows( IllegalArgumentException.class, () -> new WicaChannelValueSerializer(-1 ));
+      assertDoesNotThrow( () -> new WicaChannelValueSerializer( 0, false ));
+      assertThrows( IllegalArgumentException.class, () -> new WicaChannelValueSerializer( -1, false ));
    }
 
    @Test
@@ -241,41 +243,24 @@ class WicaChannelValueSerializerTest
    {
       final var real = WicaChannelValue.createChannelValueConnected( 123456.654321 );
 
-      final var num4Serializer = new WicaChannelValueSerializer( 4,"val" );
+      final var num4Serializer = new WicaChannelValueSerializer( Set.of( "val" ), 4,false );
       final var jsonStr1 =  num4Serializer.serialize( real );
-      logger.info("JSON Value REAL serialisation of ' 123456.654321' with 'numericScale=4' looks like this: '{}'", jsonStr1 );
+      logger.info("JSON Value REAL serialisation of ' 123456.654321' with 'numericScale=4' looks like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr1 )  );
       final JsonNode rootNode1 = jsonDecoder.readTree( jsonStr1 );
       assertTrue( rootNode1.isObject() );
       assertEquals( 1,  rootNode1.size() );
       assertTrue( rootNode1.has( "val") );
       assertEquals( 123456.6543, rootNode1.get( "val" ).asDouble() );
 
-      final var num2Serializer = new WicaChannelValueSerializer( 2,"val" );
+      final var num2Serializer = new WicaChannelValueSerializer(  Set.of( "val" ), 2,false );
       final var jsonStr2 = num2Serializer.serialize( real );
-      logger.info("JSON Value REAL serialisation of ' 123456.654321' with 'numericScale=2' looks like this: '{}'", jsonStr2 );
+      logger.info("JSON Value REAL serialisation of ' 123456.654321' with 'numericScale=2' looks like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr2 )  );
       final JsonNode rootNode2 = jsonDecoder.readTree( jsonStr2 );
       assertTrue( rootNode2.isObject() );
       assertEquals( 1,  rootNode2.size() );
       assertTrue( rootNode2.has( "val") );
       assertEquals( 123456.65, rootNode2.get( "val" ).asDouble() );
    }
-
-//   @Test
-//   void test_serializeValueMap()
-//   {
-//      final Map<WicaChannelName,WicaChannelValue> map = Map.of( WicaChannelName.of( "UnknownTypeChannel" ), unkValue,
-//                                                                   WicaChannelName.of( "StringTypeChannel" ), strValue,
-//                                                                   WicaChannelName.of( "StringArrayType" ), strArrValue,
-//                                                                   WicaChannelName.of( "IntegerTypeChannel" ), intValue,
-//                                                                   WicaChannelName.of( "IntegerArrayTypeChannel" ), intArrValue,
-//                                                                   WicaChannelName.of( "RealTypeChannel" ), realValue,
-//                                                                   WicaChannelName.of( "RealInfTypeChannel" ), realInfValue,
-//                                                                   WicaChannelName.of( "RealNanTypeChannel" ), realNanValue,
-//                                                                   WicaChannelName.of( "RealArrayTypeChannel" ), realArrValue );
-//
-//      final var serializer = new WicaChannelValueSerializer(5 );
-//      logger.info("JSON Value MAP serialisation like this: '{}'", serializer.serialize( map ) );
-//   }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

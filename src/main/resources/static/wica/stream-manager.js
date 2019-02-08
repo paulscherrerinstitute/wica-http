@@ -265,7 +265,7 @@ export class StreamManager
 
         eventSource.addEventListener( 'ev-wica-channel-metadata',ev => {
             if ( this.crossOriginCheckOk_( ev ) ) {
-                const metadataArrayObject = JSON.parse( ev.data );
+                const metadataArrayObject = JSON5.parse( ev.data );
                 this.channelMetadataUpdated( metadataArrayObject );
             }
 
@@ -273,7 +273,7 @@ export class StreamManager
 
         eventSource.addEventListener( 'ev-wica-channel-value', ev => {
             if ( this.crossOriginCheckOk_( ev ) ) {
-                const valueArrayObject = JSON.parse( ev.data );
+                const valueArrayObject = JSON5.parse( ev.data );
                 this.channelValuesUpdated( valueArrayObject );
             }
         }, false);

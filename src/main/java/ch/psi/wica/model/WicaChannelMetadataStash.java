@@ -9,6 +9,7 @@ import org.apache.commons.lang3.Validate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -80,20 +81,18 @@ public class WicaChannelMetadataStash
     * Gets the metadata for the specified stream (whose channel metadata
     * must already exist in the stash).
     *
-    * @param wicaStream the stream of interest.
+    * @param wicaChannels the channels of interest.
     * @return the stream's metadata.
     *
     * @throws IllegalStateException if the stash has no metadata for
     *         one or more channel's in the stream.
     */
-   public Map<WicaChannelName,WicaChannelMetadata> get( WicaStream wicaStream )
+   public Map<WicaChannelName,WicaChannelMetadata> get( Set<WicaChannel> wicaChannels )
    {
-      Validate.notNull( wicaStream );
-      Validate.validState( wicaStream.getWicaChannels().stream().anyMatch( c -> stash.containsKey( c.getName() ) ), "no metadata for one or more channels");
+      Validate.notNull( wicaChannels );
+      Validate.validState( wicaChannels.stream().anyMatch( c -> stash.containsKey( c.getName() ) ), "no metadata for one or more channels");
 
-      return wicaStream.getWicaChannels()
-                       .stream()
-                       .collect( Collectors.toMap( WicaChannel::getName, c -> stash.get(c.getName() ) ) );
+      return wicaChannels.stream().collect( Collectors.toMap( WicaChannel::getName, c -> stash.get(c.getName() ) ) );
    }
 
 /*- Private methods ----------------------------------------------------------*/

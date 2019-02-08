@@ -3,10 +3,7 @@ package ch.psi.wica.infrastructure;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.WicaChannel;
-import ch.psi.wica.model.WicaChannelName;
-import ch.psi.wica.model.WicaChannelProperties;
-import ch.psi.wica.model.WicaStreamProperties;
+import ch.psi.wica.model.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.jcip.annotations.Immutable;
@@ -35,6 +32,7 @@ public class WicaStreamConfigurationDecoder
    private final Logger logger = LoggerFactory.getLogger( WicaStreamConfigurationDecoder.class );
 
    private Map<String,String> streamPropertiesMap;
+   private WicaStreamProperties wicaStreamProperties;
 
    private Set<WicaChannel> wicaChannels = new HashSet<>();
 
@@ -62,7 +60,7 @@ public class WicaStreamConfigurationDecoder
 
    public WicaStreamProperties getWicaStreamProperties()
    {
-      return WicaStreamProperties.of( streamPropertiesMap );
+      return wicaStreamProperties;
    }
 
    public Set<WicaChannel> getWicaChannels()
@@ -76,7 +74,7 @@ public class WicaStreamConfigurationDecoder
    private void parse( String jsonInputString ) throws IOException
    {
       final ObjectMapper mapper = new ObjectMapper();
-      final JsonNode rootNode = mapper.readTree(jsonInputString);
+      final JsonNode rootNode = mapper.readTree( jsonInputString );
 
       if ( !rootNode.isObject() )
       {
@@ -85,11 +83,22 @@ public class WicaStreamConfigurationDecoder
 
       if ( rootNode.hasNonNull("props") )
       {
-         this.streamPropertiesMap = decodeObject( rootNode.get( "props" ) );
+         final JsonNode propsNode = rootNode.get( "props" );
+
+         if ( propsNode.isContainerNode() )
+         {
+            this.wicaStreamProperties = mapper.treeToValue(propsNode, WicaStreamProperties.class);
+            //this.streamPropertiesMap = decodeObject( rootNode.get( "props" ) );
+         }
+         else
+         {
+            throw new IllegalArgumentException( "The 'props' field in the root node of the JSON configuration string was not a container value." );
+         }
       }
       else
       {
-         this.streamPropertiesMap = new HashMap<>();
+         this.wicaStreamProperties = mapper.readValue("{}" , WicaStreamProperties.class );
+         //this.streamPropertiesMap = new HashMap<>();
       }
 
       if ( ! rootNode.has("channels") )
@@ -140,7 +149,7 @@ public class WicaStreamConfigurationDecoder
          {
             propsMap = new HashMap<>();
          }
-         this.wicaChannels.add( new WicaChannel( wicaChannelName, WicaChannelProperties.of( propsMap ) ) );
+         this.wicaChannels.add( new WicaChannel( wicaChannelName, new WicaChannelProperties()) );
       }
    }
 

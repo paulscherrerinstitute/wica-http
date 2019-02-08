@@ -1,21 +1,24 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.services.stream;
+package ch.psi.wica.infrastructure;
 
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.WicaChannelName;
-import ch.psi.wica.model.WicaChannelValue;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.jcip.annotations.Immutable;
 
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.Set;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
 @Immutable
-public interface WicaStreamMapper
+public class JsonStringFormatter
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -25,11 +28,23 @@ public interface WicaStreamMapper
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public Map<WicaChannelName,List<WicaChannelValue>> map( Map<WicaChannelName,List<WicaChannelValue>> inputMap );
-
+   public static String prettyFormat( String jsonInput ) throws RuntimeException
+   {
+      try
+      {
+         final ObjectMapper mapper = new ObjectMapper();
+         mapper.enable(JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS );
+         mapper.disable( JsonGenerator.Feature.QUOTE_NON_NUMERIC_NUMBERS );
+         final JsonNode json = mapper.readTree(jsonInput );
+         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString( json );
+      }
+      catch( IOException ex )
+      {
+         return "JSON formatting problem !" + ex;
+      }
+   }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
-
 
 }

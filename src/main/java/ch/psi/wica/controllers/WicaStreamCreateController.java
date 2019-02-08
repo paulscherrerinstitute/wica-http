@@ -4,10 +4,10 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.infrastructure.WicaServerSentEventBuilder;
-import ch.psi.wica.model.*;
+import ch.psi.wica.model.WicaStream;
 import ch.psi.wica.services.epics.EpicsChannelDataService;
-import ch.psi.wica.services.stream.WicaStreamManager;
+import ch.psi.wica.services.stream.WicaStreamService;
+import ch.psi.wica.services.stream.WicaStreamPublisher;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Map;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -38,32 +32,21 @@ class WicaStreamCreateController
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
-
    private final Logger logger = LoggerFactory.getLogger( WicaStreamCreateController.class );
-
-   private final EpicsChannelDataService epicsChannelDataService;
-   private final WicaStreamManager wicaStreamManager;
+   private final WicaStreamService wicaStreamService;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    /**
-    * Constructs a new controller which to handle all REST operations associated with EPICS event streams.
+    * Constructs a new controller for handling stream POST requests.
     *
-    * @param epicsChannelDataService reference to the service object which provides
-    *        the source of EPICS data for this controller.
-    *
-    * @param wicaStreamManager reference to the service object which can be used
-    *        to create the reactive streams.
+    * @param wicaStreamService reference to the service object which can be used
+    *        to create the reactive stream.
     */
-   private WicaStreamCreateController( @Autowired EpicsChannelDataService epicsChannelDataService,
-                                       @Autowired WicaStreamManager wicaStreamManager
-   )
+   private WicaStreamCreateController( @Autowired WicaStreamService wicaStreamService )
    {
-      //logger.info( "Created new event stream with heartbeat interval of {} seconds.", eventStreamHeartBeatInterval );
-      this.epicsChannelDataService = Validate.notNull( epicsChannelDataService );
-      this.wicaStreamManager = Validate.notNull(wicaStreamManager);
+      this.wicaStreamService = Validate.notNull( wicaStreamService );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -71,7 +54,7 @@ class WicaStreamCreateController
 
    /**
     * Handles an HTTP POST request to start monitoring (= observing the value
-    * of) a list of EPICS Process Variables ("PV's").
+    * of) a list of wica channels.
     *
     * @param jsonStreamConfiguration JSON string providing the stream configuration.
     *
@@ -92,36 +75,17 @@ class WicaStreamCreateController
       final WicaStream wicaStream;
       try
       {
-         wicaStream = wicaStreamManager.create(jsonStreamConfiguration );
+         wicaStream = wicaStreamService.create( jsonStreamConfiguration );
       }
       catch( Exception ex )
       {
          final String errorMessage = ex.getMessage();
-         logger.warn( "POST: Rejected request because {} ", errorMessage );
+         final String className = ex.getStackTrace().length > 1 ?  "C="  + ex.getStackTrace()[ 1 ].getClassName() + "," : "";
+         final String methodName = ex.getStackTrace().length > 1 ? "M=" + ex.getStackTrace()[ 1 ].getMethodName() + "," : "";
+         final String lineNumber = ex.getStackTrace().length > 1 ? "L="   + ex.getStackTrace()[ 1 ].getLineNumber() : "";
+         logger.warn( "POST: Rejected request because {} [{} {} {}]", errorMessage, className, methodName, lineNumber );
          return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
       }
-
-      wicaStream.updateLastPublicationTime();
-
-      final Flux<ServerSentEvent<String>> heartbeatFlux = createHeartbeatFlux( wicaStream );
-      final Flux<ServerSentEvent<String>> channelMetadataFlux = createChannelMetadataFlux( wicaStream );
-      final Flux<ServerSentEvent<String>> channelValueFlux = createChannelValueFlux( wicaStream );
-      final Flux<ServerSentEvent<String>> channelValueUpdateFlux = createChannelValueUpdateFlux( wicaStream );
-
-      // Create a single Flux which merges all of the above.
-      final Flux<ServerSentEvent<String>> eventStreamFlux = heartbeatFlux.mergeWith( channelMetadataFlux )
-                                                                         .mergeWith( channelValueFlux )
-                                                                         .mergeWith( channelValueUpdateFlux )
-                                                                         .doOnCancel( () -> {
-                                                                            logger.warn( "eventStreamFlux was cancelled" );
-                                                                            handleErrors( wicaStream.getWicaStreamId() );
-                                                                         } );
-                                                                         //.log();
-      // Store it in the stream map
-      wicaStream.saveCombinedFluxReference(eventStreamFlux );
-
-      // Lastly set up monitors on all the channels of interest.
-      epicsChannelDataService.startMonitoring( wicaStream );
 
       logger.info("POST: allocated stream with id: '{}'" , wicaStream.getWicaStreamId() );
       return new ResponseEntity<>( wicaStream.getWicaStreamId().asString(), HttpStatus.OK );
@@ -134,114 +98,6 @@ class WicaStreamCreateController
    }
 
 /*- Private methods ----------------------------------------------------------*/
-
-   /**
-    * Creates the HEARTBEAT FLUX.
-    *
-    * The purpose of this flux is to periodically tell remote clients that the stream is
-    * still alive. If remote clients do not receive heartbeat events within the expected
-    * time intervals then they will conclude that the event stream is no longer active.
-    * This may then lead to closing the event stream on the client side and sending a
-    * request to the server to recreate the stream.
-    *
-    * @param wicaStream the stream.
-    * @return the flux.
-    */
-   private Flux<ServerSentEvent<String>> createHeartbeatFlux( WicaStream wicaStream )
-   {
-      return Flux.interval(Duration.ofMillis( wicaStream.getHeartbeatFluxInterval()))
-            .map(l -> {
-               logger.trace("heartbeat flux is publishing new SSE...");
-               final String jsonHeartbeatString = LocalDateTime.now().toString();
-               return WicaServerSentEventBuilder.EV_WICA_SERVER_HEARTBEAT.build( wicaStream.getWicaStreamId(), jsonHeartbeatString );
-            })
-            .doOnCancel(() -> logger.warn("heartbeat flux was cancelled"));
-      //.log();
-   }
-
-   /**
-    * Creates the CHANNEL METADATA FLUX.
-    *
-    * The purpose of this flux is to publish additional information about the nature of the
-    * underlying EPICS channel. This may include the channel's type and where relevant the
-    * channel's display, alarm and operator limits.
-    *
-    * This flux runs just once and delivers its payload on inital connection to the stream.
-    *
-    * @param wicaStream the stream.
-    * @return the flux.
-    */
-   private Flux<ServerSentEvent<String>> createChannelMetadataFlux( WicaStream wicaStream )
-   {
-      return Flux.range( 1, 1 )
-            .map( l -> {
-               logger.trace( "channel-metadata flux is publishing new SSE..." );
-               final Map<WicaChannelName, WicaChannelMetadata> channelMetadataMap = epicsChannelDataService.getChannelMetadata( wicaStream );
-               final String jsonMetadataString = wicaStream.getWicaChannelMetadataMapSerializer().serialize( channelMetadataMap );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build ( wicaStream.getWicaStreamId(),jsonMetadataString );
-            } )
-            .doOnCancel( () -> logger.warn( "channel-metadata flux was cancelled" ) );
-      //.log();
-   }
-
-   /**
-    *  Creates the CHANNEL VALUE UPDATE FLUX.
-    *
-    * The purpose of this flux is to publish the last received values for any channels
-    * which have received monitor notifications since the last update.
-    *
-    * This flux runs with a periodicity defined by the channelValueUpdateFluxInterval.
-    *
-    * @param wicaStream the stream.
-    * @return the flux.
-    */
-   private Flux<ServerSentEvent<String>> createChannelValueUpdateFlux( WicaStream wicaStream )
-   {
-      return Flux.interval( Duration.ofMillis( wicaStream.getChannelValueUpdateFluxInterval() ) )
-            .map( l -> {
-               logger.trace( "channel-value-update flux is publishing new SSE..." );
-               final var updatedChannelValueMap = epicsChannelDataService.getLaterThan( wicaStream, wicaStream.getLastPublicationTime() );
-               wicaStream.updateLastPublicationTime();
-               final var transformedChannelValueMap = wicaStream.getWicaChannelValueMapTransformer().map( updatedChannelValueMap );
-               final var jsonValueString = wicaStream.getWicaChannelValueMapSerializer().serialize( transformedChannelValueMap );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUE_CHANGES.build(  wicaStream.getWicaStreamId(), jsonValueString );
-            } )
-            .doOnCancel( () -> logger.warn( "channel-value-update flux was cancelled" ) );
-      //.log();
-   }
-
-  /**
-    * Create the CHANNEL VALUE FLUX.
-    *
-    * The purpose of this flux is to publish the last received value for ALL channels
-    * in the stream.
-    *
-    * This flux runs with a  periodicity defined by the channelValueFluxInterval.
-    *
-    * @param wicaStream the stream.
-    * @return the flux.
-    */
-   private Flux<ServerSentEvent<String>> createChannelValueFlux( WicaStream wicaStream )
-   {
-      return Flux.range(1, 1)
-            .map(l -> {
-               logger.trace("channel-value flux is publishing new SSE...");
-               final var allChannelValues = epicsChannelDataService.getLaterThan( wicaStream, LONG_AGO );
-               wicaStream.updateLastPublicationTime();
-               final var transformedChannelValueMap = wicaStream.getWicaChannelValueMapTransformer().map( allChannelValues );
-               final String jsonValueString = wicaStream.getWicaChannelValueMapSerializer().serialize( transformedChannelValueMap );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUE_ALLDATA.build( wicaStream.getWicaStreamId(), jsonValueString );
-            })
-            .doOnCancel(() -> logger.warn("channel-value flux was cancelled"));
-      //.log();
-   }
-
-   private void handleErrors( WicaStreamId id )
-   {
-      logger.info( "Some error occurred on monitor stream with Id: '{}' ", id );
-      logger.info( "Probably the client navigated away from the webpage and the eventsource was closed by the browser !! " );
-   }
-
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

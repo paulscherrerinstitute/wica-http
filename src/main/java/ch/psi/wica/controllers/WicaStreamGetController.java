@@ -4,9 +4,8 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.WicaStream;
 import ch.psi.wica.model.WicaStreamId;
-import ch.psi.wica.services.stream.WicaStreamManager;
+import ch.psi.wica.services.stream.WicaStreamService;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,25 +32,32 @@ class WicaStreamGetController
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger(WicaStreamGetController.class );
-
-   private final WicaStreamManager wicaStreamManager;
+   private final WicaStreamService wicaStreamService;
 
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   private WicaStreamGetController( @Autowired WicaStreamManager wicaStreamManager )
+   /**
+    * Constructs a new controller for handling stream GET requests.
+    *
+    * @param wicaStreamService reference to the service object which can be used
+    *        to fetch the reactive streams.
+    */
+   private WicaStreamGetController( @Autowired WicaStreamService wicaStreamService )
    {
-      this.wicaStreamManager = Validate.notNull(wicaStreamManager, "The 'wicaStreamCreator' argument was null" );
+      this.wicaStreamService = Validate.notNull(wicaStreamService);
    }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
    /**
-    * Handles an HTTP GET request to return the event stream associated with the specified ID.
+    * Handles an HTTP GET request to return the event stream associated with
+    * the specified ID.
     *
-    * @param id the ID of the event stream to startMonitoring to.
+    * @param id the ID of the event stream to fetch.
+    *
     * @return the returned event stream.
     */
    @GetMapping( value="/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE )
@@ -63,7 +69,7 @@ class WicaStreamGetController
       logger.info( "GET: Handling get stream request for ID: '{}'", id );
 
       // Handle the situation where an unknown WicaStreamId is given
-      if ( ! wicaStreamManager.isKnownId(WicaStreamId.of(id ) ) )
+      if ( ! wicaStreamService.isKnownId( WicaStreamId.of(id ) ) )
       {
          final String errorMessage = "the event stream 'id' was not recognised";
          logger.warn( "GET: Rejected request because {}", errorMessage  );
@@ -71,10 +77,10 @@ class WicaStreamGetController
       }
 
       // Handle the normal case
-      final WicaStream wicaStream = wicaStreamManager.getFromId(WicaStreamId.of(id ) );
+      final Flux<ServerSentEvent<String>> wicaStreamFlux = wicaStreamService.getFromId( WicaStreamId.of(id ) );
 
       logger.info( "Returning event stream with id: '{}'", id );
-      return new ResponseEntity<>(wicaStream.getCombinedFluxReference(), HttpStatus.OK );
+      return new ResponseEntity<>( wicaStreamFlux, HttpStatus.OK );
    }
 
    @ExceptionHandler( Exception.class )

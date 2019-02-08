@@ -28,7 +28,6 @@ class WicaChannelValueStashTest
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaChannelValueStashTest.class );
    private WicaChannelValueStash stash;
    private WicaStream stream;
 
@@ -42,8 +41,7 @@ class WicaChannelValueStashTest
    void setup()
    {
       stash = new WicaChannelValueStash(3 );
-      stream = new WicaStream( WicaStreamId.createNext(),
-                               Set.of( WicaChannel.of( "abc" ), WicaChannel.of("def" ), WicaChannel.of("ghi" ) ),10000, 100 );
+      stream = new WicaStream( WicaStreamId.createNext(), Set.of( WicaChannel.of( "abc" ), WicaChannel.of("def" ), WicaChannel.of("ghi" ) ) );
    }
 
    @Test
@@ -52,7 +50,7 @@ class WicaChannelValueStashTest
       assertThrows( NullPointerException.class, () -> stash.add( null, WicaChannelValue.createChannelValueDisconnected() ) );
       assertThrows( NullPointerException.class, () -> stash.add( WicaChannelName.of( "toffee" ),null ) );
       //assertThrows( NullPointerException.class, () -> stash.getLaterThan( null, LocalDateTime.now() ) );
-      assertThrows( NullPointerException.class, () -> stash.getLaterThan( stream, null ) );
+      assertThrows( NullPointerException.class, () -> stash.getLaterThan( stream.getWicaChannels(), null ) );
       assertThrows( NullPointerException.class, () -> stash.getLatest( null ) );
       assertThrows( IllegalStateException.class, () -> stash.getLatest( WicaChannelName.of( "rhubarb" ) ) );
       assertThrows( IllegalStateException.class, () -> stash.getLatest( WicaChannelName.of( "toffee" ) ) );
@@ -148,18 +146,18 @@ class WicaChannelValueStashTest
       final LocalDateTime endTime = LocalDateTime.now();
       stash.add( WicaChannelName.of( "ghi" ), WicaChannelValue.createChannelValueDisconnected() );
 
-      final Map<WicaChannelName, List<WicaChannelValue>> laterThanBeginTimeMap = stash.getLaterThan( stream, beginTime );
+      final Map<WicaChannelName, List<WicaChannelValue>> laterThanBeginTimeMap = stash.getLaterThan( stream.getWicaChannels(), beginTime );
       Assert.assertEquals( 3, laterThanBeginTimeMap.size() );
       Assert.assertEquals( 3, laterThanBeginTimeMap.get( WicaChannelName.of( "abc" ) ).size() );
       Assert.assertEquals( 2, laterThanBeginTimeMap.get( WicaChannelName.of( "def" ) ).size() );
       Assert.assertEquals( 1, laterThanBeginTimeMap.get( WicaChannelName.of( "ghi" ) ).size() );
 
-      final Map<WicaChannelName, List<WicaChannelValue>> laterThanMiddleTimeMap = stash.getLaterThan( stream, middleTime );
+      final Map<WicaChannelName, List<WicaChannelValue>> laterThanMiddleTimeMap = stash.getLaterThan( stream.getWicaChannels(), middleTime );
       Assert.assertEquals( 2, laterThanMiddleTimeMap.size() );
       Assert.assertEquals( 2, laterThanMiddleTimeMap.get( WicaChannelName.of( "def" ) ).size() );
       Assert.assertEquals( 1, laterThanMiddleTimeMap.get( WicaChannelName.of( "ghi" ) ).size() );
 
-      final Map<WicaChannelName, List<WicaChannelValue>> laterThanEndTimeMap = stash.getLaterThan( stream, endTime );
+      final Map<WicaChannelName, List<WicaChannelValue>> laterThanEndTimeMap = stash.getLaterThan( stream.getWicaChannels(), endTime );
       Assert.assertEquals( 1, laterThanEndTimeMap.size() );
       Assert.assertEquals( 1, laterThanEndTimeMap.get( WicaChannelName.of( "ghi" ) ).size() );
 

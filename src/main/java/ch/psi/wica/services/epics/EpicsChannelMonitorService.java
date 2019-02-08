@@ -27,8 +27,9 @@ import java.util.function.Consumer;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * A service that facilitates the monitoring of a single EPICS channel
- * and to subsequently inform interested third-parties of changes of interest.
+ * A service for establishing a channel access monitor on a single EPICS
+ * channel and for notifying service consumers of any received changes
+ * of value or changes to the state of the underlying connection.
  *
  * @implNote.
  * The current implementation creates a single Context per class instance.

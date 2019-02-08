@@ -134,7 +134,7 @@ export class DocumentTextRenderer
             }
 
             // Get the channel value object
-            const channelValueArray = JSON.parse( element.getAttribute( channelValueArrayAttribute ) );
+            const channelValueArray = JSON5.parse( element.getAttribute( channelValueArrayAttribute ) );
 
             // Bail out if the value obtained from the stream was not an array
             if ( ! Array.isArray( channelValueArray ) )
@@ -157,7 +157,7 @@ export class DocumentTextRenderer
             }
 
             // Get the channel metadata object
-            const channelMetadata = JSON.parse( element.getAttribute( channelMetadataAttribute ) );
+            const channelMetadata = JSON5.parse( element.getAttribute( channelMetadataAttribute ) );
 
             // Now render the widget's text content
             DocumentTextRenderer.renderWicaElementTextContent_( element, channelMetadata, channelValueLatest, renderingProperties );
@@ -187,7 +187,7 @@ export class DocumentTextRenderer
             case "REAL_ARRAY":
             case "INTEGER_ARRAY":
             case "STRING_ARRAY":
-                element.textContent = JSON.stringify( rawValue );
+                element.textContent = JSON5.stringify( rawValue );
                 break;
 
             case "REAL":
@@ -286,7 +286,7 @@ export class DocumentTextRenderer
         const renderingPropertiesString = element.hasAttribute( renderingPropertiesAttribute ) ? element.getAttribute( renderingPropertiesAttribute ) : "{}";
         try
         {
-            return JSON.parse( renderingPropertiesString );
+            return JSON5.parse( renderingPropertiesString );
         }
         catch( err )
         {

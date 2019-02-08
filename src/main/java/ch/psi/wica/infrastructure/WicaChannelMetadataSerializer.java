@@ -8,6 +8,8 @@ import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.Set;
+
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -25,46 +27,26 @@ public class WicaChannelMetadataSerializer
     * format.
     */
    @Value( "${wica.serialize_nan_as_string}" )
-   private static final boolean writeNanAsStringDefault = false;
-
-   /**
-    * Controls the serialized representation of double Infinity values. Set to
-    * TRUE for strict JSON compliance. Set to FALSE for "relaxed" JSON5
-    * format.
-    */
-   @Value( "${wica.serialize_infinity_as_string}" )
-   private static final boolean writeInfinityAsStringDefault = false;
+   private static final boolean quoteNumericStrings = false;
 
    private final WicaChannelDataSerializer wicaChannelDataSerializer;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelMetadataSerializer( int numericScale )
+   WicaChannelMetadataSerializer( int numericScale )
    {
-      this.wicaChannelDataSerializer = new WicaChannelDataSerializer( numericScale,
-                                                                      writeNanAsStringDefault,
-                                                                      writeInfinityAsStringDefault );
+      this.wicaChannelDataSerializer = new WicaChannelDataSerializer( numericScale, quoteNumericStrings );
    }
 
-
-   WicaChannelMetadataSerializer( int numericScale, String... fieldsOfInterest )
+   WicaChannelMetadataSerializer( Set<String> fieldsOfInterest, int numericScale )
    {
-      this.wicaChannelDataSerializer = new WicaChannelDataSerializer( numericScale,
-                                                                      writeNanAsStringDefault,
-                                                                      writeInfinityAsStringDefault,
-                                                                      fieldsOfInterest );
+      this.wicaChannelDataSerializer = new WicaChannelDataSerializer( fieldsOfInterest, numericScale, quoteNumericStrings );
    }
 
-   WicaChannelMetadataSerializer( int numericScale,
-                                         boolean writeNanAsString,
-                                         boolean writeInfinityAsString,
-                                         String... fieldsOfInterest )
+   WicaChannelMetadataSerializer( Set<String> fieldsOfInterest, int numericScale, boolean quoteNumericStrings )
    {
-      this.wicaChannelDataSerializer = new WicaChannelDataSerializer( numericScale,
-                                                                      writeNanAsString,
-                                                                      writeInfinityAsString,
-                                                                      fieldsOfInterest );
+      this.wicaChannelDataSerializer = new WicaChannelDataSerializer( fieldsOfInterest, numericScale, quoteNumericStrings );
    }
 
 /*- Class methods ------------------------------------------------------------*/

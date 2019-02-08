@@ -142,10 +142,9 @@ class EpicsChannelDataServiceTest
 
       final WicaChannelValue wicaChannelValueConnected  = WicaChannelValue.createChannelValueConnected( 123 );
       final WicaStream myStream = new WicaStream( WicaStreamId.of( "0" ),
-                                                  Set.of( WicaChannel.of( wicaChannelName1 ), WicaChannel.of( wicaChannelName2 ) ),
-                                                  10000, 100 );
+                                                  Set.of( WicaChannel.of( wicaChannelName1 ), WicaChannel.of( wicaChannelName2 ) ) );
 
-      dataService.startMonitoring( myStream );
+      dataService.startMonitoring( myStream.getWicaChannels() );
 
       // Check that this service registers with the EpicsMonitorService and provides it with the
       // hooks to call it back when the channel connects/disconnects or receives a new value from
@@ -165,7 +164,7 @@ class EpicsChannelDataServiceTest
       Assert.assertThat( channelNameList.get( 1 ), isOneOf( wicaChannelName1, wicaChannelName2 )  );
 
       // Check that the DataService initially indicates that the channels in the stream are not connected.
-      final Map<WicaChannelName,List<WicaChannelValue>> map1 = dataService.getLaterThan( myStream, LocalDateTime.MIN );
+      final Map<WicaChannelName,List<WicaChannelValue>> map1 = dataService.getLaterThan( myStream.getWicaChannels(), LocalDateTime.MIN );
       assertEquals(2, map1.size() );
       assertEquals( 1, map1.get( wicaChannelName1 ).size() );
       assertEquals( 1, map1.get( wicaChannelName1 ).size() );
@@ -177,7 +176,7 @@ class EpicsChannelDataServiceTest
       final List<Consumer<Boolean>> stateChangedHandlers = stateChangedCaptor.getAllValues();
       stateChangedHandlers.get( 0 ).accept( true );
       stateChangedHandlers.get( 1 ).accept( true );
-      final Map<WicaChannelName,List<WicaChannelValue>> map2 = dataService.getLaterThan( myStream, LocalDateTime.MIN );
+      final Map<WicaChannelName,List<WicaChannelValue>> map2 = dataService.getLaterThan( myStream.getWicaChannels(), LocalDateTime.MIN );
       assertEquals(2, map2.size() );
       assertEquals( 1, map2.get( wicaChannelName1 ).size() );
       assertEquals( 1, map2.get( wicaChannelName1 ).size() );
@@ -188,7 +187,7 @@ class EpicsChannelDataServiceTest
       final List<Consumer<WicaChannelValue>> valueChangedHandlers = valueChangedCaptor.getAllValues();
       valueChangedHandlers.get( 0 ).accept( wicaChannelValueConnected );
       valueChangedHandlers.get( 1 ).accept( wicaChannelValueConnected );
-      final Map<WicaChannelName,List<WicaChannelValue>> map3 = dataService.getLaterThan( myStream, LocalDateTime.MIN );
+      final Map<WicaChannelName,List<WicaChannelValue>> map3 = dataService.getLaterThan( myStream.getWicaChannels(), LocalDateTime.MIN );
       assertEquals(2, map3.size() );
       assertEquals( 2, map3.get( wicaChannelName1 ).size() );
       assertEquals( 2, map3.get( wicaChannelName1 ).size() );

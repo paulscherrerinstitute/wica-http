@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -23,10 +20,10 @@ import java.util.function.Consumer;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * A service that facilitates the monitoring of multiple EPICS channels,
- * and to cache the received information making it available subsequently
- * to multiple service clients.
+ * A service for monitoring multiple EPICS channels, for cacheing the received
+ * information, making it subsequently available to service consumers.
  *
+ * @implNote.
  * Channels are reused.
  */
 @ThreadSafe
@@ -106,13 +103,13 @@ public class EpicsChannelDataService
     * Subsequently the connection state, metadata and value information
     * for all channels in the stream will be observable.
     *
-    * @param wicaStream the stream containing the names the channels
-    *                   to monitor.
+    * @param wicaChannels the stream containing the names the channels
+    *                     to monitor.
     */
-   public void startMonitoring( WicaStream wicaStream )
+   public void startMonitoring( Set<WicaChannel> wicaChannels )
    {
-      Validate.notNull( wicaStream );
-      wicaStream.getWicaChannels().stream().map( WicaChannel::getName ).forEach( this::startMonitoring );
+      Validate.notNull( wicaChannels );
+      wicaChannels.stream().map( WicaChannel::getName ).forEach( this::startMonitoring );
    }
 
    /**
@@ -179,15 +176,15 @@ public class EpicsChannelDataService
    /**
     * Returns the latest received metadata for the specified Wica stream.
     *
-    * @param wicaStream the stream of interest.
+    * @param wicaChannels the channels of interest.
     *
     * @return the metadata.
     */
-   public Map<WicaChannelName, WicaChannelMetadata> getChannelMetadata( WicaStream wicaStream )
+   public Map<WicaChannelName, WicaChannelMetadata> getChannelMetadata( Set<WicaChannel> wicaChannels )
    {
-      Validate.notNull( wicaStream );
+      Validate.notNull( wicaChannels );
 
-      return channelMetadataStash.get( wicaStream );
+      return channelMetadataStash.get( wicaChannels );
    }
 
    /**
@@ -205,11 +202,11 @@ public class EpicsChannelDataService
       return channelValueStash.getLatest( channelName );
    }
 
-   public Map<WicaChannelName, List<WicaChannelValue>> getLaterThan( WicaStream wicaStream, LocalDateTime since )
+   public Map<WicaChannelName, List<WicaChannelValue>> getLaterThan( Set<WicaChannel> wicaChannels, LocalDateTime since )
    {
-      Validate.notNull( wicaStream );
+      Validate.notNull( wicaChannels );
 
-      return channelValueStash.getLaterThan( wicaStream, since );
+      return channelValueStash.getLaterThan( wicaChannels, since );
    }
 
 

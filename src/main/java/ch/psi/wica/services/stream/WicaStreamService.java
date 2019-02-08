@@ -8,30 +8,35 @@ package ch.psi.wica.services.stream;
 import ch.psi.wica.infrastructure.WicaStreamConfigurationDecoder;
 import ch.psi.wica.model.WicaStream;
 import ch.psi.wica.model.WicaStreamId;
+import ch.psi.wica.services.epics.EpicsChannelDataService;
 import org.apache.commons.lang3.Validate;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class WicaStreamManager
+public class WicaStreamService
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private Map<WicaStreamId,WicaStream> map = new HashMap<>();
+   private Map<WicaStreamId,Flux<ServerSentEvent<String>>> wicaSteamFluxMap = new HashMap<>();
+   private EpicsChannelDataService epicsChannelDataService;
 
-   @Value( "${wica.default_heartbeat_flux_interval:9999}" )
-   private int defaultHeartBeatFluxInterval;
-
-   @Value( "${wica.default_channel_value_update_flux_interval:99}" )
-   private int defaultChannelValueUpdateFluxInterval;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
+
+   public WicaStreamService( @Autowired EpicsChannelDataService epicsChannelDataService )
+   {
+      this.epicsChannelDataService = epicsChannelDataService;
+   }
+
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
@@ -55,26 +60,35 @@ public class WicaStreamManager
       }
 
       final WicaStreamId wicaStreamId = WicaStreamId.createNext();
-      final WicaStream stream = new WicaStream( wicaStreamId,
-                                                decoder.getWicaStreamProperties(),
-                                                decoder.getWicaChannels(),
-                                                defaultHeartBeatFluxInterval,
-                                                defaultChannelValueUpdateFluxInterval );
+      final WicaStream wicaStream = new WicaStream( wicaStreamId, decoder.getWicaStreamProperties(), decoder.getWicaChannels() );
 
-      map.put( stream.getWicaStreamId(), stream );
-      return stream;
+      final WicaStreamDataSupplier wicaStreamDataSupplier = new WicaStreamDataSupplier( wicaStream, epicsChannelDataService );
+      final WicaStreamPublisher wicaStreamPublisher = new WicaStreamPublisher( wicaStream, wicaStreamDataSupplier );
+      wicaStreamPublisher.activate();
+
+      // Lastly set up monitors on all the channels of interest.
+      epicsChannelDataService.startMonitoring( wicaStream.getWicaChannels() );
+
+      // Update the map of known fluxes
+      wicaSteamFluxMap.put( wicaStreamId, wicaStreamPublisher.getFlux() );
+      return wicaStream;
    }
 
-   public WicaStream getFromId( WicaStreamId wicaStreamId  )
+   public void delete( WicaStreamId wicaStreamId )
+   {
+    // TODO to implement
+   }
+
+   public Flux<ServerSentEvent<String>> getFromId( WicaStreamId wicaStreamId  )
    {
       Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null" );
-      return map.get( wicaStreamId );
+      return wicaSteamFluxMap.get( wicaStreamId );
    }
 
    public boolean isKnownId( WicaStreamId wicaStreamId )
    {
       Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null" );
-      return map.containsKey( wicaStreamId );
+      return wicaSteamFluxMap.containsKey( wicaStreamId );
    }
 
 /*- Private methods ----------------------------------------------------------*/

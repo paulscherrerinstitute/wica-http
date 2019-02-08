@@ -8,6 +8,8 @@ import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.Set;
+
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -20,55 +22,31 @@ public class WicaChannelValueSerializer
    /*- Private attributes -------------------------------------------------------*/
 
    /**
-    * Controls the serialized representation of double Nan values. Set to
-    * TRUE for strict JSON compliance. Set to FALSE for "relaxed" JSON5
+    * Controls the serialized representation of double Nan and Infinity values.
+    * Set to TRUE for strict JSON compliance. Set to FALSE for "relaxed" JSON5
     * format.
     */
    @Value( "${wica.serialize_nan_as_string}" )
-   private static final boolean writeNanAsStringDefault = false;
+   private static final boolean quoteNumericStrings = false;
 
-   /**
-    * Controls the serialized representation of double Infinity values. Set to
-    * TRUE for strict JSON compliance. Set to FALSE for "relaxed" JSON5
-    * format.
-    */
-   @Value( "${wica.serialize_infinity_as_string}" )
-   private static final boolean writeInfinityAsStringDefault = false;
 
    private final WicaChannelDataSerializer wicaChannelDataSerializer;
 
-   /*- Main ---------------------------------------------------------------------*/
-   /*- Constructor --------------------------------------------------------------*/
+/*- Main ---------------------------------------------------------------------*/
+/*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelValueSerializer( int numericScale )
+   WicaChannelValueSerializer( int numericScale, boolean quoteNumericStrings )
    {
-      this.wicaChannelDataSerializer = new WicaChannelDataSerializer( numericScale,
-                                                                      writeNanAsStringDefault,
-                                                                      writeInfinityAsStringDefault );
+      this.wicaChannelDataSerializer = new WicaChannelDataSerializer( numericScale, quoteNumericStrings );
    }
 
-
-   WicaChannelValueSerializer( int numericScale, String... fieldsOfInterest )
+   WicaChannelValueSerializer( Set<String> fieldsOfInterest, int numericScale, boolean quoteNumericStrings )
    {
-      this.wicaChannelDataSerializer = new WicaChannelDataSerializer( numericScale,
-                                                                      writeNanAsStringDefault,
-                                                                      writeInfinityAsStringDefault,
-                                                                      fieldsOfInterest );
+      this.wicaChannelDataSerializer = new WicaChannelDataSerializer( fieldsOfInterest, numericScale, quoteNumericStrings );
    }
 
-   WicaChannelValueSerializer( int numericScale,
-                               boolean writeNanAsString,
-                               boolean writeInfinityAsString,
-                               String... fieldsOfInterest )
-   {
-      this.wicaChannelDataSerializer = new WicaChannelDataSerializer( numericScale,
-                                                                      writeNanAsString,
-                                                                      writeInfinityAsString,
-                                                                      fieldsOfInterest );
-   }
-
-   /*- Class methods ------------------------------------------------------------*/
-   /*- Public methods -----------------------------------------------------------*/
+/*- Class methods ------------------------------------------------------------*/
+/*- Public methods -----------------------------------------------------------*/
 
    /**
     * Serializes the supplied WicaChannelValue object according to the
@@ -83,7 +61,7 @@ public class WicaChannelValueSerializer
       return wicaChannelDataSerializer.serialize( channelValue );
    }
 
-   /*- Private methods ----------------------------------------------------------*/
-   /*- Nested Classes -----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
+/*- Nested Classes -----------------------------------------------------------*/
 
 }

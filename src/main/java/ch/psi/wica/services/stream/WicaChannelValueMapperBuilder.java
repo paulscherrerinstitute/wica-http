@@ -45,12 +45,11 @@ public class WicaChannelValueMapperBuilder implements WicaChannelValueMapper
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public static WicaChannelValueMapperBuilder createDefault()
+   public static WicaChannelValueMapper createDefault()
    {
-      WicaChannelProperties wicaChannelProperties = WicaChannelProperties.ofEmpty();
+      final WicaChannelProperties wicaChannelProperties = new WicaChannelProperties();
       return WicaChannelValueMapperBuilder.createFromChannelProperties( wicaChannelProperties );
    }
-
 
    /**
     * Returns a channel value mapper based on the supplied channel properties object.
@@ -58,67 +57,53 @@ public class WicaChannelValueMapperBuilder implements WicaChannelValueMapper
     * @param wicaChannelProperties the channel properties object.
     * @return the returned mapper.
     */
-   public static WicaChannelValueMapperBuilder createFromChannelProperties( WicaChannelProperties wicaChannelProperties )
+   public static WicaChannelValueMapper createFromChannelProperties( WicaChannelProperties wicaChannelProperties )
    {
       Validate.notNull( wicaChannelProperties );
 
       final WicaChannelValueMapper filteringMapper;
-      if ( wicaChannelProperties.hasProperty( "filterType" ) )
+      switch ( wicaChannelProperties.getFilterType() )
       {
-         final String filterType = wicaChannelProperties.getPropertyValue("filterType" );
-         switch ( filterType )
-         {
-            case "all-value":
-               logger.info("Creating channel filter with filterType='all-value'");
-               filteringMapper = new WicaChannelValueMapperAllValueSampler();
-               break;
+         case ALL_VALUE:
+            logger.info("Creating channel filter with filterType='all-value'");
+            filteringMapper = new WicaChannelValueMapperAllValueSampler();
+            break;
 
-            case "rate-limiter":
-               Validate.isTrue(wicaChannelProperties.hasProperty("interval"));
-               final int sampleGap = Integer.parseInt(wicaChannelProperties.getPropertyValue("interval") );
-               logger.info("Creating channel filter with filterType='rate-limiter', interval='{}'", sampleGap );
-               filteringMapper = new WicaChannelValueMapperRateLimitingSampler(sampleGap);
-               break;
+         case RATE_LIMITER:
+            final int sampleGap = Integer.parseInt(wicaChannelProperties.getFilterParameter() );
+            logger.info("Creating channel filter with filterType='rate-limiter', interval='{}'", sampleGap );
+            filteringMapper = new WicaChannelValueMapperRateLimitingSampler(sampleGap);
+            break;
 
-            case "one-in-n":
-               Validate.isTrue(wicaChannelProperties.hasProperty("n"));
-               final int cycleLength = Integer.parseInt(wicaChannelProperties.getPropertyValue("n") );
-               logger.info("Creating channel filter with filterType='one-in-n', n='{}'", cycleLength );
-               filteringMapper =  new WicaChannelValueMapperFixedCycleSampler( cycleLength );
-               break;
+         case ONE_IN_N:
+            final int cycleLength = Integer.parseInt(wicaChannelProperties.getFilterParameter() );
+            logger.info("Creating channel filter with filterType='one-in-n', n='{}'", cycleLength );
+            filteringMapper =  new WicaChannelValueMapperFixedCycleSampler( cycleLength );
+            break;
 
-            case "last-n":
-               Validate.isTrue( wicaChannelProperties.hasProperty("n"));
-               final int numSamples = Integer.parseInt(wicaChannelProperties.getPropertyValue("n") );
-               logger.info("Creating channel filter with filterType='last-n', n='{}'", numSamples );
-               filteringMapper =  new WicaChannelValueMapperLatestValueSampler( numSamples );
-               break;
+         case LAST_N:
+            final int numSamples = Integer.parseInt(wicaChannelProperties.getFilterParameter() );
+            logger.info("Creating channel filter with filterType='last-n', n='{}'", numSamples );
+            filteringMapper =  new WicaChannelValueMapperLatestValueSampler( numSamples );
+            break;
 
-            case "change-filterer":
-               Validate.isTrue(wicaChannelProperties.hasProperty(("deadband")));
-               final double deadband = Double.parseDouble( wicaChannelProperties.getPropertyValue(( "deadband" )));
-               logger.info("Creating channel filter with filterType='change-filterer', deadband='{}'", deadband );
-               filteringMapper =  new WicaChannelValueMapperChangeFilteringSampler(deadband );
-               break;
+         case CHANGE_FILTERER:
+            final double deadband = Double.parseDouble( wicaChannelProperties.getFilterParameter() );
+            logger.info("Creating channel filter with filterType='change-filterer', deadband='{}'", deadband );
+            filteringMapper =  new WicaChannelValueMapperChangeFilteringSampler(deadband );
+            break;
 
-            default:
-               logger.warn("The filterType parameter was not recognised. Using default (last-n) filter.");
-               final int defaultMaxNumberOfSamples = 1;
-               logger.info("Creating channel filter with filterType='last-n', n='{}'", defaultMaxNumberOfSamples );
-               filteringMapper = new WicaChannelValueMapperLatestValueSampler(defaultMaxNumberOfSamples );
-               break;
-         }
-      }
-      else
-      {
-         logger.warn( "The filterType parameter was not specified. Using default (last-n) filter." );
-         final int defaultMaxNumberOfSamples = 1;
-         logger.info("Creating channel filter with filterType='last-n', n='{}'", defaultMaxNumberOfSamples );
-         filteringMapper = new WicaChannelValueMapperLatestValueSampler(defaultMaxNumberOfSamples );
+         default:
+            logger.warn("The filterType parameter was not recognised. Using default (last-n) filter.");
+            final int defaultMaxNumberOfSamples = 1;
+            logger.info("Creating channel filter with filterType='last-n', n='{}'", defaultMaxNumberOfSamples );
+            filteringMapper = new WicaChannelValueMapperLatestValueSampler(defaultMaxNumberOfSamples );
+            break;
       }
 
-      return new WicaChannelValueMapperBuilder( filteringMapper );
+      return filteringMapper;
    }
+
 
    /**
     * {@inheritDoc}

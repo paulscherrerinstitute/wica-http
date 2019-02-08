@@ -33,10 +33,6 @@ class WicaDoubleSerializer extends JsonSerializer<Double>
 
    private final int numericScale;
 
-   private final boolean writeInfinityAsString;
-   private final boolean writeNanAsString;
-
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
@@ -50,30 +46,19 @@ class WicaDoubleSerializer extends JsonSerializer<Double>
     * Where the numeric scale forces rounding, then a RoundingMode.HALF_UP
     * strategy is implemented.
     *
-    * The serializer can be configured to write special values (NaN and
-    * infinity) as number or strings. For strict JSON compliance the string
-    * format should be chosen, but this may imply extra work on the decoding
-    * end to handle the type conversion. For JSON5 compliance numbers can be
-    * used.
+    * The JSON generator associated with this serializer can be configured to
+    * determine whether this serializer writes special values NaN and Infinity
+    * as numbers or strings.
     *
     * @param numericScale - a positive number specifying the number of digits to
     *     appear after the decimal point in the string representation.
     *
-    * @param writeNanAsString - determines whether the special value Double.NaN
-    *     will be serialised as a number or a string.
-    *
-    * @param writeInfinityAsString - determines whether the special values
-    *     Double.POSITIVE_INFINITY and DOUBLE.NEGATIVE_INFINITY will be
-    *     serialised as a number or a string.
-    *
     * @throws IllegalArgumentException if the requested numeric scale is negative.
     */
-   WicaDoubleSerializer( int numericScale, boolean writeNanAsString, boolean writeInfinityAsString )
+   WicaDoubleSerializer( int numericScale )
    {
       Validate.isTrue(numericScale >= 0, String.format( "numericScale ('%d') cannot be negative", numericScale ) );
       this.numericScale = numericScale;
-      this.writeNanAsString = writeNanAsString;
-      this.writeInfinityAsString = writeInfinityAsString;
    }
 
 
@@ -91,41 +76,13 @@ class WicaDoubleSerializer extends JsonSerializer<Double>
    @Override
    public void serialize( Double value, JsonGenerator gen, SerializerProvider serializers ) throws IOException
    {
-      // Note: the format here is important. Javascript Numbers can understand NaN and
-      // Infinity, but the JSON specification does not support them. JSON5, however, is
-      // a superset of JSON which does.
-      //
-      // Possible workarounds: (a) send NaN as a String and fix programmatically at the
-      // receiving side; (b) send in JSON5 format then use JSON5 Javascript decoder on
-      // the receiving end.
-      //
-      // The Jackson library used for the serialisation here is able to support both
-      // possibilities so it is left as a configuration option in the application to
-      // configure the appropriate behaviour.
-
-      if ( value.isNaN() )
+      if ( value.isNaN() || value.isInfinite()  )
       {
-
-         if ( this.writeNanAsString )
-         {
-            gen.writeString("NaN" );
-         }
-         else
-         {
-            gen.writeNumber("NaN" );
-         }
-      }
-      else if ( value.isInfinite() )
-      {
-         // Note: the format here is important. Javascript Numbers can understand Infinity but not infinity.
-         if ( this.writeInfinityAsString )
-         {
-            gen.writeString("Infinity");
-         }
-         else
-         {
-            gen.writeNumber( "Infinity" );
-         }
+         // Note: the behaviour here is determined by the JsonGenerator.Feature.QUOTE_NON_NUMERIC_NUMBERS
+         // setting in the object mapper associated with this serializer. When the feature is enabled a
+         // strict JSON compliance will be enforced and NaN and Infinity will be written in quotes. When
+         // the feature is disabled they will be written as numbers.
+         gen.writeNumber( value );
       }
       else
       {

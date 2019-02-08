@@ -163,14 +163,14 @@ export class PlotBuffer
                 if ( mutation.attributeName === "data-wica-channel-metadata" )
                 {
                     const metadataAsJsonString = element.getAttribute( "data-wica-channel-metadata" );
-                    const metadata = JSON.parse( metadataAsJsonString );
+                    const metadata = JSON5.parse( metadataAsJsonString );
                     this.metadataMap[ channelName ] = metadata;
                 }
 
                 if ( mutation.attributeName === "data-wica-channel-value-array" )
                 {
                     const valueArrayAsJsonString = element.getAttribute( "data-wica-channel-value-array" );
-                    const valueArray = JSON.parse( valueArrayAsJsonString );
+                    const valueArray = JSON5.parse( valueArrayAsJsonString );
                     this.updateBufferedChannelValues_( channelName, valueArray );
                 }
 
