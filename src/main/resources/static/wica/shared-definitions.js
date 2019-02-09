@@ -247,10 +247,9 @@ export const WicaRenderingProperties = Object.freeze ({
  *     value updates. Needed for time plots.
  */
 export const WicaStreamProperties = Object.freeze ({
-    heartBeatInterval: 15000,
+    heartbeatInterval: 15000,
     channelValueUpdateInterval: 100,
-    includeAlarmInfo: true,
-    includeTimestamp: true
+    fields: "type;drvh;drvl;hopr;lopr;hihi;lolo;high;low;val;sevr"
 } );
 
 /**
@@ -263,6 +262,6 @@ export const WicaStreamProperties = Object.freeze ({
  */
 export const WicaChannelProperties = Object.freeze ({
     prec: 8,
-    filterType: "last-n",
+    filter: "last-n",
     n: 1
 } );

@@ -47,8 +47,8 @@ class WicaStreamPropertiesTest
    {
       final ObjectMapper mapper = new ObjectMapper();
 
-      final String inputString = "{" + "\"heartbeat-flux-interval\"" + ":" + 12345 + "," +
-                                       "\"value-update-flux-interval\"" + ":" + 99 + "," +
+      final String inputString = "{" + "\"heartbeatInterval\"" + ":" + 12345 + "," +
+                                       "\"channelValueUpdateInterval\"" + ":" + 99 + "," +
                                        "\"fields\"" + ":" + "\"abc;def\"" + "," +
                                        "\"prec\"" + ":" + 9 + "}";
 

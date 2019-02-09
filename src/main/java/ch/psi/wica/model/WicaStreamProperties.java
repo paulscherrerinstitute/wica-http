@@ -41,8 +41,8 @@ public class WicaStreamProperties
       this.fieldsOfInterest = Set.of( DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) ;
    }
 
-   public WicaStreamProperties( @JsonProperty( "heartbeat-flux-interval" )    Integer heartbeatFluxInterval,
-                                @JsonProperty( "value-update-flux-interval" ) Integer valueUpdateFluxInterval,
+   public WicaStreamProperties( @JsonProperty( "heartbeatInterval" )    Integer heartbeatFluxInterval,
+                                @JsonProperty( "value-update-interval" ) Integer valueUpdateFluxInterval,
                                 @JsonProperty( "prec" )   Integer numericPrecision,
                                 @JsonProperty( "fields" ) String fieldsOfInterest )
    {
