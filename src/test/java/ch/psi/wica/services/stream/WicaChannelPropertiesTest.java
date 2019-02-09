@@ -14,8 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -43,30 +42,33 @@ class WicaChannelPropertiesTest
    }
 
    @Test
+   void testDefaultFieldValues() throws Exception
+   {
+      final ObjectMapper mapper = new ObjectMapper();
+      final String inputString = "{}";
+      final WicaChannelProperties props = mapper.readValue( inputString, WicaChannelProperties.class );
+      assertEquals( WicaChannelProperties.DEFAULT_FILTER_TYPE, props.getFilterType() );
+      assertFalse( props.getNumericPrecision().isPresent() );
+      assertEquals( WicaChannelProperties.DEFAULT_N, props.getN() );
+      assertEquals( WicaChannelProperties.DEFAULT_INTERVAL, props.getInterval() );
+      assertEquals( WicaChannelProperties.DEFAULT_DEADBAND, props.getDeadband() );
+      assertFalse( props.getFieldsOfInterest().isPresent() );
+
+   }
+
+   @Test
    void testAllFieldsPresentDecodedOk() throws Exception
    {
       final ObjectMapper mapper = new ObjectMapper();
 
       final String inputString = "{" + "\"filter\"" + ":" + "\"last-n\"" + "," +
-                                       "\"fparam\"" + ":" + 99 + "," +
+                                       "\"n\"" + ":" + 99 + "," +
                                        "\"fields\"" + ":" + "\"abc;def\"" + "," +
                                        "\"prec\"" + ":" + 9 + "}";
 
       final WicaChannelProperties props = mapper.readValue( inputString, WicaChannelProperties.class );
       assertEquals( WicaChannelProperties.FilterType.LAST_N, props.getFilterType() );
 
-   }
-
-   @Test
-   void testDefaultFieldValues() throws Exception
-   {
-      final ObjectMapper mapper = new ObjectMapper();
-      final String inputString = "{}";
-      final WicaChannelProperties props = mapper.readValue( inputString, WicaChannelProperties.class );
-//      assertEquals( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL, props.getHeartbeatFluxInterval() );
-//      assertEquals( WicaStreamProperties.DEFAULT_VALUE_UPDATE_FLUX_INTERVAL, props.getChannelValueUpdateFluxInterval() );
-//      assertEquals( WicaStreamProperties.DEFAULT_NUMERIC_PRECISION, props.getNumericPrecision() );
-//      assertEquals( Set.of( WicaStreamProperties.DEFAULT_FIELDS_OF_INTEREST.split(";") ), props.getFieldsOfInterest() );
    }
 
 /*- Private methods ----------------------------------------------------------*/

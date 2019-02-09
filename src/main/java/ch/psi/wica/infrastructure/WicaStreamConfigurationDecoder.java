@@ -31,9 +31,7 @@ public class WicaStreamConfigurationDecoder
 
    private final Logger logger = LoggerFactory.getLogger( WicaStreamConfigurationDecoder.class );
 
-   private Map<String,String> streamPropertiesMap;
    private WicaStreamProperties wicaStreamProperties;
-
    private Set<WicaChannel> wicaChannels = new HashSet<>();
 
 /*- Main ---------------------------------------------------------------------*/
@@ -84,11 +82,9 @@ public class WicaStreamConfigurationDecoder
       if ( rootNode.hasNonNull("props") )
       {
          final JsonNode propsNode = rootNode.get( "props" );
-
          if ( propsNode.isContainerNode() )
          {
             this.wicaStreamProperties = mapper.treeToValue(propsNode, WicaStreamProperties.class);
-            //this.streamPropertiesMap = decodeObject( rootNode.get( "props" ) );
          }
          else
          {
@@ -133,48 +129,26 @@ public class WicaStreamConfigurationDecoder
 
          final WicaChannelName wicaChannelName = WicaChannelName.of(strNode.asText());
 
-         final Map<String, String> propsMap;
+
          if ( channelNode.has("props") )
          {
-            if ( channelNode.hasNonNull("props") )
+            final JsonNode propsNode = rootNode.get( "props" );
+            if ( propsNode.isContainerNode() )
             {
-               propsMap = decodeObject( channelNode.get( "props" ) );
+               final WicaChannelProperties wicaChannelProperties = mapper.treeToValue( propsNode, WicaChannelProperties.class);
             }
             else
             {
-               throw new IllegalArgumentException( "The JSON configuration string did not specify one or more property values (missing 'props' value field)" );
+               throw new IllegalArgumentException( "The 'props' field in one or more channel nodes of the JSON configuration string was not a container value." );
             }
          }
          else
          {
-            propsMap = new HashMap<>();
+            final WicaChannelProperties wicaChannelProperties = mapper.readValue("{}" , WicaChannelProperties.class );
          }
          this.wicaChannels.add( new WicaChannel( wicaChannelName, new WicaChannelProperties()) );
       }
    }
-
-   private Map<String,String> decodeObject( JsonNode propsNode )
-   {
-      Validate.notNull( propsNode, "The JSON configuration string did not specify one or more property values (missing 'props' value field)" );
-
-      final Map<String,String> propsMap = new HashMap<>();
-      for( Iterator<String> it = propsNode.fieldNames(); it.hasNext();)
-      {
-         final String propName = it.next();
-         if ( propsNode.hasNonNull( propName ) )
-         {
-            final JsonNode propValue = propsNode.get(propName);
-            propsMap.put(propName, propValue.asText());
-         }
-         else
-         {
-            throw new IllegalArgumentException( "The JSON configuration string did not specify one or more property values (missing '" + propName + "' field)" );
-         }
-      }
-
-      return propsMap;
-   }
-
 
 /*- Nested Classes -----------------------------------------------------------*/
 

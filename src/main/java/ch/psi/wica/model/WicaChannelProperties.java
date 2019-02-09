@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.jcip.annotations.Immutable;
 
+import java.util.Optional;
 import java.util.Set;
 
 @JsonIgnoreProperties( ignoreUnknown=false )
@@ -18,16 +19,19 @@ public class WicaChannelProperties
 
 /*- Public attributes --------------------------------------------------------*/
 
-   public static final int DEFAULT_NUMERIC_PRECISION = 8;
    public static final FilterType DEFAULT_FILTER_TYPE = FilterType.LAST_N;
-   public static final String DEFAULT_FILTER_PARAMETER = "1";
-   public static final String DEFAULT_FIELDS_OF_INTEREST = "val;sevr";
+   public static final int DEFAULT_N = 1;
+   public static final int DEFAULT_INTERVAL = 1000;
+   public static final double DEFAULT_DEADBAND = 1.0;
+
 
 /*- Private attributes -------------------------------------------------------*/
 
    private final Integer numericPrecision;
    private final FilterType filterType ;
-   private final String filterParameter;
+   private final Integer n;
+   private final Integer interval;
+   private final Double deadband;
    private final String fieldsOfInterest;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -35,43 +39,61 @@ public class WicaChannelProperties
 
    public WicaChannelProperties()
    {
-      this.numericPrecision = DEFAULT_NUMERIC_PRECISION;
+      this.fieldsOfInterest = null;
+      this.numericPrecision = null;
       this.filterType = DEFAULT_FILTER_TYPE;
-      this.filterParameter = DEFAULT_FILTER_PARAMETER;
-      this.fieldsOfInterest = DEFAULT_FIELDS_OF_INTEREST;
+      this.n = DEFAULT_N;
+      this.interval = DEFAULT_INTERVAL;
+      this.deadband = DEFAULT_DEADBAND;
    }
 
-   public WicaChannelProperties( @JsonProperty( "prec" )  Integer numericPrecision,
-                                 @JsonProperty( "filter" ) FilterType filterType,
-                                 @JsonProperty( "fparam" ) String filterParameter,
-                                 @JsonProperty( "fields" ) String fieldsOfInterest )
+   public WicaChannelProperties( @JsonProperty( "fields" )   String fieldsOfInterest,
+                                 @JsonProperty( "prec" )     Integer numericPrecision,
+                                 @JsonProperty( "filter" )   FilterType filterType,
+                                 @JsonProperty( "n" )        Integer n,
+                                 @JsonProperty( "interval" ) Integer interval,
+                                 @JsonProperty( "deadband" ) Double deadband )
    {
+      this.fieldsOfInterest = fieldsOfInterest;
       this.numericPrecision = numericPrecision;
       this.filterType = filterType;
-      this.filterParameter = filterParameter;
-      this.fieldsOfInterest = fieldsOfInterest;
+      this.n = n;
+      this.interval = interval;
+      this.deadband = deadband;
    }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public Integer getNumericPrecision()
+   public Optional<Set<String>> getFieldsOfInterest()
    {
-      return numericPrecision == null ? DEFAULT_NUMERIC_PRECISION : numericPrecision;
+      return fieldsOfInterest == null ? Optional.empty() : Optional.of( Set.of( fieldsOfInterest.split( ";" ) ) );
+   }
+
+   public Optional<Integer> getNumericPrecision()
+   {
+      return numericPrecision == null ? Optional.empty() : Optional.of( numericPrecision );
    }
    public FilterType getFilterType()
    {
       return filterType == null ? DEFAULT_FILTER_TYPE : filterType;
    }
-   public String getFilterParameter()
+
+   public int getN()
    {
-      return filterParameter == null ? DEFAULT_FILTER_PARAMETER : filterParameter;
+      return n == null ? DEFAULT_N : n;
    }
 
-   public Set<String> getFieldsOfInterest()
+   public int getInterval()
    {
-      return fieldsOfInterest == null ? Set.of( DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) : Set.of( fieldsOfInterest.split( ";" ) );
+      return interval == null ? DEFAULT_INTERVAL :interval;
    }
+
+   public double getDeadband()
+   {
+      return deadband == null ? DEFAULT_DEADBAND : deadband;
+   }
+
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
@@ -83,15 +105,6 @@ public class WicaChannelProperties
       @JsonProperty( "one-in-n" )        ONE_IN_N,
       @JsonProperty( "last-n" )          LAST_N,
       @JsonProperty( "change-filterer" ) CHANGE_FILTERER,
-      @JsonProperty( "default" )         DEFAULT;
-
-      String filterName;
-      String filterParameterName;
-
-//      FilterType( String filterName, String filterParameterName )
-//      {
-//         this.filterName = filterName;
-//         this.filterParameterName = filterParameterName;
-//      }
+      @JsonProperty( "default" )         DEFAULT
    }
 }

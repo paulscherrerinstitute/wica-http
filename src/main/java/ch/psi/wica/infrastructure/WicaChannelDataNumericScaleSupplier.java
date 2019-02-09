@@ -26,7 +26,6 @@ public class WicaChannelDataNumericScaleSupplier implements NumericScaleSupplier
 
    private final Logger logger = LoggerFactory.getLogger(WicaStreamConfigurationDecoder.class );
 
-   private final WicaStream wicaStream;
    private final WicaStreamProperties wicaStreamProperties;
    private final Set<WicaChannel> wicaChannels;
    private final Map<WicaChannelName, Integer> map = new HashMap<>();
@@ -36,9 +35,11 @@ public class WicaChannelDataNumericScaleSupplier implements NumericScaleSupplier
 
    public WicaChannelDataNumericScaleSupplier( WicaStream wicaStream )
    {
-      this.wicaStream = Validate.notNull( wicaStream );
+      Validate.notNull( wicaStream );
       this.wicaStreamProperties = wicaStream.getWicaStreamProperties();
       this.wicaChannels = wicaStream.getWicaChannels();
+      addWicaStreamPropertyDefaultValues();
+      addWicaChannelPropertyOverrides();
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -64,9 +65,10 @@ public class WicaChannelDataNumericScaleSupplier implements NumericScaleSupplier
    private void addWicaChannelPropertyOverrides()
    {
       wicaChannels.stream()
-            .filter( ch -> ch.getProperties().getNumericPrecision() == null )
+            .filter( ch -> ch.getProperties().getNumericPrecision().isPresent() )
             .forEach( ch -> {
-               final int numericScaleOverride = ch.getProperties().getNumericPrecision();
+               @SuppressWarnings( "OptionalGetWithoutIsPresent" )
+               final int numericScaleOverride = ch.getProperties().getNumericPrecision().get();
                logger.info("Channel '{}' had numericScale override '{}'", ch, numericScaleOverride );
                map.put(ch.getName(), numericScaleOverride);
             } );

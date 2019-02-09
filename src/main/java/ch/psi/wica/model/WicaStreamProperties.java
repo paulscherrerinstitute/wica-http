@@ -18,7 +18,7 @@ public class WicaStreamProperties
 
 /*- Public attributes --------------------------------------------------------*/
 
-   public static final int DEFAULT_HEARTBEAT_FLUX_INTERVAL = 1000;
+   public static final int DEFAULT_HEARTBEAT_FLUX_INTERVAL = 10000;
    public static final int DEFAULT_VALUE_UPDATE_FLUX_INTERVAL = 100;
    public static final int DEFAULT_NUMERIC_PRECISION = 8;
    public static final String DEFAULT_FIELDS_OF_INTEREST = "val;sevr";

@@ -70,25 +70,25 @@ public class WicaChannelValueMapperBuilder implements WicaChannelValueMapper
             break;
 
          case RATE_LIMITER:
-            final int sampleGap = Integer.parseInt(wicaChannelProperties.getFilterParameter() );
+            final int sampleGap = wicaChannelProperties.getInterval();
             logger.info("Creating channel filter with filterType='rate-limiter', interval='{}'", sampleGap );
             filteringMapper = new WicaChannelValueMapperRateLimitingSampler(sampleGap);
             break;
 
          case ONE_IN_N:
-            final int cycleLength = Integer.parseInt(wicaChannelProperties.getFilterParameter() );
+            final int cycleLength = wicaChannelProperties.getN();
             logger.info("Creating channel filter with filterType='one-in-n', n='{}'", cycleLength );
             filteringMapper =  new WicaChannelValueMapperFixedCycleSampler( cycleLength );
             break;
 
          case LAST_N:
-            final int numSamples = Integer.parseInt(wicaChannelProperties.getFilterParameter() );
+            final int numSamples = wicaChannelProperties.getN();
             logger.info("Creating channel filter with filterType='last-n', n='{}'", numSamples );
             filteringMapper =  new WicaChannelValueMapperLatestValueSampler( numSamples );
             break;
 
          case CHANGE_FILTERER:
-            final double deadband = Double.parseDouble( wicaChannelProperties.getFilterParameter() );
+            final double deadband =wicaChannelProperties.getDeadband();
             logger.info("Creating channel filter with filterType='change-filterer', deadband='{}'", deadband );
             filteringMapper =  new WicaChannelValueMapperChangeFilteringSampler(deadband );
             break;

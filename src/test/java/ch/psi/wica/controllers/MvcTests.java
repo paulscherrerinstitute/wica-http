@@ -132,7 +132,7 @@ public class MvcTests
    public void testGet_RequestEventStreamIncludesHeartbeatSignal() throws Exception
    {
       // Send a POST request with a list containing a couple of EPICS channels
-      final RequestBuilder postRequest = MockMvcRequestBuilders.post( "/ca/streams" ).content(epicsChannelListOk).contentType(MediaType.APPLICATION_JSON_VALUE ).accept(MediaType.TEXT_PLAIN_VALUE );
+      final RequestBuilder postRequest = MockMvcRequestBuilders.post( "/ca/streams" ).content( epicsChannelListOk ).contentType(MediaType.APPLICATION_JSON_VALUE ).accept(MediaType.TEXT_PLAIN_VALUE );
       final MvcResult postRequestResult = mockMvc.perform( postRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
       logger.info( "Returned data was: '{}'", postRequestResult.getResponse().getContentAsString() );
 
