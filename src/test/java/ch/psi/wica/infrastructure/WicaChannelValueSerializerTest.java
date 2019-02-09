@@ -73,7 +73,7 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueUnconnected()
    {
-      final var serializer = new WicaChannelValueSerializer( 5, false );
+      final var serializer = new WicaChannelValueSerializer( Set.of(), 5, false );
       final var jsonStr =  serializer.serialize( unconnValue );
       logger.info("JSON Value UNCONNECTED serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
    }

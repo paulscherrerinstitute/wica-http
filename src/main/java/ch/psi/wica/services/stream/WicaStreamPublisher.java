@@ -60,14 +60,14 @@ public class WicaStreamPublisher
 
       // Create a single Flux which merges all of the above.
       combinedFlux = heartbeatFlux.mergeWith( channelMetadataFlux )
-            .mergeWith( channelValueFlux )
-            .mergeWith( channelValueUpdateFlux )
-            .doOnComplete( () -> logger.warn( "eventStreamFlux flux completed" ))
-            .doOnCancel( () -> {
-               logger.warn( "eventStreamFlux was cancelled" );
-               handleErrors( wicaStreamId );
-            } );
-      //.log();
+                                  .mergeWith( channelValueFlux )
+                                  .mergeWith( channelValueUpdateFlux )
+                                  .doOnComplete( () -> logger.warn( "eventStreamFlux flux completed" ))
+                                  .doOnCancel( () -> {
+                                      logger.warn( "eventStreamFlux was cancelled" );
+                                      handleErrors( wicaStreamId );
+                                  } );
+                                  //.log();
    }
 
 
@@ -103,7 +103,7 @@ public class WicaStreamPublisher
                final String jsonHeartbeatString = LocalDateTime.now().toString();
                return WicaServerSentEventBuilder.EV_WICA_SERVER_HEARTBEAT.build( wicaStreamId, jsonHeartbeatString );
             })
-            .doOnComplete( () -> logger.warn( "heartbeat flux completed" ))
+         //   .doOnComplete( () -> logger.warn( "heartbeat flux completed" ))
             .doOnCancel(() -> logger.warn("heartbeat flux was cancelled"));
       //.log();
    }
@@ -128,7 +128,7 @@ public class WicaStreamPublisher
                final String jsonMetadataString = wicaChannelMetadataMapSerializer.serialize( channelMetadataMap );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build ( wicaStreamId, jsonMetadataString );
             } )
-            .doOnComplete( () -> logger.warn( "channel-metadata flux completed" ))
+          //  .doOnComplete( () -> logger.warn( "channel-metadata flux completed" ))
             .doOnCancel( () -> logger.warn( "channel-metadata flux was cancelled" ) );
       //.log();
    }

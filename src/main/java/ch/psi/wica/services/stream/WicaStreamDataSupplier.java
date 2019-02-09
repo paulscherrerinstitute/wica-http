@@ -26,7 +26,7 @@ public class WicaStreamDataSupplier
 
    private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
 
-   private LocalDateTime lastPublicationTime;
+   private LocalDateTime lastPublicationTime = LONG_AGO;
 
    private final WicaStream wicaStream;
    private final EpicsChannelDataService epicsChannelDataService;

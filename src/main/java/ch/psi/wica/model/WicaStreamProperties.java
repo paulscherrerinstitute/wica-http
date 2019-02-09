@@ -11,7 +11,7 @@ import net.jcip.annotations.Immutable;
 
 import java.util.Set;
 
-@JsonIgnoreProperties( ignoreUnknown=false )
+@JsonIgnoreProperties()
 @Immutable
 public class WicaStreamProperties
 {
@@ -21,14 +21,14 @@ public class WicaStreamProperties
    public static final int DEFAULT_HEARTBEAT_FLUX_INTERVAL = 10000;
    public static final int DEFAULT_VALUE_UPDATE_FLUX_INTERVAL = 100;
    public static final int DEFAULT_NUMERIC_PRECISION = 8;
-   public static final String DEFAULT_FIELDS_OF_INTEREST = "val;sevr";
+   public static final String DEFAULT_FIELDS_OF_INTEREST = "type;val;sevr";
 
 /*- Private attributes -------------------------------------------------------*/
 
    private final Integer heartbeatFluxInterval;
    private final Integer valueUpdateFluxInterval;
    private final Integer numericPrecision;
-   private final String fieldsOfInterest;
+   private final Set<String> fieldsOfInterest;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -38,7 +38,7 @@ public class WicaStreamProperties
       this.heartbeatFluxInterval = DEFAULT_HEARTBEAT_FLUX_INTERVAL;
       this.valueUpdateFluxInterval = DEFAULT_VALUE_UPDATE_FLUX_INTERVAL;
       this.numericPrecision = DEFAULT_NUMERIC_PRECISION;
-      this.fieldsOfInterest = DEFAULT_FIELDS_OF_INTEREST;
+      this.fieldsOfInterest = Set.of( DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) ;
    }
 
    public WicaStreamProperties( @JsonProperty( "heartbeat-flux-interval" )    Integer heartbeatFluxInterval,
@@ -46,10 +46,10 @@ public class WicaStreamProperties
                                 @JsonProperty( "prec" )   Integer numericPrecision,
                                 @JsonProperty( "fields" ) String fieldsOfInterest )
    {
-      this.heartbeatFluxInterval = heartbeatFluxInterval;
-      this.valueUpdateFluxInterval = valueUpdateFluxInterval;
-      this.numericPrecision = numericPrecision;
-      this.fieldsOfInterest = fieldsOfInterest;
+      this.heartbeatFluxInterval = heartbeatFluxInterval == null ? DEFAULT_HEARTBEAT_FLUX_INTERVAL : heartbeatFluxInterval;
+      this.valueUpdateFluxInterval = valueUpdateFluxInterval== null ? DEFAULT_VALUE_UPDATE_FLUX_INTERVAL : valueUpdateFluxInterval;
+      this.numericPrecision = numericPrecision == null ? DEFAULT_NUMERIC_PRECISION : numericPrecision;
+      this.fieldsOfInterest = fieldsOfInterest == null ? Set.of( DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) : Set.of( fieldsOfInterest.split( ";" ) );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -57,22 +57,22 @@ public class WicaStreamProperties
 
    public int getHeartbeatFluxInterval()
    {
-      return heartbeatFluxInterval == null ? DEFAULT_HEARTBEAT_FLUX_INTERVAL : heartbeatFluxInterval;
+      return heartbeatFluxInterval;
    }
 
    public int getChannelValueUpdateFluxInterval()
    {
-      return valueUpdateFluxInterval == null ? DEFAULT_VALUE_UPDATE_FLUX_INTERVAL : valueUpdateFluxInterval;
+      return valueUpdateFluxInterval;
    }
 
    public int getNumericPrecision()
    {
-      return numericPrecision == null ? DEFAULT_NUMERIC_PRECISION : numericPrecision;
+      return numericPrecision;
    }
 
    public Set<String> getFieldsOfInterest()
    {
-      return fieldsOfInterest == null ? Set.of( DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) : Set.of( fieldsOfInterest.split( ";" ) );
+      return fieldsOfInterest;
    }
 
 

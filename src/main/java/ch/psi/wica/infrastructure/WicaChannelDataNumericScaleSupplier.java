@@ -58,7 +58,7 @@ public class WicaChannelDataNumericScaleSupplier implements NumericScaleSupplier
    {
       final int numericScale = wicaStreamProperties.getNumericPrecision();
       logger.info( "Stream default numericScale is: '{}'", numericScale );
-      map.keySet().forEach( (c) -> map.put( c, numericScale ) );
+      wicaChannels.forEach( (c) -> map.put( c.getName(), numericScale ) );
    }
 
 
@@ -70,7 +70,7 @@ public class WicaChannelDataNumericScaleSupplier implements NumericScaleSupplier
                @SuppressWarnings( "OptionalGetWithoutIsPresent" )
                final int numericScaleOverride = ch.getProperties().getNumericPrecision().get();
                logger.info("Channel '{}' had numericScale override '{}'", ch, numericScaleOverride );
-               map.put(ch.getName(), numericScaleOverride);
+               map.put( ch.getName(), numericScaleOverride);
             } );
    }
 

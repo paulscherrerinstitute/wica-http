@@ -142,7 +142,7 @@ public class MvcTests
       mockMvc.perform( getRequest )
              .andExpect( status().isOk() )
              .andExpect( content().contentType( "text/event-stream;charset=UTF-8" ) )
-             .andDo( l -> Thread.sleep( heartbeatIntervalInMilliseconds + 1000 ) )
+             .andDo( l -> Thread.sleep( heartbeatIntervalInMilliseconds + 5000 ) )
              .andDo( print() )
              .andExpect( content().string( containsString( "id:0" ) ) )
              .andExpect( content().string( containsString( "heartbeat" ) ) )

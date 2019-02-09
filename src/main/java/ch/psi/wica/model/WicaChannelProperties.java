@@ -12,7 +12,7 @@ import net.jcip.annotations.Immutable;
 import java.util.Optional;
 import java.util.Set;
 
-@JsonIgnoreProperties( ignoreUnknown=false )
+@JsonIgnoreProperties()
 @Immutable
 public class WicaChannelProperties
 {
@@ -56,10 +56,10 @@ public class WicaChannelProperties
    {
       this.fieldsOfInterest = fieldsOfInterest;
       this.numericPrecision = numericPrecision;
-      this.filterType = filterType;
-      this.n = n;
-      this.interval = interval;
-      this.deadband = deadband;
+      this.filterType = filterType == null ? DEFAULT_FILTER_TYPE : filterType;
+      this.n = n == null ? DEFAULT_N : n;
+      this.interval =  interval == null ? DEFAULT_INTERVAL :interval;
+      this.deadband = deadband == null ? DEFAULT_DEADBAND : deadband;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -76,22 +76,22 @@ public class WicaChannelProperties
    }
    public FilterType getFilterType()
    {
-      return filterType == null ? DEFAULT_FILTER_TYPE : filterType;
+      return filterType;
    }
 
    public int getN()
    {
-      return n == null ? DEFAULT_N : n;
+      return n;
    }
 
    public int getInterval()
    {
-      return interval == null ? DEFAULT_INTERVAL :interval;
+      return interval;
    }
 
    public double getDeadband()
    {
-      return deadband == null ? DEFAULT_DEADBAND : deadband;
+      return deadband;
    }
 
 

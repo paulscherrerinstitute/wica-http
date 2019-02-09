@@ -57,7 +57,7 @@ public class WicaChannelDataFieldsOfInterestSupplier implements FieldsOfInterest
    {
       final Set<String> fieldsOfInterest = wicaStreamProperties.getFieldsOfInterest();
       logger.info( "Stream default fieldsOfInterest for are: '{}'", fieldsOfInterest );
-      map.keySet().forEach( ch -> map.put( ch, fieldsOfInterest ) );
+      wicaChannels.forEach( ch -> map.put( ch.getName(), fieldsOfInterest ) );
    }
 
    private void addWicaChannelPropertyOverrides()
