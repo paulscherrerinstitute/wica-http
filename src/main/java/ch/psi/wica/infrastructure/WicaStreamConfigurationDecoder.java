@@ -94,7 +94,6 @@ public class WicaStreamConfigurationDecoder
       else
       {
          this.wicaStreamProperties = mapper.readValue("{}" , WicaStreamProperties.class );
-         //this.streamPropertiesMap = new HashMap<>();
       }
 
       if ( ! rootNode.has("channels") )
@@ -107,7 +106,7 @@ public class WicaStreamConfigurationDecoder
          throw new IllegalArgumentException( "The root node of the JSON configuration string did not contain a value for field named 'channels'");
       }
 
-      final JsonNode channelsObjectNode = rootNode.findValue( "channels" );
+      final JsonNode channelsObjectNode = rootNode.get( "channels" );
       if ( ! channelsObjectNode.isArray() )
       {
          throw new IllegalArgumentException( "The root node of the JSON configuration string contained a field named 'channels', but it wasn't an array" );
@@ -125,17 +124,17 @@ public class WicaStreamConfigurationDecoder
          {
             throw new IllegalArgumentException( "The JSON configuration string did not contain a valid value for one or more channel 'name' fields.");
          }
-         final JsonNode strNode = channelNode.findValue("name");
 
-         final WicaChannelName wicaChannelName = WicaChannelName.of(strNode.asText());
+         final JsonNode strNode = channelNode.get("name");
+         final WicaChannelName wicaChannelName = WicaChannelName.of( strNode.asText() );
 
-
+         final WicaChannelProperties wicaChannelProperties;
          if ( channelNode.has("props") )
          {
-            final JsonNode propsNode = rootNode.get( "props" );
+            final JsonNode propsNode = channelNode.get( "props" );
             if ( propsNode.isContainerNode() )
             {
-               final WicaChannelProperties wicaChannelProperties = mapper.treeToValue( propsNode, WicaChannelProperties.class);
+               wicaChannelProperties = mapper.treeToValue( propsNode, WicaChannelProperties.class);
             }
             else
             {
@@ -144,9 +143,9 @@ public class WicaStreamConfigurationDecoder
          }
          else
          {
-            final WicaChannelProperties wicaChannelProperties = mapper.readValue("{}" , WicaChannelProperties.class );
+            wicaChannelProperties = mapper.readValue("{}" , WicaChannelProperties.class );
          }
-         this.wicaChannels.add( new WicaChannel( wicaChannelName, new WicaChannelProperties()) );
+         this.wicaChannels.add( new WicaChannel( wicaChannelName, wicaChannelProperties ) );
       }
    }
 

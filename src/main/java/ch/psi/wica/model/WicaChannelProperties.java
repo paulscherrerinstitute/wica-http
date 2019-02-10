@@ -47,12 +47,12 @@ public class WicaChannelProperties
       this.deadband = DEFAULT_DEADBAND;
    }
 
-   public WicaChannelProperties( @JsonProperty( "fields" )   String fieldsOfInterest,
-                                 @JsonProperty( "prec" )     Integer numericPrecision,
-                                 @JsonProperty( "filter" )   FilterType filterType,
-                                 @JsonProperty( "n" )        Integer n,
-                                 @JsonProperty( "interval" ) Integer interval,
-                                 @JsonProperty( "deadband" ) Double deadband )
+   public WicaChannelProperties( @JsonProperty( "fields" )     String fieldsOfInterest,
+                                 @JsonProperty( "prec" )       Integer numericPrecision,
+                                 @JsonProperty( "filterType" ) FilterType filterType,
+                                 @JsonProperty( "n" )          Integer n,
+                                 @JsonProperty( "interval" )   Integer interval,
+                                 @JsonProperty( "deadband" )   Double deadband )
    {
       this.fieldsOfInterest = fieldsOfInterest;
       this.numericPrecision = numericPrecision;
@@ -74,6 +74,7 @@ public class WicaChannelProperties
    {
       return numericPrecision == null ? Optional.empty() : Optional.of( numericPrecision );
    }
+
    public FilterType getFilterType()
    {
       return filterType;

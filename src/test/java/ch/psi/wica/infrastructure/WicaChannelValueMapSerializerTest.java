@@ -46,7 +46,6 @@ class WicaChannelValueMapSerializerTest
    private WicaChannelValue strArrValue;
    private WicaChannelValue realArrValue;
 
-   private ObjectMapper jsonDecoder;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -68,7 +67,7 @@ class WicaChannelValueMapSerializerTest
       realArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( new double[] { 2.5, 1.2 }  );
 
       // Set up decoder
-      jsonDecoder = new ObjectMapper();
+      final ObjectMapper jsonDecoder = new ObjectMapper();
       jsonDecoder.configure( JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS, true );
    }
 

@@ -58,12 +58,12 @@ class WicaChannelValueSerializerTest
       unconnValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueDisconnected();
       intValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( 27 );
       strValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( "abcdef" );
-      realValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( 123456.654321 );
+      realValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( 123456.6543212345 );
       realNanValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( NaN );
       realInfValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( POSITIVE_INFINITY );
       intArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( new int[] { 25, 12 } );
       strArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( new String[] { "abcdef", "ghijkl" } );
-      realArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( new double[] { 2.5, 1.2 }  );
+      realArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( new double[] { 1.23456789012345, 9.87654321012345, Double.NaN }  );
 
       // Set up decoder
       jsonDecoder = new ObjectMapper();
@@ -137,29 +137,31 @@ class WicaChannelValueSerializerTest
    @Test
    void test_serializeValueReal() throws IOException
    {
-      final var serializer = new WicaChannelValueSerializer( 6, false );
+      final var serializer = new WicaChannelValueSerializer( 3, false );
       final var jsonStr =  serializer.serialize( realValue );
       logger.info("JSON Value REAL serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
       final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "val") );
       assertEquals( JsonNodeType.NUMBER, rootNode.get( "val" ).getNodeType() );
-      assertEquals( 123456.654321, rootNode.get( "val" ).asDouble() );
+      assertEquals( 123456.654, rootNode.get( "val" ).asDouble() );
    }
 
    @Test
    void test_serializeValueRealArray() throws IOException
    {
-      final var serializer = new WicaChannelValueSerializer( 5, false );
+      final var serializer = new WicaChannelValueSerializer( 4, false );
       final var jsonStr =  serializer.serialize( realArrValue );
       logger.info("JSON Value REAL ARRAY serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
       final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "val") );
       assertEquals( JsonNodeType.ARRAY, rootNode.get( "val" ).getNodeType() );
-      assertEquals( 2, rootNode.get( "val" ).size());
-      assertEquals( 2.5, rootNode.get( "val" ).get( 0 ).asDouble());
-      assertEquals( 1.2, rootNode.get( "val" ).get( 1 ).asDouble() );
+      assertEquals( 3, rootNode.get( "val" ).size());
+      assertEquals( 1.2346, rootNode.get( "val" ).get( 0 ).asDouble());
+      assertEquals( 9.8765, rootNode.get( "val" ).get( 1 ).asDouble() );
+      assertEquals(JsonNodeType.NUMBER, rootNode.get("val" ).get(2).getNodeType() );
+      assertEquals( NaN, rootNode.get( "val" ).get(2).asDouble() );
    }
 
    @Test

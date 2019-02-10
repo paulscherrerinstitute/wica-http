@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static java.lang.Integer.parseInt;
-
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
@@ -24,7 +22,7 @@ public class WicaChannelDataNumericScaleSupplier implements NumericScaleSupplier
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(WicaStreamConfigurationDecoder.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaChannelDataNumericScaleSupplier.class );
 
    private final WicaStreamProperties wicaStreamProperties;
    private final Set<WicaChannel> wicaChannels;
@@ -58,7 +56,7 @@ public class WicaChannelDataNumericScaleSupplier implements NumericScaleSupplier
    {
       final int numericScale = wicaStreamProperties.getNumericPrecision();
       logger.info( "Stream default numericScale is: '{}'", numericScale );
-      wicaChannels.forEach( (c) -> map.put( c.getName(), numericScale ) );
+      wicaChannels.forEach( (ch) -> map.put( ch.getName(), numericScale ) );
    }
 
 

@@ -21,7 +21,7 @@ public class WicaStreamProperties
    public static final int DEFAULT_HEARTBEAT_FLUX_INTERVAL = 10000;
    public static final int DEFAULT_VALUE_UPDATE_FLUX_INTERVAL = 100;
    public static final int DEFAULT_NUMERIC_PRECISION = 8;
-   public static final String DEFAULT_FIELDS_OF_INTEREST = "type;val;sevr";
+   public static final String DEFAULT_FIELDS_OF_INTEREST = "val;sevr";
 
 /*- Private attributes -------------------------------------------------------*/
 
@@ -41,7 +41,7 @@ public class WicaStreamProperties
       this.fieldsOfInterest = Set.of( DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) ;
    }
 
-   public WicaStreamProperties( @JsonProperty( "heartbeatInterval" )    Integer heartbeatFluxInterval,
+   public WicaStreamProperties( @JsonProperty( "heartbeatInterval" ) Integer heartbeatFluxInterval,
                                 @JsonProperty( "channelValueUpdateInterval" ) Integer valueUpdateFluxInterval,
                                 @JsonProperty( "prec" )   Integer numericPrecision,
                                 @JsonProperty( "fields" ) String fieldsOfInterest )

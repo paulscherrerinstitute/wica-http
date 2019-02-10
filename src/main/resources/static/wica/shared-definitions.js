@@ -249,7 +249,7 @@ export const WicaRenderingProperties = Object.freeze ({
 export const WicaStreamProperties = Object.freeze ({
     heartbeatInterval: 15000,
     channelValueUpdateInterval: 100,
-    fields: "type;drvh;drvl;hopr;lopr;hihi;lolo;high;low;val;sevr"
+    fields: "val;sevr"
 } );
 
 /**

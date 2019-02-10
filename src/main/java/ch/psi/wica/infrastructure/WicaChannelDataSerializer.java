@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -34,6 +36,8 @@ class WicaChannelDataSerializer
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
+
+   private final Logger logger = LoggerFactory.getLogger( WicaChannelDataSerializer.class );
 
    private ObjectMapper jsonObjectMapper;
 
@@ -137,8 +141,9 @@ class WicaChannelDataSerializer
       final SimpleModule module = new SimpleModule();
 
       // It is "special" because (a) it is possible to control the number of digits
-      // sent down the wire when representing doubles.
+      // sent down the wire when representing doubles and/or double arrays.
       module.addSerializer( double.class, new WicaDoubleSerializer( numericScale ) );
+      module.addSerializer( double[].class, new WicaDoubleArraySerializer( numericScale ) );
       jsonObjectMapper = new Jackson2ObjectMapperBuilder().createXmlMapper(false ).build();
 
       // Turn off the feature whereby date/time values are written as timestamps.

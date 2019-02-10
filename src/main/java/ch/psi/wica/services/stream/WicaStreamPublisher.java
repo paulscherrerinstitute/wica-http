@@ -15,6 +15,7 @@ import reactor.core.publisher.Flux;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Set;
 
 public class WicaStreamPublisher
 {
@@ -39,12 +40,13 @@ public class WicaStreamPublisher
    {
       this.wicaStreamId = wicaStream.getWicaStreamId();
       this.wicaStreamProperties = wicaStream.getWicaStreamProperties();
-      this.wicaChannelMetadataMapSerializer = new WicaChannelMetadataMapSerializer( new WicaChannelDataFieldsOfInterestSupplier( wicaStream ),
-                                                                                    new WicaChannelDataNumericScaleSupplier( wicaStream ), false );
+      this.wicaChannelMetadataMapSerializer = new WicaChannelMetadataMapSerializer( c -> Set.of(),
+                                                                                    new WicaChannelDataNumericScaleSupplier( wicaStream ),
+                                                                                   false );
 
       this.wicaChannelValueMapSerializer = new WicaChannelValueMapSerializer( new WicaChannelDataFieldsOfInterestSupplier( wicaStream ),
-                                                                              new WicaChannelDataNumericScaleSupplier( wicaStream ), false );
-
+                                                                              new WicaChannelDataNumericScaleSupplier( wicaStream ),
+                                                                             false );
       this.wicaStreamDataSupplier = wicaStreamDataSupplier;
    }
 
@@ -149,8 +151,8 @@ public class WicaStreamPublisher
             .map( l -> {
                logger.trace( "channel-value-update flux is publishing new SSE..." );
                final var map = wicaStreamDataSupplier.getValueMapLatest();
-               final var jsonSseStr = wicaChannelValueMapSerializer.serialize( map );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUE_CHANGES.build(  wicaStreamId, jsonSseStr );
+               final var jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
+               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUE_CHANGES.build(  wicaStreamId, jsonServerSentEventString );
             } )
             .doOnComplete( () -> logger.warn( "channel-value-update flux completed" ))
             .doOnCancel( () -> logger.warn( "channel-value-update flux was cancelled" ) );
@@ -173,8 +175,8 @@ public class WicaStreamPublisher
             .map(l -> {
                logger.trace("channel-value flux is publishing new SSE...");
                var map = wicaStreamDataSupplier.getValueMapAll();
-               final String jsonSseStr = wicaChannelValueMapSerializer.serialize( map );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUE_ALLDATA.build( wicaStreamId, jsonSseStr );
+               final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
+               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUE_ALLDATA.build( wicaStreamId, jsonServerSentEventString );
             })
             .doOnComplete( () -> logger.warn( "channel-value flux completed" ))
             .doOnCancel( () -> logger.warn("channel-value flux was cancelled"));

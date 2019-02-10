@@ -5,6 +5,7 @@ package ch.psi.wica.model;
 
 import ch.psi.wica.services.stream.WicaChannelValueMapper;
 import ch.psi.wica.services.stream.WicaChannelValueMapperBuilder;
+import net.jcip.annotations.Immutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,7 @@ import java.util.List;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+@Immutable
 public class WicaChannel implements WicaChannelValueMapper
 {
 
@@ -21,9 +23,9 @@ public class WicaChannel implements WicaChannelValueMapper
 
    private final Logger logger = LoggerFactory.getLogger(WicaChannel.class );
 
-   private WicaChannelName wicaChannelName;
-   private WicaChannelProperties wicaChannelProperties;
-   private WicaChannelValueMapper wicaChannelValueMapper;
+   private final WicaChannelName wicaChannelName;
+   private final WicaChannelProperties wicaChannelProperties;
+   private final WicaChannelValueMapper wicaChannelValueMapper;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
