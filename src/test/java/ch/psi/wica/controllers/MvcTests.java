@@ -138,11 +138,11 @@ public class MvcTests
 
       // Send a GET request to subscribe to the stream we just created
       final RequestBuilder getRequest = MockMvcRequestBuilders.get( "/ca/streams/0" ).accept( MediaType.TEXT_EVENT_STREAM_VALUE );
-      final int heartbeatIntervalInMilliseconds = 15_000;
+      final int heartbeatIntervalInMilliseconds = 11_000;
       mockMvc.perform( getRequest )
              .andExpect( status().isOk() )
              .andExpect( content().contentType( "text/event-stream;charset=UTF-8" ) )
-             .andDo( l -> Thread.sleep( heartbeatIntervalInMilliseconds + 5000 ) )
+             .andDo( l -> Thread.sleep( heartbeatIntervalInMilliseconds + 1000 ) )
              .andDo( print() )
              .andExpect( content().string( containsString( "id:0" ) ) )
              .andExpect( content().string( containsString( "heartbeat" ) ) )

@@ -3,55 +3,60 @@ package ch.psi.wica.infrastructure;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.WicaChannel;
+import ch.psi.wica.model.WicaChannelName;
+import ch.psi.wica.model.WicaChannelProperties;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@SpringBootTest
 class WicaStreamConfigurationDecoderTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
-
-   private final Logger logger = LoggerFactory.getLogger( WicaStreamConfigurationDecoderTest.class );
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-//   @Test
-//   void testGoodDecodeSequence1()
-//   {
-//       String testString = "{ \"props\": { \"prop1\": 29, \"prop2\": 14 }," +
-//                           "\"channels\": [ { \"name\": \"MHC1:IST:2\", \"props\": { \"filterType\": \"changes\", \"deadband\": 19 } }," +
-//                                           "{ \"name\": \"MYC2:IST:2\", \"props\": { \"filterType\": \"changes\", \"deadband\": 10 } }," +
-//                                           "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filterType\": \"special\", \"deadband\": 10 } } ] }";
-//
-//      final WicaStreamConfigurationDecoder decoder = new WicaStreamConfigurationDecoder( testString );
-//      assertEquals( 3, decoder.getWicaChannels().size() );
-//    //  assertEquals( 2, decoder.getWicaChannels()..getNumberOfProperties() );
-//      assertEquals( 2, decoder.getChannelProperties ( WicaChannelName.of( "MBC1:IST:2") ).getNumberOfProperties() );
-//      assertEquals( "special", decoder.getChannelProperties( WicaChannelName.of( "MBC1:IST:2") ).getPropertyValue( "filterType") );
-//      assertEquals( "19", decoder.getChannelProperties(WicaChannelName.of( "MHC1:IST:2") ).getPropertyValue( "deadband") );
-//
-//      assertThrows( IllegalArgumentException.class, () -> {
-//         decoder.getChannelProperties ( WicaChannelName.of( "MYC2:IST:2") ).getPropertyValue( "unknown");
-//      } );
-//
-//      assertThrows( IllegalArgumentException.class, () -> {
-//         decoder.getChannelProperties( WicaChannelName.of( "xxx") );
-//      } );
-//   }
+   @Test
+   void testGoodDecodeSequence1()
+   {
+       String testString = "{ \"props\": { \"prec\": 29, \"heartbeatInterval\": 50, \"channelValueUpdateInterval\": 40 }," +
+                           "\"channels\": [ { \"name\": \"MHC1:IST:2\", \"props\": { \"filterType\": \"changes\", \"deadband\": 19 } }," +
+                                           "{ \"name\": \"MYC2:IST:2\", \"props\": { \"filterType\": \"changes\", \"deadband\": 10 } }," +
+                                           "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filterType\": \"rate-limiter\", \"interval\": 17 } } ] }";
+
+      final WicaStreamConfigurationDecoder decoder = new WicaStreamConfigurationDecoder( testString );
+      final var streamProps = decoder.getWicaStreamProperties();
+      assertEquals( 50, streamProps.getHeartbeatFluxInterval() );
+      assertEquals( 40, streamProps.getChannelValueUpdateFluxInterval() );
+      assertEquals( 3, decoder.getWicaChannels().size() );
+      final Set<WicaChannel> channels = decoder.getWicaChannels();
+      channels.forEach( c -> {
+         var chanProps = c.getProperties();
+         assertFalse( chanProps.getFieldsOfInterest().isPresent() );
+         if ( c.getName().equals( WicaChannelName.of( "MHC1:IST:2" ) ) ) {
+            assertEquals( WicaChannelProperties.FilterType.CHANGE_FILTERER, c.getProperties().getFilterType() );
+            assertEquals( 19.0, c.getProperties().getDeadband() );
+         }
+         if ( c.getName().equals( WicaChannelName.of( "MYC2:IST:2" ) ) ) {
+            assertEquals( WicaChannelProperties.FilterType.CHANGE_FILTERER, c.getProperties().getFilterType() );
+            assertEquals( 10.0, c.getProperties().getDeadband() );
+         }
+         if ( c.getName().equals( WicaChannelName.of( "MBC1:IST:2" ) ) ) {
+            assertEquals( WicaChannelProperties.FilterType.RATE_LIMITER, c.getProperties().getFilterType() );
+            assertEquals( 17, c.getProperties().getInterval() );
+         }
+      } );
+   }
 
    @Test
    void testGoodDecodeSequence2()
@@ -59,7 +64,7 @@ class WicaStreamConfigurationDecoderTest
       assertThrows( IllegalArgumentException.class, () ->
       {
          String testString = "[ { \"name\": \"MHC1:IST:2\" } ]";
-         final WicaStreamConfigurationDecoder decoder = new WicaStreamConfigurationDecoder( testString );
+         new WicaStreamConfigurationDecoder( testString );
       } );
    }
 
@@ -72,7 +77,7 @@ class WicaStreamConfigurationDecoderTest
                "{ \"name\": \"MYC2:IST:2\", \"props\": { { \"filterType\": \"changes\", \"deadband\": 10 } }," +
                "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filterType\": \"special\", \"deadband\": 10 } } ]";
 
-         final WicaStreamConfigurationDecoder decoder = new WicaStreamConfigurationDecoder(testString);
+         new WicaStreamConfigurationDecoder(testString);
       });
    }
 
@@ -83,7 +88,7 @@ class WicaStreamConfigurationDecoderTest
       {
          String testString = "[ { \"name\": \"MHC1:IST:2\", \"props\": ]";
 
-         final WicaStreamConfigurationDecoder decoder = new WicaStreamConfigurationDecoder( testString );
+         new WicaStreamConfigurationDecoder( testString );
       } );
 
    }

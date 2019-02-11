@@ -6,8 +6,6 @@ package ch.psi.wica.infrastructure;
 import ch.psi.wica.model.WicaChannelName;
 import net.jcip.annotations.Immutable;
 
-import java.util.List;
-
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/

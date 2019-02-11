@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@SpringBootTest
+//@SpringBootTest
 class WicaChannelValueMapperBuilderTest
 {
 
@@ -67,7 +67,7 @@ class WicaChannelValueMapperBuilderTest
       final WicaChannelValue intValue3 = WicaChannelValue.createChannelValueConnected( 15 );
       final WicaChannelValue intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
 
-      WicaChannelValueMapper mapper = WicaChannelValueMapperBuilder.createFromChannelProperties( new WicaChannelProperties( "val;sevr", 5, WicaChannelProperties.FilterType.ONE_IN_N, 1, null, null ) );
+      WicaChannelValueMapper mapper = WicaChannelValueMapperBuilder.createFromChannelProperties( new WicaChannelProperties( "val;sevr", 5, WicaChannelProperties.FilterType.ONE_IN_N, 2, null, null ) );
       final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
       final List<WicaChannelValue> outputList  = mapper.map( inputList );
       assertEquals( 2, outputList.size() );

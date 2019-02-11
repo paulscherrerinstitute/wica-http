@@ -4,23 +4,15 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.WicaChannelProperties;
-import ch.psi.wica.model.WicaStreamProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@RunWith( SpringRunner.class)
-@SpringBootTest
 class WicaChannelPropertiesTest
 {
 
@@ -61,7 +53,7 @@ class WicaChannelPropertiesTest
    {
       final ObjectMapper mapper = new ObjectMapper();
 
-      final String inputString = "{" + "\"filter\"" + ":" + "\"last-n\"" + "," +
+      final String inputString = "{" + "\"filterType\"" + ":" + "\"last-n\"" + "," +
                                        "\"n\"" + ":" + 99 + "," +
                                        "\"fields\"" + ":" + "\"abc;def\"" + "," +
                                        "\"prec\"" + ":" + 9 + "}";

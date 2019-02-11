@@ -6,15 +6,12 @@ package ch.psi.wica.infrastructure;
 import ch.psi.wica.model.WicaChannelName;
 import ch.psi.wica.model.WicaChannelValue;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +24,6 @@ import static java.lang.Double.POSITIVE_INFINITY;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@SpringBootTest
 class WicaChannelValueMapSerializerTest
 {
 

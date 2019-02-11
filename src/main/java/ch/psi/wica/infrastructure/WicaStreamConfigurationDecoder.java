@@ -3,7 +3,10 @@ package ch.psi.wica.infrastructure;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.*;
+import ch.psi.wica.model.WicaChannel;
+import ch.psi.wica.model.WicaChannelName;
+import ch.psi.wica.model.WicaChannelProperties;
+import ch.psi.wica.model.WicaStreamProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.jcip.annotations.Immutable;
@@ -12,15 +15,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
-
-// Todo:
-// Note this class is clunky. It should probably be refactored to perform
-// automatic decoding directly into the classes of interest.
 
 @Immutable
 public class WicaStreamConfigurationDecoder

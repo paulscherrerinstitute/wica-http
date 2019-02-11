@@ -2,7 +2,11 @@
 package ch.psi.wica.infrastructure;
 
 /*- Imported packages --------------------------------------------------------*/
-import ch.psi.wica.model.*;
+
+import ch.psi.wica.model.WicaChannel;
+import ch.psi.wica.model.WicaChannelName;
+import ch.psi.wica.model.WicaStream;
+import ch.psi.wica.model.WicaStreamProperties;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;

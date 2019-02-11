@@ -6,15 +6,12 @@ package ch.psi.wica.infrastructure;
 import ch.psi.wica.model.WicaChannelMetadata;
 import ch.psi.wica.model.WicaChannelName;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,7 +20,6 @@ import java.util.Set;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@SpringBootTest
 class WicaChannelMetadataMapSerializerTest
 {
 

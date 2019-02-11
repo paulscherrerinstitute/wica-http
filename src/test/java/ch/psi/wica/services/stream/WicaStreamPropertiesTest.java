@@ -52,7 +52,7 @@ class WicaStreamPropertiesTest
                                        "\"fields\"" + ":" + "\"abc;def\"" + "," +
                                        "\"prec\"" + ":" + 9 + "}";
 
-      final WicaStreamProperties props = mapper.readValue(inputString, WicaStreamProperties.class );
+      final WicaStreamProperties props = mapper.readValue( inputString, WicaStreamProperties.class );
       assertEquals( 12345, props.getHeartbeatFluxInterval() );
       assertEquals( 99, props.getChannelValueUpdateFluxInterval() );
       assertEquals( 9, props.getNumericPrecision() );

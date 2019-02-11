@@ -4,10 +4,8 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.WicaStream;
 import ch.psi.wica.model.WicaStreamId;
 import ch.psi.wica.services.stream.WicaStreamService;
-import ch.psi.wica.services.stream.WicaStreamPublisher;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/

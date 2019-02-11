@@ -16,10 +16,7 @@ import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.stereotype.Service;
 
 import java.util.Set;
 

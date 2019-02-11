@@ -3,7 +3,6 @@ package ch.psi.wica.infrastructure;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.WicaChannelName;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.jcip.annotations.Immutable;
 
 import java.io.IOException;
-import java.util.Set;
 
 
 /*- Interface Declaration ----------------------------------------------------*/

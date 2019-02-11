@@ -6,8 +6,6 @@ package ch.psi.wica.model;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,7 +39,8 @@ class WicaChannelValueStashTest
    void setup()
    {
       stash = new WicaChannelValueStash(3 );
-      stream = new WicaStream( WicaStreamId.createNext(), Set.of( WicaChannel.of( "abc" ), WicaChannel.of("def" ), WicaChannel.of("ghi" ) ) );
+      stream = new WicaStream( WicaStreamId.createNext(),
+                               Set.of( WicaChannel.of( "abc" ), WicaChannel.of("def" ), WicaChannel.of("ghi" ) ) );
    }
 
    @Test
@@ -49,7 +48,6 @@ class WicaChannelValueStashTest
    {
       assertThrows( NullPointerException.class, () -> stash.add( null, WicaChannelValue.createChannelValueDisconnected() ) );
       assertThrows( NullPointerException.class, () -> stash.add( WicaChannelName.of( "toffee" ),null ) );
-      //assertThrows( NullPointerException.class, () -> stash.getLaterThan( null, LocalDateTime.now() ) );
       assertThrows( NullPointerException.class, () -> stash.getLaterThan( stream.getWicaChannels(), null ) );
       assertThrows( NullPointerException.class, () -> stash.getLatest( null ) );
       assertThrows( IllegalStateException.class, () -> stash.getLatest( WicaChannelName.of( "rhubarb" ) ) );
@@ -160,9 +158,8 @@ class WicaChannelValueStashTest
       final Map<WicaChannelName, List<WicaChannelValue>> laterThanEndTimeMap = stash.getLaterThan( stream.getWicaChannels(), endTime );
       Assert.assertEquals( 1, laterThanEndTimeMap.size() );
       Assert.assertEquals( 1, laterThanEndTimeMap.get( WicaChannelName.of( "ghi" ) ).size() );
-
-      //LocalDateTime minTime = LocalDateTime.MIN;
    }
+
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 

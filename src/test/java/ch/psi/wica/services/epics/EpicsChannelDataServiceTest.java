@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static ch.psi.wica.model.WicaChannelType.STRING;
+import static ch.psi.wica.model.WicaChannelType.getTypeFromObject;
 import static org.hamcrest.Matchers.isOneOf;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
@@ -27,7 +29,6 @@ import static org.mockito.Mockito.times;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@SpringBootTest
 class EpicsChannelDataServiceTest
 {
 
@@ -68,7 +69,6 @@ class EpicsChannelDataServiceTest
    {
       assertThrows( NullPointerException.class, () -> new EpicsChannelDataService(null ) );
    }
-
 
    @Test
    void testStartMonitoringChannel()
@@ -122,13 +122,13 @@ class EpicsChannelDataServiceTest
       final WicaChannelValue observedChannelConnectedValue = dataService.getChannelValue( myChannel );
 
       // Probe the channel's various fields to check that they are as expected.
-//      assertTrue( observedChannelConnectedValue.isConnected() );
-//      assertTrue( observedChannelConnectedValue.getValue() instanceof String );
-//      assertEquals( "MyFirstValue" ,(String) observedChannelConnectedValue.getValue() );
-//      final Duration delay2 = Duration.between( LocalDateTime.now(), observedChannelConnectedValue.getTimestamp());
-//      assertTrue(delay2.toSecondsPart() < 1 );
-//      assertEquals( 17, observedChannelConnectedValue..getWicaAlarmStatus() );
-//      assertEquals( WicaChannelAlarmSeverity.NO_ALARM.ordinal(), observedChannelConnectedValue.getAlarmSeverity() );
+      assertTrue( observedChannelConnectedValue.isConnected() );
+      assertEquals( WicaChannelValue.WicaChannelValueConnectedString.class, observedChannelConnectedValue.getClass() );
+      assertEquals( "MyFirstValue" ,((WicaChannelValue.WicaChannelValueConnectedString) observedChannelConnectedValue).getValue() );
+      final Duration delay2 = Duration.between( LocalDateTime.now(), observedChannelConnectedValue.getWicaServerTimestamp() );
+      assertTrue(delay2.toSecondsPart() < 1 );
+      assertEquals( 0, ((WicaChannelValue.WicaChannelValueConnected) observedChannelConnectedValue).getWicaChannelAlarmStatus().getStatusCode() );
+      assertEquals( WicaChannelAlarmSeverity.NO_ALARM, ((WicaChannelValue.WicaChannelValueConnected) observedChannelConnectedValue).getWicaAlarmSeverity() );
     }
 
    @Test
@@ -155,7 +155,7 @@ class EpicsChannelDataServiceTest
                                                                                               valueChangedCaptor.capture() );
 
       // Verify that the channel names are passed to the EpicsMonitorService
-      //
+      // ...
 
       // Check that the DataService makes a call on the MonitorService to ask it to start
       // monitoring the channels that were specified in the stream.
@@ -195,25 +195,20 @@ class EpicsChannelDataServiceTest
       assertTrue( map3.get( wicaChannelName2 ).get( 1 ).isConnected() );
 
       // Verify the channel values
-      // TODO FIX THESE TESTS
-//      assertEquals( wicaChannelValueConnected.getType(), map3.get( wicaChannelName1 ).get( 1 ).getType() );
-//      assertEquals( wicaChannelValueConnected.getValue(), map3.get( wicaChannelName1 ).get( 1 ).getValue() );
-//      assertEquals( wicaChannelValueConnected.getAlarmSeverity(), map3.get( wicaChannelName1 ).get( 1 ).getAlarmSeverity() );
-//      assertEquals( wicaChannelValueConnected.getAlarmStatus(), map3.get( wicaChannelName1 ).get( 1 ).getAlarmStatus() );
-//      assertEquals( wicaChannelValueConnected.getTimestamp(), map3.get( wicaChannelName1 ).get( 1 ).getTimestamp() );
-//      assertEquals( wicaChannelValueConnected.getWicaServerTimestampAlt(), map3.get( wicaChannelName1 ).get( 1 ).getWicaServerTimestampAlt() );
-//      assertEquals( wicaChannelValueConnected.getWicaServerTimestamp(), map3.get( wicaChannelName1 ).get( 1 ).getWicaServerTimestamp() );
-//      assertEquals( wicaChannelValueConnected.getEpicsIocTimestamp(), map3.get( wicaChannelName1 ).get( 1 ).getEpicsIocTimestamp() );
-//      assertEquals( wicaChannelValueConnected.getEpicsIocTimestampAlt(), map3.get( wicaChannelName1 ).get( 1 ).getEpicsIocTimestampAlt() );
-//
-//      // Verify that the injected metadata is correctly captured
-//      final List<Consumer<WicaChannelMetadata>> metadataChangedHandlers = metadataChangedCaptor.getAllValues();
-//      metadataChangedHandlers.get( 0 ).accept( wicaChannelMetadata );
-//      metadataChangedHandlers.get( 1 ).accept( wicaChannelMetadata );
-//      final WicaChannelMetadata wicaChannelMetadataRcvd1 = dataService.getChannelMetadata( wicaChannelName1 );
-//      final WicaChannelMetadata wicaChannelMetadataRcvd2 = dataService.getChannelMetadata( wicaChannelName1 );
-//      assertEquals( wicaChannelMetadata.getType(), wicaChannelMetadataRcvd1.getType() );
-//      assertEquals( wicaChannelMetadata.getType(), wicaChannelMetadataRcvd2.getType() );
+      assertEquals( ((WicaChannelValue.WicaChannelValueConnectedInteger) wicaChannelValueConnected).getValue(), ((WicaChannelValue.WicaChannelValueConnectedInteger) map3.get(wicaChannelName1 ).get( 1 )).getValue() );
+      assertEquals( ((WicaChannelValue.WicaChannelValueConnectedInteger) wicaChannelValueConnected).getWicaAlarmSeverity(), ((WicaChannelValue.WicaChannelValueConnectedInteger) map3.get(wicaChannelName1 ).get( 1 )).getWicaAlarmSeverity() );
+      assertEquals( ((WicaChannelValue.WicaChannelValueConnectedInteger) wicaChannelValueConnected).getWicaChannelAlarmStatus(), ((WicaChannelValue.WicaChannelValueConnectedInteger) map3.get(wicaChannelName1 ).get( 1 )).getWicaChannelAlarmStatus() );
+      assertEquals( wicaChannelValueConnected.getWicaServerTimestamp(), map3.get(wicaChannelName1 ).get( 1 ).getWicaServerTimestamp() );
+
+      // Verify that the injected metadata is correctly captured
+      final WicaChannelMetadata wicaChannelMetadata  = WicaChannelMetadata.createStringInstance();
+      final List<Consumer<WicaChannelMetadata>> metadataChangedHandlers = metadataChangedCaptor.getAllValues();
+      metadataChangedHandlers.get( 0 ).accept( wicaChannelMetadata );
+      metadataChangedHandlers.get( 1 ).accept( wicaChannelMetadata );
+      final WicaChannelMetadata wicaChannelMetadataRcvd1 = dataService.getChannelMetadata( wicaChannelName1 );
+      final WicaChannelMetadata wicaChannelMetadataRcvd2 = dataService.getChannelMetadata( wicaChannelName1 );
+      assertEquals( wicaChannelMetadata.getType(), wicaChannelMetadataRcvd1.getType() );
+      assertEquals( wicaChannelMetadata.getType(), wicaChannelMetadataRcvd2.getType() );
    }
 
 

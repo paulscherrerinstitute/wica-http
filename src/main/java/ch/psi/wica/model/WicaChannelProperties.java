@@ -5,6 +5,7 @@ package ch.psi.wica.model;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.jcip.annotations.Immutable;
@@ -65,31 +66,37 @@ public class WicaChannelProperties
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   @JsonIgnore
    public Optional<Set<String>> getFieldsOfInterest()
    {
       return fieldsOfInterest == null ? Optional.empty() : Optional.of( Set.of( fieldsOfInterest.split( ";" ) ) );
    }
 
+   @JsonIgnore
    public Optional<Integer> getNumericPrecision()
    {
       return numericPrecision == null ? Optional.empty() : Optional.of( numericPrecision );
    }
 
+   @JsonIgnore
    public FilterType getFilterType()
    {
       return filterType;
    }
 
+   @JsonIgnore
    public int getN()
    {
       return n;
    }
 
+   @JsonIgnore
    public int getInterval()
    {
       return interval;
    }
 
+   @JsonIgnore
    public double getDeadband()
    {
       return deadband;
@@ -101,11 +108,10 @@ public class WicaChannelProperties
 
    public enum FilterType
    {
-      @JsonProperty( "all-value" )       ALL_VALUE,
-      @JsonProperty( "rate-limiter" )    RATE_LIMITER,
-      @JsonProperty( "one-in-n" )        ONE_IN_N,
-      @JsonProperty( "last-n" )          LAST_N,
-      @JsonProperty( "change-filterer" ) CHANGE_FILTERER,
-      @JsonProperty( "default" )         DEFAULT
+      @JsonProperty( "all-value" )    ALL_VALUE,
+      @JsonProperty( "rate-limiter" ) RATE_LIMITER,
+      @JsonProperty( "one-in-n" )     ONE_IN_N,
+      @JsonProperty( "last-n" )       LAST_N,
+      @JsonProperty( "changes" )      CHANGE_FILTERER,
    }
 }
