@@ -15,7 +15,7 @@ import {DocumentStreamConnector} from "./document-stream-connector.js";
 import {DocumentTextRenderer} from "./document-text-renderer.js";
 import {DocumentEventManager} from "./document-event-manager.js";
 
-import * as JSON5 from "./json5-wrapper";
+import * as JSON5 from "./json5-wrapper.js";
 
 const WICA_HOST="https://gfa-wica-dev.psi.ch";
 
