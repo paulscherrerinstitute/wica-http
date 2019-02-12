@@ -69,7 +69,7 @@ public class WicaStreamService
       // Lastly set up monitors on all the channels of interest.
       epicsChannelDataService.startMonitoring( wicaStream.getWicaChannels() );
 
-      // Update the map of known fluxes
+      // Update the apply of known fluxes
       wicaSteamFluxMap.put( wicaStreamId, wicaStreamPublisher.getFlux() );
       return wicaStream;
    }

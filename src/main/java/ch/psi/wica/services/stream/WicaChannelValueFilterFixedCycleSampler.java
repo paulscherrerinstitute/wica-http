@@ -4,59 +4,62 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.WicaChannelValue;
-import net.jcip.annotations.Immutable;
+import net.jcip.annotations.NotThreadSafe;
 import org.apache.commons.lang3.Validate;
 
+import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * A WicaChannelValueMapper that returns an output list with the most recent
- * values from the input list.
+ * A filter that returns an output list which includes one-in-every-N values
+ * taken from the input list over successive invocations.
  */
-@Immutable
-class WicaChannelValueMapperLatestValueSampler implements WicaChannelValueMapper
+@NotThreadSafe
+class WicaChannelValueFilterFixedCycleSampler implements WicaChannelValueFilter
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final int maxNumberOfSamples;
+   private final int samplingCycleLength;
+   private int samplingCycleIndex = 0;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    /**
-    * Constructs a new instance which returns up to the specified maximum
-    * number of samples.
+    * Constructs a new instance with the specified sampling cycle length.
     *
-    * @param maxNumberOfSamples - the maximum number of values to include
-    *     in the output list.
+    * @param samplingCycleLength - the sampling cycle length. (ie the value
+    *     of N in this 1-in-every-N sampler).
     */
-   WicaChannelValueMapperLatestValueSampler( int maxNumberOfSamples )
+   WicaChannelValueFilterFixedCycleSampler( int samplingCycleLength )
    {
-      Validate.isTrue( maxNumberOfSamples >= 0 );
-      this.maxNumberOfSamples = maxNumberOfSamples;
+      Validate.isTrue( samplingCycleLength > 0 );
+      this.samplingCycleLength = samplingCycleLength;
    }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
    @Override
-   public List<WicaChannelValue> map( List<WicaChannelValue> inputList )
+   public List<WicaChannelValue> apply( List<WicaChannelValue> inputList )
    {
-      final int startInclusive = Math.max( 0, inputList.size() - maxNumberOfSamples );
-      final int endExclusive = inputList.size();
-
-      return IntStream.range( startInclusive, endExclusive ).mapToObj( inputList::get ).collect( Collectors.toList() );
-
+      final List<WicaChannelValue> outputList = new LinkedList<>();
+      for ( WicaChannelValue inputValue : inputList )
+      {
+         if ( samplingCycleIndex % samplingCycleLength == 0 )
+         {
+            outputList.add( inputValue );
+         }
+         samplingCycleIndex++;
+      }
+      return outputList;
    }
-
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

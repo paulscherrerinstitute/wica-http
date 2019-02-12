@@ -18,7 +18,7 @@ import static ch.psi.wica.model.WicaChannelType.REAL_ARRAY;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * A WicaChannelValueMapper that returns an output list with all input values
+ * A WicaChannelValueFilter that returns an output list with all input values
  * represented in the output list.
  *
  * If the input value is of type WicaChannelType.REAL or WicaChannelType.REAL_ARRAY

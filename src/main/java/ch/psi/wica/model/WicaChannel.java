@@ -3,8 +3,8 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.services.stream.WicaChannelValueMapper;
-import ch.psi.wica.services.stream.WicaChannelValueMapperBuilder;
+import ch.psi.wica.services.stream.WicaChannelValueFilter;
+import ch.psi.wica.services.stream.WicaChannelValueFilterBuilder;
 import net.jcip.annotations.Immutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ import java.util.List;
 /*- Class Declaration --------------------------------------------------------*/
 
 @Immutable
-public class WicaChannel implements WicaChannelValueMapper
+public class WicaChannel implements WicaChannelValueFilter
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -25,27 +25,27 @@ public class WicaChannel implements WicaChannelValueMapper
 
    private final WicaChannelName wicaChannelName;
    private final WicaChannelProperties wicaChannelProperties;
-   private final WicaChannelValueMapper wicaChannelValueMapper;
+   private final WicaChannelValueFilter wicaChannelValueFilter;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    public WicaChannel( WicaChannelName wicaChannelName )
    {
-      logger.info( "Creating new wicaChannelValueMapper with DEFAULT properties." );
+      logger.info( "Creating new wicaChannelValueFilter with DEFAULT properties." );
 
       this.wicaChannelName = wicaChannelName;
       this.wicaChannelProperties = new WicaChannelProperties();
-      this.wicaChannelValueMapper = WicaChannelValueMapperBuilder.createDefault();
+      this.wicaChannelValueFilter = WicaChannelValueFilterBuilder.createDefault();
    }
 
    public WicaChannel( WicaChannelName wicaChannelName, WicaChannelProperties wicaChannelProperties )
    {
-      logger.info( "Creating new wicaChannelValueMapper with properties '{}'", wicaChannelProperties );
+      logger.info( "Creating new wicaChannelValueFilter with properties '{}'", wicaChannelProperties );
 
       this.wicaChannelName = wicaChannelName;
       this.wicaChannelProperties = wicaChannelProperties;
-      this.wicaChannelValueMapper = WicaChannelValueMapperBuilder.createFromChannelProperties( wicaChannelProperties );
+      this.wicaChannelValueFilter = WicaChannelValueFilterBuilder.createFromChannelProperties( wicaChannelProperties );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -73,9 +73,9 @@ public class WicaChannel implements WicaChannelValueMapper
    }
 
    @Override
-   public List<WicaChannelValue> map( List<WicaChannelValue> inputList )
+   public List<WicaChannelValue> apply( List<WicaChannelValue> inputList )
    {
-      return wicaChannelValueMapper.map( inputList );
+      return wicaChannelValueFilter.apply(inputList );
    }
 
 /*- Private methods ----------------------------------------------------------*/

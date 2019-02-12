@@ -5,6 +5,7 @@ package ch.psi.wica.services.stream;
 
 import ch.psi.wica.model.WicaChannelValue;
 import net.jcip.annotations.Immutable;
+import org.apache.commons.lang3.Validate;
 
 import java.util.List;
 
@@ -12,8 +13,12 @@ import java.util.List;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * A filter that returns an output list with all input values passed through
+ * unchanged.
+ */
 @Immutable
-public interface WicaChannelValueMapper
+class WicaChannelValueFilterAllValueSampler implements WicaChannelValueFilter
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -23,20 +28,15 @@ public interface WicaChannelValueMapper
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   /**
-    * Transforms the values in the input map to the output map using
-    * some configurable algorithm.
-    *
-    * @param inputList the list of values to process.
-    * @return the list of values that were produced from the processing step.
-    */
-   List<WicaChannelValue> map( List<WicaChannelValue> inputList );
+   @Override
+   public List<WicaChannelValue> apply( List<WicaChannelValue> inputList )
+   {
+      Validate.notNull( inputList );
+      return inputList;
+   }
 
 
-/*- Private methods ----------------------------------------------------------*/
+   /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
-
-
-
 
 }

@@ -4,6 +4,8 @@
  */
 console.debug( "Executing script in stream-manager.js module...");
 
+import * as JSON5 from './json5-wrapper.js'
+
 /**
  * Callback invoked when the stream connect sequence begins.
  *

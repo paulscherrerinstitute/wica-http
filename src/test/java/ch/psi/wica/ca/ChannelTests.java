@@ -115,7 +115,7 @@ public class ChannelTests
             if ( samplePoint.contains(loopCounter) )
             {
                // For sampling points the channels all have the same name. This allows us to check later
-               // whether they map onto the same object.
+               // whether they apply onto the same object.
                final Channel<String> caChannel = context.createChannel("channel_name_will_be_the same", String.class);
                resultMap.put(loopCounter, stopWatch.getTime());
                channelObjectMap.put(loopCounter, caChannel);

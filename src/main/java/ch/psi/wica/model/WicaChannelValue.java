@@ -191,7 +191,10 @@ public abstract class WicaChannelValue  extends WicaChannelData
       }
 
       @JsonProperty( "ts" )
- //     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss.SSS")
+      //The timestamp string is rather long, including as it does the complete 4 digit year
+      // month, day-of-month. The annotation below offers one way of optimising this, but
+      // until proven necessary this feature is disabled.
+      // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss.SSS")
       public LocalDateTime getDataSourceTimestamp()
       {
          return dataSourceTimestamp;

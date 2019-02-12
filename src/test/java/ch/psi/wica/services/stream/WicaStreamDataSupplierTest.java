@@ -9,14 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -83,7 +77,7 @@ class WicaStreamDataSupplierTest
    void test_GetValueMapLatest()
    {
       // Verify that a first call to getValueMapAll does indeed get everything
-      final var valueMap = supplier.getValueMapLatest();
+      final var valueMap = supplier.getValueChanges();
       assertEquals( 3, valueMap.size() );
 
       assertTrue( valueMap.containsKey( WicaChannelName.of( "CH1##1") ) );

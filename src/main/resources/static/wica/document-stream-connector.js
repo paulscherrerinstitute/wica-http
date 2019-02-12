@@ -6,6 +6,7 @@ console.debug( "Executing script in document-stream-connector.js module...");
 
 import {StreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
+import * as JSON5 from './json5-wrapper.js'
 
 /**
  * Provides real-time updates to wica-aware elements in the current document based on information streamed

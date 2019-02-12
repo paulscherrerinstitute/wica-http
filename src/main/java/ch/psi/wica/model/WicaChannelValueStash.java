@@ -88,13 +88,13 @@ public class WicaChannelValueStash
    }
 
    /**
-    * Return a map of all channels from the specified set with values which arrived after
+    * Return a apply of all channels from the specified set with values which arrived after
     * the specified timestamp.
     *
     * @param wicaChannels the channels of interest.
     * @param since the timestamp.
     *
-    * @return the map of channel names and values which satisfy the arrival timing constraint.
+    * @return the apply of channel names and values which satisfy the arrival timing constraint.
     *
     * @throws IllegalStateException if the stash has no previously stored values any of the channels
     *         in this stream.
@@ -107,7 +107,7 @@ public class WicaChannelValueStash
       final Map<WicaChannelName, List<WicaChannelValue>> outputMap = new ConcurrentHashMap<>();
       wicaChannels.forEach( c -> {
          final List<WicaChannelValue> laterThanList = getLaterThan( c.getName(), since );
-         // Only return map entries where there is at least one new value.
+         // Only return apply entries where there is at least one new value.
          // TODO: probably this could be done more elegantly using some declarative approach
          if ( laterThanList.size() > 0 )
          {

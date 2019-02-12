@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /*- Class Declaration --------------------------------------------------------*/
 
 @SpringBootTest
-class WicaChannelValueMapperFixedCycleSamplerTest
+class WicaChannelValueFilterFixedCycleSamplerTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -30,7 +30,7 @@ class WicaChannelValueMapperFixedCycleSamplerTest
    @Test
    void testConstructorIllegalSampleLength()
    {
-      assertThrows( IllegalArgumentException.class, () -> new WicaChannelValueMapperFixedCycleSampler(0 ) );
+      assertThrows( IllegalArgumentException.class, () -> new WicaChannelValueFilterFixedCycleSampler(0 ) );
    }
 
    @Test
@@ -40,8 +40,8 @@ class WicaChannelValueMapperFixedCycleSamplerTest
       final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnected( "def" );
       final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnected( "ghi" );
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3 );
-      final WicaChannelValueMapper mapper = new WicaChannelValueMapperFixedCycleSampler(1 );
-      final List<WicaChannelValue> outputList  = mapper.map( inputList );
+      final WicaChannelValueFilter mapper = new WicaChannelValueFilterFixedCycleSampler(1 );
+      final List<WicaChannelValue> outputList  = mapper.apply(inputList );
       assertEquals( inputList.size() , outputList.size() );
       assertEquals( inputList.get( 0 ), outputList.get( 0 ) );
       assertEquals( inputList.get( 1 ), outputList.get( 1 ) );
@@ -58,8 +58,8 @@ class WicaChannelValueMapperFixedCycleSamplerTest
       final WicaChannelValue strValue5 = WicaChannelValue.createChannelValueConnected( "mno" );
       final WicaChannelValue strValue6 = WicaChannelValue.createChannelValueConnected( "pqr" );
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4, strValue5, strValue6 );
-      final WicaChannelValueMapper mapper = new WicaChannelValueMapperFixedCycleSampler(2 );
-      final List<WicaChannelValue> outputList  = mapper.map( inputList );
+      final WicaChannelValueFilter mapper = new WicaChannelValueFilterFixedCycleSampler(2 );
+      final List<WicaChannelValue> outputList  = mapper.apply(inputList );
       assertEquals( inputList.size() / 2 , outputList.size() );
       assertEquals( inputList.get( 0 ), outputList.get( 0 ) );
       assertEquals( inputList.get( 2 ), outputList.get( 1 ) );
@@ -76,11 +76,11 @@ class WicaChannelValueMapperFixedCycleSamplerTest
       final WicaChannelValue strValue5 = WicaChannelValue.createChannelValueConnected("mno");
       final WicaChannelValue strValue6 = WicaChannelValue.createChannelValueConnected("pqr");
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4, strValue5, strValue6 );
-      final WicaChannelValueMapper mapper = new WicaChannelValueMapperFixedCycleSampler(9 );
-      final List<WicaChannelValue> outputList = mapper.map( inputList );
+      final WicaChannelValueFilter mapper = new WicaChannelValueFilterFixedCycleSampler(9 );
+      final List<WicaChannelValue> outputList = mapper.apply(inputList );
       assertEquals(1, outputList.size() );
       assertEquals( inputList.get(0), outputList.get(0) );
-      final List<WicaChannelValue> outputList2 = mapper.map( inputList );
+      final List<WicaChannelValue> outputList2 = mapper.apply(inputList );
       assertEquals(1, outputList2.size());
       assertEquals( inputList.get(3), outputList2.get(0) );
    }
@@ -91,17 +91,17 @@ class WicaChannelValueMapperFixedCycleSamplerTest
       final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnected("abc");
       final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnected("def");
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2 );
-      final WicaChannelValueMapper mapper = new WicaChannelValueMapperFixedCycleSampler(8 );
-      final List<WicaChannelValue> outputList1 = mapper.map( inputList );
+      final WicaChannelValueFilter mapper = new WicaChannelValueFilterFixedCycleSampler(8 );
+      final List<WicaChannelValue> outputList1 = mapper.apply(inputList );
       assertEquals(1, outputList1.size() );
       assertEquals( inputList.get(0), outputList1.get(0) );
-      final List<WicaChannelValue> outputList2 = mapper.map( inputList );
+      final List<WicaChannelValue> outputList2 = mapper.apply(inputList );
       assertEquals(0, outputList2.size() );
-      final List<WicaChannelValue> outputList3 = mapper.map( inputList );
+      final List<WicaChannelValue> outputList3 = mapper.apply(inputList );
       assertEquals(0, outputList3.size() );
-      final List<WicaChannelValue> outputList4 = mapper.map( inputList );
+      final List<WicaChannelValue> outputList4 = mapper.apply(inputList );
       assertEquals(0, outputList4.size() );
-      final List<WicaChannelValue> outputList5 = mapper.map( inputList );
+      final List<WicaChannelValue> outputList5 = mapper.apply(inputList );
       assertEquals(1, outputList5.size());
       assertEquals( inputList.get(0), outputList5.get(0) );
    }

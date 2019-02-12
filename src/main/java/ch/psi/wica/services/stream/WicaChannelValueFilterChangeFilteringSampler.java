@@ -17,11 +17,10 @@ import java.util.List;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * A WicaChannelValueMapper that writes a new value to the output list every time
- * the input signal makes a change whose absolute value exceeds the configured
- * deadband.
+ * A filter that writes a new value to the output list every time the input
+ * signal makes a change whose absolute value exceeds the configured deadband.
  *
- * The mapper only operates on values for types WicaChannelType.REAL and
+ * The filter only operates on values for types WicaChannelType.REAL and
  * WicaChannelType.INTEGER. All other value types in the input list
  * will be passed through unaffected.
  *
@@ -36,13 +35,13 @@ import java.util.List;
  *
  */
 @ThreadSafe
-class WicaChannelValueMapperChangeFilteringSampler implements WicaChannelValueMapper
+class WicaChannelValueFilterChangeFilteringSampler implements WicaChannelValueFilter
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private static final Logger logger = LoggerFactory.getLogger( WicaChannelValueMapperChangeFilteringSampler.class);
+   private static final Logger logger = LoggerFactory.getLogger( WicaChannelValueFilterChangeFilteringSampler.class);
 
    private final double deadband;
    private WicaChannelValue previousValue;
@@ -57,7 +56,7 @@ class WicaChannelValueMapperChangeFilteringSampler implements WicaChannelValueMa
     *     occur in order for the new value to be transferred from the input list
     *     to the output list.
     */
-   WicaChannelValueMapperChangeFilteringSampler( double deadband )
+   WicaChannelValueFilterChangeFilteringSampler( double deadband )
    {
       Validate.isTrue( deadband > 0 );
       this.deadband = deadband;
@@ -68,7 +67,7 @@ class WicaChannelValueMapperChangeFilteringSampler implements WicaChannelValueMa
 /*- Public methods -----------------------------------------------------------*/
 
    @Override
-   public List<WicaChannelValue> map( List<WicaChannelValue> inputList )
+   public List<WicaChannelValue> apply( List<WicaChannelValue> inputList )
    {
       Validate.notNull( inputList );
       final List<WicaChannelValue> outputList = new LinkedList<>();

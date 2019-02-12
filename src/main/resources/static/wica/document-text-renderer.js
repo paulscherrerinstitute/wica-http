@@ -5,6 +5,7 @@
 console.debug( "Executing script in document-text-renderer.js module...");
 
 import * as DocumentUtilities from './document-utils.js'
+import * as JSON5 from './json5-wrapper.js'
 
 /**
  * The default precision to be used when rendering a wica-aware widget's text content with a numeric value.

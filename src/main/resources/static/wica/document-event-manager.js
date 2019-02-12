@@ -7,6 +7,7 @@
 console.debug( "Executing script in document-event-manager.js module...");
 
 import * as DocumentUtilities from './document-utils.js'
+import * as JSON5 from './json5-wrapper.js'
 
 /**
  * Provides a type definition for a JS CustomEvent object that is fired to inform observers of the

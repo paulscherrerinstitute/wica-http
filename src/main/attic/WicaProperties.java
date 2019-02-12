@@ -57,7 +57,7 @@ public class WicaProperties
 
       if ( ! map.containsKey( propertyName ) )
       {
-         throw new IllegalArgumentException( "The property map does not contain a property named: '" + propertyName + "'" );
+         throw new IllegalArgumentException( "The property apply does not contain a property named: '" + propertyName + "'" );
       }
       return map.get( propertyName );
    }
@@ -66,7 +66,7 @@ public class WicaProperties
    public String toString()
    {
       return "WicaProperties{" +
-            "map=" + map +
+            "apply=" + map +
             '}';
    }
 /*- Private methods ----------------------------------------------------------*/

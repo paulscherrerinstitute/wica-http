@@ -152,7 +152,7 @@ public class WicaStreamPublisher
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getChannelValueUpdateFluxInterval() ) )
             .map( l -> {
                logger.trace( "channel-value-update flux is publishing new SSE..." );
-               final var map = wicaStreamDataSupplier.getValueMapLatest();
+               final var map = wicaStreamDataSupplier.getValueChanges();
                final var jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUE_CHANGES.build(  wicaStreamId, jsonServerSentEventString );
             } )

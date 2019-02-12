@@ -4,60 +4,69 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.WicaChannelValue;
-import net.jcip.annotations.NotThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+
+import static java.time.temporal.ChronoUnit.MILLIS;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * A WicaChannelValueMapper that returns an output list which includes
- * one-in-every-N values taken from the input list over successive
- * invocations.
+ * A filter that returns an output list with values taken from the input list
+ * periodically according to the value's timestamp.
  */
-@NotThreadSafe
-class WicaChannelValueMapperFixedCycleSampler implements WicaChannelValueMapper
+@ThreadSafe
+class WicaChannelValueFilterRateLimitingSampler implements WicaChannelValueFilter
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final int samplingCycleLength;
-   private int samplingCycleIndex = 0;
+   private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
+   private Duration minimumSampleGap;
+   private LocalDateTime lastSampleTimestamp;
+
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    /**
-    * Constructs a new instance with the specified sampling cycle length.
+    * Constructs a new instance which returns an output list containing the
+    * first input value and then subsequent values taken from the input
+    * list after the specified minimum sampling interval.
     *
-    * @param samplingCycleLength - the sampling cycle length. (ie the value
-    *     of N in this 1-in-every-N sampler).
+    * @param minimumSampleGapInMilliseconds - the minimum time duration between samples.
     */
-   WicaChannelValueMapperFixedCycleSampler( int samplingCycleLength )
+   WicaChannelValueFilterRateLimitingSampler( long minimumSampleGapInMilliseconds )
    {
-      Validate.isTrue( samplingCycleLength > 0 );
-      this.samplingCycleLength = samplingCycleLength;
+      Validate.isTrue(minimumSampleGapInMilliseconds > 0 );
+
+      minimumSampleGap = Duration.of( minimumSampleGapInMilliseconds, MILLIS );
+      this.lastSampleTimestamp = LONG_AGO;
    }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
    @Override
-   public List<WicaChannelValue> map( List<WicaChannelValue> inputList )
+   public List<WicaChannelValue> apply( List<WicaChannelValue> inputList )
    {
       final List<WicaChannelValue> outputList = new LinkedList<>();
+
       for ( WicaChannelValue inputValue : inputList )
       {
-         if ( samplingCycleIndex % samplingCycleLength == 0 )
+         if ( Duration.between( lastSampleTimestamp, inputValue.getWicaServerTimestamp() ).compareTo(minimumSampleGap) > 0 )
          {
             outputList.add( inputValue );
+            lastSampleTimestamp = inputValue.getWicaServerTimestamp();
          }
-         samplingCycleIndex++;
       }
       return outputList;
    }

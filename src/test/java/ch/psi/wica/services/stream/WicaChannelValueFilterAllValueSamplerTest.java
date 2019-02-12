@@ -18,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /*- Class Declaration --------------------------------------------------------*/
 
 @SpringBootTest
-class WicaChannelValueMapperAllValueSamplerTest
+class WicaChannelValueFilterAllValueSamplerTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaChannelValueMapperAllValueSamplerTest.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaChannelValueFilterAllValueSamplerTest.class );
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -42,8 +42,8 @@ class WicaChannelValueMapperAllValueSamplerTest
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4 );
 
-      final WicaChannelValueMapper mapper = new WicaChannelValueMapperAllValueSampler();
-      final List<WicaChannelValue> outputList  = mapper.map( inputList );
+      final WicaChannelValueFilter mapper = new WicaChannelValueFilterAllValueSampler();
+      final List<WicaChannelValue> outputList  = mapper.apply(inputList );
       assertEquals( inputList.size(), outputList.size() );
       assertEquals( inputList.get( 3 ), outputList.get( 3 ) );
    }

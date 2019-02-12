@@ -6,10 +6,8 @@ package ch.psi.wica.services.stream;
 import ch.psi.wica.model.WicaChannelProperties;
 import ch.psi.wica.model.WicaChannelValue;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /*- Class Declaration --------------------------------------------------------*/
 
 //@SpringBootTest
-class WicaChannelValueMapperBuilderTest
+class WicaChannelValueFilterBuilderTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -36,9 +34,9 @@ class WicaChannelValueMapperBuilderTest
       final WicaChannelValue intValue3 = WicaChannelValue.createChannelValueConnected( 15 );
       final WicaChannelValue intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
 
-      WicaChannelValueMapper mapper = WicaChannelValueMapperBuilder.createDefault();
+      WicaChannelValueFilter mapper = WicaChannelValueFilterBuilder.createDefault();
       final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
-      final List<WicaChannelValue> outputList  = mapper.map( inputList );
+      final List<WicaChannelValue> outputList  = mapper.apply(inputList );
       assertEquals( 1, outputList.size() );
       assertEquals(111, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get(0 ) ).getValue() );
    }
@@ -51,9 +49,9 @@ class WicaChannelValueMapperBuilderTest
       final WicaChannelValue intValue3 = WicaChannelValue.createChannelValueConnected( 15 );
       final WicaChannelValue intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
 
-      WicaChannelValueMapper mapper = WicaChannelValueMapperBuilder.createFromChannelProperties( new WicaChannelProperties("val;sevr", 5, WicaChannelProperties.FilterType.LAST_N, 2, null,null ) );
+      WicaChannelValueFilter mapper = WicaChannelValueFilterBuilder.createFromChannelProperties(new WicaChannelProperties("val;sevr", 5, WicaChannelProperties.FilterType.LAST_N, 2, null, null ) );
       final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
-      final List<WicaChannelValue> outputList  = mapper.map( inputList );
+      final List<WicaChannelValue> outputList  = mapper.apply(inputList );
       assertEquals(2, outputList.size() );
       assertEquals(15, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue() );
       assertEquals(111, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue() );
@@ -67,9 +65,9 @@ class WicaChannelValueMapperBuilderTest
       final WicaChannelValue intValue3 = WicaChannelValue.createChannelValueConnected( 15 );
       final WicaChannelValue intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
 
-      WicaChannelValueMapper mapper = WicaChannelValueMapperBuilder.createFromChannelProperties( new WicaChannelProperties( "val;sevr", 5, WicaChannelProperties.FilterType.ONE_IN_N, 2, null, null ) );
+      WicaChannelValueFilter mapper = WicaChannelValueFilterBuilder.createFromChannelProperties(new WicaChannelProperties("val;sevr", 5, WicaChannelProperties.FilterType.ONE_IN_N, 2, null, null ) );
       final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
-      final List<WicaChannelValue> outputList  = mapper.map( inputList );
+      final List<WicaChannelValue> outputList  = mapper.apply(inputList );
       assertEquals( 2, outputList.size() );
       assertEquals( 129, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue() );
       assertEquals( 15, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue() );

@@ -54,6 +54,15 @@ public class EpicsChannelDataService
    }
 
 /*- Class methods ------------------------------------------------------------*/
+
+   /**
+    * Provided for unit testing only.
+    */
+   public static void resetCache()
+   {
+       channelInterestMap.clear();
+   }
+
 /*- Public methods -----------------------------------------------------------*/
 
    /**

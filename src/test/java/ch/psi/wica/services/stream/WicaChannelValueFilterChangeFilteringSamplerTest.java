@@ -20,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /*- Class Declaration --------------------------------------------------------*/
 
 @SpringBootTest
-class WicaChannelValueMapperChangeFilteringSamplerTest
+class WicaChannelValueFilterChangeFilteringSamplerTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private static WicaChannelValueMapper mapper;
+   private static WicaChannelValueFilter mapper;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -36,7 +36,7 @@ class WicaChannelValueMapperChangeFilteringSamplerTest
 
    private static Stream<Arguments> getStringArgs()
    {
-      mapper = new WicaChannelValueMapperChangeFilteringSampler(1 );
+      mapper = new WicaChannelValueFilterChangeFilteringSampler(1 );
 
       return Stream.of( Arguments.of( List.of(), List.of() ),
                         Arguments.of( List.of( "abc" ), List.of( "abc") ),
@@ -50,14 +50,14 @@ class WicaChannelValueMapperChangeFilteringSamplerTest
       final List<WicaChannelValue> inputList = inputStringList.stream().map( WicaChannelValue::createChannelValueConnected ).collect( Collectors.toList() );
       final List<WicaChannelValue> expectedOutputList = outputStringList.stream().map( WicaChannelValue::createChannelValueConnected ).collect( Collectors.toList() );
 
-      final List<WicaChannelValue> actualOutputList  = mapper.map( inputList );
+      final List<WicaChannelValue> actualOutputList  = mapper.apply(inputList );
       assertEquals( expectedOutputList.size(), actualOutputList.size() );
       assertEquals( expectedOutputList, actualOutputList );
    }
 
    private static Stream<Arguments> getIntegerArgs()
    {
-      mapper = new WicaChannelValueMapperChangeFilteringSampler(1 );
+      mapper = new WicaChannelValueFilterChangeFilteringSampler(1 );
 
       return Stream.of( Arguments.of( List.of(), List.of() ),
                         Arguments.of( List.of( 0 ), List.of( 0 ) ),
@@ -76,7 +76,7 @@ class WicaChannelValueMapperChangeFilteringSamplerTest
       final List<WicaChannelValue> inputList = inputIntList.stream().map( WicaChannelValue::createChannelValueConnected ).collect( Collectors.toList() );
       final List<WicaChannelValue> expectedOutputList = outputIntList.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
 
-      final List<WicaChannelValue> actualOutputList  = mapper.map( inputList );
+      final List<WicaChannelValue> actualOutputList  = mapper.apply(inputList );
       assertEquals( expectedOutputList.size(), actualOutputList.size() );
 
       for ( int i = 0; i < expectedOutputList.size(); i++ )
@@ -89,7 +89,7 @@ class WicaChannelValueMapperChangeFilteringSamplerTest
 
    private static Stream<Arguments> getDoubleArgs()
    {
-      mapper = new WicaChannelValueMapperChangeFilteringSampler(1 );
+      mapper = new WicaChannelValueFilterChangeFilteringSampler(1 );
 
       return Stream.of( Arguments.of( List.of(), List.of() ),
                         Arguments.of( List.of( 5.0 ), List.of( 5.0 ) ),
@@ -107,7 +107,7 @@ class WicaChannelValueMapperChangeFilteringSamplerTest
       final List<WicaChannelValue> inputList = inputDblList.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
       final List<WicaChannelValue> expectedOutputList = outputDblList.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
 
-      final List<WicaChannelValue> actualOutputList  = mapper.map( inputList );
+      final List<WicaChannelValue> actualOutputList  = mapper.apply(inputList );
       assertEquals( expectedOutputList.size(), actualOutputList.size() );
 
       for ( int i = 0; i < expectedOutputList.size(); i++ )
@@ -120,7 +120,7 @@ class WicaChannelValueMapperChangeFilteringSamplerTest
 
    private static Stream<Arguments> getMultipleMapIntegerArgs()
    {
-      mapper = new WicaChannelValueMapperChangeFilteringSampler(1 );
+      mapper = new WicaChannelValueFilterChangeFilteringSampler(1 );
       return Stream.of( Arguments.of( List.of( 0, 0, 0, 0 ), List.of( 0 ), List.of( 0, 3, 5 ), List.of( 3, 5 ) ),
                         Arguments.of( List.of( 0, 0, 0, 2 ), List.of( 0, 2 ), List.of( 0, 1, 4 ), List.of( 0, 4 ) ) );
    }
@@ -131,7 +131,7 @@ class WicaChannelValueMapperChangeFilteringSamplerTest
    {
       final List<WicaChannelValue> inputList1 = inputIntList1.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
       final List<WicaChannelValue> expectedOutputList1 = outputIntList1.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
-      final List<WicaChannelValue> actualOutputList1  = mapper.map( inputList1 );
+      final List<WicaChannelValue> actualOutputList1  = mapper.apply(inputList1 );
 
       assertEquals( expectedOutputList1.size(), actualOutputList1.size() );
       for ( int i = 0; i < expectedOutputList1.size(); i++ )
@@ -143,7 +143,7 @@ class WicaChannelValueMapperChangeFilteringSamplerTest
       
       final List<WicaChannelValue> inputList2 = inputIntList2.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
       final List<WicaChannelValue> expectedOutputList2 = outputIntList2.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
-      final List<WicaChannelValue> actualOutputList2  = mapper.map( inputList2 );
+      final List<WicaChannelValue> actualOutputList2  = mapper.apply(inputList2 );
 
       assertEquals( expectedOutputList2.size(), actualOutputList2.size() );
       for ( int i = 0; i < expectedOutputList2.size(); i++ )
@@ -156,7 +156,7 @@ class WicaChannelValueMapperChangeFilteringSamplerTest
 
    private static Stream<Arguments> getMultipleMapMixedTypeArgs()
    {
-      mapper = new WicaChannelValueMapperChangeFilteringSampler(1 );
+      mapper = new WicaChannelValueFilterChangeFilteringSampler(1 );
 
       return Stream.of( Arguments.of( List.of( 0, 0, 0, 0 ), List.of( 0 ), List.of( "abc", "def", "ghi" ), List.of( "abc", "def", "ghi" ) ),
                         Arguments.of( List.of( 5, 5, 0, 2, 0 ), List.of( 5, 0, 2, 0 ), List.of( "jkl" ), List.of( "jkl" ) ));
@@ -168,7 +168,7 @@ class WicaChannelValueMapperChangeFilteringSamplerTest
    {
       final List<WicaChannelValue> inputList1 = inputIntList1.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
       final List<WicaChannelValue> expectedOutputList1 = outputIntList1.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
-      final List<WicaChannelValue> actualOutputList1  = mapper.map( inputList1 );
+      final List<WicaChannelValue> actualOutputList1  = mapper.apply(inputList1 );
 
       assertEquals( expectedOutputList1.size(), actualOutputList1.size() );
       for ( int i = 0; i < expectedOutputList1.size(); i++ )
@@ -180,7 +180,7 @@ class WicaChannelValueMapperChangeFilteringSamplerTest
 
       final List<WicaChannelValue> inputList2 = inputStringList2.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
       final List<WicaChannelValue> expectedOutputList2 = outputStringList2.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
-      final List<WicaChannelValue> actualOutputList2  = mapper.map( inputList2 );
+      final List<WicaChannelValue> actualOutputList2  = mapper.apply(inputList2 );
 
       assertEquals( expectedOutputList2.size(), actualOutputList2.size() );
       for ( int i = 0; i < expectedOutputList2.size(); i++ )

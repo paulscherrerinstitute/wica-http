@@ -5,6 +5,8 @@
 */
 console.debug( "Executing script in plot-buffer.js module...");
 
+import * as JSON5 from './json5-wrapper.js'
+
 /**
  * Provides a facility to buffer the received information for one or more wica-aware elements,
  * subsequently making it available to third-parties who may wish to poll for it.

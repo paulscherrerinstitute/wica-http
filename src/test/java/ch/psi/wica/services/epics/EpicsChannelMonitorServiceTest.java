@@ -54,6 +54,7 @@ class EpicsChannelMonitorServiceTest
    void afterEach()
    {
       epicsChannelMonitorService.close();
+      EpicsChannelMonitorService.getChannelConnectionCount();
    }
 
 
@@ -169,12 +170,11 @@ class EpicsChannelMonitorServiceTest
    @Test
    void testStopMonitoring_verifyIllegalArgumentExceptionWhenChannelNotRecognised() throws InterruptedException
    {
-      epicsChannelMonitorService.startMonitoring(new WicaChannelName( "test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
+      epicsChannelMonitorService.startMonitoring( new WicaChannelName( "test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
       Thread.sleep( 1_000 );
       assertEquals( 1, EpicsChannelMonitorService.getChannelConnectionCount() );
       assertThrows( IllegalArgumentException.class, () ->  epicsChannelMonitorService.stopMonitoring( new WicaChannelName( "XXXXX" ) ) );
    }
-
 
 
 /*- Nested Classes -----------------------------------------------------------*/

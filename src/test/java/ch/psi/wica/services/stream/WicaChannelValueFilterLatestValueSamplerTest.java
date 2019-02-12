@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /*- Class Declaration --------------------------------------------------------*/
 
 @SpringBootTest
-class WicaChannelValueMapperLatestValueSamplerTest
+class WicaChannelValueFilterLatestValueSamplerTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -36,8 +36,8 @@ class WicaChannelValueMapperLatestValueSamplerTest
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4 );
 
-      final WicaChannelValueMapper mapper = new WicaChannelValueMapperLatestValueSampler(0 );
-      final List<WicaChannelValue> outputList  = mapper.map( inputList );
+      final WicaChannelValueFilter mapper = new WicaChannelValueFilterLatestValueSampler(0 );
+      final List<WicaChannelValue> outputList  = mapper.apply(inputList );
       assertEquals( 0, outputList.size() );
    }
 
@@ -51,8 +51,8 @@ class WicaChannelValueMapperLatestValueSamplerTest
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4 );
 
-      final WicaChannelValueMapper mapper = new WicaChannelValueMapperLatestValueSampler(1 );
-      final List<WicaChannelValue> outputList  = mapper.map( inputList );
+      final WicaChannelValueFilter mapper = new WicaChannelValueFilterLatestValueSampler(1 );
+      final List<WicaChannelValue> outputList  = mapper.apply(inputList );
       assertEquals( 1, outputList.size() );
       assertEquals( inputList.get( 3), outputList.get( 0 ) );
    }
@@ -67,8 +67,8 @@ class WicaChannelValueMapperLatestValueSamplerTest
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4 );
 
-      final WicaChannelValueMapper mapper = new WicaChannelValueMapperLatestValueSampler(Integer.MAX_VALUE );
-      final List<WicaChannelValue> outputList  = mapper.map( inputList );
+      final WicaChannelValueFilter mapper = new WicaChannelValueFilterLatestValueSampler(Integer.MAX_VALUE );
+      final List<WicaChannelValue> outputList  = mapper.apply(inputList );
       assertEquals( 4, outputList.size() );
       assertEquals( inputList.get( 0 ), outputList.get( 0 ) );
       assertEquals( inputList.get( 1 ), outputList.get( 1 ) );
