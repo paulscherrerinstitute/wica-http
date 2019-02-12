@@ -5,7 +5,7 @@
 */
 console.debug( "Executing script in plot-buffer.js module...");
 
-import * as JSON5 from './json5-wrapper.js'
+import * as JsonUtilities from './json5-wrapper.js'
 
 /**
  * Provides a facility to buffer the received information for one or more wica-aware elements,
@@ -165,23 +165,21 @@ export class PlotBuffer
                 if ( mutation.attributeName === "data-wica-channel-metadata" )
                 {
                     const metadataAsJsonString = element.getAttribute( "data-wica-channel-metadata" );
-                    const metadata = JSON5.parse( metadataAsJsonString );
+                    const metadata = JsonUtilities.parse( metadataAsJsonString );
                     this.metadataMap[ channelName ] = metadata;
                 }
 
                 if ( mutation.attributeName === "data-wica-channel-value-array" )
                 {
                     const valueArrayAsJsonString = element.getAttribute( "data-wica-channel-value-array" );
-                    const valueArray = JSON5.parse( valueArrayAsJsonString );
+                    const valueArray = JsonUtilities.parse( valueArrayAsJsonString );
                     this.updateBufferedChannelValues_( channelName, valueArray );
                 }
 
                 // console.log( "Mutation on attribute: '" + mutation.attributeName + "' of wica element: '" + channelName + "'" );
             }
         } );
-
     }
-
 
     /**
      * Captures the most recent value information for a channel, where

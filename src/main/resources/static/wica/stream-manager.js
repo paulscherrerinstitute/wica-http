@@ -4,7 +4,7 @@
  */
 console.debug( "Executing script in stream-manager.js module...");
 
-import * as JSON5 from './json5-wrapper.js'
+import * as JsonUtilities from './json5-wrapper.js'
 
 /**
  * Callback invoked when the stream connect sequence begins.
@@ -267,7 +267,7 @@ export class StreamManager
 
         eventSource.addEventListener( 'ev-wica-channel-metadata',ev => {
             if ( this.crossOriginCheckOk_( ev ) ) {
-                const metadataArrayObject = JSON5.parse( ev.data );
+                const metadataArrayObject = JsonUtilities.parse( ev.data );
                 this.channelMetadataUpdated( metadataArrayObject );
             }
 
@@ -275,7 +275,7 @@ export class StreamManager
 
         eventSource.addEventListener( 'ev-wica-channel-value', ev => {
             if ( this.crossOriginCheckOk_( ev ) ) {
-                const valueArrayObject = JSON5.parse( ev.data );
+                const valueArrayObject = JsonUtilities.parse( ev.data );
                 this.channelValuesUpdated( valueArrayObject );
             }
         }, false);

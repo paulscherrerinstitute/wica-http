@@ -5,7 +5,7 @@
 console.debug( "Executing script in document-text-renderer.js module...");
 
 import * as DocumentUtilities from './document-utils.js'
-import * as JSON5 from './json5-wrapper.js'
+import * as JsonUtilities from './json5-wrapper.js'
 
 /**
  * The default precision to be used when rendering a wica-aware widget's text content with a numeric value.
@@ -135,7 +135,7 @@ export class DocumentTextRenderer
             }
 
             // Get the channel value object
-            const channelValueArray = JSON5.parse( element.getAttribute( channelValueArrayAttribute ) );
+            const channelValueArray = JsonUtilities.parse( element.getAttribute( channelValueArrayAttribute ) );
 
             // Bail out if the value obtained from the stream was not an array
             if ( ! Array.isArray( channelValueArray ) )
@@ -158,7 +158,7 @@ export class DocumentTextRenderer
             }
 
             // Get the channel metadata object
-            const channelMetadata = JSON5.parse( element.getAttribute( channelMetadataAttribute ) );
+            const channelMetadata = JsonUtilities.parse( element.getAttribute( channelMetadataAttribute ) );
 
             // Now render the widget's text content
             DocumentTextRenderer.renderWicaElementTextContent_( element, channelMetadata, channelValueLatest, renderingProperties );
@@ -188,7 +188,7 @@ export class DocumentTextRenderer
             case "REAL_ARRAY":
             case "INTEGER_ARRAY":
             case "STRING_ARRAY":
-                element.textContent = JSON5.stringify( rawValue );
+                element.textContent = JsonUtilities.stringify( rawValue );
                 break;
 
             case "REAL":
@@ -287,7 +287,7 @@ export class DocumentTextRenderer
         const renderingPropertiesString = element.hasAttribute( renderingPropertiesAttribute ) ? element.getAttribute( renderingPropertiesAttribute ) : "{}";
         try
         {
-            return JSON5.parse( renderingPropertiesString );
+            return JsonUtilities.parse( renderingPropertiesString );
         }
         catch( err )
         {

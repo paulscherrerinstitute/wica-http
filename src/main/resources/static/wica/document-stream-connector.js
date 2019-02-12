@@ -6,7 +6,7 @@ console.debug( "Executing script in document-stream-connector.js module...");
 
 import {StreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
-import * as JSON5 from './json5-wrapper.js'
+import * as JsonUtilities from './json5-wrapper.js'
 
 /**
  * Provides real-time updates to wica-aware elements in the current document based on information streamed
@@ -167,7 +167,7 @@ export class DocumentStreamConnector
             if ( widget.hasAttribute( channelPropertiesAttribute ) )
             {
                 const channelProps = widget.getAttribute( channelPropertiesAttribute );
-                const channelConfiguration = { "name": channelName, "props": JSON5.parse( channelProps ) };
+                const channelConfiguration = { "name": channelName, "props": JsonUtilities.parse( channelProps ) };
                 channels.push( channelConfiguration );
             }
             else
@@ -198,7 +198,7 @@ export class DocumentStreamConnector
             const channelName = key;
             const channelMetadata = metadataMap[key];
             const elements = DocumentUtilities.findWicaElementsWithChannelName( channelName );
-            const metadataAsString = JSON5.stringify(channelMetadata);
+            const metadataAsString = JsonUtilities.stringify(channelMetadata);
             elements.forEach(ele => {
                 ele.setAttribute( channelMetadataAttribute, metadataAsString);
                 console.log( "Metadata updated on channel: '" + key + "', new value: '" + metadataAsString + "'" );
@@ -227,14 +227,14 @@ export class DocumentStreamConnector
             const channelName = key;
             const channelValueArray = valueMap[key];
             const elements = DocumentUtilities.findWicaElementsWithChannelName(channelName);
-            const channelValueArrayAsString = JSON5.stringify(channelValueArray);
+            const channelValueArrayAsString = JsonUtilities.stringify(channelValueArray);
 
             if (!Array.isArray(channelValueArray)) {
                 console.warn("Stream Error: not an array !");
                 return;
             }
             const channelValueLatest = channelValueArray.pop();
-            const channelValueLatestAsString = JSON5.stringify(channelValueLatest);
+            const channelValueLatestAsString = JsonUtilities.stringify(channelValueLatest);
             const channelConnectionState = (channelValueLatest.val === null) ? "disconnected" : "connected";
             elements.forEach(ele => {
                 ele.setAttribute( channelValueArrayAttribute, channelValueArrayAsString);

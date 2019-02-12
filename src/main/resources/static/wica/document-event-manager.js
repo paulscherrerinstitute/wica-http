@@ -7,7 +7,7 @@
 console.debug( "Executing script in document-event-manager.js module...");
 
 import * as DocumentUtilities from './document-utils.js'
-import * as JSON5 from './json5-wrapper.js'
+import * as JsonUtilities from './json5-wrapper.js'
 
 /**
  * Provides a type definition for a JS CustomEvent object that is fired to inform observers of the
@@ -170,10 +170,10 @@ export class DocumentEventManager
             const channelName = element.getAttribute( channelNameAttribute );
 
             // Obtain the channel metadata object
-            const channelMetadata = JSON5.parse( element.getAttribute(channelMetadataAttribute ));
+            const channelMetadata = JsonUtilities.parse( element.getAttribute(channelMetadataAttribute ));
 
             // Obtain the object containing the array of recently received channel values.
-            const channelValueArray = JSON5.parse( element.getAttribute( channelValueArrayAttribute ));
+            const channelValueArray = JsonUtilities.parse( element.getAttribute( channelValueArrayAttribute ));
 
             // Check that the received value object really was an array
             if (!Array.isArray( channelValueArray )) {
