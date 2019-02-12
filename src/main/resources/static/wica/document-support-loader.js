@@ -55,7 +55,7 @@ export function unload()
  */
 function loadWicaCSS_()
 {
-    if ( !document.getElementById('wica-css-id' ) )
+    if ( ! document.getElementById('wica-css-id' ) )
     {
         const head = document.getElementsByTagName('head')[0];
         const link = document.createElement('link');
@@ -64,6 +64,6 @@ function loadWicaCSS_()
         link.type = 'text/css';
         link.href = WICA_HOST + '/wica/wica.css';
         link.media = 'all';
-        head.appendChild(link);
+        head.appendChild( link );
     }
 }
