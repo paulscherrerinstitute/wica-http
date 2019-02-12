@@ -35,6 +35,8 @@ class EpicsChannelDataServiceTest
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
+   private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
+
    private EpicsChannelMonitorService monitorServiceMock;
    private EpicsChannelDataService dataService;
 
@@ -211,6 +213,25 @@ class EpicsChannelDataServiceTest
       assertEquals( wicaChannelMetadata.getType(), wicaChannelMetadataRcvd2.getType() );
    }
 
+   @Test
+   void testGetLaterThan()
+   {
+      final WicaChannelName wicaChannelName1 = WicaChannelName.of( "abc" );
+      final WicaChannelName wicaChannelName2 = WicaChannelName.of( "def" );
+      final Set<WicaChannel> channelSet = Set.of( WicaChannel.of( wicaChannelName1 ), WicaChannel.of( wicaChannelName2 ) );
+
+      final WicaChannelValue wicaChannelValueConnected  = WicaChannelValue.createChannelValueConnected( 123 );
+      final WicaStream myStream = new WicaStream( WicaStreamId.of( "0" ),channelSet );
+
+      dataService.startMonitoring( myStream.getWicaChannels() );
+
+      var result1 = dataService.getLaterThan( channelSet, LocalDateTime.now() );
+      assertEquals( 0, result1.size() );
+      var result2 = dataService.getLaterThan( channelSet, LONG_AGO );
+      assertEquals( 2, result2.size() );
+      var result3 = dataService.getLaterThan( channelSet, LocalDateTime.now() );
+      assertEquals( 0, result3.size() );
+   }
 
 
 /*- Private methods ----------------------------------------------------------*/

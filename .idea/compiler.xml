@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="wica" target="10" />
+      <module name="wica" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

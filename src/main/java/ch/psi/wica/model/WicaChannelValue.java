@@ -20,7 +20,7 @@ import java.util.Objects;
 // Note the Filter Id in the annotation here must match the definition in
 // the WicaChannelDataSerializer.
 @JsonFilter( "WicaChannelDataFilter" )
-@JsonPropertyOrder( { "conn", "type", "val", "sevr", "stat", "ts", "wsts", "wsts-alt", "dsts", "dsts-alt" } )
+@JsonPropertyOrder( { "type", "conn", "val", "sevr", "stat", "ts", "wsts", "wsts-alt", "dsts", "dsts-alt" } )
 @Immutable
 public abstract class WicaChannelValue  extends WicaChannelData
 {
@@ -136,6 +136,9 @@ public abstract class WicaChannelValue  extends WicaChannelData
 
    public static class WicaChannelValueDisconnected extends WicaChannelValue
    {
+      @JsonProperty( "val" )
+      private final Object val;
+
       private WicaChannelValueDisconnected()
       {
          this( LocalDateTime.now() );
@@ -144,6 +147,7 @@ public abstract class WicaChannelValue  extends WicaChannelData
       private WicaChannelValueDisconnected( LocalDateTime wicaServerTimestamp )
       {
          super(false,wicaServerTimestamp );
+         this.val = null;
       }
    }
 

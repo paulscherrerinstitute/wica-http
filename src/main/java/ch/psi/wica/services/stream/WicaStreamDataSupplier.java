@@ -8,10 +8,12 @@ import ch.psi.wica.services.epics.EpicsChannelDataService;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
+import java.lang.instrument.UnmodifiableClassException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -57,8 +59,7 @@ class WicaStreamDataSupplier
             .allMatch( c -> updatedChannelValueMap.containsKey( c.getName() ) ),
             "Programming Error: the EpicsChannelDataService did not know about" );
 
-      return wicaStream.getWicaChannels().stream()
-            .collect( Collectors.toUnmodifiableMap( WicaChannel::getName, ch->ch.map( updatedChannelValueMap.get( ch.getName() ) ) ) );
+      return buildMap( updatedChannelValueMap );
    }
 
    Map<WicaChannelName, List<WicaChannelValue>> getValueMapLatest()
@@ -66,13 +67,30 @@ class WicaStreamDataSupplier
       final var latestChannelValueMap = epicsChannelDataService.getLaterThan( wicaStream.getWicaChannels(), getLastPublicationTime() );
       updateLastPublicationTime();
 
-      return wicaStream.getWicaChannels().stream()
-            .filter( ch -> latestChannelValueMap.keySet().contains( ch.getName() ) )
-            .collect( Collectors.toUnmodifiableMap( WicaChannel::getName, ch->ch.map( latestChannelValueMap.get( ch.getName() ) ) ) );
+      return buildMap( latestChannelValueMap );
    }
 
-
 /*- Private methods ----------------------------------------------------------*/
+
+   private Map<WicaChannelName, List<WicaChannelValue>> buildMap(  Map<WicaChannelName, List<WicaChannelValue>> inputMap )
+   {
+      final Map<WicaChannelName,List<WicaChannelValue>> outputMap = new HashMap<>();
+
+      for ( WicaChannel channel : wicaStream.getWicaChannels() )
+      {
+         final WicaChannelName channelName = channel.getName();
+         if ( inputMap.containsKey( channelName) )
+         {
+            final List<WicaChannelValue> channelOutputList = channel.map( inputMap.get( channelName ) );
+            if ( channelOutputList.size() > 0 )
+            {
+               outputMap.put( channelName, channelOutputList );
+            }
+         }
+      }
+      return Collections.unmodifiableMap( outputMap );
+   }
+
 
    /**
     * Returns the last time the stream was published.

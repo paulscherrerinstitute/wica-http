@@ -54,9 +54,9 @@ class WicaChannelValueMapperBuilderTest
       WicaChannelValueMapper mapper = WicaChannelValueMapperBuilder.createFromChannelProperties( new WicaChannelProperties("val;sevr", 5, WicaChannelProperties.FilterType.LAST_N, 2, null,null ) );
       final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
       final List<WicaChannelValue> outputList  = mapper.map( inputList );
-      assertEquals( 2, outputList.size() );
-      assertEquals(  15, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue() );
-      assertEquals( 111, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue() );
+      assertEquals(2, outputList.size() );
+      assertEquals(15, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue() );
+      assertEquals(111, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue() );
    }
 
    @Test

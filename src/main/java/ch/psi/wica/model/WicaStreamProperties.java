@@ -47,7 +47,7 @@ public class WicaStreamProperties
    public WicaStreamProperties( @JsonProperty( "heartbeatInterval" ) Integer heartbeatFluxInterval,
                                 @JsonProperty( "channelValueUpdateInterval" ) Integer channelValueUpdateFluxInterval,
                                 @JsonProperty( "prec" ) Integer numericPrecision,
-                                @JsonProperty( "fields" )String fieldsOfInterest )
+                                @JsonProperty( "fields" ) String fieldsOfInterest )
    {
       this.heartbeatFluxInterval = heartbeatFluxInterval == null ? DEFAULT_HEARTBEAT_FLUX_INTERVAL : heartbeatFluxInterval;
       this.channelValueUpdateFluxInterval = channelValueUpdateFluxInterval == null ? DEFAULT_VALUE_UPDATE_FLUX_INTERVAL : channelValueUpdateFluxInterval;

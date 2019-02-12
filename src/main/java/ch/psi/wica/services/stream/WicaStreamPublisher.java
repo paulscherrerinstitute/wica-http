@@ -101,12 +101,13 @@ public class WicaStreamPublisher
    {
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getHeartbeatFluxInterval() ) )
             .map(l -> {
-               logger.trace("heartbeat flux is publishing new SSE...");
+               logger.info("heartbeat flux is publishing new SSE...");
                final String jsonHeartbeatString = LocalDateTime.now().toString();
                return WicaServerSentEventBuilder.EV_WICA_SERVER_HEARTBEAT.build( wicaStreamId, jsonHeartbeatString );
             })
-         //   .doOnComplete( () -> logger.warn( "heartbeat flux completed" ))
-            .doOnCancel(() -> logger.warn("heartbeat flux was cancelled"));
+            .doOnComplete( () -> logger.warn( "heartbeat flux completed" ))
+            .doOnCancel( () -> logger.warn( "heartbeat flux was cancelled"))
+            .doOnError( (e) -> logger.warn( "heartbeat flux had error {}", e ));
       //.log();
    }
 
@@ -130,8 +131,9 @@ public class WicaStreamPublisher
                final String jsonMetadataString = wicaChannelMetadataMapSerializer.serialize( channelMetadataMap );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build ( wicaStreamId, jsonMetadataString );
             } )
-          //  .doOnComplete( () -> logger.warn( "channel-metadata flux completed" ))
-            .doOnCancel( () -> logger.warn( "channel-metadata flux was cancelled" ) );
+            .doOnComplete( () -> logger.warn( "channel-metadata flux completed" ))
+            .doOnCancel( () -> logger.warn( "channel-metadata flux was cancelled" ) )
+            .doOnError( (e) -> logger.warn( "heartbeat flux had error {}", e ));
       //.log();
    }
 
@@ -155,7 +157,8 @@ public class WicaStreamPublisher
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUE_CHANGES.build(  wicaStreamId, jsonServerSentEventString );
             } )
             .doOnComplete( () -> logger.warn( "channel-value-update flux completed" ))
-            .doOnCancel( () -> logger.warn( "channel-value-update flux was cancelled" ) );
+            .doOnCancel( () -> logger.warn( "channel-value-update flux was cancelled" ) )
+            .doOnError( (e) -> logger.warn( "heartbeat flux had error {}", e ));
       //.log();
    }
 
@@ -179,7 +182,8 @@ public class WicaStreamPublisher
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUE_ALLDATA.build( wicaStreamId, jsonServerSentEventString );
             })
             .doOnComplete( () -> logger.warn( "channel-value flux completed" ))
-            .doOnCancel( () -> logger.warn("channel-value flux was cancelled"));
+            .doOnCancel( () -> logger.warn("channel-value flux was cancelled"))
+            .doOnError( (e) -> logger.warn( "heartbeat flux had error {}", e ));
       //.log();
    }
 

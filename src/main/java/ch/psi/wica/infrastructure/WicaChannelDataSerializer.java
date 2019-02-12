@@ -141,7 +141,7 @@ class WicaChannelDataSerializer
       // sent down the wire when representing doubles and/or double arrays.
       module.addSerializer( double.class, new WicaDoubleSerializer( numericScale ) );
       module.addSerializer( double[].class, new WicaDoubleArraySerializer( numericScale ) );
-      jsonObjectMapper = new Jackson2ObjectMapperBuilder().createXmlMapper(false ).build();
+      jsonObjectMapper = new Jackson2ObjectMapperBuilder().createXmlMapper( false ).build();
 
       // Turn off the feature whereby date/time values are written as timestamps.
       jsonObjectMapper.configure( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false );
@@ -160,7 +160,7 @@ class WicaChannelDataSerializer
 
       // It is special because (c) we can select the fields of interest that get
       // sent down the wire.
-      jsonObjectMapper.setFilterProvider(filterProvider );
+      jsonObjectMapper.setFilterProvider( filterProvider );
 
       // Complete the registration of our special serializer.
       jsonObjectMapper.registerModule( module );

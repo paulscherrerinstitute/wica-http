@@ -33,16 +33,12 @@ class WicaStreamDataSupplierTest
 /*- Private attributes -------------------------------------------------------*/
 
    @Autowired
-   public WicaStreamService wicaStreamService;
+   private WicaStreamService wicaStreamService;
 
    @Autowired
-   public EpicsChannelDataService epicsService;
+   private EpicsChannelDataService epicsService;
 
-   @Value( "${wica.default_heartbeat_flux_interval}" )
-   private int defaultHeartBeatFluxInterval;
-
-   @Value( "${wica.default_channel_value_update_flux_interval}" )
-   private int defaultChannelValueUpdateFluxInterval;
+   private WicaStreamDataSupplier supplier;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -52,11 +48,65 @@ class WicaStreamDataSupplierTest
    @BeforeEach
    void setUp()
    {
-      String testString = "{ \"props\" : {}, \"channels\":  [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
+      String testString = "{ \"props\" : {}, \"channels\":  [ { \"name\": \"CH1##1\" }, " +
+                                                             "{ \"name\": \"CH1##2\" }, " +
+                                                             "{ \"name\": \"CH2\" }  ] }";
       final WicaStream stream = wicaStreamService.create( testString );
 
-      WicaStreamDataSupplier supplier = new WicaStreamDataSupplier( stream,epicsService );
+      supplier = new WicaStreamDataSupplier( stream, epicsService );
    }
+
+   @Test
+   void test_GetValueMapAll()
+   {
+      // Verify that a first call to getValueMapAll does indeed get everything
+      final var valueMap = supplier.getValueMapAll();
+      assertEquals( 3, valueMap.size() );
+
+      assertTrue( valueMap.containsKey( WicaChannelName.of( "CH1##1") ) );
+      final var valueList1 = valueMap.get( WicaChannelName.of( "CH1##1") );
+      assertTrue( valueList1.get( 0 ) instanceof WicaChannelValue.WicaChannelValueDisconnected);
+      assertEquals( 1, valueList1.size() );
+
+      assertTrue( valueMap.containsKey( WicaChannelName.of( "CH1##2") ) );
+      final var valueList2 = valueMap.get( WicaChannelName.of( "CH1##2" ) );
+      assertTrue( valueList2.get( 0 ) instanceof WicaChannelValue.WicaChannelValueDisconnected);
+      assertEquals( 1, valueList2.size() );
+
+      assertTrue( valueMap.containsKey( WicaChannelName.of( "CH2") ) );
+      final var valueList3 = valueMap.get( WicaChannelName.of( "CH2") );
+      assertTrue( valueList3.get( 0 ) instanceof WicaChannelValue.WicaChannelValueDisconnected);
+      assertEquals( 1, valueList3.size() );
+   }
+
+   @Test
+   void test_GetValueMapLatest()
+   {
+      // Verify that a first call to getValueMapAll does indeed get everything
+      final var valueMap = supplier.getValueMapLatest();
+      assertEquals( 3, valueMap.size() );
+
+      assertTrue( valueMap.containsKey( WicaChannelName.of( "CH1##1") ) );
+      final var valueList1 = valueMap.get( WicaChannelName.of( "CH1##1") );
+      assertTrue( valueList1.get( 0 ) instanceof WicaChannelValue.WicaChannelValueDisconnected);
+      assertEquals( 1, valueList1.size() );
+
+      assertTrue( valueMap.containsKey( WicaChannelName.of( "CH1##2") ) );
+      final var valueList2 = valueMap.get( WicaChannelName.of( "CH1##2" ) );
+      assertTrue( valueList2.get( 0 ) instanceof WicaChannelValue.WicaChannelValueDisconnected);
+      assertEquals( 1, valueList2.size() );
+
+      assertTrue( valueMap.containsKey( WicaChannelName.of( "CH2") ) );
+      final var valueList3 = valueMap.get( WicaChannelName.of( "CH2") );
+      assertTrue( valueList3.get( 0 ) instanceof WicaChannelValue.WicaChannelValueDisconnected);
+      assertEquals( 1, valueList3.size() );
+   }
+
+
+
+
+
+
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
