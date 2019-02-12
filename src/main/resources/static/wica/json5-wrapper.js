@@ -1,6 +1,6 @@
 console.debug( "Executing script in json5-wrapper.js module...");
 
-export { parse, stringify };
+export { parse, stringify }
 
 let initialised = false;
 
