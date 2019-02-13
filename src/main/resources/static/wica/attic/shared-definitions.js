@@ -119,12 +119,14 @@
  * @typedef module:shared-definitions.WicaChannelValue
  *
  * @property val {string|null} - JSON String representation of the current value. Set to NULL if the channel's
- *     data source is offline, or otherwise unavailable.
+ *     data source is offline, or otherwise unavailable. Included if the represented in the WicaStreamProperties
+ *     "fields" list or overridden by the same setting in the WicaChannelProperties object.
  *
- * @property sevr {number} - [Alarm Severity] -  Present if the WicaStreamProperty 'includeAlarmInfo' is true. The
- *    following values are defined (0 = No Alarm; 1 = Minor Alarm, 2 = Major Alarm)
+ * @property sevr {number} - [Alarm Severity] -  Included if the represented in the WicaStreamProperties
+ *     "fields" list or overridden by the same setting in the WicaChannelProperties object.
  *
- * @property ts {string} - [Timestamp] - present if the WicaStreamProperty 'includeTimestamp' is true.
+ * @proerty ts {string} - [Timestamp] - Included if the represented in the WicaStreamProperties
+ *     "fields" list or overridden by the same setting in the WicaChannelProperties object.
  */
 
 
@@ -254,16 +256,18 @@ export const WicaRenderingProperties = Object.freeze ({
  * @property {number} [heartbeatInterval=15000] - The interval in milliseconds between heartbeat messages.
  * @property {number} [channelValueUpdateInterval=100] The interval in milliseconds between channel value
  *     update messages.
- * @property {boolean} [includeAlarmInfo=true] - Whether alarm information should be included in channel
- *     value updates. Needed if the visual state of the element should change when in the alarm state.
- * @property {boolean} [includeTimestamp=false] - Whether timestamp information should be included in channel
- *     value updates. Needed for time plots.
+ * @property {string} [fields=val;sevr;ts] - A semicolon delimited list defining the data fields that should be
+ *    included by default in the stream of WicaChannelValues. Can be overridden by individual settings
+ *    in the WicaChannelProperties object.
+ * @property {number} [prec=8] - The precision (= number of digits after the decimal point) that should
+ *     be used by default when returning channel value information with numeric data.  Can be overridden
+ *     by individual settings in the WicaChannelProperties object.
  */
 export const WicaStreamProperties = Object.freeze ({
     heartBeatInterval: 15000,
     channelValueUpdateInterval: 100,
-    includeAlarmInfo: true,
-    includeTimestamp: false
+    fields: "val;sevr;ts;",
+    prec: 8
 } );
 
 /**
@@ -271,8 +275,10 @@ export const WicaStreamProperties = Object.freeze ({
  *
  * @property {number} [prec=8] - The precision (= number of digits after the decimal point) to be used when
  *     sending numeric information.
- * @property {WicaChannelFilterType} [filterType=WicaChannelFilterTypeAllValueSampler] - The type of filtering to be used on the
- *     channel. See {@link module:shared-definitions.WicaChannelFilterType WicaChannelFilterType}.
+ * @property {WicaChannelFilterType} [filterType=last-n] - The type of filtering to be used on the channel.
+ *     See {@link module:shared-definitions.WicaChannelFilterType WicaChannelFilterType}.
+ * @property {string} [fields=val;sevr;ts] - A semicolon delimited list defining the data fields that should be
+ *    included by default in the stream of WicaChannelValues.
  */
 export const WicaChannelProperties = Object.freeze ({
     prec: 8,

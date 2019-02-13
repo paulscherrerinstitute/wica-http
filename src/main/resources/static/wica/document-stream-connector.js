@@ -138,8 +138,10 @@ export class DocumentStreamConnector
      */
     createStream_()
     {
+        // Note the streamReconnectIntervalInSeconds must be > streamTimeoutIntervalInSeconds
+        // or multiple connections will occur.
         const streamManagerOptions = {
-            streamReconnectIntervalInSeconds: 15,
+            streamReconnectIntervalInSeconds: 25,
             streamTimeoutIntervalInSeconds: 20,
             crossOriginCheckEnabled: false,
         };

@@ -139,7 +139,7 @@ export class StreamManager
                 console.warn("Event source 'stream': creating new...");
                 this.createStream_();
                 console.warn("Event source: 'stream' - OK: create event stream task started");
-                this.countdownInSeconds = this.streamTimeoutIntervalInSeconds;
+                this.countdownInSeconds = this.streamReconnectIntervalInSeconds;
             }
             this.countdownInSeconds--;
         }, ONE_SECOND_IN_TIMER_UNITS );

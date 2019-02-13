@@ -76,7 +76,7 @@ public class WicaChannelValueFilterBuilder
             break;
 
          case CHANGE_FILTERER:
-            final double deadband =wicaChannelProperties.getDeadband();
+            final double deadband = wicaChannelProperties.getDeadband();
             logger.info("Creating channel filter with filterType='change-filterer', deadband='{}'", deadband );
             filter =  new WicaChannelValueFilterChangeFilteringSampler(deadband );
             break;

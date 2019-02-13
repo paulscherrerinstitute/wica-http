@@ -108,10 +108,10 @@ public class WicaChannelProperties
 
    public enum FilterType
    {
-      @JsonProperty( "all-value" )    ALL_VALUE,
-      @JsonProperty( "rate-limiter" ) RATE_LIMITER,
-      @JsonProperty( "one-in-n" )     ONE_IN_N,
-      @JsonProperty( "last-n" )       LAST_N,
-      @JsonProperty( "changes" )      CHANGE_FILTERER,
+      @JsonProperty( "all-value" )       ALL_VALUE,
+      @JsonProperty( "rate-limiter" )    RATE_LIMITER,
+      @JsonProperty( "one-in-n" )        ONE_IN_N,
+      @JsonProperty( "last-n" )          LAST_N,
+      @JsonProperty( "change-filterer" ) CHANGE_FILTERER,
    }
 }
