@@ -133,16 +133,9 @@ export class StreamManager
      */
     activate()
     {
-        const ONE_SECOND_IN_TIMER_UNITS = 1000;
-        this.intervalTimer = setInterval( () => {
-            if ( this.countdownInSeconds === 0 ) {
-                console.warn("Event source 'stream': creating new...");
-                this.createStream_();
-                console.warn("Event source: 'stream' - OK: create event stream task started");
-                this.countdownInSeconds = this.streamReconnectIntervalInSeconds;
-            }
-            this.countdownInSeconds--;
-        }, ONE_SECOND_IN_TIMER_UNITS );
+        // Activation has to wait until we received the callback that the
+        // JSON5 library is loaded.
+        JsonUtilities.load( () => startStreamMonitoring_() )
     }
 
     /**
@@ -200,6 +193,28 @@ export class StreamManager
         xhttp.send();
     }
 
+    /**
+     * Starts the stream monitoring process.
+     *
+     * @private
+     */
+    startStreamMonitoring_()
+    {
+        const ONE_SECOND_IN_TIMER_UNITS = 1000;
+        this.intervalTimer = setInterval( () => {
+            if ( this.countdownInSeconds === 0 ) {
+                console.warn("Event source 'stream': creating new...");
+                // Set up an asynchronous chain of events that will create a stream
+                // then subscribe to it, then start monitoring it. If the heartbeat
+                // signal is not seen the process will repeat itself after the
+                // heartbeat interval timeout.
+                this.createStream_();
+                console.warn("Event source: 'stream' - OK: create event stream task started");
+                this.countdownInSeconds = this.streamReconnectIntervalInSeconds;
+            }
+            this.countdownInSeconds--;
+        }, ONE_SECOND_IN_TIMER_UNITS );
+    }
     /**
      * Sends a POST request to the Wica Server to create a new stream. Adds a handler to
      * subscribe to the stream once it has been created.
