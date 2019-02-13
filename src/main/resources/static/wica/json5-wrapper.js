@@ -113,6 +113,8 @@ function load( callback )
         }
         else {
             console.log("JSON5 wrapper library is loading...");
+            awaitLibraryLoad( callback );
+            console.log("Plotly wrapper library is now loaded.");
         }
     }
 }
@@ -132,4 +134,16 @@ function isLibraryLoaded_()
 function setLibraryLoaded_()
 {
     window.json5LibLoaded = true;
+}
+
+function awaitLibraryLoad( callback )
+{
+    setTimeout( () => {
+        if( isLibraryLoaded_() ) {
+            callback();
+        }
+        else {
+            awaitLibraryLoad( callback );
+        } }, 100
+    );
 }

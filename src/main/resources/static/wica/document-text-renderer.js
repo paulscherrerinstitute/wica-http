@@ -49,7 +49,7 @@ export class DocumentTextRenderer
         // Start update process if not already active. Otherwise do nothing.
         if ( this.intervalTimer === undefined )
         {
-            this.doScan_( refreshRateInMilliseconds )
+            JsonUtilities.load( () => this.doScan_( refreshRateInMilliseconds ) );
         }
     }
 
