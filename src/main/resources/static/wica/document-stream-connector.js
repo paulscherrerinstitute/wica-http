@@ -59,7 +59,8 @@ export class DocumentStreamConnector
 
         this.buildStreamConfiguration_( this.wicaElementConnectionAttributes.channelName, this.wicaElementConnectionAttributes.channelProperties );
         this.createStream_();
-        this.streamManager.activate();
+
+        JsonUtilities.load( () => this.streamManager.activate() );
     }
 
     /**
