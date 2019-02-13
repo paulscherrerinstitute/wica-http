@@ -96,7 +96,7 @@ function load( callback )
     {
         const script = document.createElement('script');
         script.id = 'wica-json5-wrapper-id';
-        script.src = "./json5-latest.min.js";
+        script.src = "/wica/json5-latest.min.js";
         script.onload = function()
         {
             setLibraryLoaded_();
