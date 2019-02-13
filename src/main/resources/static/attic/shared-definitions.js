@@ -125,7 +125,7 @@
  * @property sevr {number} - [Alarm Severity] -  Included if the represented in the WicaStreamProperties
  *     "fields" list or overridden by the same setting in the WicaChannelProperties object.
  *
- * @proerty ts {string} - [Timestamp] - Included if the represented in the WicaStreamProperties
+ * @property ts {string} - [Timestamp] - Included if the represented in the WicaStreamProperties
  *     "fields" list or overridden by the same setting in the WicaChannelProperties object.
  */
 
