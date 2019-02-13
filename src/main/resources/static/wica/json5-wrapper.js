@@ -11,7 +11,7 @@ console.debug( "Executing script in json5-wrapper.js module...");
  * The current implementation is from JSON5.org. See: https://json5.org/
  */
 
-export { parse, stringify }
+export { load, parse, stringify };
 
 /**
  * Wrapper for the JSON5 "flexible" parser that can handle real numbers sent as NaNs, Infinity etc.
@@ -31,11 +31,16 @@ export { parse, stringify }
  */
 function parse( text, reviver )
 {
-    if ( ! isInitialised() )
+    if ( isLibraryLoaded_() )
     {
-        waitForLoad_().then(() => { return JSON5.parse( value, reviver ); } );
+        return JSON5.parse( text, reviver );
     }
-    return JSON5.parse( value, reviver );
+    else
+    {
+        const msg = "Programming Error: call to JSON5.parse() before library initialised.";
+        console.warn( msg );
+        throw Error( msg );
+    }
 }
 
 /**
@@ -68,45 +73,63 @@ function parse( text, reviver )
  */
 function stringify( value, replacer, space )
 {
-    if ( ! isInitialised() )
+    if ( isLibraryLoaded_() )
     {
-        waitForLoad_().then(() => {
-            return JSON5.stringify( value, replacer, space );
-        } );
+        return JSON5.stringify( value, replacer, space );
     }
-
-    return JSON5.stringify( value, replacer, space );
+    else
+    {
+        const msg = "Programming Error: call to JSON5.stringify() before library initialised.";
+        console.warn( msg );
+        throw Error( msg );
+    }
 }
-
-
-function waitForLoad_( )
-{
-    return new Promise(resolve  => load_( resolve ) );
-}
-
 
 /**
  * Loads the library. Invokes the callback handler when complete.
  *
  * @param callback the handler to callback when the library is loaded.
  */
-function load_( callback )
+function load( callback )
 {
-    if ( ! isInitialised() )
+    if ( ! getAndSetLibraryLoadStarted_() )
     {
         const script = document.createElement('script');
         script.id = 'wica-json5-wrapper-id';
         script.src = "/extlibs/json5-latest.min.js";
         script.onload = function()
         {
+            setLibraryLoaded_();
             console.log( "JSON5 wrapper: initialised ok !");
             callback();
         };
         document.head.appendChild( script );
     }
+    else
+    {
+        if ( isLibraryLoaded_() ) {
+            console.log("JSON5 wrapper library is already loaded.");
+            callback();
+        }
+        else {
+            console.log("JSON5 wrapper library is loading...");
+        }
+    }
 }
 
-function isInitialised()
+function getAndSetLibraryLoadStarted_()
 {
-    return ( document.getElementById('wica-json5-wrapper-id' ) !== null);
+    const result = ( typeof window.json5LibLoadStarted !== "undefined" );
+    window.json5LibLoadStarted = true;
+    return result;
+}
+
+function isLibraryLoaded_()
+{
+    return typeof window.json5LibLoaded !== "undefined";
+}
+
+function setLibraryLoaded_()
+{
+    window.json5LibLoaded = true;
 }

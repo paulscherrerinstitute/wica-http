@@ -15,6 +15,8 @@ import {DocumentStreamConnector} from "./document-stream-connector.js";
 import {DocumentTextRenderer} from "./document-text-renderer.js";
 import {DocumentEventManager} from "./document-event-manager.js";
 
+import * as JsonUtilities from './json5-wrapper.js'
+
 const WICA_HOST="https://gfa-wica-dev.psi.ch";
 
 const documentStreamConnector = new DocumentStreamConnector( WICA_HOST, WicaStreamProperties, WicaElementConnectionAttributes );
@@ -33,9 +35,12 @@ const documentEventManager = new DocumentEventManager( WicaElementConnectionAttr
 export function load( textRendererRefreshRate = 100, eventManagerRefreshRate = 100 )
 {
     loadWicaCSS_();
-    documentStreamConnector.activate();
-    documentTextRenderer.activate( textRendererRefreshRate );
-    documentEventManager.activate( eventManagerRefreshRate );
+
+    JsonUtilities.load( () => {
+        documentStreamConnector.activate();
+        documentTextRenderer.activate( textRendererRefreshRate );
+        documentEventManager.activate( eventManagerRefreshRate );
+    } );
 }
 
 /**
@@ -67,3 +72,19 @@ function loadWicaCSS_()
         head.appendChild( link );
     }
 }
+
+// function loadJson5Lib_( callback )
+// {
+//     if ( ! document.getElementById('wica-json5-wrapper-id'  ) )
+//     {
+//         const script = document.createElement('script');
+//         script.id = 'wica-json5-wrapper-id';
+//         script.src = "/extlibs/json5-latest.min.js";
+//         script.onload = function()
+//         {
+//             console.log( "JSON5 wrapper: initialised ok !");
+//             callback();
+//         };
+//         document.head.appendChild( script );
+//     }
+// }
