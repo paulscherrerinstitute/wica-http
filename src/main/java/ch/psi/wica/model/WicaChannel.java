@@ -15,7 +15,7 @@ import java.util.List;
 /*- Class Declaration --------------------------------------------------------*/
 
 @Immutable
-public class WicaChannel implements WicaChannelValueFilter
+public class WicaChannel
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -72,8 +72,7 @@ public class WicaChannel implements WicaChannelValueFilter
       return wicaChannelProperties;
    }
 
-   @Override
-   public List<WicaChannelValue> apply( List<WicaChannelValue> inputList )
+   public List<WicaChannelValue> applyFilter( List<WicaChannelValue> inputList )
    {
       return wicaChannelValueFilter.apply(inputList );
    }

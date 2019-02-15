@@ -135,7 +135,7 @@ export class StreamManager
     {
         // Activation has to wait until we received the callback that the
         // JSON5 library is loaded.
-        JsonUtilities.load( () => startStreamMonitoring_() )
+        JsonUtilities.load( () => this.startStreamMonitoring_() )
     }
 
     /**

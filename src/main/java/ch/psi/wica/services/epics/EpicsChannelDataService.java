@@ -203,7 +203,7 @@ public class EpicsChannelDataService
     *
     * @return the metadata.
     */
-   public WicaChannelValue getChannelValue( WicaChannelName channelName )
+     WicaChannelValue getChannelValue( WicaChannelName channelName )
    {
       Validate.notNull( channelName );
       Validate.isTrue(  channelInterestMap.containsKey( channelName ), "channel name not known" );

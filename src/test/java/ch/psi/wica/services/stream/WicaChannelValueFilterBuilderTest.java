@@ -49,7 +49,8 @@ class WicaChannelValueFilterBuilderTest
       final WicaChannelValue intValue3 = WicaChannelValue.createChannelValueConnected( 15 );
       final WicaChannelValue intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
 
-      WicaChannelValueFilter mapper = WicaChannelValueFilterBuilder.createFromChannelProperties(new WicaChannelProperties("val;sevr", 5, WicaChannelProperties.FilterType.LAST_N, 2, null, null ) );
+      WicaChannelValueFilter mapper = WicaChannelValueFilterBuilder.createFromChannelProperties( new WicaChannelProperties( WicaChannelProperties.DaqType.MONITORER,
+                                                                                                                           "val;sevr", 5, WicaChannelProperties.FilterType.LAST_N, 2, null, null ) );
       final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
       final List<WicaChannelValue> outputList  = mapper.apply(inputList );
       assertEquals(2, outputList.size() );
@@ -65,7 +66,8 @@ class WicaChannelValueFilterBuilderTest
       final WicaChannelValue intValue3 = WicaChannelValue.createChannelValueConnected( 15 );
       final WicaChannelValue intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
 
-      WicaChannelValueFilter mapper = WicaChannelValueFilterBuilder.createFromChannelProperties(new WicaChannelProperties("val;sevr", 5, WicaChannelProperties.FilterType.ONE_IN_N, 2, null, null ) );
+      WicaChannelValueFilter mapper = WicaChannelValueFilterBuilder.createFromChannelProperties(new WicaChannelProperties( WicaChannelProperties.DaqType.MONITORER, "val;sevr",
+                                                                                                                           5, WicaChannelProperties.FilterType.ONE_IN_N, 2, null, null ) );
       final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
       final List<WicaChannelValue> outputList  = mapper.apply(inputList );
       assertEquals( 2, outputList.size() );

@@ -53,8 +53,8 @@ class WicaStreamDataSupplierTest
    @Test
    void test_GetValueMapAll()
    {
-      // Verify that a first call to getValueMapAll does indeed get everything
-      final var valueMap = supplier.getValueMapAll();
+      // Verify that a first call to getNotifiedValues does indeed get everything
+      final var valueMap = supplier.getNotifiedValues();
       assertEquals( 3, valueMap.size() );
 
       assertTrue( valueMap.containsKey( WicaChannelName.of( "CH1##1") ) );
@@ -76,8 +76,8 @@ class WicaStreamDataSupplierTest
    @Test
    void test_GetValueMapLatest()
    {
-      // Verify that a first call to getValueMapAll does indeed get everything
-      final var valueMap = supplier.getValueChanges();
+      // Verify that a first call to getNotifiedValues does indeed get everything
+      final var valueMap = supplier.getNotifiedValueChanges();
       assertEquals( 3, valueMap.size() );
 
       assertTrue( valueMap.containsKey( WicaChannelName.of( "CH1##1") ) );

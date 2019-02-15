@@ -166,8 +166,6 @@ class EpicsChannelValuePublisher
       valueChangeHandler.accept( wicaChannelValue );
    }
 
-   
-
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

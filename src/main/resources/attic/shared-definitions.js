@@ -253,9 +253,12 @@ export const WicaRenderingProperties = Object.freeze ({
 /**
  * JS Object that defines the properties and default values supported by a WicaStream.
  *
- * @property {number} [heartbeatInterval=15000] - The interval in milliseconds between heartbeat messages.
- * @property {number} [channelValueUpdateInterval=100] The interval in milliseconds between channel value
- *     update messages.
+ * @property {number} [heartbeatFluxInterval=15000] - The interval in milliseconds between heartbeat messages.
+ * @property {number} [channelValueChangeFluxInterval=100] The interval in milliseconds between channel
+ *     monitored value change messages.
+ * @property {number} [channelValuePollingFluxInterval=100] The interval in milliseconds between channel
+ *     polled value messages.
+ *
  * @property {string} [fields=val;sevr;ts] - A semicolon delimited list defining the data fields that should be
  *    included by default in the stream of WicaChannelValues. Can be overridden by individual settings
  *    in the WicaChannelProperties object.
@@ -264,8 +267,9 @@ export const WicaRenderingProperties = Object.freeze ({
  *     by individual settings in the WicaChannelProperties object.
  */
 export const WicaStreamProperties = Object.freeze ({
-    heartBeatInterval: 15000,
-    channelValueUpdateInterval: 100,
+    heartbeatFluxInterval: 15000,
+    channelValueChangeFluxInterval: 100,
+    channelValuePollingFluxInterval: 100,
     fields: "val;sevr;ts;",
     prec: 8
 } );
@@ -273,6 +277,8 @@ export const WicaStreamProperties = Object.freeze ({
 /**
  * JS Object that defines the properties supported by a WicaChannel and the default values.
  *
+ * @property {string} [daqType="monitorer"] - The means by which this channel will acquire data
+ *    Should be set to "polling" or monitoring"
  * @property {number} [prec=8] - The precision (= number of digits after the decimal point) to be used when
  *     sending numeric information.
  * @property {WicaChannelFilterType} [filterType=last-n] - The type of filtering to be used on the channel.
@@ -281,6 +287,7 @@ export const WicaStreamProperties = Object.freeze ({
  *    included by default in the stream of WicaChannelValues.
  */
 export const WicaChannelProperties = Object.freeze ({
+    daqType: "monitorer",
     prec: 8,
     filterType: "last-n",
     n: 1

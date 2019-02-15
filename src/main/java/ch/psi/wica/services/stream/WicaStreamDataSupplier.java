@@ -25,7 +25,7 @@ class WicaStreamDataSupplier
 
    private final WicaStream wicaStream;
    private final EpicsChannelDataService epicsChannelDataService;
-
+   private final WicaChannelProperties.DaqType defaultChannelDaqType;
    private LocalDateTime lastPublicationTime = LONG_AGO;
 
 
@@ -42,6 +42,7 @@ class WicaStreamDataSupplier
    WicaStreamDataSupplier( WicaStream wicaStream, EpicsChannelDataService epicsChannelDataService )
    {
       this.wicaStream = wicaStream;
+      this.defaultChannelDaqType = wicaStream.getWicaStreamProperties().gettDaqType();
       this.epicsChannelDataService = epicsChannelDataService;
    }
 
@@ -58,12 +59,40 @@ class WicaStreamDataSupplier
       return epicsChannelDataService.getChannelMetadata( wicaStream.getWicaChannels() );
    }
 
+
    /**
-    * Returns a apply of all channels and their most recent buffered values.
+    * Returns a map of all channels and their most recent values obtained
+    * by polling.
     *
-    * @return the apply
+    * Note: following data acquisition the returned map will be FILTERED according
+    * to the rules defined for each channel.
+    *
+    * @return the map.
     */
-   Map<WicaChannelName, List<WicaChannelValue>> getValueMapAll()
+   Map<WicaChannelName,List<WicaChannelValue>> getPolledValues()
+   {
+      final var map = epicsChannelDataService.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
+      final var outputMap = new HashMap<WicaChannelName,List<WicaChannelValue>>();
+      for ( WicaChannelName wicaChannelName : map.keySet() )
+      {
+         final var wicaChannelValue = map.get( wicaChannelName ).get( 0 );
+         final var rewriter = new WicaChannelValue.WicaChannelTimestampRewriter();
+         final var newValue = rewriter.rewrite( wicaChannelValue, LocalDateTime.now() );
+         outputMap.put( wicaChannelName, List.of( newValue ) );
+      }
+      return filter( outputMap, WicaChannelProperties.DaqType.POLLER );
+   }
+
+   /**
+    * Returns a map of all channels and their most recent buffered values
+    * received through notification from the channel's data source.
+    *
+    * Note: following data acquisition the returned map will be FILTERED according
+    * to the rules defined for each channel.
+    *
+    * @return the map.
+    */
+   Map<WicaChannelName, List<WicaChannelValue>> getNotifiedValues()
    {
       final var updatedChannelValueMap = epicsChannelDataService.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
 
@@ -72,22 +101,25 @@ class WicaStreamDataSupplier
             .allMatch( c -> updatedChannelValueMap.containsKey( c.getName() ) ),
             "Programming Error: the EpicsChannelDataService did not know about" );
 
-      return transformStreamValues(updatedChannelValueMap );
+      return filter( updatedChannelValueMap, WicaChannelProperties.DaqType.MONITORER );
    }
 
    /**
-    * Returns a apply of all channels whose values have changed since the last time
-    * this method was invoked.
+    * Returns a map of all channels whose buffered notification values have changed
+    * since the last time this method was invoked.
     *
-    * @return the apply of channels and any changes that have occurred since the last
-    *     time this method was invoked.
+    * Note: following data acquisition the returned map will be FILTERED according
+    * to the rules defined for each channel.
+    *
+    * @return the map of channels and list of changes that have occurred since the
+    *     last time this method was invoked.
     */
-   Map<WicaChannelName, List<WicaChannelValue>> getValueChanges()
+   Map<WicaChannelName, List<WicaChannelValue>> getNotifiedValueChanges()
    {
       final var latestChannelValueMap = epicsChannelDataService.getLaterThan( wicaStream.getWicaChannels(), getLastPublicationTime() );
       updateLastPublicationTime();
 
-      return transformStreamValues(latestChannelValueMap );
+      return filter( latestChannelValueMap, WicaChannelProperties.DaqType.MONITORER );
    }
 
 /*- Private methods ----------------------------------------------------------*/
@@ -99,20 +131,22 @@ class WicaStreamDataSupplier
     * @param inputMap the apply to transform.
     * @return the transformed apply.
     */
-   private Map<WicaChannelName, List<WicaChannelValue>> transformStreamValues( Map<WicaChannelName, List<WicaChannelValue>> inputMap )
+   private Map<WicaChannelName, List<WicaChannelValue>> filter( Map<WicaChannelName, List<WicaChannelValue>> inputMap,
+                                                                WicaChannelProperties.DaqType targetDaqType )
    {
       final Map<WicaChannelName,List<WicaChannelValue>> outputMap = new HashMap<>();
 
       for ( WicaChannel channel : wicaStream.getWicaChannels() )
       {
          final WicaChannelName channelName = channel.getName();
-         if ( inputMap.containsKey( channelName) )
-         {
-            // For each channel use the defined mapping function to take the supplied
-            // input apply and transform it to the output format.
-            final List<WicaChannelValue> channelOutputList = channel.apply(inputMap.get(channelName ) );
 
-            // Only return apply entries for channels which actually have information
+         if ( inputMap.containsKey( channelName ) && getChannelDaqType( channel).equals( targetDaqType ) )
+         {
+            // For each channel use the defined filtering function to take the supplied
+            // input map and transform it to the output format.
+            final List<WicaChannelValue> channelOutputList = channel.applyFilter( inputMap.get( channelName ) );
+
+            // Only return map entries for channels which actually have information
             // following the transformation above.
             if ( channelOutputList.size() > 0 )
             {
@@ -141,6 +175,23 @@ class WicaStreamDataSupplier
    private void updateLastPublicationTime()
    {
       lastPublicationTime = LocalDateTime.now();
+   }
+
+   /**
+    * Returns the Daqtype for the specified channel, either directly from the
+    * channel properties, or when, not available from the properties of the
+    * WicaStream.
+    *
+    * @param wicaChannel the channel to check.
+    * @return the result.
+    */
+   private WicaChannelProperties.DaqType getChannelDaqType( WicaChannel wicaChannel )
+   {
+      final WicaStreamProperties streamProperties = wicaStream.getWicaStreamProperties();
+      final WicaChannelProperties channelProperties = wicaChannel.getProperties();
+
+      return channelProperties.getDaqType().isPresent() ?
+             channelProperties.getDaqType().get() : streamProperties.gettDaqType();
    }
 
 /*- Nested Classes -----------------------------------------------------------*/

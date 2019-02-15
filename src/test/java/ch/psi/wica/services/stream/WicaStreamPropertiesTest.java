@@ -47,14 +47,14 @@ class WicaStreamPropertiesTest
    {
       final ObjectMapper mapper = new ObjectMapper();
 
-      final String inputString = "{" + "\"heartbeatInterval\"" + ":" + 12345 + "," +
-                                       "\"channelValueUpdateInterval\"" + ":" + 99 + "," +
+      final String inputString = "{" + "\"heartbeatFluxInterval\"" + ":" + 12345 + "," +
+                                       "\"channelValueChangeFluxInterval\"" + ":" + 99 + "," +
                                        "\"fields\"" + ":" + "\"abc;def\"" + "," +
                                        "\"prec\"" + ":" + 9 + "}";
 
       final WicaStreamProperties props = mapper.readValue( inputString, WicaStreamProperties.class );
       assertEquals( 12345, props.getHeartbeatFluxInterval() );
-      assertEquals( 99, props.getChannelValueUpdateFluxInterval() );
+      assertEquals( 99, props.getChannelValueChangeFluxInterval() );
       assertEquals( 9, props.getNumericPrecision() );
       assertEquals( Set.of( "abc", "def" ), props.getFieldsOfInterest() );
    }
@@ -66,7 +66,7 @@ class WicaStreamPropertiesTest
       final String inputString = "{}";
       final WicaStreamProperties props = mapper.readValue( inputString, WicaStreamProperties.class );
       assertEquals( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL, props.getHeartbeatFluxInterval() );
-      assertEquals( WicaStreamProperties.DEFAULT_VALUE_UPDATE_FLUX_INTERVAL, props.getChannelValueUpdateFluxInterval() );
+      assertEquals(WicaStreamProperties.DEFAULT_CHANNEL_VALUE_CHANGE_FLUX_INTERVAL, props.getChannelValueChangeFluxInterval() );
       assertEquals( WicaStreamProperties.DEFAULT_NUMERIC_PRECISION, props.getNumericPrecision() );
       assertEquals( Set.of( WicaStreamProperties.DEFAULT_FIELDS_OF_INTEREST.split(";") ), props.getFieldsOfInterest() );
    }

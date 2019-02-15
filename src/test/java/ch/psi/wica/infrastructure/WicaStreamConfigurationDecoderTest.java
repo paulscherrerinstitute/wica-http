@@ -29,15 +29,15 @@ class WicaStreamConfigurationDecoderTest
    @Test
    void testGoodDecodeSequence1()
    {
-       String testString = "{ \"props\": { \"prec\": 29, \"heartbeatInterval\": 50, \"channelValueUpdateInterval\": 40 }," +
-                           "\"channels\": [ { \"name\": \"MHC1:IST:2\", \"props\": { \"filterType\": \"changes\", \"deadband\": 19 } }," +
-                                           "{ \"name\": \"MYC2:IST:2\", \"props\": { \"filterType\": \"changes\", \"deadband\": 10 } }," +
+       String testString = "{ \"props\": { \"prec\": 29, \"heartbeatFluxInterval\": 50, \"channelValueChangeFluxInterval\": 40 }," +
+                           "\"channels\": [ { \"name\": \"MHC1:IST:2\", \"props\": { \"filterType\": \"change-filterer\", \"deadband\": 19 } }," +
+                                           "{ \"name\": \"MYC2:IST:2\", \"props\": { \"filterType\": \"change-filterer\", \"deadband\": 10 } }," +
                                            "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filterType\": \"rate-limiter\", \"interval\": 17 } } ] }";
 
       final WicaStreamConfigurationDecoder decoder = new WicaStreamConfigurationDecoder( testString );
       final var streamProps = decoder.getWicaStreamProperties();
       assertEquals( 50, streamProps.getHeartbeatFluxInterval() );
-      assertEquals( 40, streamProps.getChannelValueUpdateFluxInterval() );
+      assertEquals( 40, streamProps.getChannelValueChangeFluxInterval() );
       assertEquals( 3, decoder.getWicaChannels().size() );
       final Set<WicaChannel> channels = decoder.getWicaChannels();
       channels.forEach( c -> {

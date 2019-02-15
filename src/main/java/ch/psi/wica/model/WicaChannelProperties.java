@@ -30,6 +30,7 @@ public class WicaChannelProperties
 
    private final Integer numericPrecision;
    private final FilterType filterType ;
+   private final DaqType daqType ;
    private final Integer n;
    private final Integer interval;
    private final Double deadband;
@@ -40,6 +41,7 @@ public class WicaChannelProperties
 
    public WicaChannelProperties()
    {
+      this.daqType = null;
       this.fieldsOfInterest = null;
       this.numericPrecision = null;
       this.filterType = DEFAULT_FILTER_TYPE;
@@ -48,23 +50,31 @@ public class WicaChannelProperties
       this.deadband = DEFAULT_DEADBAND;
    }
 
-   public WicaChannelProperties( @JsonProperty( "fields" )     String fieldsOfInterest,
+   public WicaChannelProperties( @JsonProperty( "daqType" )    DaqType daqType,
+                                 @JsonProperty( "fields" )     String fieldsOfInterest,
                                  @JsonProperty( "prec" )       Integer numericPrecision,
                                  @JsonProperty( "filterType" ) FilterType filterType,
                                  @JsonProperty( "n" )          Integer n,
                                  @JsonProperty( "interval" )   Integer interval,
                                  @JsonProperty( "deadband" )   Double deadband )
    {
+      this.daqType = daqType;
       this.fieldsOfInterest = fieldsOfInterest;
       this.numericPrecision = numericPrecision;
       this.filterType = filterType == null ? DEFAULT_FILTER_TYPE : filterType;
       this.n = n == null ? DEFAULT_N : n;
-      this.interval =  interval == null ? DEFAULT_INTERVAL :interval;
+      this.interval =  interval == null ? DEFAULT_INTERVAL : interval;
       this.deadband = deadband == null ? DEFAULT_DEADBAND : deadband;
    }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
+
+   @JsonIgnore
+   public Optional<DaqType> getDaqType()
+   {
+      return daqType == null ? Optional.empty() : Optional.of( daqType );
+   }
 
    @JsonIgnore
    public Optional<Set<String>> getFieldsOfInterest()
@@ -83,6 +93,7 @@ public class WicaChannelProperties
    {
       return filterType;
    }
+
 
    @JsonIgnore
    public int getN()
@@ -113,5 +124,11 @@ public class WicaChannelProperties
       @JsonProperty( "one-in-n" )        ONE_IN_N,
       @JsonProperty( "last-n" )          LAST_N,
       @JsonProperty( "change-filterer" ) CHANGE_FILTERER,
+   }
+
+   public enum DaqType
+   {
+      @JsonProperty( "poller" )    POLLER,
+      @JsonProperty( "monitorer" ) MONITORER
    }
 }

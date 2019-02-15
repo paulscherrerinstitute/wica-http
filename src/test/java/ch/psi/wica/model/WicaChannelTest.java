@@ -35,9 +35,9 @@ class WicaChannelTest
       final var wicaChannelValue1 = WicaChannelValue.createChannelValueConnected( "abc" );
       final var wicaChannelValue2 = WicaChannelValue.createChannelValueConnected( "def" );
       final var myValueList = List.of( wicaChannelValue1, wicaChannelValue2 );
-      final var res1 = wicaChannel.apply(myValueList );
+      final var res1 = wicaChannel.applyFilter(myValueList );
       assertEquals( 1, res1.size() );
-      final var res2 = wicaChannel.apply(List.of() );
+      final var res2 = wicaChannel.applyFilter(List.of() );
       assertEquals( 0, res2.size() );
    }
 
