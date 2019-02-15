@@ -239,16 +239,19 @@ export const WicaRenderingProperties = Object.freeze ({
  * JS Object that defines the properties and default values supported by a WicaStream.
  *
  * @property {number} [heartbeatInterval=15000] - The interval in milliseconds between heartbeat messages.
- * @property {number} [channelValueUpdateInterval=100] The interval in milliseconds between channel value
- *     update messages.
+ * @property {number} [channelValueChangeFluxInterval=100] The interval in milliseconds between channel value
+ *     change messages.
+ * @property {number} [channelValuePollingFluxInterval=100] The interval in milliseconds between polled
+ *     channel value messages.*
  * @property {boolean} [includeAlarmInfo=true] - Whether alarm information should be included in channel
  *     value updates. Needed if the visual state of the element should change when in the alarm state.
  * @property {boolean} [includeTimestamp=false] - Whether timestamp information should be included in channel
  *     value updates. Needed for time plots.
  */
 export const WicaStreamProperties = Object.freeze ({
-    heartbeatInterval: 15000,
-    channelValueUpdateInterval: 100,
+    heartbeatFluxInterval: 15000,
+    channelValueChangeFluxInterval: 100,
+    channelValuePollingFluxInterval: 100,
     fields: "val;sevr"
 } );
 

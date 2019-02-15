@@ -258,7 +258,6 @@ export const WicaRenderingProperties = Object.freeze ({
  *     monitored value change messages.
  * @property {number} [channelValuePollingFluxInterval=100] The interval in milliseconds between channel
  *     polled value messages.
- *
  * @property {string} [fields=val;sevr;ts] - A semicolon delimited list defining the data fields that should be
  *    included by default in the stream of WicaChannelValues. Can be overridden by individual settings
  *    in the WicaChannelProperties object.
@@ -268,7 +267,7 @@ export const WicaRenderingProperties = Object.freeze ({
  */
 export const WicaStreamProperties = Object.freeze ({
     heartbeatFluxInterval: 15000,
-    channelValueChangeFluxInterval: 100,
+    channelValueChangeFluxInterval:  100,
     channelValuePollingFluxInterval: 100,
     fields: "val;sevr;ts;",
     prec: 8

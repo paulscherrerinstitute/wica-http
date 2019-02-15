@@ -49,6 +49,11 @@ public abstract class WicaChannelValue  extends WicaChannelData
       return new WicaChannelValueDisconnected();
    }
 
+   public static WicaChannelValue createChannelValueDisconnected( LocalDateTime dataSourceTimestamp )
+   {
+      return new WicaChannelValueDisconnected( dataSourceTimestamp );
+   }
+
    public static WicaChannelValue createChannelValueConnected( double value )
    {
       return new WicaChannelValueConnectedReal( WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
@@ -376,52 +381,4 @@ public abstract class WicaChannelValue  extends WicaChannelData
 
 /*- Json View Classes -------------------------------------------------------*/
 
-   public static class WicaChannelTimestampRewriter
-   {
-      public WicaChannelValue rewrite( WicaChannelValue valueObj, LocalDateTime newTimeStamp )
-      {
-         final WicaChannelValueConnected connectedValue;
-         if ( valueObj.isConnected() )
-         {
-            connectedValue = ((WicaChannelValueConnected) valueObj);
-         }
-         else
-         {
-            return new WicaChannelValueDisconnected(LocalDateTime.now());
-         }
-
-         final WicaChannelAlarmStatus alarmStatus = connectedValue.getWicaChannelAlarmStatus();
-         final WicaChannelAlarmSeverity alarmSeverity = connectedValue.getWicaAlarmSeverity();
-
-         switch ( WicaChannelType.getTypeFromObject(connectedValue.wicaChannelType) )
-         {
-            case REAL:
-               final double dblValue = ((WicaChannelValueConnectedReal) connectedValue).getValue();
-               return new WicaChannelValueConnectedReal(alarmSeverity, alarmStatus, newTimeStamp, dblValue);
-
-            case REAL_ARRAY:
-               final double[] dblArrayValue = ((WicaChannelValueConnectedRealArray) connectedValue).getValue();
-               return new WicaChannelValueConnectedRealArray(alarmSeverity, alarmStatus, newTimeStamp, dblArrayValue);
-
-            case INTEGER:
-               final int intValue = ((WicaChannelValueConnectedInteger) connectedValue).getValue();
-               return new WicaChannelValueConnectedReal(alarmSeverity, alarmStatus, newTimeStamp, intValue);
-
-            case INTEGER_ARRAY:
-               final int[] intArrayValue = ((WicaChannelValueConnectedIntegerArray) connectedValue).getValue();
-               return new WicaChannelValueConnectedIntegerArray(alarmSeverity, alarmStatus, newTimeStamp, intArrayValue);
-
-            case STRING:
-               final String strValue = ((WicaChannelValueConnectedString) connectedValue).getValue();
-               return new WicaChannelValueConnectedString(alarmSeverity, alarmStatus, newTimeStamp, strValue);
-
-            case STRING_ARRAY:
-               final String[] strArrayValue = ((WicaChannelValueConnectedStringArray) connectedValue).getValue();
-               return new WicaChannelValueConnectedStringArray(alarmSeverity, alarmStatus, newTimeStamp, strArrayValue);
-
-            default:
-               throw new IllegalArgumentException("The supplied object was of an unexpected type ");
-         }
-      }
-   }
 }

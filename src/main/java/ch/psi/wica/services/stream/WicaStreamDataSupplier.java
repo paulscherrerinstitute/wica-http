@@ -76,7 +76,7 @@ class WicaStreamDataSupplier
       for ( WicaChannelName wicaChannelName : map.keySet() )
       {
          final var wicaChannelValue = map.get( wicaChannelName ).get( 0 );
-         final var rewriter = new WicaChannelValue.WicaChannelTimestampRewriter();
+         final var rewriter = new WicaChannelValueTimestampRewriter();
          final var newValue = rewriter.rewrite( wicaChannelValue, LocalDateTime.now() );
          outputMap.put( wicaChannelName, List.of( newValue ) );
       }
