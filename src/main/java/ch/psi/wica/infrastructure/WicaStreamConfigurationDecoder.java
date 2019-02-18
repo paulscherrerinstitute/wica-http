@@ -61,7 +61,6 @@ public class WicaStreamConfigurationDecoder
    {
       return wicaStreamProperties;
    }
-
    public Set<WicaChannel> getWicaChannels()
    {
       return Collections.unmodifiableSet( wicaChannels );
@@ -85,7 +84,7 @@ public class WicaStreamConfigurationDecoder
          final JsonNode propsNode = rootNode.get( "props" );
          if ( propsNode.isContainerNode() )
          {
-            this.wicaStreamProperties = mapper.treeToValue(propsNode, WicaStreamProperties.class);
+            this.wicaStreamProperties = mapper.treeToValue( propsNode, WicaStreamProperties.class) ;
          }
          else
          {
@@ -146,7 +145,7 @@ public class WicaStreamConfigurationDecoder
          {
             wicaChannelProperties = mapper.readValue("{}" , WicaChannelProperties.class );
          }
-         this.wicaChannels.add( new WicaChannel( wicaChannelName, wicaChannelProperties ) );
+         this.wicaChannels.add( new WicaChannel( wicaChannelName, wicaStreamProperties, wicaChannelProperties ) );
       }
    }
 

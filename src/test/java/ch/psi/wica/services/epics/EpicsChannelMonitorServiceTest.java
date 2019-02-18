@@ -9,6 +9,7 @@ import ch.psi.wica.model.WicaChannelName;
 import ch.psi.wica.model.WicaChannelValue;
 import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
@@ -44,7 +45,7 @@ class EpicsChannelMonitorServiceTest
 /*- Public methods -----------------------------------------------------------*/
 /*- Private methods ----------------------------------------------------------*/
 
-   @AfterEach
+   @BeforeEach
    void beforeEach()
    {
       epicsChannelMonitorService = new EpicsChannelMonitorService();
@@ -54,7 +55,7 @@ class EpicsChannelMonitorServiceTest
    void afterEach()
    {
       epicsChannelMonitorService.close();
-      EpicsChannelMonitorService.getChannelConnectionCount();
+      assertEquals( 0, EpicsChannelMonitorService.getChannelConnectionCount() );
    }
 
 
@@ -170,6 +171,7 @@ class EpicsChannelMonitorServiceTest
    @Test
    void testStopMonitoring_verifyIllegalArgumentExceptionWhenChannelNotRecognised() throws InterruptedException
    {
+      assertEquals( 0, EpicsChannelMonitorService.getChannelConnectionCount() );
       epicsChannelMonitorService.startMonitoring( new WicaChannelName( "test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
       Thread.sleep( 1_000 );
       assertEquals( 1, EpicsChannelMonitorService.getChannelConnectionCount() );

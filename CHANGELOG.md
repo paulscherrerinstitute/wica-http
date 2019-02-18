@@ -126,7 +126,7 @@ This log describes the functionality of tagged versions within the repository.
                                                             - improved debug-ability by adding intermediate variable which can take breakpoint.
                                                             - temporarily switched to debian image and openjdk10
                                                             - support for cpu metrics
-                                                            - added support for static locations and add extra information to actuator. Add initial get interval.
+                                                            - added support for static locations and add extra information to actuator. Add initial get filterT.
 
 * [0.9.5-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.9.5-RELEASE)
    - [CTRLIT-XXXX](https://jira.psi.ch/browse/CTRLIT-XXXX): XXXX

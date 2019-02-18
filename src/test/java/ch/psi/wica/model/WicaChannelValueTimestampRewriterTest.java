@@ -22,8 +22,6 @@ class WicaChannelValueTimestampRewriterTest
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private WicaChannelName wicaChannelName;
-   private WicaChannel wicaChannel;
    private WicaChannelValueTimestampRewriter rewriter;
 
 
@@ -35,8 +33,6 @@ class WicaChannelValueTimestampRewriterTest
    @BeforeEach
    void setUp()
    {
-      wicaChannelName = WicaChannelName.of( "simon" );
-      wicaChannel = new WicaChannel( wicaChannelName );
       rewriter = new WicaChannelValueTimestampRewriter();
    }
 

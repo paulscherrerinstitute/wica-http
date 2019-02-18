@@ -21,75 +21,77 @@ public class WicaStreamProperties
 
 /*- Public attributes --------------------------------------------------------*/
 
-   public static final int DEFAULT_HEARTBEAT_FLUX_INTERVAL = 10000;
-   public static final int DEFAULT_CHANNEL_VALUE_CHANGE_FLUX_INTERVAL = 100;
-   public static final int DEFAULT_CHANNEL_VALUE_POLLING_FLUX_INTERVAL = 100;
+   public static final int DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS = 10_000;
+   public static final int DEFAULT_VALUE_CHANGE_FLUX_INTERVAL_IN_MILLIS = 100;
+   public static final int DEFAULT_VALUE_POLL_FLUX_INTERVAL_IN_MILLIS = 100;
    public static final int DEFAULT_NUMERIC_PRECISION = 8;
    public static final String DEFAULT_FIELDS_OF_INTEREST = "val;sevr";
-   public static final WicaChannelProperties.DaqType DEFAULT_DAQ_TYPE= WicaChannelProperties.DaqType.MONITORER;
+   public static final WicaChannelProperties.DataAcquisitionMode DEFAULT_DAQ_MODE = WicaChannelProperties.DataAcquisitionMode.MONITOR;
 
 /*- Private attributes -------------------------------------------------------*/
 
    private final Integer heartbeatFluxInterval;
-   private final Integer channelValueChangeFluxInterval;
-   private final Integer channelValuePollingFluxInterval;
-   private final WicaChannelProperties.DaqType daqType;
+   private final Integer valueChangeFluxInterval;
+   private final Integer valuePollFluxInterval;
    private final Integer numericPrecision;
    private final Set<String> fieldsOfInterest;
+   private final WicaChannelProperties.DataAcquisitionMode dataAcquisitionMode;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    public WicaStreamProperties()
    {
-      this.heartbeatFluxInterval = DEFAULT_HEARTBEAT_FLUX_INTERVAL;
-      this.channelValueChangeFluxInterval = DEFAULT_CHANNEL_VALUE_CHANGE_FLUX_INTERVAL;
-      this.channelValuePollingFluxInterval = DEFAULT_CHANNEL_VALUE_POLLING_FLUX_INTERVAL;
-      this.daqType = DEFAULT_DAQ_TYPE;
-      this.numericPrecision = DEFAULT_NUMERIC_PRECISION;
-      this.fieldsOfInterest = Set.of( DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) ;
+      this.heartbeatFluxInterval   = DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS;
+      this.valueChangeFluxInterval = DEFAULT_VALUE_CHANGE_FLUX_INTERVAL_IN_MILLIS;
+      this.valuePollFluxInterval   = DEFAULT_VALUE_POLL_FLUX_INTERVAL_IN_MILLIS;
+      this.dataAcquisitionMode     = DEFAULT_DAQ_MODE;
+      this.numericPrecision        = DEFAULT_NUMERIC_PRECISION;
+      this.fieldsOfInterest        = Set.of( DEFAULT_FIELDS_OF_INTEREST.split(";" ) ) ;
    }
 
-   public WicaStreamProperties( @JsonProperty( "heartbeatFluxInterval" ) Integer heartbeatFluxInterval,
-                                @JsonProperty( "channelValueChangeFluxInterval" ) Integer channelValueChangeFluxInterval,
-                                @JsonProperty( "channelValuePollingFluxInterval" ) Integer channelValuePollingFluxInterval,
-                                @JsonProperty( "daqType" ) WicaChannelProperties.DaqType daqType,
-                                @JsonProperty( "prec" ) Integer numericPrecision,
-                                @JsonProperty( "fields" ) String fieldsOfInterest )
+   public WicaStreamProperties( @JsonProperty( "heartbeat" ) Integer heartbeatFluxIntervalInMillis,
+                                @JsonProperty( "changeint" ) Integer valueChangeFluxIntervalInMillis,
+                                @JsonProperty( "pollint"   ) Integer valuePollFluxIntervalInMillis,
+                                @JsonProperty( "prec"      ) Integer numericPrecision,
+                                @JsonProperty( "fields"    ) String fieldsOfInterest,
+                                @JsonProperty( "daqmode"   ) WicaChannelProperties.DataAcquisitionMode dataAcquisitionMode
+   )
    {
-      this.heartbeatFluxInterval = heartbeatFluxInterval == null ? DEFAULT_HEARTBEAT_FLUX_INTERVAL : heartbeatFluxInterval;
-      this.channelValueChangeFluxInterval = channelValueChangeFluxInterval == null ? DEFAULT_CHANNEL_VALUE_CHANGE_FLUX_INTERVAL : channelValueChangeFluxInterval;
-      this.channelValuePollingFluxInterval = channelValuePollingFluxInterval == null ? DEFAULT_CHANNEL_VALUE_POLLING_FLUX_INTERVAL : channelValuePollingFluxInterval;
-      this.numericPrecision = numericPrecision == null ? DEFAULT_NUMERIC_PRECISION : numericPrecision;
-      this.fieldsOfInterest = fieldsOfInterest == null ? stringToFieldsOfInterest( DEFAULT_FIELDS_OF_INTEREST ) : stringToFieldsOfInterest( fieldsOfInterest );
-      this.daqType = daqType == null ? DEFAULT_DAQ_TYPE : daqType;
+      this.heartbeatFluxInterval   = heartbeatFluxIntervalInMillis   == null ? DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS     : heartbeatFluxIntervalInMillis;
+      this.valueChangeFluxInterval = valueChangeFluxIntervalInMillis == null ? DEFAULT_VALUE_CHANGE_FLUX_INTERVAL_IN_MILLIS  : valueChangeFluxIntervalInMillis;
+      this.valuePollFluxInterval   = valuePollFluxIntervalInMillis   == null ? DEFAULT_VALUE_POLL_FLUX_INTERVAL_IN_MILLIS    : valuePollFluxIntervalInMillis;
+      this.numericPrecision        = numericPrecision                == null ? DEFAULT_NUMERIC_PRECISION                     : numericPrecision;
+      this.dataAcquisitionMode     = dataAcquisitionMode             == null ? DEFAULT_DAQ_MODE                              : dataAcquisitionMode;
+      this.fieldsOfInterest        = fieldsOfInterest                == null ? stringToFieldsOfInterest( DEFAULT_FIELDS_OF_INTEREST ) : stringToFieldsOfInterest(fieldsOfInterest );
    }
+
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
    @JsonIgnore
-   public int getHeartbeatFluxInterval()
+   public int getHeartbeatFluxIntervalInMillis()
    {
       return heartbeatFluxInterval;
    }
 
    @JsonIgnore
-   public int getChannelValueChangeFluxInterval()
+   public int getValueChangeFluxIntervalInMillis()
    {
-      return channelValueChangeFluxInterval;
+      return valueChangeFluxInterval;
    }
 
    @JsonIgnore
-   public int getChannelValuePollingFluxInterval()
+   public int getValuePollFluxIntervalInMillis()
    {
-      return channelValuePollingFluxInterval;
+      return valuePollFluxInterval;
    }
 
    @JsonIgnore
-   public WicaChannelProperties.DaqType gettDaqType()
+   public WicaChannelProperties.DataAcquisitionMode getDataAcquisitionMode()
    {
-      return daqType;
+      return dataAcquisitionMode;
    }
 
    @JsonIgnore
@@ -102,6 +104,19 @@ public class WicaStreamProperties
    public Set<String> getFieldsOfInterest()
    {
       return fieldsOfInterest;
+   }
+
+   @Override
+   public String toString()
+   {
+      return "WicaStreamProperties{" +
+            "heartbeatFluxInterval=" + heartbeatFluxInterval +
+            ", valueChangeFluxInterval=" + valueChangeFluxInterval +
+            ", valuePollFluxInterval=" + valuePollFluxInterval +
+            ", numericPrecision=" + numericPrecision +
+            ", fieldsOfInterest=" + fieldsOfInterest +
+            ", dataAcquisitionMode=" + dataAcquisitionMode +
+            '}';
    }
 
 /*- Private methods ----------------------------------------------------------*/

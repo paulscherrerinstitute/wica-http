@@ -29,15 +29,15 @@ class WicaStreamConfigurationDecoderTest
    @Test
    void testGoodDecodeSequence1()
    {
-       String testString = "{ \"props\": { \"prec\": 29, \"heartbeatFluxInterval\": 50, \"channelValueChangeFluxInterval\": 40 }," +
-                           "\"channels\": [ { \"name\": \"MHC1:IST:2\", \"props\": { \"filterType\": \"change-filterer\", \"deadband\": 19 } }," +
-                                           "{ \"name\": \"MYC2:IST:2\", \"props\": { \"filterType\": \"change-filterer\", \"deadband\": 10 } }," +
-                                           "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filterType\": \"rate-limiter\", \"interval\": 17 } } ] }";
+       String testString = "{ \"props\": { \"prec\": 29, \"heartbeat\": 50, \"changeint\": 40 }," +
+                           "\"channels\": [ { \"name\": \"MHC1:IST:2\", \"props\": { \"filter\": \"change-filterer\", \"deadband\": 19 } }," +
+                                           "{ \"name\": \"MYC2:IST:2\", \"props\": { \"filter\": \"change-filterer\", \"deadband\": 10 } }," +
+                                           "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filter\": \"rate-limiter\", \"minsgap\": 17 } } ] }";
 
       final WicaStreamConfigurationDecoder decoder = new WicaStreamConfigurationDecoder( testString );
       final var streamProps = decoder.getWicaStreamProperties();
-      assertEquals( 50, streamProps.getHeartbeatFluxInterval() );
-      assertEquals( 40, streamProps.getChannelValueChangeFluxInterval() );
+      assertEquals( 50, streamProps.getHeartbeatFluxIntervalInMillis() );
+      assertEquals( 40, streamProps.getValueChangeFluxIntervalInMillis() );
       assertEquals( 3, decoder.getWicaChannels().size() );
       final Set<WicaChannel> channels = decoder.getWicaChannels();
       channels.forEach( c -> {
@@ -45,15 +45,15 @@ class WicaStreamConfigurationDecoderTest
          assertFalse( chanProps.getFieldsOfInterest().isPresent() );
          if ( c.getName().equals( WicaChannelName.of( "MHC1:IST:2" ) ) ) {
             assertEquals( WicaChannelProperties.FilterType.CHANGE_FILTERER, c.getProperties().getFilterType() );
-            assertEquals( 19.0, c.getProperties().getDeadband() );
+            assertEquals( 19.0, c.getProperties().getFilterDeadband() );
          }
          if ( c.getName().equals( WicaChannelName.of( "MYC2:IST:2" ) ) ) {
             assertEquals( WicaChannelProperties.FilterType.CHANGE_FILTERER, c.getProperties().getFilterType() );
-            assertEquals( 10.0, c.getProperties().getDeadband() );
+            assertEquals( 10.0, c.getProperties().getFilterDeadband() );
          }
          if ( c.getName().equals( WicaChannelName.of( "MBC1:IST:2" ) ) ) {
             assertEquals( WicaChannelProperties.FilterType.RATE_LIMITER, c.getProperties().getFilterType() );
-            assertEquals( 17, c.getProperties().getInterval() );
+            assertEquals( 17, c.getProperties().getFilterMinSampleGapInMillis() );
          }
       } );
    }

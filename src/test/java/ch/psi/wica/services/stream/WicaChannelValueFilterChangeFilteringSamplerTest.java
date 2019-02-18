@@ -151,7 +151,7 @@ class WicaChannelValueFilterChangeFilteringSamplerTest
          final int expectedValue = ((WicaChannelValue.WicaChannelValueConnectedInteger) expectedOutputList2.get( i ) ).getValue();
          final int actualValue = ((WicaChannelValue.WicaChannelValueConnectedInteger) actualOutputList2.get( i )).getValue();
          assertEquals(expectedValue, actualValue);
-      };
+      }
    }
 
    private static Stream<Arguments> getMultipleMapMixedTypeArgs()
@@ -188,7 +188,7 @@ class WicaChannelValueFilterChangeFilteringSamplerTest
          final String expectedValue = ((WicaChannelValue.WicaChannelValueConnectedString) expectedOutputList2.get( i ) ).getValue();
          final String actualValue = ((WicaChannelValue.WicaChannelValueConnectedString) actualOutputList2.get( i )).getValue();
          assertEquals(expectedValue, actualValue);
-      };
+      }
    }
 
 

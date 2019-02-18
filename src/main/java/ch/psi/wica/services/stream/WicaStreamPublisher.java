@@ -2,14 +2,15 @@
 package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
-/*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
 import ch.psi.wica.infrastructure.*;
 import ch.psi.wica.model.*;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.codec.ServerSentEvent;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
@@ -53,20 +54,29 @@ public class WicaStreamPublisher
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Activates this flux.
+    *
+    * This method should only be called once, subsequent attempts to activate
+    * the flux will result in an IllegalStateException.
+    *
+    * @throws IllegalStateException if the flux has already been shutdown.
+    */
    public void activate()
    {
+      Validate.validState( combinedFlux == null, "the flux is already activated" );
+
       final Flux<ServerSentEvent<String>> heartbeatFlux = createHeartbeatFlux();
-      final Flux<ServerSentEvent<String>> channelMetadataFlux = createChannelMetadataFlux();
-      final Flux<ServerSentEvent<String>> channelInitialValuesFlux = createChannelInitialValuesFlux();
-      final Flux<ServerSentEvent<String>> channelChangedValueFlux = createChannelChangedValueFlux();
-      final Flux<ServerSentEvent<String>> channelPolledValuesFlux = createChannelPolledValuesFlux();
+      final Flux<ServerSentEvent<String>> channelMetadataFlux = createMetadataFlux();
+      final Flux<ServerSentEvent<String>> changedValueFlux = createChangedValueFlux();
+      final Flux<ServerSentEvent<String>> polledValuesFlux = createPolledValuesFlux();
 
       // Create a single Flux which merges all of the above.
       combinedFlux = heartbeatFlux.mergeWith( channelMetadataFlux )
-                                  .mergeWith( channelInitialValuesFlux )
-                                  .mergeWith( channelChangedValueFlux )
-                                  .mergeWith( channelPolledValuesFlux )
-                                  .doOnComplete( () -> logger.warn( "eventStreamFlux flux completed" ))
+                     //             .mergeWith( channelInitialValuesFlux )
+                                  .mergeWith( changedValueFlux )
+                                  .mergeWith( polledValuesFlux )
+                                  .doOnComplete( () -> logger.warn( "Wica combinedflux completed" ))
                                   .doOnCancel( () -> {
                                       logger.warn( "eventStreamFlux was cancelled" );
                                       handleErrors( wicaStreamId );
@@ -76,17 +86,33 @@ public class WicaStreamPublisher
 
 
    /**
+    * Returns the combined flux.
     *
-    * @return
+    * @return the flux
+    * @throws IllegalStateException if the flux is not in an active state.
     */
    Flux<ServerSentEvent<String>> getFlux()
    {
+      Validate.validState( combinedFlux != null );
       return combinedFlux;
    }
 
+   /**
+    * Shuts down this publisher instance.
+    *
+    * This method should only be called once, subsequent attempts to shutdown
+    * the flux will result in an IllegalStateException.
+    *
+    * @throws IllegalStateException if the flux has already been shutdown.
+    */
    public void shutdown()
    {
-      // TODO - implement
+      Validate.validState( combinedFlux != null,"the flux has already been shutdown" );
+
+      final Disposable d = combinedFlux.subscribe( (c) -> {} );
+      d.dispose();
+      combinedFlux = null;
+
    }
 
 
@@ -105,7 +131,7 @@ public class WicaStreamPublisher
     */
    private Flux<ServerSentEvent<String>> createHeartbeatFlux()
    {
-      return Flux.interval( Duration.ofMillis( wicaStreamProperties.getHeartbeatFluxInterval() ) )
+      return Flux.interval( Duration.ofMillis( wicaStreamProperties.getHeartbeatFluxIntervalInMillis() ) )
             .map(l -> {
                logger.info("heartbeat flux is publishing new SSE...");
                final String jsonHeartbeatString = LocalDateTime.now().toString();
@@ -128,7 +154,7 @@ public class WicaStreamPublisher
     *
     * @return the flux.
     */
-   private Flux<ServerSentEvent<String>> createChannelMetadataFlux()
+   private Flux<ServerSentEvent<String>> createMetadataFlux()
    {
       return Flux.range( 1, 1 )
             .map( l -> {
@@ -144,31 +170,6 @@ public class WicaStreamPublisher
    }
 
    /**
-    * Create the CHANNEL INITIAL VALUE FLUX.
-    *
-    * The purpose of this flux is to publish the last received value for ALL channels
-    * in the stream.
-    *
-    * This flux runs just once and delivers its payload on initial connection to the stream.
-    *
-    * @return the flux.
-    */
-   private Flux<ServerSentEvent<String>> createChannelInitialValuesFlux()
-   {
-      return Flux.range(1, 1)
-            .map(l -> {
-               logger.trace("channel-value flux is publishing new SSE...");
-               var map = wicaStreamDataSupplier.getNotifiedValues();
-               final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUES_INITIAL.build( wicaStreamId, jsonServerSentEventString );
-            } )
-            .doOnComplete( () -> logger.warn( "channel-initial-values flux completed" ))
-            .doOnCancel( () -> logger.warn("channel-initial-values flux was cancelled"))
-            .doOnError( (e) -> logger.warn( "channel-initial-values flux had error {}", e ));
-      //.log();
-   }
-
-   /**
     *  Creates the CHANNEL CHANGED VALUE FLUX.
     *
     * The purpose of this flux is to publish the last received values for any channels
@@ -178,14 +179,14 @@ public class WicaStreamPublisher
     *
     * @return the flux.
     */
-   private Flux<ServerSentEvent<String>> createChannelChangedValueFlux()
+   private Flux<ServerSentEvent<String>> createChangedValueFlux()
    {
-      return Flux.interval( Duration.ofMillis( wicaStreamProperties.getChannelValueChangeFluxInterval() ) )
+      return Flux.interval( Duration.ofMillis( wicaStreamProperties.getValueChangeFluxIntervalInMillis() ) )
             .map( l -> {
                logger.trace( "channel-value-change flux is publishing new SSE..." );
                final var map = wicaStreamDataSupplier.getNotifiedValueChanges();
                final var jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_CHANGED_VALUES.build(wicaStreamId, jsonServerSentEventString );
+               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_CHANGED_VALUES.build( wicaStreamId, jsonServerSentEventString );
             } )
             .doOnComplete( () -> logger.warn( "channel-value-change flux completed" ))
             .doOnCancel( () -> logger.warn( "channel-value-change flux was cancelled" ) )
@@ -203,9 +204,9 @@ public class WicaStreamPublisher
     *
     * @return the flux.
     */
-   private Flux<ServerSentEvent<String>> createChannelPolledValuesFlux()
+   private Flux<ServerSentEvent<String>> createPolledValuesFlux()
    {
-      return Flux.interval( Duration.ofMillis( wicaStreamProperties.getChannelValuePollingFluxInterval() ) )
+      return Flux.interval( Duration.ofMillis( wicaStreamProperties.getValuePollFluxIntervalInMillis() ) )
             .map(l -> {
                logger.trace("channel-value-poll flux is publishing new SSE...");
                var map = wicaStreamDataSupplier.getPolledValues();

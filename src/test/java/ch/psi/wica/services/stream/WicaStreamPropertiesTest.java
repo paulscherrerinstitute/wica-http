@@ -3,6 +3,7 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.WicaChannelProperties;
 import ch.psi.wica.model.WicaStreamProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
@@ -47,14 +48,18 @@ class WicaStreamPropertiesTest
    {
       final ObjectMapper mapper = new ObjectMapper();
 
-      final String inputString = "{" + "\"heartbeatFluxInterval\"" + ":" + 12345 + "," +
-                                       "\"channelValueChangeFluxInterval\"" + ":" + 99 + "," +
+      final String inputString = "{" + "\"heartbeat\"" + ":" + 12345 + "," +
+                                       "\"changeint\"" + ":" + 99 + "," +
+                                       "\"pollint\"" + ":" + 101 + "," +
+                                       "\"daqmode\"" + ":" + "\"poll\"" + "," +
                                        "\"fields\"" + ":" + "\"abc;def\"" + "," +
                                        "\"prec\"" + ":" + 9 + "}";
 
       final WicaStreamProperties props = mapper.readValue( inputString, WicaStreamProperties.class );
-      assertEquals( 12345, props.getHeartbeatFluxInterval() );
-      assertEquals( 99, props.getChannelValueChangeFluxInterval() );
+      assertEquals( 12345, props.getHeartbeatFluxIntervalInMillis() );
+      assertEquals( 99, props.getValueChangeFluxIntervalInMillis() );
+      assertEquals( 101, props.getValuePollFluxIntervalInMillis() );
+      assertEquals( WicaChannelProperties.DataAcquisitionMode.POLL, props.getDataAcquisitionMode() );
       assertEquals( 9, props.getNumericPrecision() );
       assertEquals( Set.of( "abc", "def" ), props.getFieldsOfInterest() );
    }
@@ -65,8 +70,9 @@ class WicaStreamPropertiesTest
       final ObjectMapper mapper = new ObjectMapper();
       final String inputString = "{}";
       final WicaStreamProperties props = mapper.readValue( inputString, WicaStreamProperties.class );
-      assertEquals( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL, props.getHeartbeatFluxInterval() );
-      assertEquals(WicaStreamProperties.DEFAULT_CHANNEL_VALUE_CHANGE_FLUX_INTERVAL, props.getChannelValueChangeFluxInterval() );
+      assertEquals( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS, props.getHeartbeatFluxIntervalInMillis() );
+      assertEquals( WicaStreamProperties.DEFAULT_VALUE_CHANGE_FLUX_INTERVAL_IN_MILLIS, props.getValueChangeFluxIntervalInMillis() );
+      assertEquals( WicaStreamProperties.DEFAULT_VALUE_POLL_FLUX_INTERVAL_IN_MILLIS, props.getValuePollFluxIntervalInMillis() );
       assertEquals( WicaStreamProperties.DEFAULT_NUMERIC_PRECISION, props.getNumericPrecision() );
       assertEquals( Set.of( WicaStreamProperties.DEFAULT_FIELDS_OF_INTEREST.split(";") ), props.getFieldsOfInterest() );
    }

@@ -22,42 +22,58 @@ public class WicaChannel
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger(WicaChannel.class );
-
    private final WicaChannelName wicaChannelName;
    private final WicaChannelProperties wicaChannelProperties;
-   private final WicaChannelValueFilter wicaChannelValueFilter;
+   private final WicaChannelValueFilter wicaChannelValueFilterForMonitoredChannels;
+   private final WicaChannelValueFilter wicaChannelValueFilterForPolledChannels;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannel( WicaChannelName wicaChannelName )
+   /**
+    * Create a new WicaChannel with the specified name and the specified stream properties.
+    *
+    * @param wicaChannelName the name of the channel.
+    * @param wicaStreamProperties the properties of the stream with which this channel is associated.
+    */
+   public WicaChannel( WicaChannelName wicaChannelName, WicaStreamProperties wicaStreamProperties )
    {
-      logger.info( "Creating new wicaChannelValueFilter with DEFAULT properties." );
+      logger.info( "Creating new WicaChannel with stream properties {}.", wicaStreamProperties );
 
       this.wicaChannelName = wicaChannelName;
       this.wicaChannelProperties = new WicaChannelProperties();
-      this.wicaChannelValueFilter = WicaChannelValueFilterBuilder.createDefault();
+      this.wicaChannelValueFilterForMonitoredChannels = WicaChannelValueFilterBuilder.createFilterForMonitoredChannels( wicaChannelProperties);
+      this.wicaChannelValueFilterForPolledChannels = WicaChannelValueFilterBuilder.createFilterForPolledChannels( wicaStreamProperties, wicaChannelProperties );
    }
 
-   public WicaChannel( WicaChannelName wicaChannelName, WicaChannelProperties wicaChannelProperties )
+   /**
+    * Create a new WicaChannel with the specified name, the specified stream properties and
+    * the specified channel properties.
+    *
+    * @param wicaChannelName the name of the channel.
+    * @param wicaStreamProperties the properties of the stream with which this channel is associated.
+    * @param wicaChannelProperties the properties of this channel.
+    */
+   public WicaChannel( WicaChannelName wicaChannelName, WicaStreamProperties wicaStreamProperties, WicaChannelProperties wicaChannelProperties )
    {
-      logger.info( "Creating new wicaChannelValueFilter with properties '{}'", wicaChannelProperties );
+      logger.info( "Creating new WicaChannel with stream properties {} and channel properties {}.", wicaStreamProperties, wicaChannelProperties );
 
       this.wicaChannelName = wicaChannelName;
       this.wicaChannelProperties = wicaChannelProperties;
-      this.wicaChannelValueFilter = WicaChannelValueFilterBuilder.createFromChannelProperties( wicaChannelProperties );
+      this.wicaChannelValueFilterForMonitoredChannels = WicaChannelValueFilterBuilder.createFilterForMonitoredChannels( wicaChannelProperties );
+      this.wicaChannelValueFilterForPolledChannels = WicaChannelValueFilterBuilder.createFilterForPolledChannels( wicaStreamProperties, wicaChannelProperties );
    }
 
 /*- Class methods ------------------------------------------------------------*/
 
    public static WicaChannel of( String wicaChannelName )
    {
-      return new WicaChannel( WicaChannelName.of( wicaChannelName ) );
+      return new WicaChannel( WicaChannelName.of( wicaChannelName ), new WicaStreamProperties() );
    }
 
    public static WicaChannel of( WicaChannelName wicaChannelName )
    {
-      return new WicaChannel( wicaChannelName );
+      return new WicaChannel( wicaChannelName, new WicaStreamProperties() );
    }
 
 /*- Public methods -----------------------------------------------------------*/
@@ -72,9 +88,14 @@ public class WicaChannel
       return wicaChannelProperties;
    }
 
-   public List<WicaChannelValue> applyFilter( List<WicaChannelValue> inputList )
+   public List<WicaChannelValue> applyFilterForPolledChannels( List<WicaChannelValue> inputList )
    {
-      return wicaChannelValueFilter.apply(inputList );
+      return wicaChannelValueFilterForMonitoredChannels.apply(inputList );
+   }
+
+   public List<WicaChannelValue> applyFilterForMonitoredChannels( List<WicaChannelValue> inputList )
+   {
+      return wicaChannelValueFilterForPolledChannels.apply(inputList );
    }
 
 /*- Private methods ----------------------------------------------------------*/

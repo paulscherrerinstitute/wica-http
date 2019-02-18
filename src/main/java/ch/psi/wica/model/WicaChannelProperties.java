@@ -21,71 +21,92 @@ public class WicaChannelProperties
 /*- Public attributes --------------------------------------------------------*/
 
    public static final FilterType DEFAULT_FILTER_TYPE = FilterType.LAST_N;
-   public static final int DEFAULT_N = 1;
-   public static final int DEFAULT_INTERVAL = 1000;
-   public static final double DEFAULT_DEADBAND = 1.0;
+   public static final int DEFAULT_FILTER_NUM_SAMPLES = 1;
+   public static final int DEFAULT_FILTER_CYCLE_LENGTH = 1;
+   public static final int DEFAULT_FILTER_SAMPLE_GAP = 1000;
+   public static final double DEFAULT_FILTER_DEADBAND = 1.0;
+   public static final int DEFAULT_POLLING_INTERVAL = 1000;
 
 
 /*- Private attributes -------------------------------------------------------*/
 
+   private final DataAcquisitionMode dataAcquisitionMode;
+   private final Integer pollingInterval;
    private final Integer numericPrecision;
    private final FilterType filterType ;
-   private final DaqType daqType ;
-   private final Integer n;
-   private final Integer interval;
-   private final Double deadband;
+   private final Integer filterNumSamples;
+   private final Integer filterCycleLength;
+   private final Integer filterMinSampleGap;
+   private final Double filterDeadband;
    private final String fieldsOfInterest;
+
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    public WicaChannelProperties()
    {
-      this.daqType = null;
+      this.dataAcquisitionMode = null;
       this.fieldsOfInterest = null;
       this.numericPrecision = null;
+      this.pollingInterval = DEFAULT_POLLING_INTERVAL;
       this.filterType = DEFAULT_FILTER_TYPE;
-      this.n = DEFAULT_N;
-      this.interval = DEFAULT_INTERVAL;
-      this.deadband = DEFAULT_DEADBAND;
+      this.filterNumSamples = DEFAULT_FILTER_NUM_SAMPLES;
+      this.filterCycleLength = DEFAULT_FILTER_CYCLE_LENGTH;
+      this.filterMinSampleGap = DEFAULT_FILTER_SAMPLE_GAP;
+      this.filterDeadband = DEFAULT_FILTER_DEADBAND;
    }
 
-   public WicaChannelProperties( @JsonProperty( "daqType" )    DaqType daqType,
-                                 @JsonProperty( "fields" )     String fieldsOfInterest,
-                                 @JsonProperty( "prec" )       Integer numericPrecision,
-                                 @JsonProperty( "filterType" ) FilterType filterType,
-                                 @JsonProperty( "n" )          Integer n,
-                                 @JsonProperty( "interval" )   Integer interval,
-                                 @JsonProperty( "deadband" )   Double deadband )
+   public WicaChannelProperties( @JsonProperty( "daqmode"  ) DataAcquisitionMode dataAcquisitionMode,
+                                 @JsonProperty( "pollint"  ) Integer pollingIntervalInMillis,
+                                 @JsonProperty( "fields"   ) String fieldsOfInterest,
+                                 @JsonProperty( "prec"     ) Integer numericPrecision,
+                                 @JsonProperty( "filter"   ) FilterType filterType,
+                                 @JsonProperty( "nsamples" ) Integer filterNumSamples,
+                                 @JsonProperty( "cyclelen" ) Integer filterCycleLength,
+                                 @JsonProperty( "minsgap"  ) Integer filterMinSampleGapInMillis,
+                                 @JsonProperty( "deadband" ) Double filterDeadband
+   )
    {
-      this.daqType = daqType;
+      this.dataAcquisitionMode = dataAcquisitionMode;
+      this.pollingInterval = pollingIntervalInMillis == null ? DEFAULT_POLLING_INTERVAL : pollingIntervalInMillis;
       this.fieldsOfInterest = fieldsOfInterest;
       this.numericPrecision = numericPrecision;
       this.filterType = filterType == null ? DEFAULT_FILTER_TYPE : filterType;
-      this.n = n == null ? DEFAULT_N : n;
-      this.interval =  interval == null ? DEFAULT_INTERVAL : interval;
-      this.deadband = deadband == null ? DEFAULT_DEADBAND : deadband;
+      this.filterNumSamples = filterNumSamples == null ? DEFAULT_FILTER_NUM_SAMPLES : filterNumSamples;
+      this.filterCycleLength = filterCycleLength == null ? DEFAULT_FILTER_CYCLE_LENGTH : filterCycleLength;
+      this.filterMinSampleGap = filterMinSampleGapInMillis == null ? DEFAULT_FILTER_SAMPLE_GAP : filterMinSampleGapInMillis;
+      this.filterDeadband = filterDeadband == null ? DEFAULT_FILTER_DEADBAND : filterDeadband;
    }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
    @JsonIgnore
-   public Optional<DaqType> getDaqType()
+   public Optional<DataAcquisitionMode> getDataAcquisitionMode()
    {
-      return daqType == null ? Optional.empty() : Optional.of( daqType );
+      // Note: Can be overridden by same property of stream
+      return dataAcquisitionMode == null ? Optional.empty() : Optional.of( dataAcquisitionMode );
    }
 
    @JsonIgnore
    public Optional<Set<String>> getFieldsOfInterest()
    {
-      return fieldsOfInterest == null ? Optional.empty() : Optional.of( Set.of( fieldsOfInterest.split( ";" ) ) );
+      // Note: Can be overridden by same property of stream
+      return fieldsOfInterest == null ? Optional.empty() : Optional.of( Set.of( fieldsOfInterest.split(";" ) ) );
    }
 
    @JsonIgnore
    public Optional<Integer> getNumericPrecision()
    {
+      // Note: Can be overridden by same property of stream
       return numericPrecision == null ? Optional.empty() : Optional.of( numericPrecision );
+   }
+
+   @JsonIgnore
+   public int getPollingIntervalInMillis()
+   {
+      return pollingInterval;
    }
 
    @JsonIgnore
@@ -94,25 +115,45 @@ public class WicaChannelProperties
       return filterType;
    }
 
-
    @JsonIgnore
-   public int getN()
+   public int getFilterCycleLength()
    {
-      return n;
+      return filterCycleLength;
    }
 
    @JsonIgnore
-   public int getInterval()
+   public int getFilterNumSamples()
    {
-      return interval;
+      return filterNumSamples;
    }
 
    @JsonIgnore
-   public double getDeadband()
+   public double getFilterDeadband()
    {
-      return deadband;
+      return filterDeadband;
    }
 
+   @JsonIgnore
+   public int getFilterMinSampleGapInMillis()
+   {
+      return filterMinSampleGap;
+   }
+
+   @Override
+   public String toString()
+   {
+      return "WicaChannelProperties{" +
+            "dataAcquisitionMode=" + dataAcquisitionMode +
+            ", pollingInterval=" + pollingInterval +
+            ", numericPrecision=" + numericPrecision +
+            ", filterType=" + filterType +
+            ", filterNumSamples=" + filterNumSamples +
+            ", filterCycleLength=" + filterCycleLength +
+            ", filterMinSampleGap=" + filterMinSampleGap +
+            ", filterDeadband=" + filterDeadband +
+            ", fieldsOfInterest='" + fieldsOfInterest + '\'' +
+            '}';
+   }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
@@ -126,9 +167,29 @@ public class WicaChannelProperties
       @JsonProperty( "change-filterer" ) CHANGE_FILTERER,
    }
 
-   public enum DaqType
+   public enum DataAcquisitionMode
    {
-      @JsonProperty( "poller" )    POLLER,
-      @JsonProperty( "monitorer" ) MONITORER
+      @JsonProperty( "poll" )              POLL( true, false ),
+      @JsonProperty( "monitor" )           MONITOR( false, true ),
+      @JsonProperty( "poll-and-monitor" )  POLL_AND_MONITOR( true, true );
+
+      private boolean doesPolling;
+      private boolean doesMonitoring;
+
+      DataAcquisitionMode( boolean doesPolling, boolean doesMonitoring )
+      {
+         this.doesPolling = doesPolling;
+         this.doesMonitoring = doesMonitoring;
+      }
+
+      public boolean doesPolling()
+      {
+         return doesPolling;
+      }
+
+      public boolean doesMonitoring()
+      {
+         return doesMonitoring;
+      }
    }
 }

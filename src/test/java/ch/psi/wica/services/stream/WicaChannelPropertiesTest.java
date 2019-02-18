@@ -40,12 +40,14 @@ class WicaChannelPropertiesTest
       final String inputString = "{}";
       final WicaChannelProperties props = mapper.readValue( inputString, WicaChannelProperties.class );
       assertEquals( WicaChannelProperties.DEFAULT_FILTER_TYPE, props.getFilterType() );
-      assertFalse( props.getNumericPrecision().isPresent() );
-      assertEquals( WicaChannelProperties.DEFAULT_N, props.getN() );
-      assertEquals( WicaChannelProperties.DEFAULT_INTERVAL, props.getInterval() );
-      assertEquals( WicaChannelProperties.DEFAULT_DEADBAND, props.getDeadband() );
+      assertEquals( WicaChannelProperties.DEFAULT_FILTER_NUM_SAMPLES, props.getFilterNumSamples() );
+      assertEquals( WicaChannelProperties.DEFAULT_FILTER_CYCLE_LENGTH, props.getFilterCycleLength() );
+      assertEquals( WicaChannelProperties.DEFAULT_FILTER_SAMPLE_GAP, props.getFilterMinSampleGapInMillis() );
+      assertEquals( WicaChannelProperties.DEFAULT_FILTER_DEADBAND, props.getFilterDeadband() );
+      assertEquals( WicaChannelProperties.DEFAULT_POLLING_INTERVAL, props.getPollingIntervalInMillis() );
       assertFalse( props.getFieldsOfInterest().isPresent() );
-
+      assertFalse( props.getNumericPrecision().isPresent() );
+      assertFalse( props.getDataAcquisitionMode().isPresent() );
    }
 
    @Test
@@ -53,8 +55,8 @@ class WicaChannelPropertiesTest
    {
       final ObjectMapper mapper = new ObjectMapper();
 
-      final String inputString = "{" + "\"filterType\"" + ":" + "\"last-n\"" + "," +
-                                       "\"n\"" + ":" + 99 + "," +
+      final String inputString = "{" + "\"filter\"" + ":" + "\"last-n\"" + "," +
+                                       "\"nsamples\"" + ":" + 99 + "," +
                                        "\"fields\"" + ":" + "\"abc;def\"" + "," +
                                        "\"prec\"" + ":" + 9 + "}";
 

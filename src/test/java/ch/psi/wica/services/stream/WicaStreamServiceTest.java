@@ -7,7 +7,6 @@ import ch.psi.wica.model.*;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -47,7 +46,7 @@ class WicaStreamServiceTest
       assertTrue( channels.stream().map( c -> c.getName().toString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ) );
 
       final WicaStreamProperties streamProperties = stream.getWicaStreamProperties();
-      assertEquals( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL, streamProperties.getHeartbeatFluxInterval() );
+      assertEquals(WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS, streamProperties.getHeartbeatFluxIntervalInMillis() );
 
       final WicaStreamId wicaStreamId = stream.getWicaStreamId();
       assertEquals( "0", wicaStreamId.asString() );
@@ -66,7 +65,7 @@ class WicaStreamServiceTest
       assertTrue( channels.stream().map( c -> c.getName().toString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ) );
 
       final WicaStreamProperties streamProperties = stream.getWicaStreamProperties();
-      assertEquals( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL, streamProperties.getHeartbeatFluxInterval() );
+      assertEquals(WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS, streamProperties.getHeartbeatFluxIntervalInMillis() );
 
       final WicaStreamId wicaStreamId = stream.getWicaStreamId();
       assertEquals( "0", wicaStreamId.asString() );
@@ -85,7 +84,7 @@ class WicaStreamServiceTest
       assertTrue( channels.stream().map( c -> c.getName().toString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ) );
 
       final WicaStreamProperties streamProperties = stream.getWicaStreamProperties();
-      assertEquals( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL, streamProperties.getHeartbeatFluxInterval() );
+      assertEquals(WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS, streamProperties.getHeartbeatFluxIntervalInMillis() );
       assertEquals( WicaStreamProperties.DEFAULT_NUMERIC_PRECISION, streamProperties.getNumericPrecision() );
       assertEquals( Set.of( "abc", "def" ), streamProperties.getFieldsOfInterest() );
 

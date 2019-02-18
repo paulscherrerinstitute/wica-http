@@ -28,16 +28,16 @@ class WicaChannelTest
    void test()
    {
       final WicaChannelName wicaChannelName = WicaChannelName.of( "simon" );
-      final WicaChannel wicaChannel = new WicaChannel(wicaChannelName );
+      final WicaChannel wicaChannel = WicaChannel.of( wicaChannelName );
       assertEquals( wicaChannelName, wicaChannel.getName() );
       assertFalse( wicaChannel.getProperties().getFieldsOfInterest().isPresent() );
       assertFalse( wicaChannel.getProperties().getNumericPrecision().isPresent() );
       final var wicaChannelValue1 = WicaChannelValue.createChannelValueConnected( "abc" );
       final var wicaChannelValue2 = WicaChannelValue.createChannelValueConnected( "def" );
       final var myValueList = List.of( wicaChannelValue1, wicaChannelValue2 );
-      final var res1 = wicaChannel.applyFilter(myValueList );
+      final var res1 = wicaChannel.applyFilterForMonitoredChannels( myValueList );
       assertEquals( 1, res1.size() );
-      final var res2 = wicaChannel.applyFilter(List.of() );
+      final var res2 = wicaChannel.applyFilterForMonitoredChannels( List.of() );
       assertEquals( 0, res2.size() );
    }
 
