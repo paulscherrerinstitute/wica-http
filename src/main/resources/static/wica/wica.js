@@ -5,10 +5,13 @@
  */
 console.debug( "Executing script in wica.js module...");
 
-import DocumentServiceSupportLoader from './client-api.js'
+import {DocumentSupportLoader} from './client-api.js'
 
-DocumentServiceSupportLoader.load( 200, 200 );
+const WICA_HOST="https://gfa-wica-dev.psi.ch";
 
-// import * as PlotBuffer from './client-api.js'
-// const buffer = new PlotBuffer( ["abc", "def" ], 222 );
-// buffer.activate();
+// Create and activate a document support loader to server this document
+const documentSupportLoader = new DocumentSupportLoader( WICA_HOST );
+documentSupportLoader.activate( 200, 200 );
+
+// Attach a handler to shut things down when the browser navigates away
+window.onunload( () => loader.shutdown() );

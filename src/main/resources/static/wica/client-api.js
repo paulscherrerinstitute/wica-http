@@ -1,18 +1,16 @@
 /**
- * Provides the API for leveraging
+ * Provides the entrypoint API for leveraging all functionality associated with Wica.
  *
  * @module
  */
-
 console.debug( "Executing script in client-api.js module...");
 
-import {load,unload} from "./document-support-loader";
+import {DocumentSupportLoader} from "./document-support-loader.js";
 import {StreamManager} from "./stream-manager.js";
 import {PlotBuffer} from "./plot-buffer.js";
 
 export {
     PlotBuffer,
     StreamManager,
-    load,
-    unload
+    DocumentSupportLoader
 }

@@ -20,8 +20,8 @@ export class PlotBuffer
      *
      * @param {string[]} htmlElementIds the names of the elements to listen to.
      *
-     * @param maximumBufferSize the number of entries that will be buffered. Beyond this limit the oldest values
-     *     will be silently thrown away.
+     * @param maximumBufferSize the number of entries that will be buffered. Beyond
+     *     this limit the oldest values will be silently thrown away.
      */
     constructor(  htmlElementIds, maximumBufferSize = 32 )
     {
