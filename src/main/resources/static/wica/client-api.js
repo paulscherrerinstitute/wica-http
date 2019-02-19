@@ -1,6 +1,5 @@
 /**
  * Provides the entrypoint API for leveraging all functionality associated with Wica.
- *
  * @module
  */
 console.debug( "Executing script in client-api.js module...");
