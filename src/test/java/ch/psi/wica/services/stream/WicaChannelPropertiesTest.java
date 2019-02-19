@@ -42,7 +42,7 @@ class WicaChannelPropertiesTest
       assertEquals( WicaChannelProperties.DEFAULT_FILTER_TYPE, props.getFilterType() );
       assertEquals( WicaChannelProperties.DEFAULT_FILTER_NUM_SAMPLES, props.getFilterNumSamples() );
       assertEquals( WicaChannelProperties.DEFAULT_FILTER_CYCLE_LENGTH, props.getFilterCycleLength() );
-      assertEquals( WicaChannelProperties.DEFAULT_FILTER_SAMPLE_GAP, props.getFilterMinSampleGapInMillis() );
+      assertEquals(WicaChannelProperties.DEFAULT_FILTER_SAMPLING_INTERVAL, props.getFilterSamplingIntervalInMillis() );
       assertEquals( WicaChannelProperties.DEFAULT_FILTER_DEADBAND, props.getFilterDeadband() );
       assertEquals( WicaChannelProperties.DEFAULT_POLLING_INTERVAL, props.getPollingIntervalInMillis() );
       assertFalse( props.getFieldsOfInterest().isPresent() );

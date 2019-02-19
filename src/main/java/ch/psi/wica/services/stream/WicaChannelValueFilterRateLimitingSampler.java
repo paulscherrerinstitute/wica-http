@@ -30,7 +30,7 @@ class WicaChannelValueFilterRateLimitingSampler implements WicaChannelValueFilte
 /*- Private attributes -------------------------------------------------------*/
 
    private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
-   private Duration minimumSampleGap;
+   private final Duration samplingInterval;
    private LocalDateTime lastSampleTimestamp;
 
 
@@ -42,13 +42,13 @@ class WicaChannelValueFilterRateLimitingSampler implements WicaChannelValueFilte
     * first input value and then subsequent values taken from the input
     * list after the specified minimum sampling interval.
     *
-    * @param minimumSampleGapInMilliseconds - the minimum time duration between samples.
+    * @param samplingIntervalInMillis - the minimum time duration between samples.
     */
-   WicaChannelValueFilterRateLimitingSampler( long minimumSampleGapInMilliseconds )
+   WicaChannelValueFilterRateLimitingSampler( long samplingIntervalInMillis )
    {
-      Validate.isTrue(minimumSampleGapInMilliseconds > 0 );
+      Validate.isTrue(samplingIntervalInMillis > 0 );
 
-      minimumSampleGap = Duration.of( minimumSampleGapInMilliseconds, MILLIS );
+      samplingInterval = Duration.of( samplingIntervalInMillis, MILLIS );
       this.lastSampleTimestamp = LONG_AGO;
    }
 
@@ -62,7 +62,7 @@ class WicaChannelValueFilterRateLimitingSampler implements WicaChannelValueFilte
 
       for ( WicaChannelValue inputValue : inputList )
       {
-         if ( Duration.between( lastSampleTimestamp, inputValue.getWicaServerTimestamp() ).compareTo(minimumSampleGap) > 0 )
+         if ( Duration.between( lastSampleTimestamp, inputValue.getWicaServerTimestamp() ).compareTo( samplingInterval) > 0 )
          {
             outputList.add( inputValue );
             lastSampleTimestamp = inputValue.getWicaServerTimestamp();

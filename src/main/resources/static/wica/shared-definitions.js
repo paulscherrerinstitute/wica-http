@@ -47,8 +47,8 @@
  * on a fixed one-in-N sampling basis.
  *
  * @typedef module:shared-definitions.WicaChannelFilterTypeFixedCycleSampler
- * @property {string} filterType - "one-in-n" - the string literal that configures this type of filter.
- * @property {number} n - The sampling cycle length.
+ * @property {string} filterType - "one-in-m" - the string literal that configures this type of filter.
+ * @property {number} m - The sampling cycle length.
  */
 
 /**
@@ -238,20 +238,19 @@ export const WicaRenderingProperties = Object.freeze ({
 /**
  * JS Object that defines the properties and default values supported by a WicaStream.
  *
- * @property {number} [heartbeatInterval=15000] - The interval in milliseconds between heartbeat messages.
- * @property {number} [channelValueChangeFluxInterval=100] The interval in milliseconds between channel value
+ * @property {number} [heartbeat=15000] - The interval in milliseconds between heartbeat messages.
+ * @property {number} [changeint=100] The interval in milliseconds between channel value
  *     change messages.
- * @property {number} [channelValuePollingFluxInterval=100] The interval in milliseconds between polled
- *     channel value messages.*
- * @property {boolean} [includeAlarmInfo=true] - Whether alarm information should be included in channel
- *     value updates. Needed if the visual state of the element should change when in the alarm state.
- * @property {boolean} [includeTimestamp=false] - Whether timestamp information should be included in channel
- *     value updates. Needed for time plots.
+ * @property {number} [pollint=100] The interval in milliseconds between polled
+ *     channel value messages.
+ * @property {string} [fields=val;sevr;ts] - A semicolon delimited list defining the data fields that
+ *    should be included by default in the stream of WicaChannelValues. Can be overridden by individual
+ *    settings in the WicaChannelProperties object.
  */
 export const WicaStreamProperties = Object.freeze ({
-    heartbeatFluxInterval: 15000,
-    channelValueChangeFluxInterval: 100,
-    channelValuePollingFluxInterval: 100,
+    heartbeat: 15000,
+    changeint: 100,
+    pollint: 1000,
     fields: "val;sevr"
 } );
 
@@ -260,11 +259,14 @@ export const WicaStreamProperties = Object.freeze ({
  *
  * @property {number} [prec=8] - The precision (= number of digits after the decimal point) to be used when
  *     sending numeric information.
- * @property {WicaChannelFilterType} [filterType=WicaChannelFilterTypeAllValueSampler] - The type of filtering to be used on the
+ * @property {WicaChannelFilterType} [filter=WicaChannelFilterTypeAllValueSampler] - The type of filtering to be used on the
  *     channel. See {@link module:shared-definitions.WicaChannelFilterType WicaChannelFilterType}.
  */
 export const WicaChannelProperties = Object.freeze ({
     prec: 8,
     filter: "last-n",
-    n: 1
+    nsamples: 1,
+    changeint: null,
+    pollint: null,
+    fields: null
 } );

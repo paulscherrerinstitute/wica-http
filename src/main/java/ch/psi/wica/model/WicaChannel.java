@@ -38,11 +38,14 @@ public class WicaChannel
     */
    public WicaChannel( WicaChannelName wicaChannelName, WicaStreamProperties wicaStreamProperties )
    {
-      logger.info( "Creating new WicaChannel with stream properties {}.", wicaStreamProperties );
-
+      logger.info( "Creating new WicaChannel named '{}' with stream properties '{}'.", wicaChannelName, wicaStreamProperties );
       this.wicaChannelName = wicaChannelName;
+
       this.wicaChannelProperties = new WicaChannelProperties();
       this.wicaChannelValueFilterForMonitoredChannels = WicaChannelValueFilterBuilder.createFilterForMonitoredChannels( wicaChannelProperties);
+
+      WicaChannelProperties properties = new WicaChannelProperties( );
+
       this.wicaChannelValueFilterForPolledChannels = WicaChannelValueFilterBuilder.createFilterForPolledChannels( wicaStreamProperties, wicaChannelProperties );
    }
 
@@ -90,12 +93,12 @@ public class WicaChannel
 
    public List<WicaChannelValue> applyFilterForPolledChannels( List<WicaChannelValue> inputList )
    {
-      return wicaChannelValueFilterForMonitoredChannels.apply(inputList );
+      return wicaChannelValueFilterForPolledChannels.apply(inputList );
    }
 
    public List<WicaChannelValue> applyFilterForMonitoredChannels( List<WicaChannelValue> inputList )
    {
-      return wicaChannelValueFilterForPolledChannels.apply(inputList );
+      return wicaChannelValueFilterForMonitoredChannels.apply(inputList );
    }
 
 /*- Private methods ----------------------------------------------------------*/

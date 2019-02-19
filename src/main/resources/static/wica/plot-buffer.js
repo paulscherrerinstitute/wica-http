@@ -6,6 +6,7 @@
 console.debug( "Executing script in plot-buffer.js module...");
 
 import * as JsonUtilities from './json5-wrapper.js'
+import {WicaElementConnectionAttributes} from './shared-definitions.js';
 
 /**
  * Provides a facility to buffer the received information for one or more wica-aware elements,
@@ -22,7 +23,7 @@ export class PlotBuffer
      * @param maximumBufferSize the number of entries that will be buffered. Beyond this limit the oldest values
      *     will be silently thrown away.
      */
-    constructor( htmlElementIds, maximumBufferSize = 32 )
+    constructor(  htmlElementIds, maximumBufferSize = 32 )
     {
         this.htmlElementIds = htmlElementIds;
         this.maximumBufferSize = maximumBufferSize;
@@ -36,13 +37,14 @@ export class PlotBuffer
             const ele = document.getElementById( htmlElementId );
             if ( ele !== null )
             {
-                if ( ele.hasAttribute( "data-wica-channel-name") )
+                if ( ele.hasAttribute( WicaElementConnectionAttributes.channelName ) )
                 {
-                    const channelName = ele.getAttribute("data-wica-channel-name" );
+                    const channelName = ele.getAttribute( WicaElementConnectionAttributes.channelName );
                     this.valueMap[ channelName ]= [];
                     this.htmlElements.push( ele );
                 }
-                else {
+                else
+                {
                     console.warn( "One or more element ID's did not correspond to a wica-aware element" );
                 }
             }
@@ -60,11 +62,11 @@ export class PlotBuffer
      */
     activate()
     {
-        const mutationObserverOptions = { attributes: true,
-                                          attributeFilter: [ "data-wica-channel-metadata", "data-wica-channel-value-array" ],
+        const mutationObserverOptions = { subtree: false,
                                           childList: false,
-                                          subtree: false };
-
+                                          attributes: true,
+                                          attributeFilter: [ WicaElementConnectionAttributes.channelMetadata,
+                                                             WicaElementConnectionAttributes.channelValueArray ] };
         for ( const htmlElement of this.htmlElements )
         {
             this.observer.observe( htmlElement, mutationObserverOptions );
@@ -87,9 +89,24 @@ export class PlotBuffer
      */
     isConnectedToServer()
     {
-        // TODO
+        // Scan through all elements and check that the stream state is shown as opened
+        for ( const ele of this.htmlElements )
+        {
+            if ( ele.hasAttribute( WicaElementConnectionAttributes.streamState ) )
+            {
+                const streamState = ele.getAttribute( WicaElementConnectionAttributes.streamState );
+                if ( ! streamState.includes( "opened-") )
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         return true;
-        //return this.streamOpened;
     }
 
     /**
@@ -160,18 +177,18 @@ export class PlotBuffer
             if ( mutation.type === "attributes" )
             {
                 const element = mutation.target;
-                const channelName = element.getAttribute( "data-wica-channel-name" );
+                const channelName = element.getAttribute( WicaElementConnectionAttributes.channelName );
 
-                if ( mutation.attributeName === "data-wica-channel-metadata" )
+                if ( mutation.attributeName === WicaElementConnectionAttributes.channelMetadata )
                 {
-                    const metadataAsJsonString = element.getAttribute( "data-wica-channel-metadata" );
+                    const metadataAsJsonString = element.getAttribute( WicaElementConnectionAttributes.channelMetadata );
                     const metadata = JsonUtilities.parse( metadataAsJsonString );
                     this.metadataMap[ channelName ] = metadata;
                 }
 
-                if ( mutation.attributeName === "data-wica-channel-value-array" )
+                if ( mutation.attributeName === WicaElementConnectionAttributes.channelValueArray )
                 {
-                    const valueArrayAsJsonString = element.getAttribute( "data-wica-channel-value-array" );
+                    const valueArrayAsJsonString = element.getAttribute( WicaElementConnectionAttributes.channelValueArray );
                     const valueArray = JsonUtilities.parse( valueArrayAsJsonString );
                     this.updateBufferedChannelValues_( channelName, valueArray );
                 }
@@ -203,5 +220,4 @@ export class PlotBuffer
             this.valueMap[ channelName ].shift();
         }
     }
-
 }

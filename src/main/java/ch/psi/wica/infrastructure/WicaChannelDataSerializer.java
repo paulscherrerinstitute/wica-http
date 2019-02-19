@@ -14,8 +14,6 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.util.Set;
@@ -34,9 +32,7 @@ class WicaChannelDataSerializer
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaChannelDataSerializer.class );
-
-   private ObjectMapper jsonObjectMapper;
+   private final ObjectMapper jsonObjectMapper;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/

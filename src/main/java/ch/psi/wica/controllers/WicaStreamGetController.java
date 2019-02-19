@@ -69,7 +69,7 @@ class WicaStreamGetController
       logger.info( "GET: Handling get stream request for ID: '{}'", id );
 
       // Handle the situation where an unknown WicaStreamId is given
-      if ( ! wicaStreamService.isKnownId( WicaStreamId.of(id ) ) )
+      if ( ! wicaStreamService.isKnownId( WicaStreamId.of( id ) ) )
       {
          final String errorMessage = "the event stream 'id' was not recognised";
          logger.warn( "GET: Rejected request because {}", errorMessage  );

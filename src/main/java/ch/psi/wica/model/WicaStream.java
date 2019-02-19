@@ -20,8 +20,6 @@ public class WicaStream
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaStream.class );
-
    private final WicaStreamId wicaStreamId;
    private final WicaStreamProperties wicaStreamProperties;
    private final Set<WicaChannel> wicaChannels;
@@ -50,7 +48,8 @@ public class WicaStream
       this.wicaChannels = Validate.notNull( wicaChannels );
 
       // Output some diagnostic information to the log.
-      logger.info( "Created new WicaStream with properties as follows: '{}'", this );
+      final Logger logger = LoggerFactory.getLogger(WicaStream.class);
+      logger.info("Created new WicaStream with properties as follows: '{}'", this );
    }
 
 /*- Class methods ------------------------------------------------------------*/

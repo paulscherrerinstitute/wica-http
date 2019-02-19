@@ -12,7 +12,7 @@ public class WicaChannelAlarmStatus
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private int wicaAlarmStatusCode;
+   private final int wicaAlarmStatusCode;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/

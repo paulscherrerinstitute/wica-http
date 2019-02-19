@@ -20,22 +20,19 @@ import java.time.LocalDateTime;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * SpringBoot application
+ * SpringBoot application for the web visualisation of points of interest within
+ * a distributed control system.
  */
 @SpringBootApplication
 public class WicaApplication implements DisposableBean
 {
 
 /*- Public attributes --------------------------------------------------------*/
-
-	public static final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
-
 /*- Private attributes -------------------------------------------------------*/
 
+   private static final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
 	private static final Logger logger = LoggerFactory.getLogger( WicaApplication.class );
 	private static final LocalDateTime serverStartTime = LocalDateTime.now();
-
-	private static String keystorePassword;
 
 /*- Main ---------------------------------------------------------------------*/
 
@@ -54,7 +51,7 @@ public class WicaApplication implements DisposableBean
 			return;
 		}
 
-		keystorePassword = args[ 0 ];
+		final String keystorePassword = args[ 0 ];
 
 		// The value set here will override any definitions in the application.properties file
 		System.setProperty( "server.ssl.key-store-password", keystorePassword );

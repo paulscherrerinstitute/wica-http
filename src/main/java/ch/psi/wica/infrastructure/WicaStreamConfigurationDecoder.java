@@ -30,10 +30,8 @@ public class WicaStreamConfigurationDecoder
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaStreamConfigurationDecoder.class );
-
+   private final Set<WicaChannel> wicaChannels = new HashSet<>();
    private WicaStreamProperties wicaStreamProperties;
-   private Set<WicaChannel> wicaChannels = new HashSet<>();
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -47,8 +45,9 @@ public class WicaStreamConfigurationDecoder
       }
       catch ( IOException ex )
       {
-         logger.warn( "Failed to decode JSON channel configuration string '{}'", jsonInputString );
-         logger.warn( "The detail of the exception message was '{}", ex.getMessage() );
+         final Logger logger = LoggerFactory.getLogger(WicaStreamConfigurationDecoder.class);
+         logger.warn("Failed to decode JSON channel configuration string '{}'", jsonInputString );
+         logger.warn("The detail of the exception message was '{}", ex.getMessage() );
          throw new IllegalArgumentException( "The JSON channel configuration string: '" + jsonInputString + "' was illegal", ex );
       }
    }
@@ -61,6 +60,7 @@ public class WicaStreamConfigurationDecoder
    {
       return wicaStreamProperties;
    }
+
    public Set<WicaChannel> getWicaChannels()
    {
       return Collections.unmodifiableSet( wicaChannels );

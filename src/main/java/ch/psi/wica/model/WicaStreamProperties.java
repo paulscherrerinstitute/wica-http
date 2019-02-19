@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Set;
 
@@ -21,18 +22,47 @@ public class WicaStreamProperties
 
 /*- Public attributes --------------------------------------------------------*/
 
+   /**
+    * Default value for the heartbeat flux interval that will be assigned if
+    * the property is not explicitly set by configuration on the client.
+    */
    public static final int DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS = 10_000;
-   public static final int DEFAULT_VALUE_CHANGE_FLUX_INTERVAL_IN_MILLIS = 100;
-   public static final int DEFAULT_VALUE_POLL_FLUX_INTERVAL_IN_MILLIS = 100;
+
+   /**
+    * Default value for the changed value flux interval that will be assigned if
+    * the property is not explicitly set by configuration on the client.
+    */
+   public static final int DEFAULT_CHANGED_VALUE_FLUX_INTERVAL_IN_MILLIS = 100;
+
+   /**
+    * Default value for the polled value flux interval that will be assigned if
+    * the property is not explicitly set by configuration on the client.
+    */
+   public static final int DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS = 100;
+
+   /**
+    * Default value for the numeric precision that will be assigned if
+    * the property is not explicitly set by configuration on the client.
+    */
    public static final int DEFAULT_NUMERIC_PRECISION = 8;
+
+   /**
+    * Default value for the fields of interest that will be assigned if
+    * the property is not explicitly set by configuration on the client.
+    */
    public static final String DEFAULT_FIELDS_OF_INTEREST = "val;sevr";
-   public static final WicaChannelProperties.DataAcquisitionMode DEFAULT_DAQ_MODE = WicaChannelProperties.DataAcquisitionMode.MONITOR;
+
+   /**
+    * Default value for the data acqusition mode that will be assigned if
+    * the property is not explicitly set by configuration on the client.
+    */
+   public static final WicaChannelProperties.DataAcquisitionMode DEFAULT_DATA_ACQUISITION_MODE = WicaChannelProperties.DataAcquisitionMode.MONITOR;
 
 /*- Private attributes -------------------------------------------------------*/
 
    private final Integer heartbeatFluxInterval;
-   private final Integer valueChangeFluxInterval;
-   private final Integer valuePollFluxInterval;
+   private final Integer changedValueFluxInterval;
+   private final Integer polledValueFluxInterval;
    private final Integer numericPrecision;
    private final Set<String> fieldsOfInterest;
    private final WicaChannelProperties.DataAcquisitionMode dataAcquisitionMode;
@@ -42,28 +72,28 @@ public class WicaStreamProperties
 
    public WicaStreamProperties()
    {
-      this.heartbeatFluxInterval   = DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS;
-      this.valueChangeFluxInterval = DEFAULT_VALUE_CHANGE_FLUX_INTERVAL_IN_MILLIS;
-      this.valuePollFluxInterval   = DEFAULT_VALUE_POLL_FLUX_INTERVAL_IN_MILLIS;
-      this.dataAcquisitionMode     = DEFAULT_DAQ_MODE;
-      this.numericPrecision        = DEFAULT_NUMERIC_PRECISION;
-      this.fieldsOfInterest        = Set.of( DEFAULT_FIELDS_OF_INTEREST.split(";" ) ) ;
+      this.heartbeatFluxInterval    = DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS;
+      this.changedValueFluxInterval = DEFAULT_CHANGED_VALUE_FLUX_INTERVAL_IN_MILLIS;
+      this.polledValueFluxInterval  = DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS;
+      this.dataAcquisitionMode      = DEFAULT_DATA_ACQUISITION_MODE;
+      this.numericPrecision         = DEFAULT_NUMERIC_PRECISION;
+      this.fieldsOfInterest         = Set.of( DEFAULT_FIELDS_OF_INTEREST.split(";" ) ) ;
    }
 
    public WicaStreamProperties( @JsonProperty( "heartbeat" ) Integer heartbeatFluxIntervalInMillis,
-                                @JsonProperty( "changeint" ) Integer valueChangeFluxIntervalInMillis,
-                                @JsonProperty( "pollint"   ) Integer valuePollFluxIntervalInMillis,
+                                @JsonProperty( "changeint" ) Integer changedValueFluxIntervalInMillis,
+                                @JsonProperty( "pollint"   ) Integer polledValueFluxIntervalInMillis,
                                 @JsonProperty( "prec"      ) Integer numericPrecision,
                                 @JsonProperty( "fields"    ) String fieldsOfInterest,
                                 @JsonProperty( "daqmode"   ) WicaChannelProperties.DataAcquisitionMode dataAcquisitionMode
    )
    {
-      this.heartbeatFluxInterval   = heartbeatFluxIntervalInMillis   == null ? DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS     : heartbeatFluxIntervalInMillis;
-      this.valueChangeFluxInterval = valueChangeFluxIntervalInMillis == null ? DEFAULT_VALUE_CHANGE_FLUX_INTERVAL_IN_MILLIS  : valueChangeFluxIntervalInMillis;
-      this.valuePollFluxInterval   = valuePollFluxIntervalInMillis   == null ? DEFAULT_VALUE_POLL_FLUX_INTERVAL_IN_MILLIS    : valuePollFluxIntervalInMillis;
-      this.numericPrecision        = numericPrecision                == null ? DEFAULT_NUMERIC_PRECISION                     : numericPrecision;
-      this.dataAcquisitionMode     = dataAcquisitionMode             == null ? DEFAULT_DAQ_MODE                              : dataAcquisitionMode;
-      this.fieldsOfInterest        = fieldsOfInterest                == null ? stringToFieldsOfInterest( DEFAULT_FIELDS_OF_INTEREST ) : stringToFieldsOfInterest(fieldsOfInterest );
+      this.heartbeatFluxInterval    = heartbeatFluxIntervalInMillis    == null ? DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS     : heartbeatFluxIntervalInMillis;
+      this.changedValueFluxInterval = changedValueFluxIntervalInMillis == null ? DEFAULT_CHANGED_VALUE_FLUX_INTERVAL_IN_MILLIS : changedValueFluxIntervalInMillis;
+      this.polledValueFluxInterval  = polledValueFluxIntervalInMillis  == null ? DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS  : polledValueFluxIntervalInMillis;
+      this.numericPrecision         = numericPrecision                 == null ? DEFAULT_NUMERIC_PRECISION                     : numericPrecision;
+      this.dataAcquisitionMode      = dataAcquisitionMode              == null ? DEFAULT_DATA_ACQUISITION_MODE                 : dataAcquisitionMode;
+      this.fieldsOfInterest         = fieldsOfInterest                 == null ? stringToFieldsOfInterest( DEFAULT_FIELDS_OF_INTEREST ) : stringToFieldsOfInterest(fieldsOfInterest );
    }
 
 
@@ -77,15 +107,15 @@ public class WicaStreamProperties
    }
 
    @JsonIgnore
-   public int getValueChangeFluxIntervalInMillis()
+   public int getChangedValueFluxIntervalInMillis()
    {
-      return valueChangeFluxInterval;
+      return changedValueFluxInterval;
    }
 
    @JsonIgnore
-   public int getValuePollFluxIntervalInMillis()
+   public int getPolledValueFluxIntervalInMillis()
    {
-      return valuePollFluxInterval;
+      return polledValueFluxInterval;
    }
 
    @JsonIgnore
@@ -111,8 +141,8 @@ public class WicaStreamProperties
    {
       return "WicaStreamProperties{" +
             "heartbeatFluxInterval=" + heartbeatFluxInterval +
-            ", valueChangeFluxInterval=" + valueChangeFluxInterval +
-            ", valuePollFluxInterval=" + valuePollFluxInterval +
+            ", changedValueFluxInterval=" + changedValueFluxInterval +
+            ", polledValueFluxInterval=" + polledValueFluxInterval +
             ", numericPrecision=" + numericPrecision +
             ", fieldsOfInterest=" + fieldsOfInterest +
             ", dataAcquisitionMode=" + dataAcquisitionMode +
@@ -126,6 +156,7 @@ public class WicaStreamProperties
       Validate.notBlank(inputString );
       return Set.of( inputString.split( ";" ) );
    }
+
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

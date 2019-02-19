@@ -41,7 +41,7 @@ public class EpicsChannelDataService
    private final WicaChannelMetadataStash channelMetadataStash = new WicaChannelMetadataStash();
    private final WicaChannelValueStash channelValueStash = new WicaChannelValueStash( 16 );
 
-   private EpicsChannelMonitorService epicsChannelMonitorService;
+   private final EpicsChannelMonitorService epicsChannelMonitorService;
 
 
 /*- Main ---------------------------------------------------------------------*/

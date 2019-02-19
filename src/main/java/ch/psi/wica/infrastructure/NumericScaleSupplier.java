@@ -11,7 +11,7 @@ import net.jcip.annotations.Immutable;
 /*- Class Declaration --------------------------------------------------------*/
 
 @Immutable
-public interface NumericScaleSupplier
+interface NumericScaleSupplier
 {
 
 /*- Public attributes --------------------------------------------------------*/

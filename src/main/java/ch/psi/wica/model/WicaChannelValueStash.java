@@ -32,8 +32,6 @@ public class WicaChannelValueStash
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaChannelValueStash.class );
-
    private final Map<WicaChannelName, Deque<WicaChannelValue>> stash;
    private final int bufferSize;
 
@@ -43,7 +41,8 @@ public class WicaChannelValueStash
 
    public WicaChannelValueStash( @Value( "channel_value_stash_buffer_size" ) int bufferSize  )
    {
-      logger.info( "Creating value stash with buffer size: {} ", bufferSize);
+      final Logger logger = LoggerFactory.getLogger(WicaChannelValueStash.class);
+      logger.info("Creating value stash with buffer size: {} ", bufferSize);
       this.bufferSize = bufferSize;
       stash = Collections.synchronizedMap( new HashMap<>() );
    }

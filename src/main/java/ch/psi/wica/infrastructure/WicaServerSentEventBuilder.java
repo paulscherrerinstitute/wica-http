@@ -18,11 +18,11 @@ import java.time.format.DateTimeFormatter;
 @Immutable
 public enum WicaServerSentEventBuilder
 {
-   EV_WICA_SERVER_HEARTBEAT       ( "ev-wica-server-heartbeat", "server heartbeat"         ),
-   EV_WICA_CHANNEL_METADATA       ( "ev-wica-channel-metadata", "initial channel metadata" ),
-   EV_WICA_CHANNEL_VALUES_INITIAL ( "ev-wica-channel-value",    "initial channel values"   ),
-   EV_WICA_CHANNEL_POLLED_VALUES("ev-wica-channel-value", "polled channel values"    ),
-   EV_WICA_CHANNEL_CHANGED_VALUES("ev-wica-channel-value", "channel value changes"    );
+   EV_WICA_SERVER_HEARTBEAT       ("ev-wica-server-heartbeat", "server heartbeat"         ),
+   EV_WICA_CHANNEL_METADATA       ("ev-wica-channel-metadata", "initial channel metadata" ),
+   EV_WICA_CHANNEL_VALUES_INITIAL ("ev-wica-channel-value",    "initial channel values"   ),
+   EV_WICA_CHANNEL_POLLED_VALUES  ("ev-wica-channel-value",    "polled channel values"    ),
+   EV_WICA_CHANNEL_CHANGED_VALUES ("ev-wica-channel-value",    "channel value changes"    );
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/

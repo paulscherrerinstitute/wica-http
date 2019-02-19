@@ -69,13 +69,12 @@ public class WicaStreamPublisher
       final Flux<ServerSentEvent<String>> heartbeatFlux = createHeartbeatFlux();
       final Flux<ServerSentEvent<String>> channelMetadataFlux = createMetadataFlux();
       final Flux<ServerSentEvent<String>> changedValueFlux = createChangedValueFlux();
-      final Flux<ServerSentEvent<String>> polledValuesFlux = createPolledValuesFlux();
+      final Flux<ServerSentEvent<String>> polledValueFlux = createPolledValueFlux();
 
       // Create a single Flux which merges all of the above.
       combinedFlux = heartbeatFlux.mergeWith( channelMetadataFlux )
-                     //             .mergeWith( channelInitialValuesFlux )
                                   .mergeWith( changedValueFlux )
-                                  .mergeWith( polledValuesFlux )
+                                  .mergeWith( polledValueFlux )
                                   .doOnComplete( () -> logger.warn( "Wica combinedflux completed" ))
                                   .doOnCancel( () -> {
                                       logger.warn( "eventStreamFlux was cancelled" );
@@ -181,7 +180,7 @@ public class WicaStreamPublisher
     */
    private Flux<ServerSentEvent<String>> createChangedValueFlux()
    {
-      return Flux.interval( Duration.ofMillis( wicaStreamProperties.getValueChangeFluxIntervalInMillis() ) )
+      return Flux.interval( Duration.ofMillis( wicaStreamProperties.getChangedValueFluxIntervalInMillis() ) )
             .map( l -> {
                logger.trace( "channel-value-change flux is publishing new SSE..." );
                final var map = wicaStreamDataSupplier.getNotifiedValueChanges();
@@ -204,9 +203,9 @@ public class WicaStreamPublisher
     *
     * @return the flux.
     */
-   private Flux<ServerSentEvent<String>> createPolledValuesFlux()
+   private Flux<ServerSentEvent<String>> createPolledValueFlux()
    {
-      return Flux.interval( Duration.ofMillis( wicaStreamProperties.getValuePollFluxIntervalInMillis() ) )
+      return Flux.interval( Duration.ofMillis( wicaStreamProperties.getPolledValueFluxIntervalInMillis() ) )
             .map(l -> {
                logger.trace("channel-value-poll flux is publishing new SSE...");
                var map = wicaStreamDataSupplier.getPolledValues();

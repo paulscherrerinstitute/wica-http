@@ -37,7 +37,7 @@ class WicaStreamConfigurationDecoderTest
       final WicaStreamConfigurationDecoder decoder = new WicaStreamConfigurationDecoder( testString );
       final var streamProps = decoder.getWicaStreamProperties();
       assertEquals( 50, streamProps.getHeartbeatFluxIntervalInMillis() );
-      assertEquals( 40, streamProps.getValueChangeFluxIntervalInMillis() );
+      assertEquals( 40, streamProps.getChangedValueFluxIntervalInMillis() );
       assertEquals( 3, decoder.getWicaChannels().size() );
       final Set<WicaChannel> channels = decoder.getWicaChannels();
       channels.forEach( c -> {
@@ -53,7 +53,7 @@ class WicaStreamConfigurationDecoderTest
          }
          if ( c.getName().equals( WicaChannelName.of( "MBC1:IST:2" ) ) ) {
             assertEquals( WicaChannelProperties.FilterType.RATE_LIMITER, c.getProperties().getFilterType() );
-            assertEquals( 17, c.getProperties().getFilterMinSampleGapInMillis() );
+            assertEquals( 17, c.getProperties().getFilterSamplingIntervalInMillis() );
          }
       } );
    }

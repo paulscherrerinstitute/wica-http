@@ -27,21 +27,6 @@ class WicaChannelValueFilterBuilderTest
 /*- Public methods -----------------------------------------------------------*/
 
    @Test
-   void testDefault()
-   {
-      final WicaChannelValue intValue1 = WicaChannelValue.createChannelValueConnected( 129 );
-      final WicaChannelValue intValue2 = WicaChannelValue.createChannelValueConnected( 14 );
-      final WicaChannelValue intValue3 = WicaChannelValue.createChannelValueConnected( 15 );
-      final WicaChannelValue intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
-
-      WicaChannelValueFilter mapper = WicaChannelValueFilterBuilder.createDefault();
-      final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
-      final List<WicaChannelValue> outputList  = mapper.apply(inputList );
-      assertEquals( 1, outputList.size() );
-      assertEquals(111, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get(0 ) ).getValue() );
-   }
-
-   @Test
    void testLatestValueSampler()
    {
       final WicaChannelValue intValue1 = WicaChannelValue.createChannelValueConnected( 129 );
@@ -50,11 +35,11 @@ class WicaChannelValueFilterBuilderTest
       final WicaChannelValue intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
 
       final WicaChannelProperties.DataAcquisitionMode daqMode = WicaChannelProperties.DataAcquisitionMode.MONITOR;
-      final WicaChannelValueFilter mapper = WicaChannelValueFilterBuilder.createFilterForMonitoredChannels(new WicaChannelProperties(daqMode,
+      final WicaChannelValueFilter mapper = WicaChannelValueFilterBuilder.createFilterForMonitoredChannels(new WicaChannelProperties( daqMode,
                                                                                                                                      100,
                                                                                                                                      "val;sevr",
                                                                                                                                      5,
-                                                                                                                                     WicaChannelProperties.FilterType.LAST_N,
+                                                                                                                                      WicaChannelProperties.FilterType.LAST_N,
                                                                                                                                      2, null, null, null ) );
       final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
       final List<WicaChannelValue> outputList  = mapper.apply(inputList );
@@ -72,12 +57,12 @@ class WicaChannelValueFilterBuilderTest
       final WicaChannelValue intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
 
       final WicaChannelProperties.DataAcquisitionMode daqMode = WicaChannelProperties.DataAcquisitionMode.MONITOR;
-      final WicaChannelValueFilter mapper = WicaChannelValueFilterBuilder.createFilterForMonitoredChannels(new WicaChannelProperties(daqMode,
-                                                                                                                                     100,
-                                                                                                                                     "val;sevr",
-                                                                                                                                     5,
-                                                                                                                                     WicaChannelProperties.FilterType.ONE_IN_N,
-                                                                                                                                     null, 2, null, null ) );
+      final WicaChannelValueFilter mapper = WicaChannelValueFilterBuilder.createFilterForMonitoredChannels( new WicaChannelProperties( daqMode,
+                                                                                                                                      100,
+                                                                                                                                      "val;sevr",
+                                                                                                                                      5,
+                                                                                                                                       WicaChannelProperties.FilterType.ONE_IN_M,
+                                                                                                                                      null, 2, null, null ) );
 
 
       final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );

@@ -23,7 +23,7 @@ public class WicaChannelProperties
    public static final FilterType DEFAULT_FILTER_TYPE = FilterType.LAST_N;
    public static final int DEFAULT_FILTER_NUM_SAMPLES = 1;
    public static final int DEFAULT_FILTER_CYCLE_LENGTH = 1;
-   public static final int DEFAULT_FILTER_SAMPLE_GAP = 1000;
+   public static final int DEFAULT_FILTER_SAMPLING_INTERVAL = 1000;
    public static final double DEFAULT_FILTER_DEADBAND = 1.0;
    public static final int DEFAULT_POLLING_INTERVAL = 1000;
 
@@ -31,12 +31,12 @@ public class WicaChannelProperties
 /*- Private attributes -------------------------------------------------------*/
 
    private final DataAcquisitionMode dataAcquisitionMode;
-   private final Integer pollingInterval;
+   private final Integer pollingIntervalInMillis;
    private final Integer numericPrecision;
    private final FilterType filterType ;
    private final Integer filterNumSamples;
    private final Integer filterCycleLength;
-   private final Integer filterMinSampleGap;
+   private final Integer filterSamplingInterval;
    private final Double filterDeadband;
    private final String fieldsOfInterest;
 
@@ -49,11 +49,11 @@ public class WicaChannelProperties
       this.dataAcquisitionMode = null;
       this.fieldsOfInterest = null;
       this.numericPrecision = null;
-      this.pollingInterval = DEFAULT_POLLING_INTERVAL;
+      this.pollingIntervalInMillis = DEFAULT_POLLING_INTERVAL;
       this.filterType = DEFAULT_FILTER_TYPE;
       this.filterNumSamples = DEFAULT_FILTER_NUM_SAMPLES;
       this.filterCycleLength = DEFAULT_FILTER_CYCLE_LENGTH;
-      this.filterMinSampleGap = DEFAULT_FILTER_SAMPLE_GAP;
+      this.filterSamplingInterval = DEFAULT_FILTER_SAMPLING_INTERVAL;
       this.filterDeadband = DEFAULT_FILTER_DEADBAND;
    }
 
@@ -62,20 +62,20 @@ public class WicaChannelProperties
                                  @JsonProperty( "fields"   ) String fieldsOfInterest,
                                  @JsonProperty( "prec"     ) Integer numericPrecision,
                                  @JsonProperty( "filter"   ) FilterType filterType,
-                                 @JsonProperty( "nsamples" ) Integer filterNumSamples,
-                                 @JsonProperty( "cyclelen" ) Integer filterCycleLength,
-                                 @JsonProperty( "minsgap"  ) Integer filterMinSampleGapInMillis,
+                                 @JsonProperty( "n"        ) Integer filterNumSamples,
+                                 @JsonProperty( "m"        ) Integer filterCycleLength,
+                                 @JsonProperty( "interval" ) Integer filterSamplingIntervalInMillis,
                                  @JsonProperty( "deadband" ) Double filterDeadband
    )
    {
       this.dataAcquisitionMode = dataAcquisitionMode;
-      this.pollingInterval = pollingIntervalInMillis == null ? DEFAULT_POLLING_INTERVAL : pollingIntervalInMillis;
+      this.pollingIntervalInMillis = pollingIntervalInMillis == null ? DEFAULT_POLLING_INTERVAL : pollingIntervalInMillis;
       this.fieldsOfInterest = fieldsOfInterest;
       this.numericPrecision = numericPrecision;
       this.filterType = filterType == null ? DEFAULT_FILTER_TYPE : filterType;
       this.filterNumSamples = filterNumSamples == null ? DEFAULT_FILTER_NUM_SAMPLES : filterNumSamples;
       this.filterCycleLength = filterCycleLength == null ? DEFAULT_FILTER_CYCLE_LENGTH : filterCycleLength;
-      this.filterMinSampleGap = filterMinSampleGapInMillis == null ? DEFAULT_FILTER_SAMPLE_GAP : filterMinSampleGapInMillis;
+      this.filterSamplingInterval = filterSamplingIntervalInMillis == null ? DEFAULT_FILTER_SAMPLING_INTERVAL : filterSamplingIntervalInMillis;
       this.filterDeadband = filterDeadband == null ? DEFAULT_FILTER_DEADBAND : filterDeadband;
    }
 
@@ -106,7 +106,7 @@ public class WicaChannelProperties
    @JsonIgnore
    public int getPollingIntervalInMillis()
    {
-      return pollingInterval;
+      return pollingIntervalInMillis;
    }
 
    @JsonIgnore
@@ -134,9 +134,9 @@ public class WicaChannelProperties
    }
 
    @JsonIgnore
-   public int getFilterMinSampleGapInMillis()
+   public int getFilterSamplingIntervalInMillis()
    {
-      return filterMinSampleGap;
+      return filterSamplingInterval;
    }
 
    @Override
@@ -144,12 +144,12 @@ public class WicaChannelProperties
    {
       return "WicaChannelProperties{" +
             "dataAcquisitionMode=" + dataAcquisitionMode +
-            ", pollingInterval=" + pollingInterval +
+            ", pollingIntervalInMillis=" + pollingIntervalInMillis +
             ", numericPrecision=" + numericPrecision +
             ", filterType=" + filterType +
             ", filterNumSamples=" + filterNumSamples +
             ", filterCycleLength=" + filterCycleLength +
-            ", filterMinSampleGap=" + filterMinSampleGap +
+            ", filterSamplingInterval=" + filterSamplingInterval +
             ", filterDeadband=" + filterDeadband +
             ", fieldsOfInterest='" + fieldsOfInterest + '\'' +
             '}';
@@ -160,11 +160,11 @@ public class WicaChannelProperties
 
    public enum FilterType
    {
-      @JsonProperty( "all-value" )       ALL_VALUE,
-      @JsonProperty( "rate-limiter" )    RATE_LIMITER,
-      @JsonProperty( "one-in-n" )        ONE_IN_N,
-      @JsonProperty( "last-n" )          LAST_N,
-      @JsonProperty( "change-filterer" ) CHANGE_FILTERER,
+      @JsonProperty( "all-value" )    ALL_VALUE,
+      @JsonProperty( "rate-limiter" ) RATE_LIMITER,
+      @JsonProperty( "last-n" )       LAST_N,
+      @JsonProperty( "one-in-m" )     ONE_IN_M,
+      @JsonProperty( "changes" )      CHANGE_FILTERER,
    }
 
    public enum DataAcquisitionMode
@@ -173,8 +173,8 @@ public class WicaChannelProperties
       @JsonProperty( "monitor" )           MONITOR( false, true ),
       @JsonProperty( "poll-and-monitor" )  POLL_AND_MONITOR( true, true );
 
-      private boolean doesPolling;
-      private boolean doesMonitoring;
+      private final boolean doesPolling;
+      private final boolean doesMonitoring;
 
       DataAcquisitionMode( boolean doesPolling, boolean doesMonitoring )
       {

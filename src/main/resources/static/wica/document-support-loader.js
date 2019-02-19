@@ -14,7 +14,6 @@ import {
 import {DocumentStreamConnector} from "./document-stream-connector.js";
 import {DocumentTextRenderer} from "./document-text-renderer.js";
 import {DocumentEventManager} from "./document-event-manager.js";
-
 import * as JsonUtilities from './json5-wrapper.js'
 
 const WICA_HOST="https://gfa-wica-dev.psi.ch";
@@ -73,18 +72,3 @@ function loadWicaCSS_()
     }
 }
 
-// function loadJson5Lib_( callback )
-// {
-//     if ( ! document.getElementById('wica-json5-wrapper-id'  ) )
-//     {
-//         const script = document.createElement('script');
-//         script.id = 'wica-json5-wrapper-id';
-//         script.src = "/extlibs/json5-latest.min.js";
-//         script.onload = function()
-//         {
-//             console.log( "JSON5 wrapper: initialised ok !");
-//             callback();
-//         };
-//         document.head.appendChild( script );
-//     }
-// }

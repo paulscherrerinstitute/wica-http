@@ -25,8 +25,8 @@ public class WicaStreamService
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private Map<WicaStreamId,Flux<ServerSentEvent<String>>> wicaSteamFluxMap = new HashMap<>();
-   private EpicsChannelDataService epicsChannelDataService;
+   private final Map<WicaStreamId,Flux<ServerSentEvent<String>>> wicaSteamFluxMap = new HashMap<>();
+   private final EpicsChannelDataService epicsChannelDataService;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -51,7 +51,7 @@ public class WicaStreamService
       }
       catch( Exception ex)
       {
-         throw new IllegalArgumentException( "The JSON configuration string was invalid.", ex );
+         throw new IllegalArgumentException( "The JSON configuration string '" + jsonStreamConfiguration + "' was invalid.", ex );
       }
 
       if ( decoder.getWicaChannels().size() == 0 )
