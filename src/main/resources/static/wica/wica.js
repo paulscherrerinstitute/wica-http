@@ -14,4 +14,4 @@ const documentSupportLoader = new DocumentSupportLoader( WICA_HOST );
 documentSupportLoader.activate( 200, 200 );
 
 // Attach a handler to shut things down when the browser navigates away
-window.onbeforeunload = () => loader.shutdown();
+window.onbeforeunload = () => documentSupportLoader.shutdown();
