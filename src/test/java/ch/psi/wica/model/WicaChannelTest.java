@@ -28,7 +28,7 @@ class WicaChannelTest
    void test()
    {
       final WicaChannelName wicaChannelName = WicaChannelName.of( "simon" );
-      final WicaChannel wicaChannel = WicaChannel.of( wicaChannelName );
+      final WicaChannel wicaChannel = WicaChannel.of( "simon"  );
       assertEquals( wicaChannelName, wicaChannel.getName() );
       assertFalse( wicaChannel.getProperties().getFieldsOfInterest().isPresent() );
       assertFalse( wicaChannel.getProperties().getNumericPrecision().isPresent() );

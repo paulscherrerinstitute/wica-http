@@ -50,7 +50,7 @@ public class WicaChannelValueFilterBuilder
             break;
 
          case RATE_LIMITER:
-            final int samplingInterval = wicaChannelProperties.getPollingIntervalInMillis();
+            final int samplingInterval = wicaChannelProperties.getFilterSamplingIntervalInMillis();
             logger.info("Creating channel value filter with filterType='rate-limiter', samplingInterval='{}'", samplingInterval );
             filter = new WicaChannelValueFilterRateLimitingSampler( samplingInterval );
             break;
@@ -69,7 +69,7 @@ public class WicaChannelValueFilterBuilder
 
          case CHANGE_FILTERER:
             final double deadband = wicaChannelProperties.getFilterDeadband();
-            logger.info("Creating channel value filter with filterType='change-filterer', deadband='{}'", deadband );
+            logger.info("Creating channel value filter with filterType='changes', deadband='{}'", deadband );
             filter = new WicaChannelValueFilterChangeFilteringSampler(deadband );
             break;
 
@@ -89,11 +89,9 @@ public class WicaChannelValueFilterBuilder
     * Returns a filter suitable for a channels whose data acquisition mode includes polling.
     *
     * The filter that will be returned will be a fixed cycle ("one-in-m") sampler
-    * whose cycle length is configured to match the polling rate (specified in the
-    * channel properties object) and stream update rate (specified in the wica stream
-    * properties object).
+    * whose cycle length (ie m) will be configured according to the configured
+    * sampling ratio (taken either from the stream or channel properties).
     *
-    * @param wicaStreamProperties the stream properties object.
     * @param wicaChannelProperties the channel properties object
     *
     * @return the filter.
@@ -104,14 +102,10 @@ public class WicaChannelValueFilterBuilder
       Validate.notNull( wicaStreamProperties );
       Validate.notNull( wicaChannelProperties );
 
-      // Extract the interval at which the stream sends the flux of polled channel values
-      final int polledValueFluxIntervalInMillis = wicaStreamProperties.getPolledValueFluxIntervalInMillis();
-
-      // Extract the required polling interval. This must be greater than the send rate above.
-      final int channelPollingIntervalInMillis = wicaChannelProperties.getPollingIntervalInMillis();
-
-      // Calculate the cycle length for a fixed sampler which satisfies the polling rate constraint.
-      final int cycleLength = Math.max( 1, channelPollingIntervalInMillis / polledValueFluxIntervalInMillis );
+      // Extract the ratio of number of channel polls per acquired sample
+      final int cycleLength = wicaChannelProperties.getPolledValueSampleRatio().isPresent() ?
+            wicaChannelProperties.getPolledValueSampleRatio().get() :
+            wicaStreamProperties.getPolledValueSampleRatio();
 
       // Return the filter
       logger.info("Creating channel value filter with filterType='one-in-m', m='{}'", cycleLength );

@@ -133,7 +133,11 @@ export class PlotBuffer
 
         for ( const channelValueArray of Object.values( this.valueMap ) )
         {
-            if ( channelValueArray[ channelValueArray.length - 1 ].val === null  )
+            if ( channelValueArray.length === 0)
+            {
+                return false;
+            }
+            else if ( channelValueArray[ channelValueArray.length - 1 ].val === null  )
             {
                 return false;
             }

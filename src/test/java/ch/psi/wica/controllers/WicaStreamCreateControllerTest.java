@@ -4,6 +4,7 @@ package ch.psi.wica.controllers;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.WicaStreamId;
+import ch.psi.wica.services.epics.EpicsControlSystemMonitoringService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,10 +27,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -38,18 +37,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class MvcTests
+public class WicaStreamCreateControllerTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( MvcTests.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaStreamCreateControllerTest.class );
 
 	@Autowired
 	private MockMvc mockMvc;
 
    private String epicsChannelListOk;
+   private String epicsChannelListOk2;
    private String epicsChannelListEmpty;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -61,18 +61,21 @@ public class MvcTests
    // the @before annotation is required and @BeforeEach does nothing
    @Before
    @BeforeEach
-   public void buildJsonNotificationBody() throws IOException
+   public void beforeEach() throws IOException
    {
-      epicsChannelListOk = new String(Files.readAllBytes(Paths.get("src/test/resources/epics/epics_channel_list_ok.json") ), StandardCharsets.UTF_8) ;
-      epicsChannelListEmpty = new String(Files.readAllBytes(Paths.get("src/test/resources/epics/epics_channel_list_empty.json") ), StandardCharsets.UTF_8) ;
+      epicsChannelListOk = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_ok.json") );
+      epicsChannelListOk2 = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_ok2.json") );
+      epicsChannelListEmpty = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_empty.json") );
       WicaStreamId.resetAllocationSequencer();
+      EpicsControlSystemMonitoringService.resetCache();
    }
 
 	@Test
    public void testPost_RequestIsProcessedNormallyWhenEpicsChannelListOk() throws Exception
    {
       // Send a POST request with a list containing a couple of EPICS channels
-      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams" ).content( epicsChannelListOk ).contentType(MediaType.APPLICATION_JSON_VALUE ).accept(MediaType.TEXT_PLAIN_VALUE );
+      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams" ).content( epicsChannelListOk ).contentType( MediaType.APPLICATION_JSON_VALUE ).accept(MediaType.TEXT_PLAIN_VALUE );
+      final RequestBuilder rb2 = MockMvcRequestBuilders.post( "/ca/streams" ).content( epicsChannelListOk2 ).contentType( MediaType.APPLICATION_JSON_VALUE ).accept(MediaType.TEXT_PLAIN_VALUE );
    	final MvcResult result1 = mockMvc.perform( rb ).andDo( print()).andExpect( status().isOk() ).andReturn();
 
    	// Check that the status code was ok
@@ -89,10 +92,9 @@ public class MvcTests
       final String content1 = result1.getResponse().getContentAsString();
       logger.info( "Returned Content was: '{}'", content1 );
       assertEquals( "0", content1 );
-      //assertEquals( "0", content1 );
 
       // Now make a second request and check that the second stream which was allocated had id "1"
-      final MvcResult result2 = mockMvc.perform( rb ).andDo( print()).andExpect( status().isOk() ).andReturn();
+      final MvcResult result2 = mockMvc.perform( rb2 ).andDo( print()).andExpect( status().isOk() ).andReturn();
       final String content2 = result2.getResponse().getContentAsString();
       logger.info( "Returned Content was: '{}'", content2 );
       assertEquals("1", content2 );
@@ -108,54 +110,6 @@ public class MvcTests
       logger.info( "Returned Content was: '{}'", content );
       assertEquals("The JSON configuration string did not define any channels.", content );
    }
-
-   @Test
-   public void testGet_RequestReturnsEventStream() throws Exception
-   {
-      // Send a POST request with a list containing a couple of EPICS channels
-      final RequestBuilder postRequest = MockMvcRequestBuilders.post( "/ca/streams" ).content(epicsChannelListOk).contentType(MediaType.APPLICATION_JSON_VALUE ).accept(MediaType.TEXT_PLAIN_VALUE );
-      final MvcResult postRequestResult = mockMvc.perform( postRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
-      logger.info( "Returned data was: '{}'", postRequestResult.getResponse().getContentAsString() );
-
-      // Send a GET request to subscribe to the stream we just created
-      final RequestBuilder getRequest = MockMvcRequestBuilders.get( "/ca/streams/0" ).accept( MediaType.TEXT_EVENT_STREAM_VALUE);
-      final MvcResult getRequestResult = mockMvc.perform( getRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
-      logger.info( "Returned data was: '{}'", getRequestResult.getResponse().getContentAsString() );
-
-      // Check that the ContentType in the response indicated we are now subscribed to an event stream
-      final String contentType = getRequestResult.getResponse().getContentType();
-      logger.info( "Returned ContentType was: '{}'", contentType );
-      assertEquals("text/event-stream;charset=UTF-8", contentType );
-   }
-
-   @Test
-   public void testGet_RequestEventStreamIncludesHeartbeatSignal() throws Exception
-   {
-      // Send a POST request with a list containing a couple of EPICS channels
-      final RequestBuilder postRequest = MockMvcRequestBuilders.post( "/ca/streams" ).content( epicsChannelListOk ).contentType(MediaType.APPLICATION_JSON_VALUE ).accept(MediaType.TEXT_PLAIN_VALUE );
-      final MvcResult postRequestResult = mockMvc.perform( postRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
-      logger.info( "Returned data was: '{}'", postRequestResult.getResponse().getContentAsString() );
-
-      // Send a GET request to subscribe to the stream we just created
-      final RequestBuilder getRequest = MockMvcRequestBuilders.get( "/ca/streams/0" ).accept( MediaType.TEXT_EVENT_STREAM_VALUE );
-      final int heartbeatIntervalInMilliseconds = 11_000;
-      mockMvc.perform( getRequest )
-             .andExpect( status().isOk() )
-             .andExpect( content().contentType( "text/event-stream;charset=UTF-8" ) )
-             .andDo( l -> Thread.sleep( heartbeatIntervalInMilliseconds + 1000 ) )
-             .andDo( print() )
-             .andExpect( content().string( containsString( "id:0" ) ) )
-             .andExpect( content().string( containsString( "heartbeat" ) ) )
-             .andReturn();
-   }
-
-   @Test
-   public void testGet_RequestIsRejectedWhenStreamIdIsUnrecognised() throws Exception
-   {
-      final RequestBuilder rb = MockMvcRequestBuilders.get( "/ca/streams/XXXXX" ).accept( MediaType.TEXT_EVENT_STREAM_VALUE);
-      mockMvc.perform( rb ).andDo( print() ).andExpect( status().isBadRequest() ).andReturn();
-   }
-
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

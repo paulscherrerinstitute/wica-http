@@ -1,0 +1,4 @@
+{
+  "channels" : [ { "name": "test:counter02" },
+                 { "name": "test:counter03" } ]
+}

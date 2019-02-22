@@ -1,44 +1,67 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.services.stream;
+package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.WicaChannelValue;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
-import java.util.List;
-
+import java.util.Objects;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-/**
- * A filter that returns an output list with all input values passed through
- * unchanged.
- */
 @Immutable
-class WicaChannelValueFilterAllValueSampler implements WicaChannelValueFilter
+public class ControlSystemName
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
+
+   private final String name;
+
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
+
+   protected ControlSystemName( String name )
+   {
+      this.name = Validate.notBlank( name );
+   }
+
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   @Override
-   public List<WicaChannelValue> apply( List<WicaChannelValue> inputList )
+   public String asString()
    {
-      Validate.notNull( inputList );
-      return inputList;
+      return name;
+   }
+
+   public static ControlSystemName of( String name )
+   {
+      return new ControlSystemName( name );
+   }
+
+   @Override
+   public boolean equals( Object o )
+   {
+      if ( this == o ) return true;
+      if ( !(o instanceof ControlSystemName) ) return false;
+      ControlSystemName that = (ControlSystemName) o;
+      return Objects.equals(name, that.name);
+   }
+
+   @Override
+   public int hashCode()
+   {
+      return Objects.hash(name);
    }
 
    @Override
    public String toString()
    {
-      return "WicaChannelValueFilterAllValueSampler{}";
+      return "ControlSystemName{" +
+            "name='" + name + '\'' +
+            '}';
    }
 
 /*- Private methods ----------------------------------------------------------*/

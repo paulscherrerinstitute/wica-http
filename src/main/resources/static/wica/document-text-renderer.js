@@ -313,6 +313,7 @@ export class DocumentTextRenderer
                 vDebug += "property: " + prop + " value: [" + err[ prop ] + "]\n";
             }
         }
+        vDebug += "Details: [" + err.toString() + "]";
         console.warn( msg + vDebug );
     }
 

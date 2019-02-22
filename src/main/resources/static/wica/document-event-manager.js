@@ -229,6 +229,7 @@ export class DocumentEventManager
                 vDebug += "property: " + prop + " value: [" + err[ prop ] + "]\n";
             }
         }
+        vDebug += "Details: [" + err.toString() + "]";
         console.warn( msg + vDebug );
     }
 

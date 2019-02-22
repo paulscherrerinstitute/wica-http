@@ -77,7 +77,7 @@ class WicaStreamGetController
       }
 
       // Handle the normal case
-      final Flux<ServerSentEvent<String>> wicaStreamFlux = wicaStreamService.getFromId( WicaStreamId.of(id ) );
+      final Flux<ServerSentEvent<String>> wicaStreamFlux = wicaStreamService.getFluxFromId(WicaStreamId.of(id ) );
 
       logger.info( "Returning event stream with id: '{}'", id );
       return new ResponseEntity<>( wicaStreamFlux, HttpStatus.OK );

@@ -103,6 +103,15 @@ class WicaChannelValueFilterChangeFilteringSampler implements WicaChannelValueFi
       return outputList;
    }
 
+   @Override
+   public String toString()
+   {
+      return "WicaChannelValueFilterChangeFilteringSampler{" +
+            "deadband=" + deadband +
+            ", previousValue=" + previousValue +
+            '}';
+   }
+
    /*- Private methods ----------------------------------------------------------*/
 
    private boolean changeDetected( WicaChannelValue.WicaChannelValueConnected currentValue,

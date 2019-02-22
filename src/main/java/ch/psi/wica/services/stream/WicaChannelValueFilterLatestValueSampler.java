@@ -56,6 +56,13 @@ class WicaChannelValueFilterLatestValueSampler implements WicaChannelValueFilter
       return IntStream.range( startInclusive, endExclusive ).mapToObj( inputList::get ).collect( Collectors.toList() );
    }
 
+   @Override
+   public String toString()
+   {
+      return "WicaChannelValueFilterLatestValueSampler{" +
+            "maxNumberOfSamples=" + maxNumberOfSamples +
+            '}';
+   }
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 

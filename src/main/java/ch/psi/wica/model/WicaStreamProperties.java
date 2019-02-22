@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Set;
 
@@ -41,6 +40,12 @@ public class WicaStreamProperties
    public static final int DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS = 100;
 
    /**
+    * Default value for the polled value sample ratio that will be assigned
+    * if the property is not explicitly set by configuration on the client.
+    */
+   public static final int DEFAULT_POLLED_VALUE_SAMPLE_RATIO            = 10;
+
+   /**
     * Default value for the numeric precision that will be assigned if
     * the property is not explicitly set by configuration on the client.
     */
@@ -63,6 +68,7 @@ public class WicaStreamProperties
    private final Integer heartbeatFluxInterval;
    private final Integer changedValueFluxInterval;
    private final Integer polledValueFluxInterval;
+   private final Integer polledValueSampleRatio;
    private final Integer numericPrecision;
    private final Set<String> fieldsOfInterest;
    private final WicaChannelProperties.DataAcquisitionMode dataAcquisitionMode;
@@ -75,6 +81,7 @@ public class WicaStreamProperties
       this.heartbeatFluxInterval    = DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS;
       this.changedValueFluxInterval = DEFAULT_CHANGED_VALUE_FLUX_INTERVAL_IN_MILLIS;
       this.polledValueFluxInterval  = DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS;
+      this.polledValueSampleRatio   = DEFAULT_POLLED_VALUE_SAMPLE_RATIO;
       this.dataAcquisitionMode      = DEFAULT_DATA_ACQUISITION_MODE;
       this.numericPrecision         = DEFAULT_NUMERIC_PRECISION;
       this.fieldsOfInterest         = Set.of( DEFAULT_FIELDS_OF_INTEREST.split(";" ) ) ;
@@ -83,14 +90,15 @@ public class WicaStreamProperties
    public WicaStreamProperties( @JsonProperty( "heartbeat" ) Integer heartbeatFluxIntervalInMillis,
                                 @JsonProperty( "changeint" ) Integer changedValueFluxIntervalInMillis,
                                 @JsonProperty( "pollint"   ) Integer polledValueFluxIntervalInMillis,
+                                @JsonProperty( "pollrat"   ) Integer polledValueSampleRatio,
                                 @JsonProperty( "prec"      ) Integer numericPrecision,
                                 @JsonProperty( "fields"    ) String fieldsOfInterest,
-                                @JsonProperty( "daqmode"   ) WicaChannelProperties.DataAcquisitionMode dataAcquisitionMode
-   )
+                                @JsonProperty( "daqmode"   ) WicaChannelProperties.DataAcquisitionMode dataAcquisitionMode )
    {
       this.heartbeatFluxInterval    = heartbeatFluxIntervalInMillis    == null ? DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS     : heartbeatFluxIntervalInMillis;
       this.changedValueFluxInterval = changedValueFluxIntervalInMillis == null ? DEFAULT_CHANGED_VALUE_FLUX_INTERVAL_IN_MILLIS : changedValueFluxIntervalInMillis;
       this.polledValueFluxInterval  = polledValueFluxIntervalInMillis  == null ? DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS  : polledValueFluxIntervalInMillis;
+      this.polledValueSampleRatio   = polledValueSampleRatio           == null ? DEFAULT_POLLED_VALUE_SAMPLE_RATIO             : polledValueSampleRatio;
       this.numericPrecision         = numericPrecision                 == null ? DEFAULT_NUMERIC_PRECISION                     : numericPrecision;
       this.dataAcquisitionMode      = dataAcquisitionMode              == null ? DEFAULT_DATA_ACQUISITION_MODE                 : dataAcquisitionMode;
       this.fieldsOfInterest         = fieldsOfInterest                 == null ? stringToFieldsOfInterest( DEFAULT_FIELDS_OF_INTEREST ) : stringToFieldsOfInterest(fieldsOfInterest );
@@ -117,6 +125,9 @@ public class WicaStreamProperties
    {
       return polledValueFluxInterval;
    }
+
+   @JsonIgnore
+   public int getPolledValueSampleRatio() { return polledValueSampleRatio; }
 
    @JsonIgnore
    public WicaChannelProperties.DataAcquisitionMode getDataAcquisitionMode()

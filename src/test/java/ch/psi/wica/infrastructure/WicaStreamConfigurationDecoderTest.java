@@ -30,9 +30,9 @@ class WicaStreamConfigurationDecoderTest
    void testGoodDecodeSequence1()
    {
        String testString = "{ \"props\": { \"prec\": 29, \"heartbeat\": 50, \"changeint\": 40 }," +
-                           "\"channels\": [ { \"name\": \"MHC1:IST:2\", \"props\": { \"filter\": \"change-filterer\", \"deadband\": 19 } }," +
-                                           "{ \"name\": \"MYC2:IST:2\", \"props\": { \"filter\": \"change-filterer\", \"deadband\": 10 } }," +
-                                           "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filter\": \"rate-limiter\", \"minsgap\": 17 } } ] }";
+                           "\"channels\": [ { \"name\": \"MHC1:IST:2\", \"props\": { \"filter\": \"changes\", \"deadband\": 19 } }," +
+                                           "{ \"name\": \"MYC2:IST:2\", \"props\": { \"filter\": \"changes\", \"deadband\": 10 } }," +
+                                           "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filter\": \"rate-limiter\", \"interval\": 17 } } ] }";
 
       final WicaStreamConfigurationDecoder decoder = new WicaStreamConfigurationDecoder( testString );
       final var streamProps = decoder.getWicaStreamProperties();
@@ -43,15 +43,15 @@ class WicaStreamConfigurationDecoderTest
       channels.forEach( c -> {
          var chanProps = c.getProperties();
          assertFalse( chanProps.getFieldsOfInterest().isPresent() );
-         if ( c.getName().equals( WicaChannelName.of( "MHC1:IST:2" ) ) ) {
+         if ( c.getName().equals(WicaChannelName.of("MHC1:IST:2" ) ) ) {
             assertEquals( WicaChannelProperties.FilterType.CHANGE_FILTERER, c.getProperties().getFilterType() );
             assertEquals( 19.0, c.getProperties().getFilterDeadband() );
          }
-         if ( c.getName().equals( WicaChannelName.of( "MYC2:IST:2" ) ) ) {
+         if ( c.getName().equals(WicaChannelName.of("MYC2:IST:2" ) ) ) {
             assertEquals( WicaChannelProperties.FilterType.CHANGE_FILTERER, c.getProperties().getFilterType() );
             assertEquals( 10.0, c.getProperties().getFilterDeadband() );
          }
-         if ( c.getName().equals( WicaChannelName.of( "MBC1:IST:2" ) ) ) {
+         if ( c.getName().equals(WicaChannelName.of("MBC1:IST:2" ) ) ) {
             assertEquals( WicaChannelProperties.FilterType.RATE_LIMITER, c.getProperties().getFilterType() );
             assertEquals( 17, c.getProperties().getFilterSamplingIntervalInMillis() );
          }

@@ -70,15 +70,15 @@ class WicaChannelValueMapSerializerTest
    @Test
    void test_serialize()
    {
-      final Map<WicaChannelName,List<WicaChannelValue>> map = Map.of( WicaChannelName.of( "UnconnChannel" ), List.of( unconnValue ),
-                                                                      WicaChannelName.of( "StringTypeChannel" ),  List.of( strValue ),
-                                                                      WicaChannelName.of( "StringArrayType" ),  List.of( strArrValue ),
-                                                                      WicaChannelName.of( "IntegerTypeChannel" ),  List.of( intValue ),
-                                                                      WicaChannelName.of( "IntegerArrayTypeChannel" ),  List.of( intArrValue ),
-                                                                      WicaChannelName.of( "RealTypeChannel" ),  List.of( realValue ),
-                                                                      WicaChannelName.of( "RealInfTypeChannel" ),  List.of( realInfValue ),
-                                                                      WicaChannelName.of( "RealNanTypeChannel" ),  List.of( realNanValue ),
-                                                                      WicaChannelName.of( "RealArrayTypeChannel" ),  List.of( realArrValue  ) );
+      final Map<WicaChannelName,List<WicaChannelValue>> map = Map.of(WicaChannelName.of("UnconnChannel" ), List.of(unconnValue ),
+                                                                     WicaChannelName.of("StringTypeChannel" ), List.of(strValue ),
+                                                                     WicaChannelName.of("StringArrayType" ), List.of(strArrValue ),
+                                                                     WicaChannelName.of("IntegerTypeChannel" ), List.of(intValue ),
+                                                                     WicaChannelName.of("IntegerArrayTypeChannel" ), List.of(intArrValue ),
+                                                                     WicaChannelName.of("RealTypeChannel" ), List.of(realValue ),
+                                                                     WicaChannelName.of("RealInfTypeChannel" ), List.of(realInfValue ),
+                                                                     WicaChannelName.of("RealNanTypeChannel" ), List.of(realNanValue ),
+                                                                     WicaChannelName.of("RealArrayTypeChannel" ), List.of(realArrValue  ) );
 
       final var serializer = new WicaChannelValueMapSerializer( (c) -> Set.of( "val" ), (c) -> 5, false );
       final String jsonStr = serializer.serialize( map );

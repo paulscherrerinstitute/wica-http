@@ -4,8 +4,8 @@ package ch.psi.wica.services.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.ControlSystemName;
 import ch.psi.wica.model.WicaChannelMetadata;
-import ch.psi.wica.model.WicaChannelName;
 import ch.psi.wica.model.WicaChannelValue;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -45,8 +45,8 @@ public class EpicsChannelMonitorService implements AutoCloseable
    private final Logger logger = LoggerFactory.getLogger( EpicsChannelMonitorService.class );
    private final Context caContext;
 
-   private static final List<Channel> channels = new ArrayList<>();
-   private static final List<Monitor> monitors = new ArrayList<>();
+   private static final Map<ControlSystemName,Channel> channels = new HashMap<>();
+   private static final Map<ControlSystemName,Monitor> monitors = new HashMap<>();
 
    private final EpicsChannelMetadataPublisher epicsChannelMetadataPublisher;
    private final EpicsChannelValuePublisher epicsChannelValuePublisher;
@@ -96,47 +96,46 @@ public class EpicsChannelMonitorService implements AutoCloseable
     *
     * The supplied handlers will be potentially called back on multiple threads.
     *
-    * @param wicaChannelName the name of the channel to be monitored.
+    * @param epicsChannelName the name of the channel to be monitored.
     * @param connectionStateChangeHandler the handler to be informed of changes
     *        to the channel's connection state.
     * @param metadataChangeHandler the handler to be informed of metadata changes.
     * @param valueChangeHandler the handler to be informed of value changes.
+    * @throws NullPointerException if any of the input arguments were null.
     *
     */
-    void startMonitoring( WicaChannelName wicaChannelName,
+    void startMonitoring( EpicsChannelName epicsChannelName,
                           Consumer<Boolean> connectionStateChangeHandler,
                           Consumer<WicaChannelMetadata> metadataChangeHandler,
                           Consumer<WicaChannelValue> valueChangeHandler )
    {
-      Validate.notNull(wicaChannelName);
+      Validate.notNull( epicsChannelName);
       Validate.notNull( connectionStateChangeHandler );
       Validate.notNull( metadataChangeHandler );
       Validate.notNull( valueChangeHandler );
+      Validate.isTrue( ! channels.containsKey( epicsChannelName ),"channel name already exists" );
 
-      logger.debug("'{}' - starting to monitor... ", wicaChannelName);
+      logger.debug("'{}' - starting to monitor... ", epicsChannelName);
 
       try
       {
-         logger.debug("'{}' - creating channel of type '{}'...", wicaChannelName, "generic" );
+         logger.debug("'{}' - creating channel of type '{}'...", epicsChannelName, "generic" );
 
-         final String epicsChannelName = EpicsConversionUtilities.getEpicsChannelName( wicaChannelName );
-         logger.debug("'{}' - converted to EPICS channel name: '{}'...", wicaChannelName, epicsChannelName );
+         final Channel<Object> channel = caContext.createChannel(epicsChannelName.toString(), Object.class ) ;
+         channels.put( epicsChannelName, channel );
 
-         final Channel<Object> channel = caContext.createChannel( epicsChannelName, Object.class ) ;
-         channels.add( channel );
+         logger.debug("'{}' - channel created ok.", epicsChannelName);
 
-         logger.debug("'{}' - channel created ok.", wicaChannelName);
-
-         logger.debug("'{}' - adding connection listener... ", wicaChannelName);
+         logger.debug("'{}' - adding connection listener... ", epicsChannelName);
          channel.addConnectionListener( ( chan, isConnected ) -> connectionStateChangeHandler.accept( isConnected ) );
-         logger.debug("'{}' - connection listener added ok.", wicaChannelName);
+         logger.debug("'{}' - connection listener added ok.", epicsChannelName);
 
-         logger.debug("'{}' - connecting asynchronously to... ", wicaChannelName);
+         logger.debug("'{}' - connecting asynchronously to... ", epicsChannelName);
          final CompletableFuture<Channel<Object>> completableFuture = channel.connectAsync();
-         logger.debug("'{}' - asynchronous connect completed ok.", wicaChannelName);
+         logger.debug("'{}' - asynchronous connect completed ok.", epicsChannelName);
 
          completableFuture.thenRunAsync( () -> {
-            logger.debug("'{}' - channel connected ok.", wicaChannelName);
+            logger.debug("'{}' - channel connected ok.", epicsChannelName);
             epicsChannelMetadataPublisher.getAndPublishMetadata( channel, metadataChangeHandler );
             epicsChannelValuePublisher.getAndPublishValue( channel, valueChangeHandler );
             registerValueChangeHandler( channel, valueChangeHandler );
@@ -144,31 +143,27 @@ public class EpicsChannelMonitorService implements AutoCloseable
       }
       catch ( Exception ex )
       {
-         logger.debug("'{}' - exception on channel, details were as follows: ", wicaChannelName, ex.toString() );
+         logger.debug("'{}' - exception on channel, details were as follows: ", epicsChannelName, ex.toString() );
       }
    }
 
    /**
     * Stop monitoring the specified channel.
     *
-    * @param wicaChannelName the channel which is no longer of interest.
+    * @param epicsChannelName the channel which is no longer of interest.
     */
-   void stopMonitoring( WicaChannelName wicaChannelName )
+   void stopMonitoring( EpicsChannelName epicsChannelName )
    {
-      Validate.notNull(wicaChannelName);
+      Validate.notNull( epicsChannelName );
+      Validate.isTrue( channels.containsKey( epicsChannelName ), "channel name not recognised" );
 
-      final boolean channelNameIsRecognised = channels.stream()
-                                                      .anyMatch( c -> c.getName().equals(wicaChannelName.toString() ) );
-
-      Validate.isTrue( channelNameIsRecognised, "channel name not recognised" );
-
-      logger.debug("'{}' - stopping monitor... ", wicaChannelName);
-
-      channels.stream()
-              .filter( c -> c.getName().equals(wicaChannelName.toString() ) )
-              .forEach( Channel::close );
+      logger.debug("'{}' - stopping monitor... ", epicsChannelName);
+      channels.get( epicsChannelName ).close();
    }
 
+   /**
+    * Disposes of all resources associated with this class instance.
+    */
    @Override
    public void close()
    {
@@ -183,23 +178,35 @@ public class EpicsChannelMonitorService implements AutoCloseable
    }
 
    /**
-    * Returns the count of channels established by this class.
+    * Returns the count of the channels created by this class instance.
+    *
+    * A channel is "created" every time the startMonitoring method is invoked.
+    * A channel is "deleted" every time the stop monitoring method is invoked.
+    * All channels are "deleted" every time the class instance is closed.
     *
     * @return the count
     */
-   public static long getChannelCreationCount()
+   public static long getChannelsCreatedCount()
    {
       return channels.size();
    }
 
    /**
-    * Returns the count of channels established by this class.
+    * Returns the count of channels known to this class instance which are
+    * connected to the underlying data source.
+    *
+    * A channel is "connected" asynchronously, every time a previous call to the
+    * startMonitoring method has subsequently resulted in a successful transaction
+    * with the underlying CA data source. If a channel is available online this
+    * will occur (typically) within a few milliseconds. If not it may not take
+    * seconds/minutes/hours/weeks/days.
     *
     * @return the count
     */
-   public static long getChannelConnectionCount()
+   public static long getChannelsConnectedCount()
    {
-      return channels.stream()
+      return channels.values()
+                     .stream()
                      .filter( c -> c.getConnectionState() == ConnectionState.CONNECTED )
                      .count();
    }
@@ -209,7 +216,7 @@ public class EpicsChannelMonitorService implements AutoCloseable
     *
     * @return the count
     */
-   public static long getMonitorCreationCount()
+   public static long getMonitorsConnectedCount()
    {
       return monitors.size();
    }
@@ -231,23 +238,23 @@ public class EpicsChannelMonitorService implements AutoCloseable
     */
    private void registerValueChangeHandler( Channel<Object> channel, Consumer<WicaChannelValue> valueChangeHandler )
    {
-      final String epicsChannelName = channel.getName();
+      final ControlSystemName controlSystemName = ControlSystemName.of( channel.getName() );
 
       // Establish a monitor on the most "dynamic" (= frequently changing)
       // properties of the channel.  These include the timestamp, the alarm
       // information and value itself. In EPICS Channel Access this requirement
       // is fulfilled by the DBR_TIME_xxx type which is supported in PSI's
       // CA library via the Metadata<Timestamped> class.
-      logger.debug("'{}' - adding monitor...", epicsChannelName);
+      logger.debug("'{}' - adding monitor...", controlSystemName);
 
       @SuppressWarnings( "unchecked" )
       final Monitor<Timestamped> monitor = channel.addMonitor( Timestamped.class, valueObj -> {
-         logger.trace("'{}' - publishing new value...", epicsChannelName);
-         epicsChannelValuePublisher.publishValue( epicsChannelName, valueObj, valueChangeHandler);
-         logger.trace("'{}' - new value published.", epicsChannelName);
+         logger.trace("'{}' - publishing new value...", controlSystemName );
+         epicsChannelValuePublisher.publishValue( controlSystemName, valueObj, valueChangeHandler);
+         logger.trace("'{}' - new value published.", controlSystemName );
       } );
-      logger.debug("'{}' - monitor added.", epicsChannelName );
-      monitors.add( monitor );
+      logger.debug("'{}' - monitor added.", controlSystemName );
+      monitors.put( controlSystemName, monitor );
    }
 
 

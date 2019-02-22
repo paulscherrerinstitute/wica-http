@@ -126,7 +126,7 @@ public class WicaStreamConfigurationDecoder
          }
 
          final JsonNode strNode = channelNode.get("name");
-         final WicaChannelName wicaChannelName = WicaChannelName.of( strNode.asText() );
+         final WicaChannelName wicaChannelName = WicaChannelName.of(strNode.asText() );
 
          final WicaChannelProperties wicaChannelProperties;
          if ( channelNode.has("props") )

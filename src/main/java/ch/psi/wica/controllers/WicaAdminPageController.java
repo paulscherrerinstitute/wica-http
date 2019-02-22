@@ -70,11 +70,10 @@ class WicaAdminPageController
       serverStatisticsMap.put( "Server Started",    formattedServerStartTime );
       serverStatisticsMap.put( "Server Uptime",     formattedServerUpTime );
 
-      serverStatisticsMap.put( "WICA Streams Created",     String.valueOf(WicaStreamId.getCreationCount() ) );
-      serverStatisticsMap.put( "EPICS Channels Created",   String.valueOf( EpicsChannelMonitorService.getChannelCreationCount()   ) );
-      serverStatisticsMap.put( "EPICS Channels Connected", String.valueOf( EpicsChannelMonitorService.getChannelConnectionCount() ) );
-      serverStatisticsMap.put( "EPICS Monitors Created",   String.valueOf( EpicsChannelMonitorService.getMonitorCreationCount()   ) );
-
+      serverStatisticsMap.put( "WICA Streams Created",     String.valueOf( WicaStreamId.getCreationCount() ) );
+      serverStatisticsMap.put( "EPICS Channels Active",    String.valueOf( EpicsChannelMonitorService.getChannelsCreatedCount()   ) );
+      serverStatisticsMap.put( "EPICS Channels Connected", String.valueOf( EpicsChannelMonitorService.getChannelsConnectedCount() ) );
+      serverStatisticsMap.put( "EPICS Monitors Active",    String.valueOf( EpicsChannelMonitorService.getMonitorsConnectedCount()   ) );
 
       viewModel.addAttribute("serverStatisticsMap", serverStatisticsMap );
 

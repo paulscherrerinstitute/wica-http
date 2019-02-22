@@ -47,7 +47,7 @@ class WicaStreamDeleteController
       this.wicaStreamService = Validate.notNull( wicaStreamService );
    }
 
-   /*- Class methods ------------------------------------------------------------*/
+/*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
    @DeleteMapping( value="/{id}", produces=MediaType.TEXT_PLAIN_VALUE )
@@ -56,13 +56,13 @@ class WicaStreamDeleteController
       // Check that the Spring framework gives us something in the channelNames field.
       Validate.notNull( id, "The event stream 'id' field was empty." );
 
-      logger.info( "DELETE: Handling get stream request for ID: '{}'", id );
+      logger.info( "DELETE: Handling delete stream request for ID: '{}'", id );
 
       // Handle the situation where an unknown WicaStreamId is given
       final WicaStreamId wicaStreamId = WicaStreamId.of(id );
       if ( ! wicaStreamService.isKnownId( wicaStreamId ) )
       {
-         logger.info( "GET: Rejected request because the event stream 'id' was not recognised." );
+         logger.info( "DELETE: Rejected request because the event stream 'id' was not recognised." );
          return new ResponseEntity<>( HttpStatus.BAD_REQUEST );
       }
 

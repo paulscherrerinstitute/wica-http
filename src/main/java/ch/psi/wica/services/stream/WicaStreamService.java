@@ -6,9 +6,7 @@ package ch.psi.wica.services.stream;
 /*- Class Declaration --------------------------------------------------------*/
 
 import ch.psi.wica.infrastructure.WicaStreamConfigurationDecoder;
-import ch.psi.wica.model.WicaStream;
-import ch.psi.wica.model.WicaStreamId;
-import ch.psi.wica.services.epics.EpicsChannelDataService;
+import ch.psi.wica.model.*;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.ServerSentEvent;
@@ -25,21 +23,33 @@ public class WicaStreamService
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Map<WicaStreamId,Flux<ServerSentEvent<String>>> wicaSteamFluxMap = new HashMap<>();
-   private final EpicsChannelDataService epicsChannelDataService;
+   private final Map<WicaStreamId,WicaStreamPublisher> wicaStreamPublisherMap = new HashMap<>();
+   private final ControlSystemMonitoringService controlSystemMonitoringService;
 
+   private final WicaChannelMetadataStash wicaChannelMetadataStash;
+   private final WicaChannelValueStash wicaChannelValueStash;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaStreamService( @Autowired EpicsChannelDataService epicsChannelDataService )
+   public WicaStreamService( @Autowired WicaChannelMetadataStash wicaChannelMetadataStash,
+                             @Autowired WicaChannelValueStash wicaChannelValueStash,
+                             @Autowired ControlSystemMonitoringService controlSystemMonitoringService )
    {
-      this.epicsChannelDataService = epicsChannelDataService;
+      this.controlSystemMonitoringService = Validate.notNull( controlSystemMonitoringService );
+      this.wicaChannelMetadataStash = Validate.notNull( wicaChannelMetadataStash );
+      this.wicaChannelValueStash = Validate.notNull( wicaChannelValueStash );
    }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Creates an activated wica stream based on the supplied configuration string.
+    *
+    * @param jsonStreamConfiguration the configuration string.
+    * @return the returned stream.
+    */
    public WicaStream create( String jsonStreamConfiguration )
    {
       Validate.notEmpty( jsonStreamConfiguration, "The 'jsonStreamConfiguration' argument was null" );
@@ -62,33 +72,57 @@ public class WicaStreamService
       final WicaStreamId wicaStreamId = WicaStreamId.createNext();
       final WicaStream wicaStream = new WicaStream( wicaStreamId, decoder.getWicaStreamProperties(), decoder.getWicaChannels() );
 
-      final WicaStreamDataSupplier wicaStreamDataSupplier = new WicaStreamDataSupplier( wicaStream, epicsChannelDataService );
+      final WicaStreamDataSupplier wicaStreamDataSupplier = new WicaStreamDataSupplier( wicaStream, wicaChannelMetadataStash, wicaChannelValueStash );
       final WicaStreamPublisher wicaStreamPublisher = new WicaStreamPublisher( wicaStream, wicaStreamDataSupplier );
       wicaStreamPublisher.activate();
 
-      // Lastly set up monitors on all the channels of interest.
-      epicsChannelDataService.startMonitoring( wicaStream.getWicaChannels() );
+      // Lastly start monitoring all the channels of interest.
+      controlSystemMonitoringService.startMonitoring( wicaStream );
 
-      // Update the apply of known fluxes
-      wicaSteamFluxMap.put( wicaStreamId, wicaStreamPublisher.getFlux() );
+      // Update the map of known fluxes
+      wicaStreamPublisherMap.put( wicaStreamId, wicaStreamPublisher );
       return wicaStream;
    }
 
+   /**
+    * Deletes the Wica stream with specified id.
+    *
+    * @param wicaStreamId the Id of the stream to delete.
+    */
    public void delete( WicaStreamId wicaStreamId )
    {
-    // TODO to implement
+      Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null" );
+      Validate.isTrue(( isKnownId( wicaStreamId ) ),"The 'wicaStreamId' argument was not recognised"  );
+
+      final WicaStreamPublisher wicaStreamPublisher = wicaStreamPublisherMap.get( wicaStreamId );
+      wicaStreamPublisher.shutdown();
+
+      // Lastly stop monitoring all the channels of interest.
+      controlSystemMonitoringService.stopMonitoring( wicaStreamPublisher.getStream() );
    }
 
-   public Flux<ServerSentEvent<String>> getFromId( WicaStreamId wicaStreamId  )
+   /**
+    * Gets the combined flux for the stream with the specified id.
+    *
+    * @param wicaStreamId the id of the flux to fetch.
+    * @return the combined flux.
+    */
+   public Flux<ServerSentEvent<String>> getFluxFromId( WicaStreamId wicaStreamId  )
    {
       Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null" );
-      return wicaSteamFluxMap.get( wicaStreamId );
+      return wicaStreamPublisherMap.get( wicaStreamId ).getFlux();
    }
 
+   /**
+    * Returns an indication saying whether the specified id is recognised within the system.
+    *
+    * @param wicaStreamId the id.
+    * @return the result.
+    */
    public boolean isKnownId( WicaStreamId wicaStreamId )
    {
       Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null" );
-      return wicaSteamFluxMap.containsKey( wicaStreamId );
+      return wicaStreamPublisherMap.containsKey( wicaStreamId );
    }
 
 /*- Private methods ----------------------------------------------------------*/

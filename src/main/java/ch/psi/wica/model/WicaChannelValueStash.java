@@ -8,6 +8,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -25,6 +26,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * take object arguments will throw NullPointerException in the case
  * that a non null argument is passed.
  */
+@Service
 @ThreadSafe
 public class WicaChannelValueStash
 {
@@ -32,16 +34,22 @@ public class WicaChannelValueStash
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Map<WicaChannelName, Deque<WicaChannelValue>> stash;
+   /**
+    * Stash of names in the controls system and their most recently
+    * obtained values.
+    */
+   private final Map<ControlSystemName, Deque<WicaChannelValue>> stash;
    private final int bufferSize;
 
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelValueStash( @Value( "channel_value_stash_buffer_size" ) int bufferSize  )
+   // @Value( "channel_value_stash_buffer_size" ) int bufferSize
+
+   public WicaChannelValueStash( @Value( "16" ) int bufferSize  )
    {
-      final Logger logger = LoggerFactory.getLogger(WicaChannelValueStash.class);
+      final Logger logger = LoggerFactory.getLogger( WicaChannelValueStash.class);
       logger.info("Creating value stash with buffer size: {} ", bufferSize);
       this.bufferSize = bufferSize;
       stash = Collections.synchronizedMap( new HashMap<>() );
@@ -60,25 +68,25 @@ public class WicaChannelValueStash
     * There is of practical importance since the Value stash may receive notifications
     * on multiple incoming threads.
     *
-    * @param wicaChannelName the channel's name.
+    * @param controlSystemName the channel's name.
     * @param wicaChannelValue the channel's value.
     */
-   public synchronized void add( WicaChannelName wicaChannelName, WicaChannelValue wicaChannelValue )
+   public synchronized void add( ControlSystemName controlSystemName, WicaChannelValue wicaChannelValue )
    {
-      Validate.notNull( wicaChannelName );
+      Validate.notNull( controlSystemName );
       Validate.notNull( wicaChannelValue );
 
       // Lazily instantiate a Queue the first time a new channel is added
-      if ( ! stash.containsKey( wicaChannelName ) )
+      if ( ! stash.containsKey( controlSystemName ) )
       {
          final Deque<WicaChannelValue> queue = new ConcurrentLinkedDeque<>();
-         stash.put( wicaChannelName, queue );
+         stash.put( controlSystemName, queue );
       }
 
       // Evict the oldest value from the queue when it has reached its configured size constraint
       final Queue<WicaChannelValue> queue;
 
-      queue = stash.get(wicaChannelName);
+      queue = stash.get( controlSystemName);
       if ( queue.size() == bufferSize )
       {
          queue.remove();
@@ -87,7 +95,7 @@ public class WicaChannelValueStash
    }
 
    /**
-    * Return a apply of all channels from the specified set with values which arrived after
+    * Return a map of all channels from the specified set with values which arrived after
     * the specified timestamp.
     *
     * @param wicaChannels the channels of interest.
@@ -105,7 +113,7 @@ public class WicaChannelValueStash
 
       final Map<WicaChannelName, List<WicaChannelValue>> outputMap = new ConcurrentHashMap<>();
       wicaChannels.forEach( c -> {
-         final List<WicaChannelValue> laterThanList = getLaterThan( c.getName(), since );
+         final List<WicaChannelValue> laterThanList = getLaterThan( c.getName().getControlSystemName(), since );
          // Only return apply entries where there is at least one new value.
          // TODO: probably this could be done more elegantly using some declarative approach
          if ( laterThanList.size() > 0 )
@@ -116,29 +124,10 @@ public class WicaChannelValueStash
       return outputMap;
    }
 
-/*- Private methods ----------------------------------------------------------*/
-
-   /**
-    * Gets the most recent value for the specified channel (which must already exist in the stash).
-    *
-    * @param wicaChannelName the channel's name.
-    * @return the channel's value.
-    *
-    * @throws IllegalStateException if the stash has no previously stored value for this channel.
-    */
-   public WicaChannelValue getLatest( WicaChannelName wicaChannelName )
-   {
-      Validate.notNull( wicaChannelName );
-      Validate.validState( stash.containsKey( wicaChannelName ), "no value data for channel with name: ", wicaChannelName );
-      Validate.validState(stash.get( wicaChannelName ).size() > 0, "no value data for channel with name: ", wicaChannelName );
-
-      return stash.get( wicaChannelName ).getLast();
-   }
-
    /**
     * Gets all values for the specified channel which arrived after the specified timestamp.
     *
-    * @param wicaChannelName the channel's name.
+    * @param controlSystemName the channel's name.
     * @param since the timestamp.
     *
     * @return the list of channel values which satisfy the arrival timing constraint. When
@@ -146,14 +135,14 @@ public class WicaChannelValueStash
     *
     * @throws IllegalStateException if the stash has no previously stored values for this channel.
     */
-   List<WicaChannelValue> getLaterThan( WicaChannelName wicaChannelName, LocalDateTime since )
+   public List<WicaChannelValue> getLaterThan( ControlSystemName controlSystemName, LocalDateTime since )
    {
-      Validate.notNull( wicaChannelName );
+      Validate.notNull( controlSystemName );
       Validate.notNull( since );
-      Validate.validState( stash.containsKey( wicaChannelName ), "no value data for channel with name: ", wicaChannelName );
-      Validate.validState(stash.get( wicaChannelName ).size() > 0, "no value data for channel with name: ", wicaChannelName );
+      Validate.validState( stash.containsKey( controlSystemName ), "Value stash did not recognise name: '" + controlSystemName + "'+" );
+      Validate.validState(stash.get( controlSystemName ).size() > 0, "Value stash had not vale data for name: '" + controlSystemName + "'" );
 
-      final Queue<WicaChannelValue> inputQueue = stash.get( wicaChannelName );
+      final Queue<WicaChannelValue> inputQueue = stash.get( controlSystemName );
       final List<WicaChannelValue> outputQueue = new LinkedList<>();
 
       inputQueue.forEach( c -> {
@@ -165,6 +154,24 @@ public class WicaChannelValueStash
       return outputQueue;
    }
 
+   /**
+    * Gets the most recent value for the specified channel (which must already exist in the stash).
+    *
+    * @param controlSystemName the channel's name.
+    * @return the channel's value.
+    *
+    * @throws IllegalStateException if the stash has no previously stored value for this channel.
+    */
+   public WicaChannelValue getLatest( ControlSystemName controlSystemName )
+   {
+      Validate.notNull( controlSystemName );
+      Validate.validState( stash.containsKey( controlSystemName ), "no value data for channel with name: ", controlSystemName );
+      Validate.validState(stash.get( controlSystemName ).size() > 0, "no value data for channel with name: ", controlSystemName );
+
+      return stash.get( controlSystemName ).getLast();
+   }
+
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

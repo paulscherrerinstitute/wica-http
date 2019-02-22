@@ -3,10 +3,7 @@ package ch.psi.wica.services.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.WicaChannelAlarmSeverity;
-import ch.psi.wica.model.WicaChannelAlarmStatus;
-import ch.psi.wica.model.WicaChannelType;
-import ch.psi.wica.model.WicaChannelValue;
+import ch.psi.wica.model.*;
 import net.jcip.annotations.Immutable;
 import org.epics.ca.Channel;
 import org.epics.ca.data.Timestamped;
@@ -55,28 +52,27 @@ class EpicsChannelValuePublisher
     */
    void getAndPublishValue( Channel<Object> channel, Consumer<WicaChannelValue> valueChangeHandler  )
    {
-      final String epicsChannelName = channel.getName();
-      logger.debug("'{}' - getting first value...", epicsChannelName);
+      final ControlSystemName controlSystemName = ControlSystemName.of(channel.getName() );
+      logger.debug("'{}' - getting first value...", controlSystemName);
       final Object firstGet = channel.get();
 
       final WicaChannelType type = WicaChannelType.getTypeFromObject(firstGet);
-      logger.debug("'{}' - first value received was of type {}. ", epicsChannelName, type);
+      logger.debug("'{}' - first value received was of type {}. ", controlSystemName, type);
 
-      logger.debug("'{}' - getting epics TIMESTAMPED value data...", epicsChannelName);
+      logger.debug("'{}' - getting epics TIMESTAMPED value data...", controlSystemName);
       final Timestamped<Object> valueObj = channel.get(Timestamped.class);
-      logger.debug("'{}' - EPICS TIMESTAMPED value data received.", epicsChannelName);
+      logger.debug("'{}' - EPICS TIMESTAMPED value data received.", controlSystemName);
 
-      publishValue( epicsChannelName, valueObj, valueChangeHandler );
+      publishValue( controlSystemName, valueObj, valueChangeHandler );
    }
    
-   void publishValue( String epicsChannelName, Timestamped<Object> valueObj, Consumer<WicaChannelValue> valueChangeHandler  )
+   void publishValue( ControlSystemName controlSystemName, Timestamped<Object> valueObj, Consumer<WicaChannelValue> valueChangeHandler  )
    {
       if ( ! WicaChannelType.isRecognisedType( valueObj.getValue() ) )
       {
-         logger.trace("'{}' - the value received was of an unrecognised type. ", epicsChannelName );
+         logger.trace("'{}' - the value received was of an unrecognised type. ", controlSystemName );
          return;
       }
-
 
       final WicaChannelAlarmSeverity wicaChannelAlarmSeverity = EpicsConversionUtilities.fromEpics( valueObj.getAlarmSeverity() );
       final WicaChannelAlarmStatus wicaChannelAlarmStatus = EpicsConversionUtilities.fromEpics( valueObj.getAlarmStatus() );
@@ -85,40 +81,41 @@ class EpicsChannelValuePublisher
       switch( WicaChannelType.getTypeFromObject( valueObj.getValue() ) )
       {
          case REAL:
-            logger.trace( "'{}' - value was DOUBLE.", epicsChannelName );
+            logger.trace( "'{}' - value was DOUBLE.", controlSystemName );
             publishTimestampedValueDouble( valueObj, wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, valueChangeHandler );
             return;
 
          case REAL_ARRAY:
-            logger.trace( "'{}' - value was DOUBLE ARRAY.", epicsChannelName );
+            logger.trace( "'{}' - value was DOUBLE ARRAY.", controlSystemName );
             publishTimestampedValueDoubleArray( valueObj, wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, valueChangeHandler );
             return;
 
          case INTEGER:
-            logger.trace("'{}' - value was INTEGER.", epicsChannelName );
+            logger.trace("'{}' - value was INTEGER.", controlSystemName );
             publishTimestampedValueInteger( valueObj, wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, valueChangeHandler );
             return;
 
          case INTEGER_ARRAY:
-            logger.trace("'{}' - value was INTEGER ARRAY.", epicsChannelName );
+            logger.trace("'{}' - value was INTEGER ARRAY.", controlSystemName );
             publishTimestampedValueIntegerArray( valueObj, wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, valueChangeHandler );
             return;
 
          case STRING:
-            logger.trace("'{}' - value was STRING.", epicsChannelName );
+            logger.trace("'{}' - value was STRING.", controlSystemName );
             publishTimestampedValueString( valueObj, wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, valueChangeHandler );
             return;
 
          case STRING_ARRAY:
-            logger.trace("'{}' - value was STRING ARRAY.", epicsChannelName );
+            logger.trace("'{}' - value was STRING ARRAY.", controlSystemName );
             publishTimestampedValueStringArray( valueObj, wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, valueChangeHandler );
             return;
       }
-      logger.warn( "'{}' - first value was of an unsupported type", epicsChannelName );
+      logger.warn( "'{}' - first value was of an unsupported type", controlSystemName );
    }
 
 
 /*- Private methods ----------------------------------------------------------*/
+
    private void publishTimestampedValueDouble( Timestamped<Object> valueObj, WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus,
                                                LocalDateTime wicaDataSourceTimestamp, Consumer<WicaChannelValue> valueChangeHandler )
    {

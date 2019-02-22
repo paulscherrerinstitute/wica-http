@@ -3,7 +3,11 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.*;
+import ch.psi.wica.model.WicaChannel;
+import ch.psi.wica.model.WicaStream;
+import ch.psi.wica.model.WicaStreamId;
+import ch.psi.wica.model.WicaStreamProperties;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,16 +38,22 @@ class WicaStreamServiceTest
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   @BeforeEach
+   void beforeEach()
+   {
+      WicaStreamId.resetAllocationSequencer();
+   }
+
    @Test
    void testCreateStreamWithEmptyPropsObject()
    {
-      String testString = "{ \"props\" : {}, \"channels\":  [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
-      WicaStreamId.resetAllocationSequencer();
+
+      final String testString = "{ \"props\" : {}, \"channels\":  [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
       final WicaStream stream = service.create( testString );
       final Set<WicaChannel> channels = stream.getWicaChannels();
       assertEquals( 2, channels.size() );
-      assertTrue( channels.stream().map( c -> c.getName().toString() ).anyMatch( s -> s.equals( "MHC1:IST:2" ) ) );
-      assertTrue( channels.stream().map( c -> c.getName().toString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ) );
+      assertTrue( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC1:IST:2" ) ) );
+      assertTrue( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ) );
 
       final WicaStreamProperties streamProperties = stream.getWicaStreamProperties();
       assertEquals(WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS, streamProperties.getHeartbeatFluxIntervalInMillis() );
@@ -55,14 +65,12 @@ class WicaStreamServiceTest
    @Test
    void testCreateStreamWithNoPropsObject()
    {
-      String testString = "{ \"channels\":  [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
-      WicaStreamId.resetAllocationSequencer();
+      final String testString = "{ \"channels\":  [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
       final WicaStream stream = service.create(testString );
-
       final Set<WicaChannel> channels = stream.getWicaChannels();
       assertEquals( 2, channels.size() );
-      assertTrue( channels.stream().map( c -> c.getName().toString() ).anyMatch( s -> s.equals( "MHC1:IST:2" ) ) );
-      assertTrue( channels.stream().map( c -> c.getName().toString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ) );
+      assertTrue( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC1:IST:2" ) ) );
+      assertTrue( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ) );
 
       final WicaStreamProperties streamProperties = stream.getWicaStreamProperties();
       assertEquals(WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS, streamProperties.getHeartbeatFluxIntervalInMillis() );
@@ -74,14 +82,13 @@ class WicaStreamServiceTest
    @Test
    void testCreateStreamWithPropsObject()
    {
-      String testString = "{ \"props\" : { \"prec\":8, \"fields\":\"abc;def\" }, \"channels\":  [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
-      WicaStreamId.resetAllocationSequencer();
+      final String testString = "{ \"props\" : { \"prec\":8, \"fields\":\"abc;def\" }, \"channels\":  [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
       final WicaStream stream = service.create(testString );
 
       final Set<WicaChannel> channels = stream.getWicaChannels();
       assertEquals( 2, channels.size() );
-      assertTrue( channels.stream().map( c -> c.getName().toString() ).anyMatch( s -> s.equals( "MHC1:IST:2" ) ) );
-      assertTrue( channels.stream().map( c -> c.getName().toString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ) );
+      assertTrue( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC1:IST:2" ) ) );
+      assertTrue( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ) );
 
       final WicaStreamProperties streamProperties = stream.getWicaStreamProperties();
       assertEquals(WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS, streamProperties.getHeartbeatFluxIntervalInMillis() );

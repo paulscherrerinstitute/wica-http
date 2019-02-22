@@ -4,12 +4,14 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.*;
-import ch.psi.wica.services.epics.EpicsChannelDataService;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -24,7 +26,9 @@ class WicaStreamDataSupplier
    private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
 
    private final WicaStream wicaStream;
-   private final EpicsChannelDataService epicsChannelDataService;
+   private final WicaChannelMetadataStash wicaChannelMetadataStash;
+   private final WicaChannelValueStash wicaChannelValueStash;
+
    private LocalDateTime lastPublicationTime = LONG_AGO;
 
 
@@ -36,12 +40,16 @@ class WicaStreamDataSupplier
     * about all channels in the specified stream.
     *
     * @param wicaStream the stream which specifies the channels of interest.
-    * @param epicsChannelDataService reference to the provider of a service
+    * @param wicaChannelMetadataStash the stash of received metadata.
+    * @param wicaChannelValueStash the stash of received values.
     */
-   WicaStreamDataSupplier( WicaStream wicaStream, EpicsChannelDataService epicsChannelDataService )
+   WicaStreamDataSupplier( WicaStream wicaStream,
+                           WicaChannelMetadataStash wicaChannelMetadataStash,
+                           WicaChannelValueStash wicaChannelValueStash )
    {
       this.wicaStream = wicaStream;
-      this.epicsChannelDataService = epicsChannelDataService;
+      this.wicaChannelMetadataStash = wicaChannelMetadataStash;
+      this.wicaChannelValueStash = wicaChannelValueStash;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -54,9 +62,8 @@ class WicaStreamDataSupplier
     */
    Map<WicaChannelName, WicaChannelMetadata> getMetadataMap()
    {
-      return epicsChannelDataService.getChannelMetadata( wicaStream.getWicaChannels() );
+      return wicaChannelMetadataStash.get( wicaStream.getWicaChannels() );
    }
-
 
    /**
     * Returns a map of all channels and their most recent values obtained by POLLING
@@ -71,7 +78,7 @@ class WicaStreamDataSupplier
    Map<WicaChannelName,List<WicaChannelValue>> getPolledValues()
    {
       // Poll the stash of cached values to get the notified values for each channel.
-      final var latestChannelValueMap = epicsChannelDataService.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
+      final var latestChannelValueMap = wicaChannelValueStash.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
 
       // Produce a map which includes the last notified value for each channel, but with
       // the timestamp information rewritten to reflect that the time is NOW.
@@ -114,7 +121,7 @@ class WicaStreamDataSupplier
     */
    Map<WicaChannelName, List<WicaChannelValue>> getNotifiedValues()
    {
-      final var updatedChannelValueMap = epicsChannelDataService.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
+      final var updatedChannelValueMap = wicaChannelValueStash.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
 
       // Validate the precondition that every channel in the stream is represented in the returned map.
       Validate.isTrue( wicaStream.getWicaChannels().stream()
@@ -147,7 +154,7 @@ class WicaStreamDataSupplier
     */
    Map<WicaChannelName, List<WicaChannelValue>> getNotifiedValueChanges()
    {
-      final var latestChannelValueMap = epicsChannelDataService.getLaterThan( wicaStream.getWicaChannels(), getLastPublicationTime() );
+      final var latestChannelValueMap = wicaChannelValueStash.getLaterThan( wicaStream.getWicaChannels(), getLastPublicationTime() );
       updateLastPublicationTime();
 
       final Map<WicaChannelName,List<WicaChannelValue>> outputMap = new HashMap<>();
@@ -188,7 +195,7 @@ class WicaStreamDataSupplier
    }
 
    /**
-    * Returns the Daqtype for the specified channel, either directly from the
+    * Returns the Daqmode for the specified channel, either directly from the
     * channel properties, or when, not available from the properties of the
     * WicaStream.
     *

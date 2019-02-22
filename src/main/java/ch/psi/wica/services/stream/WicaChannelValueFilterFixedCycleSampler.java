@@ -61,6 +61,15 @@ class WicaChannelValueFilterFixedCycleSampler implements WicaChannelValueFilter
       return outputList;
    }
 
+   @Override
+   public String toString()
+   {
+      return "WicaChannelValueFilterFixedCycleSampler{" +
+            "samplingCycleLength=" + samplingCycleLength +
+            ", samplingCycleIndex=" + samplingCycleIndex +
+            '}';
+   }
+
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 

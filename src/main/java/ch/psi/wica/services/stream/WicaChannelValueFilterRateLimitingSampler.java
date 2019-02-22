@@ -71,6 +71,15 @@ class WicaChannelValueFilterRateLimitingSampler implements WicaChannelValueFilte
       return outputList;
    }
 
+   @Override
+   public String toString()
+   {
+      return "WicaChannelValueFilterRateLimitingSampler{" +
+            "samplingInterval=" + samplingInterval +
+            ", lastSampleTimestamp=" + lastSampleTimestamp +
+            '}';
+   }
+
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 

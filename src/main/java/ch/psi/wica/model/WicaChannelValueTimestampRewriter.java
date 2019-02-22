@@ -2,10 +2,8 @@
 package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
-import java.time.LocalDateTime;
 
-import static ch.psi.wica.model.WicaChannelType.REAL;
-import static ch.psi.wica.model.WicaChannelType.REAL_ARRAY;
+import java.time.LocalDateTime;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/

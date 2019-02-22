@@ -44,7 +44,7 @@ class WicaChannelPropertiesTest
       assertEquals( WicaChannelProperties.DEFAULT_FILTER_CYCLE_LENGTH, props.getFilterCycleLength() );
       assertEquals(WicaChannelProperties.DEFAULT_FILTER_SAMPLING_INTERVAL, props.getFilterSamplingIntervalInMillis() );
       assertEquals( WicaChannelProperties.DEFAULT_FILTER_DEADBAND, props.getFilterDeadband() );
-      assertEquals( WicaChannelProperties.DEFAULT_POLLING_INTERVAL, props.getPollingIntervalInMillis() );
+      assertFalse( props.getPolledValueSampleRatio().isPresent() );
       assertFalse( props.getFieldsOfInterest().isPresent() );
       assertFalse( props.getNumericPrecision().isPresent() );
       assertFalse( props.getDataAcquisitionMode().isPresent() );
@@ -56,7 +56,7 @@ class WicaChannelPropertiesTest
       final ObjectMapper mapper = new ObjectMapper();
 
       final String inputString = "{" + "\"filter\"" + ":" + "\"last-n\"" + "," +
-                                       "\"nsamples\"" + ":" + 99 + "," +
+                                       "\"n\"" + ":" + 99 + "," +
                                        "\"fields\"" + ":" + "\"abc;def\"" + "," +
                                        "\"prec\"" + ":" + 9 + "}";
 

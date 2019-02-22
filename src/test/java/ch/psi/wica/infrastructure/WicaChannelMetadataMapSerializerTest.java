@@ -67,15 +67,15 @@ class WicaChannelMetadataMapSerializerTest
    @Test
    void test_serialize()
    {
-      final Map<WicaChannelName,WicaChannelMetadata> map = Map.of( WicaChannelName.of( "UnknownTypeChannel" ), unkMetadata,
-                                                                   WicaChannelName.of( "StringTypeChannel" ), strMetadata,
-                                                                   WicaChannelName.of( "StringArrayType" ), strArrMetadata,
-                                                                   WicaChannelName.of( "IntegerTypeChannel" ), intMetadata,
-                                                                   WicaChannelName.of( "IntegerArrayTypeChannel" ), intArrMetadata,
-                                                                   WicaChannelName.of( "RealTypeChannel" ), realMetadata,
-                                                                   WicaChannelName.of( "RealInfTypeChannel" ), realInfMetadata,
-                                                                   WicaChannelName.of( "RealNanTypeChannel" ), realNanMetadata,
-                                                                   WicaChannelName.of( "RealArrayTypeChannel" ), realArrMetadata );
+      final Map<WicaChannelName,WicaChannelMetadata> map = Map.of(WicaChannelName.of("UnknownTypeChannel" ), unkMetadata,
+                                                                  WicaChannelName.of("StringTypeChannel" ), strMetadata,
+                                                                  WicaChannelName.of("StringArrayType" ), strArrMetadata,
+                                                                  WicaChannelName.of("IntegerTypeChannel" ), intMetadata,
+                                                                  WicaChannelName.of("IntegerArrayTypeChannel" ), intArrMetadata,
+                                                                  WicaChannelName.of("RealTypeChannel" ), realMetadata,
+                                                                  WicaChannelName.of("RealInfTypeChannel" ), realInfMetadata,
+                                                                  WicaChannelName.of("RealNanTypeChannel" ), realNanMetadata,
+                                                                  WicaChannelName.of("RealArrayTypeChannel" ), realArrMetadata );
 
       final var serializer = new WicaChannelMetadataMapSerializer( c -> Set.of(), c -> 5,  false );
       final String jsonStr = serializer.serialize( map );

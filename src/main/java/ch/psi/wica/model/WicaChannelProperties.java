@@ -25,13 +25,12 @@ public class WicaChannelProperties
    public static final int DEFAULT_FILTER_CYCLE_LENGTH = 1;
    public static final int DEFAULT_FILTER_SAMPLING_INTERVAL = 1000;
    public static final double DEFAULT_FILTER_DEADBAND = 1.0;
-   public static final int DEFAULT_POLLING_INTERVAL = 1000;
 
 
 /*- Private attributes -------------------------------------------------------*/
 
    private final DataAcquisitionMode dataAcquisitionMode;
-   private final Integer pollingIntervalInMillis;
+   private final Integer polledValueSamplingRatio;
    private final Integer numericPrecision;
    private final FilterType filterType ;
    private final Integer filterNumSamples;
@@ -49,7 +48,7 @@ public class WicaChannelProperties
       this.dataAcquisitionMode = null;
       this.fieldsOfInterest = null;
       this.numericPrecision = null;
-      this.pollingIntervalInMillis = DEFAULT_POLLING_INTERVAL;
+      this.polledValueSamplingRatio = null;
       this.filterType = DEFAULT_FILTER_TYPE;
       this.filterNumSamples = DEFAULT_FILTER_NUM_SAMPLES;
       this.filterCycleLength = DEFAULT_FILTER_CYCLE_LENGTH;
@@ -58,7 +57,7 @@ public class WicaChannelProperties
    }
 
    public WicaChannelProperties( @JsonProperty( "daqmode"  ) DataAcquisitionMode dataAcquisitionMode,
-                                 @JsonProperty( "pollint"  ) Integer pollingIntervalInMillis,
+                                 @JsonProperty( "pollrat"  ) Integer polledValueSamplingRatio,
                                  @JsonProperty( "fields"   ) String fieldsOfInterest,
                                  @JsonProperty( "prec"     ) Integer numericPrecision,
                                  @JsonProperty( "filter"   ) FilterType filterType,
@@ -69,7 +68,7 @@ public class WicaChannelProperties
    )
    {
       this.dataAcquisitionMode = dataAcquisitionMode;
-      this.pollingIntervalInMillis = pollingIntervalInMillis == null ? DEFAULT_POLLING_INTERVAL : pollingIntervalInMillis;
+      this.polledValueSamplingRatio = polledValueSamplingRatio;
       this.fieldsOfInterest = fieldsOfInterest;
       this.numericPrecision = numericPrecision;
       this.filterType = filterType == null ? DEFAULT_FILTER_TYPE : filterType;
@@ -104,9 +103,9 @@ public class WicaChannelProperties
    }
 
    @JsonIgnore
-   public int getPollingIntervalInMillis()
+   public Optional<Integer> getPolledValueSampleRatio()
    {
-      return pollingIntervalInMillis;
+      return polledValueSamplingRatio == null ? Optional.empty() : Optional.of( polledValueSamplingRatio );
    }
 
    @JsonIgnore
@@ -144,7 +143,7 @@ public class WicaChannelProperties
    {
       return "WicaChannelProperties{" +
             "dataAcquisitionMode=" + dataAcquisitionMode +
-            ", pollingIntervalInMillis=" + pollingIntervalInMillis +
+            ", polledValueSamplingRatio=" + polledValueSamplingRatio +
             ", numericPrecision=" + numericPrecision +
             ", filterType=" + filterType +
             ", filterNumSamples=" + filterNumSamples +

@@ -26,6 +26,7 @@ public class WicaStreamPublisher
 
    private final Logger logger = LoggerFactory.getLogger( WicaStreamPublisher.class );
 
+   private final WicaStream wicaStream;
    private final WicaStreamId wicaStreamId;
    private final WicaStreamProperties wicaStreamProperties;
    private final WicaStreamDataSupplier wicaStreamDataSupplier;
@@ -39,6 +40,7 @@ public class WicaStreamPublisher
 
    WicaStreamPublisher( WicaStream wicaStream, WicaStreamDataSupplier wicaStreamDataSupplier )
    {
+      this.wicaStream = wicaStream;
       this.wicaStreamId = wicaStream.getWicaStreamId();
       this.wicaStreamProperties = wicaStream.getWicaStreamProperties();
       this.wicaChannelMetadataMapSerializer = new WicaChannelMetadataMapSerializer( c -> Set.of(),
@@ -53,6 +55,16 @@ public class WicaStreamPublisher
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
+
+   /**
+    * Returns the stream associated with this publisher.
+    *
+    * @return the stream
+    */
+   public WicaStream getStream()
+   {
+      return this.wicaStream;
+   }
 
    /**
     * Activates this flux.
@@ -111,9 +123,7 @@ public class WicaStreamPublisher
       final Disposable d = combinedFlux.subscribe( (c) -> {} );
       d.dispose();
       combinedFlux = null;
-
    }
-
 
 /*- Private methods ----------------------------------------------------------*/
 

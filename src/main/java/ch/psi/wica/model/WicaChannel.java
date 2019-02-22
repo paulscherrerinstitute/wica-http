@@ -38,15 +38,7 @@ public class WicaChannel
     */
    public WicaChannel( WicaChannelName wicaChannelName, WicaStreamProperties wicaStreamProperties )
    {
-      logger.info( "Creating new WicaChannel named '{}' with stream properties '{}'.", wicaChannelName, wicaStreamProperties );
-      this.wicaChannelName = wicaChannelName;
-
-      this.wicaChannelProperties = new WicaChannelProperties();
-      this.wicaChannelValueFilterForMonitoredChannels = WicaChannelValueFilterBuilder.createFilterForMonitoredChannels( wicaChannelProperties);
-
-      WicaChannelProperties properties = new WicaChannelProperties( );
-
-      this.wicaChannelValueFilterForPolledChannels = WicaChannelValueFilterBuilder.createFilterForPolledChannels( wicaStreamProperties, wicaChannelProperties );
+      this( wicaChannelName, wicaStreamProperties, new WicaChannelProperties() );
    }
 
    /**
@@ -59,21 +51,35 @@ public class WicaChannel
     */
    public WicaChannel( WicaChannelName wicaChannelName, WicaStreamProperties wicaStreamProperties, WicaChannelProperties wicaChannelProperties )
    {
-      logger.info( "Creating new WicaChannel with stream properties {} and channel properties {}.", wicaStreamProperties, wicaChannelProperties );
+      logger.info( "Creating new WicaChannel with name {}, stream properties {} and channel properties {}.", wicaChannelName,
+                    wicaStreamProperties, wicaChannelProperties );
 
       this.wicaChannelName = wicaChannelName;
       this.wicaChannelProperties = wicaChannelProperties;
       this.wicaChannelValueFilterForMonitoredChannels = WicaChannelValueFilterBuilder.createFilterForMonitoredChannels( wicaChannelProperties );
-      this.wicaChannelValueFilterForPolledChannels = WicaChannelValueFilterBuilder.createFilterForPolledChannels( wicaStreamProperties, wicaChannelProperties );
+      this.wicaChannelValueFilterForPolledChannels = WicaChannelValueFilterBuilder.createFilterForPolledChannels( wicaStreamProperties,
+                                                                                                                  wicaChannelProperties );
    }
 
 /*- Class methods ------------------------------------------------------------*/
 
+   /**
+    * Returns a constructed channel from a string with default properties.
+    *
+    * @param wicaChannelName the channel's name.
+    * @return the channel.
+    */
    public static WicaChannel of( String wicaChannelName )
    {
       return new WicaChannel( WicaChannelName.of( wicaChannelName ), new WicaStreamProperties() );
    }
 
+   /**
+    * Returns a constructed channel from a channel name with default properties.
+    *
+    * @param wicaChannelName the channel's name.
+    * @return the channel.
+    */
    public static WicaChannel of( WicaChannelName wicaChannelName )
    {
       return new WicaChannel( wicaChannelName, new WicaStreamProperties() );

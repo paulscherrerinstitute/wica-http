@@ -4,9 +4,11 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 
+import ch.psi.wica.model.WicaChannelMetadataStash;
+import ch.psi.wica.model.WicaChannelValueStash;
 import ch.psi.wica.model.WicaStream;
 import ch.psi.wica.model.WicaStreamId;
-import ch.psi.wica.services.epics.EpicsChannelDataService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -37,14 +39,14 @@ class WicaStreamPublisherTest
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-
    private final Logger logger = LoggerFactory.getLogger( WicaStreamPublisherTest.class );
 
    @Autowired
    public WicaStreamService service;
 
-   @Autowired
-   private EpicsChannelDataService epicsService;
+
+   private WicaChannelMetadataStash wicaChannelMetadataStash;
+   private WicaChannelValueStash wicaChannelValueStash;
 
 //   private WicaStreamPublisher publisher;
 
@@ -53,17 +55,25 @@ class WicaStreamPublisherTest
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+
+   @BeforeEach
+   void beforeEach()
+   {
+      this.wicaChannelMetadataStash = new WicaChannelMetadataStash();
+      this.wicaChannelValueStash = new WicaChannelValueStash( 16 );
+   }
+
    @Test
    void testShutdown() throws InterruptedException
    {
-      final String configString = "{ \"props\" : {  \"daqmode\" : \"poll\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"changeint\" : 320 }, " +
-            "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
+      final String configString = "{ \"props\" :   {  \"daqmode\" : \"poll\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"changeint\" : 320 }, " +
+                                    "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" } ] }";
 
       WicaStreamId.resetAllocationSequencer();
       final WicaStream stream = service.create( configString );
 
       // Create a stream publisher and activate it.
-      final WicaStreamDataSupplier supplier = new WicaStreamDataSupplier( stream, epicsService );
+      final WicaStreamDataSupplier supplier = new WicaStreamDataSupplier( stream, wicaChannelMetadataStash, wicaChannelValueStash );
       final var publisher = new WicaStreamPublisher( stream, supplier );
       publisher.activate();
 
@@ -81,14 +91,14 @@ class WicaStreamPublisherTest
    @Test
    void testSubscribeToPollOnlyStream() throws InterruptedException
    {
-      final String configString = "{ \"props\" : {  \"daqmode\" : \"poll\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"changeint\" : 320 }, " +
-                                    "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
+      final String configString = "{ \"props\" :   {  \"daqmode\" : \"poll\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"changeint\" : 320 }, " +
+                                    "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" } ] }";
 
       WicaStreamId.resetAllocationSequencer();
       final WicaStream stream = service.create( configString );
 
       // Create a stream publisher and activate it.
-      final WicaStreamDataSupplier supplier = new WicaStreamDataSupplier( stream, epicsService );
+      final WicaStreamDataSupplier supplier = new WicaStreamDataSupplier( stream, wicaChannelMetadataStash, wicaChannelValueStash );
       final var publisher = new WicaStreamPublisher( stream, supplier );
       publisher.activate();
 
@@ -139,8 +149,6 @@ class WicaStreamPublisherTest
       assertThat( sse2.data(), containsString( "{}" ) );
 
       // Verify that the fourth notification contains polled values again.
-      // The second value update method should not contain any update information since
-      // nothing has changed.
       final var sse3 = sseList.get( 3 );
       assertEquals( "ev-wica-channel-value",sse3.event() );
       assertThat( sse3.comment(), containsString( "- polled channel values" ) );
@@ -169,13 +177,14 @@ class WicaStreamPublisherTest
    @Test
    void testSubscribeToMonitorOnlyStream() throws InterruptedException
    {
-      final String configString = "{ \"props\" : {  \"daqmode\" : \"monitor\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"changeint\" : 320 }, " +
-            "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
+      final String configString = "{ \"props\" :   {  \"daqmode\" : \"poll\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"changeint\" : 320 }, " +
+                                    "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" } ] }";
+
       WicaStreamId.resetAllocationSequencer();
       final WicaStream stream = service.create( configString );
 
       // Create a stream publisher and activate it.
-      final WicaStreamDataSupplier supplier = new WicaStreamDataSupplier( stream, epicsService );
+      final WicaStreamDataSupplier supplier = new WicaStreamDataSupplier( stream, wicaChannelMetadataStash, wicaChannelValueStash );
       final var publisher = new WicaStreamPublisher( stream, supplier );
       publisher.activate();
 
@@ -259,13 +268,14 @@ class WicaStreamPublisherTest
    @Test
    void testSubscribeToPollAndMonitorStream() throws InterruptedException
    {
-      final String configString = "{ \"props\" : {  \"daqmode\" : \"poll-and-monitor\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"changeint\" : 320 }, " +
-            "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
+      final String configString = "{ \"props\" :   {  \"daqmode\" : \"poll-and-monitor\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"changeint\" : 320 }, " +
+                                    "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" } ] }";
+
       WicaStreamId.resetAllocationSequencer();
       final WicaStream stream = service.create( configString );
 
       // Create a stream publisher and activate it.
-      final WicaStreamDataSupplier supplier = new WicaStreamDataSupplier( stream, epicsService );
+      final WicaStreamDataSupplier supplier = new WicaStreamDataSupplier( stream, wicaChannelMetadataStash, wicaChannelValueStash );
       final var publisher = new WicaStreamPublisher( stream, supplier );
       publisher.activate();
 

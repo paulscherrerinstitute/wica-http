@@ -188,7 +188,7 @@ export class StreamManager
         // Now send off the request
         const deleteUrl = this.serverUrl + "/ca/streams/" + streamId;
         xhttp.withCredentials = true;
-        xhttp.open("DELETE", deleteUrl, true);
+        xhttp.open("DELETE", deleteUrl, false );
         xhttp.setRequestHeader("Content-Type", "application/json");
         xhttp.send();
     }

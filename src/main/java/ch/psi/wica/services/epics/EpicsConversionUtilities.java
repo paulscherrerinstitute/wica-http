@@ -5,7 +5,6 @@ package ch.psi.wica.services.epics;
 
 import ch.psi.wica.model.WicaChannelAlarmSeverity;
 import ch.psi.wica.model.WicaChannelAlarmStatus;
-import ch.psi.wica.model.WicaChannelName;
 import org.epics.ca.data.AlarmSeverity;
 import org.epics.ca.data.AlarmStatus;
 
@@ -27,27 +26,14 @@ class EpicsConversionUtilities
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
-
-   // TODO this is a kludge which allows a channel to be used multiple times
-   // in the same stream. It breaks the Principle of Least Surprise and
-   // should be refactored into something less intuitive.
-   private static final String EPICS_END_OF_STRING_MARKER = "##";
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
-
-   static String getEpicsChannelName( WicaChannelName wicaChannelName )
-   {
-      final String[] tokens = wicaChannelName.toString().split( EPICS_END_OF_STRING_MARKER, 2 );
-      return tokens[0];
-   }
 
    static WicaChannelAlarmSeverity fromEpics( AlarmSeverity caAlarmSeverity )
    {
       return WicaChannelAlarmSeverity.valueOf( caAlarmSeverity.toString() );
    }
-
 
    static WicaChannelAlarmStatus fromEpics( AlarmStatus caAlarmStatus )
    {

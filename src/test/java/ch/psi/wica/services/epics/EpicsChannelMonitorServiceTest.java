@@ -3,9 +3,6 @@ package ch.psi.wica.services.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-
-import ch.psi.wica.model.WicaChannelMetadata;
-import ch.psi.wica.model.WicaChannelName;
 import ch.psi.wica.model.WicaChannelValue;
 import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
@@ -34,11 +31,6 @@ class EpicsChannelMonitorServiceTest
 
    private EpicsChannelMonitorService epicsChannelMonitorService = new EpicsChannelMonitorService( );
 
-   private Consumer<Boolean> stateChangeHandler = ( bool ) -> {};
-   private Consumer<WicaChannelMetadata> metadataChangeHandler = ( string ) -> {};
-   private Consumer<WicaChannelValue> valueChangeHandler = ( string ) -> {};
-
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
@@ -55,79 +47,114 @@ class EpicsChannelMonitorServiceTest
    void afterEach()
    {
       epicsChannelMonitorService.close();
-      assertEquals( 0, EpicsChannelMonitorService.getChannelConnectionCount() );
+      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
    }
-
 
    @Test
    void testStartMonitoring_ThrowsNullPointerExceptionWhenEpicsChannelNamesIsNull()
    {
-      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring(null, stateChangeHandler, metadataChangeHandler, valueChangeHandler ) );
+      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring(null, (b)->{}, (m)->{}, (v)->{} ) );
    }
 
    @Test
    void testStartMonitoring_ThrowsNullPointerExceptionWhenStateChangeHandlerIsNull()
    {
-      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring(new WicaChannelName("abcd" ), null, metadataChangeHandler, valueChangeHandler ) );
+      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring( new EpicsChannelName("abcd" ), null, (m)->{}, (v)->{} ) );
    }
 
    @Test
    void testStartMonitoring_ThrowsNullPointerExceptionWhenMetadataChangeHandlerIsNull()
    {
-      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring(new WicaChannelName("abcd" ), stateChangeHandler, null, valueChangeHandler ) );
+      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring( new EpicsChannelName("abcd" ), (b)->{}, null, (v)->{} ) );
    }
 
    @Test
    void testStartMonitoring_ThrowsNullPointerExceptionWhenValueChangeHandlerIsNull()
    {
-      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring(new WicaChannelName("abcd" ), stateChangeHandler, metadataChangeHandler, null ) );
+      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring( new EpicsChannelName("abcd" ), (b)->{}, (m)->{}, null ) );
    }
 
    @Test
-   void testGetChannelCreationCount()
+   void testStartMonitoring_ThrowsIllegalArgumentExceptionWhenChannelNameNotUnique()
    {
-      assertEquals( 0, EpicsChannelMonitorService.getChannelCreationCount() );
-      epicsChannelMonitorService.startMonitoring(new WicaChannelName("non-existent-channel 1" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
-      assertEquals( 1, EpicsChannelMonitorService.getChannelCreationCount() );
-      epicsChannelMonitorService.startMonitoring(new WicaChannelName("non-existent-channel 1" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
-      assertEquals( 2, EpicsChannelMonitorService.getChannelCreationCount());
-      epicsChannelMonitorService.startMonitoring(new WicaChannelName("non-existent-channel 2" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
-      assertEquals( 3, EpicsChannelMonitorService.getChannelCreationCount() );
-      epicsChannelMonitorService.close();
-      assertEquals( 0, EpicsChannelMonitorService.getChannelCreationCount() );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName("abcd" ), (b)->{}, (m)->{}, (v)->{} );
+      assertThrows( IllegalArgumentException.class, () -> epicsChannelMonitorService.startMonitoring( new EpicsChannelName("abcd" ), (b)->{}, (m)->{}, (v)->{} ) );
    }
 
    @Test
-   void testGetMonitorCreationCount()
+   void testStartMonitoring_CheckChannelStatisticsAsExpectedWhenDealingWithOfflineChannels()
    {
-      assertEquals( 0, EpicsChannelMonitorService.getMonitorCreationCount() );
-      epicsChannelMonitorService.startMonitoring(new WicaChannelName("non-existent-channel 1" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
-      assertEquals( 0, EpicsChannelMonitorService.getMonitorCreationCount() );
-      epicsChannelMonitorService.startMonitoring(new WicaChannelName("non-existent-channel 2" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
-      assertEquals( 0, EpicsChannelMonitorService.getMonitorCreationCount() );
+      // Confirm that initially no channels have been created and that nothing is connected
+      assertEquals( 0, EpicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+
+      // Verify that a call to monitor a channel results in an increase in the channel creation count.
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "offline-channel-1" ), (b)->{}, (m)->{}, (v)->{} );
+      assertEquals( 1, EpicsChannelMonitorService.getChannelsCreatedCount() );
+
+      // Verify that the channel connection count is still zero.
+      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+
+      // Verify that monitoring a channel with the same name increases the connection count but not the connection count.
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "offline-channel-2" ), (b)->{}, (m)->{}, (v)->{} );
+      assertEquals( 2, EpicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+   }
+
+   @Test
+   void testStopMonitoring_ThrowsIllegalArgumentExceptionWhenChannelNameNotRecognised()
+   {
+      assertThrows( IllegalArgumentException.class, () -> epicsChannelMonitorService.stopMonitoring( new EpicsChannelName("unknown-channel" ) ) );
+   }
+
+   @Test
+   void testStopMonitoring_CheckChannelStatisticsAsExpectedWhenDisposingOfflineChannels()
+   {
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "offline-channel-1" ), (b)->{}, (m)->{}, (v)->{} );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "offline-channel-2" ), (b)->{}, (m)->{}, (v)->{} );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "offline-channel-3" ), (b)->{}, (m)->{}, (v)->{} );
+      assertEquals( 3, EpicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+
+      epicsChannelMonitorService.stopMonitoring( new EpicsChannelName( "offline-channel-1" ) );
+      assertEquals( 3, EpicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+   }
+
+
+   @Test
+   void testStartMonitoring_CheckMonitorStatisticsAsExpectedWhenDealingWithOfflineChannels()
+   {
+      // Verify that attempting to monitor a non-existent channel
+      assertEquals( 0, EpicsChannelMonitorService.getMonitorsConnectedCount() );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 1" ), (b)->{}, (m)->{}, (v)->{} );
+      assertEquals( 0, EpicsChannelMonitorService.getMonitorsConnectedCount() );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 2" ), (b)->{}, (m)->{}, (v)->{} );
+      assertEquals( 0, EpicsChannelMonitorService.getMonitorsConnectedCount() );
+
       epicsChannelMonitorService.close();
-      assertEquals( 0, EpicsChannelMonitorService.getMonitorCreationCount());
+      assertEquals( 0, EpicsChannelMonitorService.getMonitorsConnectedCount());
    }
 
    @Test
    void testGetChannelConnectionCount() throws InterruptedException
    {
-      assertEquals( 0, EpicsChannelMonitorService.getChannelConnectionCount());
-      epicsChannelMonitorService.startMonitoring(new WicaChannelName("test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
+      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount());
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName("test:db_ok" ), (b)->{}, (m)->{}, (v)->{} );
       Thread.sleep( 1_000 );
-      assertEquals( 1, EpicsChannelMonitorService.getChannelConnectionCount());
+      assertEquals( 1, EpicsChannelMonitorService.getChannelsConnectedCount());
       epicsChannelMonitorService.close();
-      assertEquals( 0, EpicsChannelMonitorService.getChannelConnectionCount());
+      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount());
    }
 
 
    @Test
    void testStartMonitoring_verifyInitialConnectBehaviour_HandlersAreNotNotifiedIfChannelOffline() throws InterruptedException
    {
-      assertEquals( 0, EpicsChannelMonitorService.getChannelCreationCount() );
+      assertEquals( 0, EpicsChannelMonitorService.getChannelsCreatedCount() );
       final Consumer<Boolean> stateChangeHandlerMock = Mockito.mock( BooleanConsumer.class );
       final Consumer<WicaChannelValue> valueChangeHandlerMock = Mockito.mock(EpicsChannelValueConsumer.class );
-      epicsChannelMonitorService.startMonitoring(new WicaChannelName("non-existent-channel" ), stateChangeHandlerMock, metadataChangeHandler, valueChangeHandlerMock );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName("non-existent-channel" ), stateChangeHandlerMock, (m)->{}, valueChangeHandlerMock );
       Thread.sleep( 1_000 );
       Mockito.verify( stateChangeHandlerMock, never() ).accept( anyBoolean() );
       Mockito.verify( valueChangeHandlerMock, never() ).accept( any() );
@@ -136,10 +163,10 @@ class EpicsChannelMonitorServiceTest
    @Test
    void testStartMonitoring_verifyInitialConnectBehaviour_NotificationSequence() throws InterruptedException
    {
-      assertEquals( 0, EpicsChannelMonitorService.getChannelCreationCount() );
+      assertEquals( 0, EpicsChannelMonitorService.getChannelsCreatedCount() );
       final Consumer<Boolean> stateChangeHandlerMock = Mockito.mock( BooleanConsumer.class );
       final Consumer<WicaChannelValue> valueChangeHandlerMock = Mockito.mock(EpicsChannelValueConsumer.class );
-      epicsChannelMonitorService.startMonitoring(new WicaChannelName("test:db_ok" ), stateChangeHandlerMock, metadataChangeHandler, valueChangeHandlerMock );
+      epicsChannelMonitorService.startMonitoring(new EpicsChannelName("test:db_ok" ), stateChangeHandlerMock, (m)->{}, valueChangeHandlerMock );
       Thread.sleep( 1_000 );
       final InOrder inOrder = inOrder( stateChangeHandlerMock, valueChangeHandlerMock );
       inOrder.verify( stateChangeHandlerMock ).accept(true );
@@ -160,22 +187,18 @@ class EpicsChannelMonitorServiceTest
    @Test
    void testStopMonitoring_verifyConnectionCountChanges() throws InterruptedException
    {
-      assertEquals( 0, EpicsChannelMonitorService.getChannelConnectionCount() );
-      epicsChannelMonitorService.startMonitoring( new WicaChannelName( "test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
+      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "test:db_ok" ), (b)->{}, (m)->{}, (v)->{} );
       Thread.sleep( 1_000 );
-      assertEquals( 1, EpicsChannelMonitorService.getChannelConnectionCount() );
-      epicsChannelMonitorService.stopMonitoring( new WicaChannelName( "test:db_ok" ) );
-      assertEquals( 0, EpicsChannelMonitorService.getChannelConnectionCount() );
+      assertEquals( 1, EpicsChannelMonitorService.getChannelsConnectedCount() );
+      epicsChannelMonitorService.stopMonitoring( new EpicsChannelName( "test:db_ok" ) );
+      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
    }
 
    @Test
-   void testStopMonitoring_verifyIllegalArgumentExceptionWhenChannelNotRecognised() throws InterruptedException
+   void testStopMonitoring_verifyIllegalArgumentExceptionWhenChannelNotRecognised()
    {
-      assertEquals( 0, EpicsChannelMonitorService.getChannelConnectionCount() );
-      epicsChannelMonitorService.startMonitoring( new WicaChannelName( "test:db_ok" ), stateChangeHandler, metadataChangeHandler, valueChangeHandler );
-      Thread.sleep( 1_000 );
-      assertEquals( 1, EpicsChannelMonitorService.getChannelConnectionCount() );
-      assertThrows( IllegalArgumentException.class, () ->  epicsChannelMonitorService.stopMonitoring( new WicaChannelName( "XXXXX" ) ) );
+      assertThrows( IllegalArgumentException.class, () ->  epicsChannelMonitorService.stopMonitoring( new EpicsChannelName( "XXXXX" ) ) );
    }
 
 
