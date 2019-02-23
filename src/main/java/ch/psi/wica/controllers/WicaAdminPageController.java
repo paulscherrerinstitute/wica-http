@@ -10,6 +10,7 @@ import ch.psi.wica.services.epics.EpicsChannelMonitorService;
 import net.jcip.annotations.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +38,9 @@ class WicaAdminPageController
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger(WicaAdminPageController.class );
+
+   @Autowired
+   private EpicsChannelMonitorService epicsChannelMonitorService;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -71,9 +75,11 @@ class WicaAdminPageController
       serverStatisticsMap.put( "Server Uptime",     formattedServerUpTime );
 
       serverStatisticsMap.put( "WICA Streams Created",     String.valueOf( WicaStreamId.getCreationCount() ) );
-      serverStatisticsMap.put( "EPICS Channels Active",    String.valueOf( EpicsChannelMonitorService.getChannelsCreatedCount()   ) );
-      serverStatisticsMap.put( "EPICS Channels Connected", String.valueOf( EpicsChannelMonitorService.getChannelsConnectedCount() ) );
-      serverStatisticsMap.put( "EPICS Monitors Active",    String.valueOf( EpicsChannelMonitorService.getMonitorsConnectedCount()   ) );
+      serverStatisticsMap.put( "EPICS Channels Created",   String.valueOf( epicsChannelMonitorService.getChannelsCreatedCount()   ) );
+      serverStatisticsMap.put( "EPICS Channels Deleted",   String.valueOf( epicsChannelMonitorService.getChannelsDeletedCount()   ) );
+      serverStatisticsMap.put( "EPICS Channels Active",    String.valueOf( epicsChannelMonitorService.getChannelsActiveCount()      ) );
+      serverStatisticsMap.put( "EPICS Channels Connected", String.valueOf( epicsChannelMonitorService.getChannelsConnectedCount() ) );
+      serverStatisticsMap.put( "EPICS Monitors Active",    String.valueOf( epicsChannelMonitorService.getMonitorsConnectedCount() ) );
 
       viewModel.addAttribute("serverStatisticsMap", serverStatisticsMap );
 

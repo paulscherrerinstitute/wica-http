@@ -11,7 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -34,7 +36,7 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
 
    private final Logger logger = LoggerFactory.getLogger( EpicsControlSystemMonitoringService.class );
 
-   private static final Map<ControlSystemName,Integer> controlSystemInterestMap = Collections.synchronizedMap(new HashMap<>() );
+   private static final Map<ControlSystemName,Integer> controlSystemInterestMap = Collections.synchronizedMap( new HashMap<>() );
 
    private final WicaChannelMetadataStash channelMetadataStash;
    private final WicaChannelValueStash channelValueStash;
@@ -58,10 +60,12 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
    /**
     * Provided for unit testing only.
     */
-   public static void resetCache()
+   public void resetCache()
    {
        controlSystemInterestMap.clear();
+       epicsChannelMonitorService.resetCache();
    }
+
 
 /*- Public methods -----------------------------------------------------------*/
 
@@ -77,6 +81,17 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
       wicaStream.getWicaChannels().stream().map( WicaChannel::getName ).forEach( this::stopMonitoring );
    }
 
+/*- Package level methods ----------------------------------------------------*/
+
+   /**
+    * Provided for unit testing only.
+    */
+   int getInterestCountForChannel( WicaChannelName wicaChannelName)
+   {
+      final var controlSystemName = wicaChannelName.getControlSystemName();
+      return controlSystemInterestMap.getOrDefault( controlSystemName, 0 );
+   }
+
    /**
     * Starts monitoring the Wica channel with the specified name and/or
     * increments the interest count for this channel.
@@ -90,21 +105,25 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
     *
     * @param wicaChannelName the name of the channel to monitor.
     */
-   public void startMonitoring( WicaChannelName wicaChannelName )
+   void startMonitoring( WicaChannelName wicaChannelName )
    {
+      logger.info( "Starting monitoring wica channel named: '{}'", wicaChannelName.asString() );
+
       Validate.notNull( wicaChannelName );
       final var controlSystemName = wicaChannelName.getControlSystemName();
 
       // If the channel is already being monitored increment the interest count.
-
       if ( controlSystemInterestMap.containsKey( controlSystemName ) )
       {
-         controlSystemInterestMap.put( controlSystemName, controlSystemInterestMap.get( controlSystemName ) + 1 );
+         final int currentInterestCount = controlSystemInterestMap.get( controlSystemName );
+         final int newInterestCount = currentInterestCount + 1;
+         logger.info( "Increasing interest level in control system channel named: '{}' to {}", controlSystemName.asString(), newInterestCount );
+         controlSystemInterestMap.put( controlSystemName, newInterestCount );
       }
       // If the channel is NOT already being monitored start monitoring it.
       else
       {
-         logger.info("Subscribing to new channel: '{}'", wicaChannelName );
+         logger.info("Subscribing to new control system channel named: '{}'", controlSystemName.asString() );
 
          // Set the initial state for the value and metadata stashes.
          channelMetadataStash.put( wicaChannelName.getControlSystemName(), WicaChannelMetadata.createUnknownInstance() );
@@ -134,25 +153,30 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
     *
     * @throws IllegalStateException if the channel name was never previously monitored.
     */
-   public void stopMonitoring( WicaChannelName wicaChannelName )
+   void stopMonitoring( WicaChannelName wicaChannelName )
    {
+      logger.info( "Stopping monitoring wica channel named: '{}'", wicaChannelName.asString() );
       Validate.notNull( wicaChannelName );
       final var controlSystemName = wicaChannelName.getControlSystemName();
 
       Validate.validState( controlSystemInterestMap.containsKey( controlSystemName ) );
-      Validate.validState(controlSystemInterestMap.get( controlSystemName ) >= 1 );
+      Validate.validState(controlSystemInterestMap.get( controlSystemName ) > 0 );
 
-      if ( controlSystemInterestMap.get(controlSystemName ) > 1 )
+      final int currentInterestCount = controlSystemInterestMap.get( controlSystemName );
+      if ( currentInterestCount > 1 )
       {
-         controlSystemInterestMap.put( controlSystemName, controlSystemInterestMap.get(controlSystemName ) - 1 );
+         final int newInterestCount = currentInterestCount - 1;
+         logger.info( "Reducing interest level in control system channel named: '{}' to {}" , controlSystemName.asString(), newInterestCount );
+         controlSystemInterestMap.put( controlSystemName, newInterestCount );
       }
       else
       {
-         logger.info( "Unsubscribing to channel: '{}'", controlSystemName );
+         logger.info( "Unsubscribing to control system channel named: '{}'", controlSystemName.asString() );
          controlSystemInterestMap.remove( controlSystemName );
          epicsChannelMonitorService.stopMonitoring( EpicsChannelName.of( controlSystemName ) );
       }
    }
+
 
 /*- Private methods ----------------------------------------------------------*/
 
@@ -166,7 +190,6 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
    {
       Validate.notNull( wicaChannelName, "The 'wicaChannelName' argument was null" );
       Validate.notNull( isConnected, "The 'isConnected' argument was null"  );
-
       logger.info("'{}' - connection state changed to '{}'.", wicaChannelName, isConnected);
 
       if ( ! isConnected )

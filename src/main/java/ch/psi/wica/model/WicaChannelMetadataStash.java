@@ -3,10 +3,6 @@ package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.ControlSystemName;
-import ch.psi.wica.model.WicaChannel;
-import ch.psi.wica.model.WicaChannelMetadata;
-import ch.psi.wica.model.WicaChannelName;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;

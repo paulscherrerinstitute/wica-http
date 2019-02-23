@@ -5,24 +5,21 @@ package ch.psi.wica.controllers;
 
 import ch.psi.wica.model.WicaStreamId;
 import ch.psi.wica.services.epics.EpicsChannelMonitorService;
-import org.junit.Before;
-import org.junit.Test;
+import ch.psi.wica.services.epics.EpicsControlSystemMonitoringService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -33,10 +30,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class WicaStreamDeleteControllerTest
+class WicaStreamDeleteControllerTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -47,6 +43,12 @@ public class WicaStreamDeleteControllerTest
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Autowired
+	private EpicsChannelMonitorService epicsChannelMonitorService;
+
+	@Autowired
+   private EpicsControlSystemMonitoringService epicsControlSystemMonitoringService;
+
    private String epicsChannelListOk;
 
 
@@ -55,25 +57,23 @@ public class WicaStreamDeleteControllerTest
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   // TODO for some reason this test is still being run under junit 4. So
-   // the @before annotation is required and @BeforeEach does nothing
-   @Before
    @BeforeEach
-   public void buildJsonNotificationBody() throws IOException
+   void buildJsonNotificationBody() throws IOException
    {
-      epicsChannelListOk = new String(Files.readAllBytes(Paths.get("src/test/resources/epics/epics_channel_list_ok.json") ), StandardCharsets.UTF_8) ;
+      epicsChannelListOk = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_ok.json") );
       WicaStreamId.resetAllocationSequencer();
+      //epicsControlSystemMonitoringService.resetCache();
    }
 
    @Test
-   public void testDelete_RequestIsRejectedWhenStreamIdIsUnrecognised() throws Exception
+   void testDelete_RequestIsRejectedWhenStreamIdIsUnrecognised() throws Exception
    {
       final RequestBuilder rb = MockMvcRequestBuilders.delete( "/ca/streams/XXXXX" );
       mockMvc.perform( rb ).andDo( print() ).andExpect( status().isBadRequest() ).andReturn();
    }
 
    @Test
-   public void testDelete_RequestIsAccepted() throws Exception
+   void testDelete_RequestIsAccepted() throws Exception
    {
       // Send a POST request to create a stream with a list containing a couple of EPICS channels
       final RequestBuilder postRequest = MockMvcRequestBuilders.post( "/ca/streams" )
@@ -83,16 +83,17 @@ public class WicaStreamDeleteControllerTest
 
       final MvcResult postRequestResult = mockMvc.perform( postRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
       logger.info( "Returned data was: '{}'", postRequestResult.getResponse().getContentAsString() );
-      assertEquals( 2, EpicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 2, epicsChannelMonitorService.getChannelsActiveCount() );
 
       // Send a DELETE request to delete the stream we just created
       final RequestBuilder rb = MockMvcRequestBuilders.delete( "/ca/streams/0" );
       mockMvc.perform( rb ).andDo( print() ).andExpect( status().isOk() ).andReturn();
-      assertEquals( 2, EpicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsActiveCount() );
+      assertEquals( 2, epicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 2, epicsChannelMonitorService.getChannelsDeletedCount() );
    }
 
-
-   /*- Private methods ----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

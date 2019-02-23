@@ -107,7 +107,14 @@ public class WicaChannel
       return wicaChannelValueFilterForMonitoredChannels.apply(inputList );
    }
 
-/*- Private methods ----------------------------------------------------------*/
+   @Override
+   public String toString()
+   {
+      return "WicaChannel{" +
+            "wicaChannelName=" + wicaChannelName +
+            '}';
+   }
+   /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

@@ -41,13 +41,18 @@ class EpicsChannelMonitorServiceTest
    void beforeEach()
    {
       epicsChannelMonitorService = new EpicsChannelMonitorService();
+      assertEquals( 0, epicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsDeletedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsActiveCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsConnectedCount() );
    }
 
    @AfterEach
    void afterEach()
    {
       epicsChannelMonitorService.close();
-      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsActiveCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsConnectedCount() );
    }
 
    @Test
@@ -85,20 +90,24 @@ class EpicsChannelMonitorServiceTest
    void testStartMonitoring_CheckChannelStatisticsAsExpectedWhenDealingWithOfflineChannels()
    {
       // Confirm that initially no channels have been created and that nothing is connected
-      assertEquals( 0, EpicsChannelMonitorService.getChannelsCreatedCount() );
-      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsDeletedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsActiveCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsConnectedCount() );
 
       // Verify that a call to monitor a channel results in an increase in the channel creation count.
       epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "offline-channel-1" ), (b)->{}, (m)->{}, (v)->{} );
-      assertEquals( 1, EpicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsDeletedCount() );
+      assertEquals( 1, epicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 1, epicsChannelMonitorService.getChannelsActiveCount() );
 
       // Verify that the channel connection count is still zero.
-      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsConnectedCount() );
 
       // Verify that monitoring a channel with the same name increases the connection count but not the connection count.
       epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "offline-channel-2" ), (b)->{}, (m)->{}, (v)->{} );
-      assertEquals( 2, EpicsChannelMonitorService.getChannelsCreatedCount() );
-      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+      assertEquals( 2, epicsChannelMonitorService.getChannelsActiveCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsConnectedCount() );
    }
 
    @Test
@@ -113,12 +122,16 @@ class EpicsChannelMonitorServiceTest
       epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "offline-channel-1" ), (b)->{}, (m)->{}, (v)->{} );
       epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "offline-channel-2" ), (b)->{}, (m)->{}, (v)->{} );
       epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "offline-channel-3" ), (b)->{}, (m)->{}, (v)->{} );
-      assertEquals( 3, EpicsChannelMonitorService.getChannelsCreatedCount() );
-      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsDeletedCount() );
+      assertEquals( 3, epicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 3, epicsChannelMonitorService.getChannelsActiveCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsConnectedCount() );
 
       epicsChannelMonitorService.stopMonitoring( new EpicsChannelName( "offline-channel-1" ) );
-      assertEquals( 3, EpicsChannelMonitorService.getChannelsCreatedCount() );
-      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+      assertEquals( 1, epicsChannelMonitorService.getChannelsDeletedCount() );
+      assertEquals( 3, epicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 2, epicsChannelMonitorService.getChannelsActiveCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsConnectedCount() );
    }
 
 
@@ -126,32 +139,31 @@ class EpicsChannelMonitorServiceTest
    void testStartMonitoring_CheckMonitorStatisticsAsExpectedWhenDealingWithOfflineChannels()
    {
       // Verify that attempting to monitor a non-existent channel
-      assertEquals( 0, EpicsChannelMonitorService.getMonitorsConnectedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getMonitorsConnectedCount() );
       epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 1" ), (b)->{}, (m)->{}, (v)->{} );
-      assertEquals( 0, EpicsChannelMonitorService.getMonitorsConnectedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getMonitorsConnectedCount() );
       epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "non-existent-channel 2" ), (b)->{}, (m)->{}, (v)->{} );
-      assertEquals( 0, EpicsChannelMonitorService.getMonitorsConnectedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getMonitorsConnectedCount() );
 
       epicsChannelMonitorService.close();
-      assertEquals( 0, EpicsChannelMonitorService.getMonitorsConnectedCount());
+      assertEquals( 0, epicsChannelMonitorService.getMonitorsConnectedCount());
    }
 
    @Test
    void testGetChannelConnectionCount() throws InterruptedException
    {
-      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount());
-      epicsChannelMonitorService.startMonitoring( new EpicsChannelName("test:db_ok" ), (b)->{}, (m)->{}, (v)->{} );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsConnectedCount());
+      epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "test:db_ok" ), (b)->{}, (m)->{}, (v)->{} );
       Thread.sleep( 1_000 );
-      assertEquals( 1, EpicsChannelMonitorService.getChannelsConnectedCount());
+      assertEquals( 1, epicsChannelMonitorService.getChannelsConnectedCount());
       epicsChannelMonitorService.close();
-      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount());
+      assertEquals( 0, epicsChannelMonitorService.getChannelsConnectedCount());
    }
-
 
    @Test
    void testStartMonitoring_verifyInitialConnectBehaviour_HandlersAreNotNotifiedIfChannelOffline() throws InterruptedException
    {
-      assertEquals( 0, EpicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsActiveCount() );
       final Consumer<Boolean> stateChangeHandlerMock = Mockito.mock( BooleanConsumer.class );
       final Consumer<WicaChannelValue> valueChangeHandlerMock = Mockito.mock(EpicsChannelValueConsumer.class );
       epicsChannelMonitorService.startMonitoring( new EpicsChannelName("non-existent-channel" ), stateChangeHandlerMock, (m)->{}, valueChangeHandlerMock );
@@ -163,7 +175,7 @@ class EpicsChannelMonitorServiceTest
    @Test
    void testStartMonitoring_verifyInitialConnectBehaviour_NotificationSequence() throws InterruptedException
    {
-      assertEquals( 0, EpicsChannelMonitorService.getChannelsCreatedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsActiveCount() );
       final Consumer<Boolean> stateChangeHandlerMock = Mockito.mock( BooleanConsumer.class );
       final Consumer<WicaChannelValue> valueChangeHandlerMock = Mockito.mock(EpicsChannelValueConsumer.class );
       epicsChannelMonitorService.startMonitoring(new EpicsChannelName("test:db_ok" ), stateChangeHandlerMock, (m)->{}, valueChangeHandlerMock );
@@ -187,12 +199,12 @@ class EpicsChannelMonitorServiceTest
    @Test
    void testStopMonitoring_verifyConnectionCountChanges() throws InterruptedException
    {
-      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsConnectedCount() );
       epicsChannelMonitorService.startMonitoring( new EpicsChannelName( "test:db_ok" ), (b)->{}, (m)->{}, (v)->{} );
-      Thread.sleep( 1_000 );
-      assertEquals( 1, EpicsChannelMonitorService.getChannelsConnectedCount() );
+      Thread.sleep( 3_000 );
+      assertEquals( 1, epicsChannelMonitorService.getChannelsConnectedCount() );
       epicsChannelMonitorService.stopMonitoring( new EpicsChannelName( "test:db_ok" ) );
-      assertEquals( 0, EpicsChannelMonitorService.getChannelsConnectedCount() );
+      assertEquals( 0, epicsChannelMonitorService.getChannelsConnectedCount() );
    }
 
    @Test

@@ -45,7 +45,8 @@ class WicaChannelNameTest
       assertEquals( ControlSystemName.of( "abc" ), wicaChannelName.getControlSystemName() );
       assertEquals( WicaChannelName.DEFAULT_PROTOCOL, wicaChannelName.getProtocol() );
       assertEquals( WicaChannelName.DEFAULT_INSTANCE, wicaChannelName.getInstance() );
-      logger.info( "WicaChannelName looks like this {} ", wicaChannelName.asString() );
+      assertEquals( "abc", wicaChannelName.asString() );
+      logger.info( "WicaChannelName looks like this '{}' ", wicaChannelName.asString() );
    }
 
    @Test
@@ -55,7 +56,8 @@ class WicaChannelNameTest
       assertEquals( ControlSystemName.of( "abc" ), wicaChannelName.getControlSystemName() );
       assertEquals( WicaChannelName.DEFAULT_PROTOCOL, wicaChannelName.getProtocol() );
       assertEquals( 4, wicaChannelName.getInstance() );
-      logger.info( "WicaChannelName looks like this {} ", wicaChannelName.asString() );
+      assertEquals( "abc##4", wicaChannelName.asString() );
+      logger.info( "WicaChannelName looks like this '{}' ", wicaChannelName.asString() );
    }
 
    @Test
@@ -65,11 +67,23 @@ class WicaChannelNameTest
       assertEquals( ControlSystemName.of( "abc" ), wicaChannelName.getControlSystemName() );
       assertEquals( WicaChannelName.Protocol.CA, wicaChannelName.getProtocol() );
       assertEquals( 6, wicaChannelName.getInstance() );
-      logger.info( "WicaChannelName looks like this {} ", wicaChannelName.asString() );
+      assertEquals( "abc##6", wicaChannelName.asString() );
+      logger.info( "WicaChannelName looks like this '{}' ", wicaChannelName.asString() );
+   }
+
+   @Test
+   void test4()
+   {
+      WicaChannelName wicaChannelName = WicaChannelName.of( "pv://abc##00006" );
+      assertEquals( ControlSystemName.of( "abc" ), wicaChannelName.getControlSystemName() );
+      assertEquals( WicaChannelName.Protocol.PV, wicaChannelName.getProtocol() );
+      assertEquals( 6, wicaChannelName.getInstance() );
+      assertEquals( "pv://abc##6", wicaChannelName.asString() );
+      logger.info( "WicaChannelName looks like this '{}' ", wicaChannelName.asString() );
    }
 
 
-/*- Private methods ----------------------------------------------------------*/
+   /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

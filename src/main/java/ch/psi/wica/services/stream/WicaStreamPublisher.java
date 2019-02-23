@@ -168,7 +168,7 @@ public class WicaStreamPublisher
       return Flux.range( 1, 1 )
             .map( l -> {
                logger.trace( "channel-metadata flux is publishing new SSE..." );
-               final Map<WicaChannelName, WicaChannelMetadata> channelMetadataMap = wicaStreamDataSupplier.getMetadataMap();
+               final Map<WicaChannelName, WicaChannelMetadata> channelMetadataMap = wicaStreamDataSupplier.getMetadataMap( wicaStream );
                final String jsonMetadataString = wicaChannelMetadataMapSerializer.serialize( channelMetadataMap );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build ( wicaStreamId, jsonMetadataString );
             } )
@@ -193,7 +193,7 @@ public class WicaStreamPublisher
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getChangedValueFluxIntervalInMillis() ) )
             .map( l -> {
                logger.trace( "channel-value-change flux is publishing new SSE..." );
-               final var map = wicaStreamDataSupplier.getNotifiedValueChanges();
+               final var map = wicaStreamDataSupplier.getNotifiedValueChanges( wicaStream );
                final var jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_CHANGED_VALUES.build( wicaStreamId, jsonServerSentEventString );
             } )
@@ -218,7 +218,7 @@ public class WicaStreamPublisher
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getPolledValueFluxIntervalInMillis() ) )
             .map(l -> {
                logger.trace("channel-value-poll flux is publishing new SSE...");
-               var map = wicaStreamDataSupplier.getPolledValues();
+               var map = wicaStreamDataSupplier.getPolledValues( wicaStream );
                final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_POLLED_VALUES.build(wicaStreamId, jsonServerSentEventString );
             } )

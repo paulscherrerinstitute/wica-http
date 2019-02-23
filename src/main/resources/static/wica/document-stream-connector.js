@@ -229,10 +229,11 @@ export class DocumentStreamConnector
         Object.keys( valueMap).forEach((key) => {
             const channelName = key;
             const channelValueArray = valueMap[key];
-            const elements = DocumentUtilities.findWicaElementsWithChannelName(channelName);
-            const channelValueArrayAsString = JsonUtilities.stringify(channelValueArray);
+            const elements = DocumentUtilities.findWicaElementsWithChannelName( channelName );
+            const channelValueArrayAsString = JsonUtilities.stringify( channelValueArray );
 
-            if (!Array.isArray(channelValueArray)) {
+            if (!Array.isArray( channelValueArray )
+            ) {
                 console.warn("Stream Error: not an array !");
                 return;
             }

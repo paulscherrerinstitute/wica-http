@@ -1,11 +1,9 @@
 package ch.psi.wica.controllers;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import reactor.core.Disposable;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
@@ -19,16 +17,16 @@ import java.util.stream.LongStream;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
-public class ReactiveTests {
+class WicaReactiveTests
+{
 
-   private final Logger logger = LoggerFactory.getLogger( ReactiveTests.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaReactiveTests.class );
 
    // This test verifies that cancel requests are back-propagated up the operator chain to
    // the root publisher, in this case flux1 and flux2. Single-threaded case.
    @Test
-   public void reactorTest_check_cancel_back_propagation()
+   void reactorTest_check_cancel_back_propagation()
    {
       final AtomicBoolean flux1Cancelled= new AtomicBoolean( false );
       final AtomicBoolean flux2Cancelled= new AtomicBoolean( false );
@@ -58,7 +56,7 @@ public class ReactiveTests {
    // This test verifies that cancel requests are back-propagated up the operator chain to
    // the root publisher, in this case flux1 and flux2. Multi-threaded case.
    @Test
-   public void reactorTest_check_cancel_back_propagation_threaded() throws InterruptedException
+   void reactorTest_check_cancel_back_propagation_threaded() throws InterruptedException
    {
       final AtomicBoolean flux1Cancelled= new AtomicBoolean( false );
       final AtomicBoolean flux2Cancelled= new AtomicBoolean( false );
@@ -110,7 +108,7 @@ public class ReactiveTests {
    // https://stackoverflow.com/questions/19309417/what-should-happen-if-i-throw-an-exception-in-my-subscribe-callback-for-an-obser
    // https://social.msdn.microsoft.com/Forums/en-US/6ea06e08-6d26-49b4-a3fa-276d1efef780/what-if-an-exception-is-thrown-by-the-observer-in-onnext?forum=rx
    @Test
-   public void reactorTest_check_exception_back_propagation_no_subscriber_error_handler()
+   void reactorTest_check_exception_back_propagation_no_subscriber_error_handler()
    {
       final AtomicReference<Throwable> dataSourceThrowCatcher = new AtomicReference<>();
       final AtomicBoolean flux1Cancelled= new AtomicBoolean( false);
@@ -225,7 +223,7 @@ public class ReactiveTests {
    //   (c) all subscriptions in the upstream chain are automatically cancelled.
    //
    @Test
-   public void reactorTest_check_exception_back_propagation_with_subscriber_error_handler()
+   void reactorTest_check_exception_back_propagation_with_subscriber_error_handler()
    {
       final AtomicReference<Throwable> dataSourceThrowCatcher = new AtomicReference<>();
       final AtomicReference<Throwable> flux3ConsumerErrorCatcher = new AtomicReference<>();
@@ -319,9 +317,7 @@ public class ReactiveTests {
          logger.info("dataSourceThrowCatcher caught throwable: '{}'", t.getMessage()  );
       }
       assertNull( dataSourceThrowCatcher.get() );
-
    }
-
 }
 
 

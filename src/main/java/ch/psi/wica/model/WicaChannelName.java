@@ -22,7 +22,7 @@ public class WicaChannelName
 /*- Private attributes -------------------------------------------------------*/
 
    static final Protocol DEFAULT_PROTOCOL = Protocol.CA;
-   static final int DEFAULT_INSTANCE = 1;
+   static final int DEFAULT_INSTANCE = 0;
 
    private static final String PROTOCOL_REGEX = "(?<protocol>ca://|pv://)";
    private static final String CSNAME_REGEX = "(?<csname>[A-Z|a-z|0-9|:|_|\\-|<|>]+)";
@@ -88,7 +88,9 @@ public class WicaChannelName
     */
    public String asString()
    {
-      return protocol.getName() + controlSystemName.asString() + "##" + instance;
+      final String prot = protocol == DEFAULT_PROTOCOL ? "" : protocol.getName();
+      final String inst = instance == DEFAULT_INSTANCE ? "" : "##" + String.valueOf( instance );
+      return prot + controlSystemName.asString() + inst;
    }
 
    /**

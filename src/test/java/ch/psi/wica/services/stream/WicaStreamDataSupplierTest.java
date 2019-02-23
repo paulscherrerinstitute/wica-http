@@ -3,8 +3,9 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.*;
-import ch.psi.wica.services.epics.EpicsControlSystemMonitoringService;
+import ch.psi.wica.model.WicaChannelName;
+import ch.psi.wica.model.WicaChannelValue;
+import ch.psi.wica.model.WicaStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -30,9 +31,9 @@ class WicaStreamDataSupplierTest
    private WicaStreamService wicaStreamService;
 
    @Autowired
-   private EpicsControlSystemMonitoringService epicsService;
+   private WicaStreamDataSupplier wicaStreamDataSupplier;
 
-   private WicaStreamDataSupplier supplier;
+   private WicaStream wicaStream;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -45,15 +46,15 @@ class WicaStreamDataSupplierTest
       final String testString = "{ \"props\" : {}, \"channels\":  [ { \"name\": \"CH1##1\" }, " +
                                                                    "{ \"name\": \"CH1##2\" }, " +
                                                                    "{ \"name\": \"CH2\" }  ] }";
-      final WicaStream stream = wicaStreamService.create( testString );
-      supplier = new WicaStreamDataSupplier( stream, new WicaChannelMetadataStash(), new WicaChannelValueStash( 16 ) );
+
+      wicaStream = wicaStreamService.create( testString );
    }
 
    @Test
    void test_getNotifiedValues()
    {
       // Verify that a first call to getNotifiedValues does indeed get everything
-      final var valueMap = supplier.getNotifiedValues();
+      final var valueMap = wicaStreamDataSupplier.getNotifiedValues( wicaStream );
       assertEquals( 3, valueMap.size() );
 
       assertTrue( valueMap.containsKey( WicaChannelName.of( "CH1##1") ) );
@@ -76,7 +77,7 @@ class WicaStreamDataSupplierTest
    void test_getNotifiedValueChanges()
    {
       // Verify that a first call to getNotifiedValues does indeed get everything
-      final var valueMap = supplier.getNotifiedValueChanges();
+      final var valueMap = wicaStreamDataSupplier.getNotifiedValueChanges( wicaStream );
       assertEquals( 3, valueMap.size() );
 
       assertTrue( valueMap.containsKey( WicaChannelName.of("CH1##1") ) );

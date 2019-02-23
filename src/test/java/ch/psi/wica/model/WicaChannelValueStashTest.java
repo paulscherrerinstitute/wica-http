@@ -1,16 +1,14 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.services.epics;
+package ch.psi.wica.model;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.*;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

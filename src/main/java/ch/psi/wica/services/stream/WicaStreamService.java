@@ -6,7 +6,8 @@ package ch.psi.wica.services.stream;
 /*- Class Declaration --------------------------------------------------------*/
 
 import ch.psi.wica.infrastructure.WicaStreamConfigurationDecoder;
-import ch.psi.wica.model.*;
+import ch.psi.wica.model.WicaStream;
+import ch.psi.wica.model.WicaStreamId;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.ServerSentEvent;
@@ -24,21 +25,18 @@ public class WicaStreamService
 /*- Private attributes -------------------------------------------------------*/
 
    private final Map<WicaStreamId,WicaStreamPublisher> wicaStreamPublisherMap = new HashMap<>();
-   private final ControlSystemMonitoringService controlSystemMonitoringService;
 
-   private final WicaChannelMetadataStash wicaChannelMetadataStash;
-   private final WicaChannelValueStash wicaChannelValueStash;
+   private final ControlSystemMonitoringService controlSystemMonitoringService;
+   private final WicaStreamDataSupplier wicaStreamDataSupplier;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaStreamService( @Autowired WicaChannelMetadataStash wicaChannelMetadataStash,
-                             @Autowired WicaChannelValueStash wicaChannelValueStash,
-                             @Autowired ControlSystemMonitoringService controlSystemMonitoringService )
+   public WicaStreamService( @Autowired ControlSystemMonitoringService controlSystemMonitoringService,
+                             @Autowired WicaStreamDataSupplier wicaStreamDataSupplier )
    {
       this.controlSystemMonitoringService = Validate.notNull( controlSystemMonitoringService );
-      this.wicaChannelMetadataStash = Validate.notNull( wicaChannelMetadataStash );
-      this.wicaChannelValueStash = Validate.notNull( wicaChannelValueStash );
+      this.wicaStreamDataSupplier = wicaStreamDataSupplier;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -71,8 +69,6 @@ public class WicaStreamService
 
       final WicaStreamId wicaStreamId = WicaStreamId.createNext();
       final WicaStream wicaStream = new WicaStream( wicaStreamId, decoder.getWicaStreamProperties(), decoder.getWicaChannels() );
-
-      final WicaStreamDataSupplier wicaStreamDataSupplier = new WicaStreamDataSupplier( wicaStream, wicaChannelMetadataStash, wicaChannelValueStash );
       final WicaStreamPublisher wicaStreamPublisher = new WicaStreamPublisher( wicaStream, wicaStreamDataSupplier );
       wicaStreamPublisher.activate();
 

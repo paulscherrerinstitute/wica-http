@@ -6,6 +6,8 @@ package ch.psi.wica.services.stream;
 import ch.psi.wica.model.*;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -16,6 +18,7 @@ import java.util.Map;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+@Service
 @Immutable
 class WicaStreamDataSupplier
 {
@@ -25,7 +28,6 @@ class WicaStreamDataSupplier
 
    private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
 
-   private final WicaStream wicaStream;
    private final WicaChannelMetadataStash wicaChannelMetadataStash;
    private final WicaChannelValueStash wicaChannelValueStash;
 
@@ -39,15 +41,12 @@ class WicaStreamDataSupplier
     * Constructs a new instance which can supply metadata and value information
     * about all channels in the specified stream.
     *
-    * @param wicaStream the stream which specifies the channels of interest.
     * @param wicaChannelMetadataStash the stash of received metadata.
     * @param wicaChannelValueStash the stash of received values.
     */
-   WicaStreamDataSupplier( WicaStream wicaStream,
-                           WicaChannelMetadataStash wicaChannelMetadataStash,
-                           WicaChannelValueStash wicaChannelValueStash )
+   WicaStreamDataSupplier( @Autowired WicaChannelMetadataStash wicaChannelMetadataStash,
+                           @Autowired WicaChannelValueStash wicaChannelValueStash )
    {
-      this.wicaStream = wicaStream;
       this.wicaChannelMetadataStash = wicaChannelMetadataStash;
       this.wicaChannelValueStash = wicaChannelValueStash;
    }
@@ -60,7 +59,7 @@ class WicaStreamDataSupplier
     *
     * @return the apply.
     */
-   Map<WicaChannelName, WicaChannelMetadata> getMetadataMap()
+   Map<WicaChannelName, WicaChannelMetadata> getMetadataMap( WicaStream wicaStream)
    {
       return wicaChannelMetadataStash.get( wicaStream.getWicaChannels() );
    }
@@ -75,7 +74,7 @@ class WicaStreamDataSupplier
     *
     * @return the map.
     */
-   Map<WicaChannelName,List<WicaChannelValue>> getPolledValues()
+   Map<WicaChannelName,List<WicaChannelValue>> getPolledValues( WicaStream wicaStream )
    {
       // Poll the stash of cached values to get the notified values for each channel.
       final var latestChannelValueMap = wicaChannelValueStash.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
@@ -98,7 +97,7 @@ class WicaStreamDataSupplier
       final Map<WicaChannelName,List<WicaChannelValue>> outputMap = new HashMap<>();
       wicaStream.getWicaChannels().stream()
             .filter( c -> lastChannelValueMap.containsKey( c.getName() ) )
-            .filter( c -> getChannelDataAcquisitionMode( c ).doesPolling() )
+            .filter( c -> getChannelDataAcquisitionMode( wicaStream, c ).doesPolling() )
             .forEach( c -> {
                final var outputList = c.applyFilterForPolledChannels( lastChannelValueMap.get( c.getName() ) );
                if ( outputList.size() > 0 )
@@ -119,7 +118,7 @@ class WicaStreamDataSupplier
     *
     * @return the map.
     */
-   Map<WicaChannelName, List<WicaChannelValue>> getNotifiedValues()
+   Map<WicaChannelName, List<WicaChannelValue>> getNotifiedValues( WicaStream wicaStream )
    {
       final var updatedChannelValueMap = wicaChannelValueStash.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
 
@@ -130,7 +129,7 @@ class WicaStreamDataSupplier
 
       final Map<WicaChannelName,List<WicaChannelValue>> outputMap = new HashMap<>();
       wicaStream.getWicaChannels().stream()
-            .filter( c -> getChannelDataAcquisitionMode( c ).doesMonitoring() )
+            .filter( c -> getChannelDataAcquisitionMode( wicaStream, c ).doesMonitoring() )
             .forEach( c -> {
                var outputList = c.applyFilterForMonitoredChannels( updatedChannelValueMap.get( c.getName() ) );
                if ( outputList.size() > 0 )
@@ -152,7 +151,7 @@ class WicaStreamDataSupplier
     * @return the map of channels and list of changes that have occurred since the
     *     last time this method was invoked.
     */
-   Map<WicaChannelName, List<WicaChannelValue>> getNotifiedValueChanges()
+   Map<WicaChannelName, List<WicaChannelValue>> getNotifiedValueChanges( WicaStream wicaStream)
    {
       final var latestChannelValueMap = wicaChannelValueStash.getLaterThan( wicaStream.getWicaChannels(), getLastPublicationTime() );
       updateLastPublicationTime();
@@ -160,7 +159,7 @@ class WicaStreamDataSupplier
       final Map<WicaChannelName,List<WicaChannelValue>> outputMap = new HashMap<>();
       wicaStream.getWicaChannels().stream()
             .filter( c -> latestChannelValueMap.containsKey( c.getName() ) )
-            .filter( c -> getChannelDataAcquisitionMode( c ).doesMonitoring() )
+            .filter( c -> getChannelDataAcquisitionMode( wicaStream, c ).doesMonitoring() )
             .forEach( c -> {
                var outputList = c.applyFilterForMonitoredChannels( latestChannelValueMap.get( c.getName() ) );
                if ( outputList.size() > 0 )
@@ -202,7 +201,7 @@ class WicaStreamDataSupplier
     * @param wicaChannel the channel to check.
     * @return the result.
     */
-   private WicaChannelProperties.DataAcquisitionMode getChannelDataAcquisitionMode( WicaChannel wicaChannel )
+   private WicaChannelProperties.DataAcquisitionMode getChannelDataAcquisitionMode( WicaStream wicaStream, WicaChannel wicaChannel )
    {
       final WicaStreamProperties streamProperties = wicaStream.getWicaStreamProperties();
       final WicaChannelProperties channelProperties = wicaChannel.getProperties();

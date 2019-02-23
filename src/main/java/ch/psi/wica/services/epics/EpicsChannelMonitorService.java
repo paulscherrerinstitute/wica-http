@@ -4,7 +4,6 @@ package ch.psi.wica.services.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.ControlSystemName;
 import ch.psi.wica.model.WicaChannelMetadata;
 import ch.psi.wica.model.WicaChannelValue;
 import org.apache.commons.lang3.Validate;
@@ -42,11 +41,15 @@ public class EpicsChannelMonitorService implements AutoCloseable
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
+   private boolean closed = false;
+   private int channelsCreatedCount;
+   private int channelsDeletedCount;
+
+   private final Map<EpicsChannelName,Channel> channels = new HashMap<>();
+   private final Map<EpicsChannelName,Monitor> monitors = new HashMap<>();
+
    private final Logger logger = LoggerFactory.getLogger( EpicsChannelMonitorService.class );
    private final Context caContext;
-
-   private static final Map<ControlSystemName,Channel> channels = new HashMap<>();
-   private static final Map<ControlSystemName,Monitor> monitors = new HashMap<>();
 
    private final EpicsChannelMetadataPublisher epicsChannelMetadataPublisher;
    private final EpicsChannelValuePublisher epicsChannelValuePublisher;
@@ -77,6 +80,16 @@ public class EpicsChannelMonitorService implements AutoCloseable
    }
 
 /*- Class methods ------------------------------------------------------------*/
+
+   /**
+    * Provided for unit testing only.
+    */
+   void resetCache()
+   {
+      channels.clear();
+      monitors.clear();
+   }
+
 /*- Public methods -----------------------------------------------------------*/
 
    /**
@@ -113,15 +126,17 @@ public class EpicsChannelMonitorService implements AutoCloseable
       Validate.notNull( connectionStateChangeHandler );
       Validate.notNull( metadataChangeHandler );
       Validate.notNull( valueChangeHandler );
-      Validate.isTrue( ! channels.containsKey( epicsChannelName ),"channel name already exists" );
+      Validate.validState( ! closed, "The monitor service was previously closed and can no longer be used" );
+      Validate.isTrue( ! channels.containsKey( epicsChannelName ),"Channel name already exists: '" + epicsChannelName.asString() +"'" );
 
       logger.debug("'{}' - starting to monitor... ", epicsChannelName);
+      channelsCreatedCount++;
 
       try
       {
          logger.debug("'{}' - creating channel of type '{}'...", epicsChannelName, "generic" );
 
-         final Channel<Object> channel = caContext.createChannel(epicsChannelName.toString(), Object.class ) ;
+         final Channel<Object> channel = caContext.createChannel( epicsChannelName.asString(), Object.class ) ;
          channels.put( epicsChannelName, channel );
 
          logger.debug("'{}' - channel created ok.", epicsChannelName);
@@ -155,10 +170,13 @@ public class EpicsChannelMonitorService implements AutoCloseable
    void stopMonitoring( EpicsChannelName epicsChannelName )
    {
       Validate.notNull( epicsChannelName );
+      Validate.validState( ! closed, "The monitor service was previously closed and can no longer be used" );
       Validate.isTrue( channels.containsKey( epicsChannelName ), "channel name not recognised" );
+      channelsDeletedCount++;
 
       logger.debug("'{}' - stopping monitor... ", epicsChannelName);
       channels.get( epicsChannelName ).close();
+      channels.remove( epicsChannelName );
    }
 
    /**
@@ -167,10 +185,14 @@ public class EpicsChannelMonitorService implements AutoCloseable
    @Override
    public void close()
    {
-      logger.debug( "'{}' - disposing resources...", this );
-      caContext.close();
+      // Set a flag to prevent further usage
+      closed = true;
 
       // Dispose of any references that are no longer required
+      logger.debug( "'{}' - disposing resources...", this );
+
+      // Note: closing the context dispoes of any open channels and monitors
+      caContext.close();
       monitors.clear();
       channels.clear();
 
@@ -178,15 +200,11 @@ public class EpicsChannelMonitorService implements AutoCloseable
    }
 
    /**
-    * Returns the count of the channels created by this class instance.
-    *
-    * A channel is "created" every time the startMonitoring method is invoked.
-    * A channel is "deleted" every time the stop monitoring method is invoked.
-    * All channels are "deleted" every time the class instance is closed.
+    * Returns the count of active channels.
     *
     * @return the count
     */
-   public static long getChannelsCreatedCount()
+   public long getChannelsActiveCount()
    {
       return channels.size();
    }
@@ -203,7 +221,7 @@ public class EpicsChannelMonitorService implements AutoCloseable
     *
     * @return the count
     */
-   public static long getChannelsConnectedCount()
+   public long getChannelsConnectedCount()
    {
       return channels.values()
                      .stream()
@@ -211,12 +229,22 @@ public class EpicsChannelMonitorService implements AutoCloseable
                      .count();
    }
 
+   public int getChannelsCreatedCount()
+   {
+      return channelsCreatedCount;
+   }
+
+   public int getChannelsDeletedCount()
+   {
+      return channelsDeletedCount;
+   }
+
    /**
     * Returns the count of monitors established by this class.
     *
     * @return the count
     */
-   public static long getMonitorsConnectedCount()
+   public long getMonitorsConnectedCount()
    {
       return monitors.size();
    }
@@ -238,23 +266,23 @@ public class EpicsChannelMonitorService implements AutoCloseable
     */
    private void registerValueChangeHandler( Channel<Object> channel, Consumer<WicaChannelValue> valueChangeHandler )
    {
-      final ControlSystemName controlSystemName = ControlSystemName.of( channel.getName() );
+      final EpicsChannelName epicsChannelName = EpicsChannelName.of( channel.getName() );
 
       // Establish a monitor on the most "dynamic" (= frequently changing)
       // properties of the channel.  These include the timestamp, the alarm
       // information and value itself. In EPICS Channel Access this requirement
       // is fulfilled by the DBR_TIME_xxx type which is supported in PSI's
       // CA library via the Metadata<Timestamped> class.
-      logger.debug("'{}' - adding monitor...", controlSystemName);
+      logger.debug("'{}' - adding monitor...", epicsChannelName);
 
       @SuppressWarnings( "unchecked" )
       final Monitor<Timestamped> monitor = channel.addMonitor( Timestamped.class, valueObj -> {
-         logger.trace("'{}' - publishing new value...", controlSystemName );
-         epicsChannelValuePublisher.publishValue( controlSystemName, valueObj, valueChangeHandler);
-         logger.trace("'{}' - new value published.", controlSystemName );
+         logger.trace("'{}' - publishing new value...", epicsChannelName );
+         epicsChannelValuePublisher.publishValue( epicsChannelName, valueObj, valueChangeHandler);
+         logger.trace("'{}' - new value published.", epicsChannelName );
       } );
-      logger.debug("'{}' - monitor added.", controlSystemName );
-      monitors.put( controlSystemName, monitor );
+      logger.debug("'{}' - monitor added.", epicsChannelName );
+      monitors.put( epicsChannelName, monitor );
    }
 
 
