@@ -45,38 +45,38 @@ public class WicaChannelValueFilterBuilder
       switch ( wicaChannelProperties.getFilterType() )
       {
          case ALL_VALUE:
-            logger.info("Creating channel value filter with filterType='allValueSampler'");
+            logger.info("Creating channel value filter for MONITORED channels with filterType='allValueSampler'");
             filter = new WicaChannelValueFilterAllValueSampler();
             break;
 
          case RATE_LIMITER:
             final int samplingInterval = wicaChannelProperties.getFilterSamplingIntervalInMillis();
-            logger.info("Creating channel value filter with filterType='rate-limiter', samplingInterval='{}'", samplingInterval );
+            logger.info("Creating channel value filter for MONITORED channels with filterType='rate-limiter', samplingInterval='{}'", samplingInterval );
             filter = new WicaChannelValueFilterRateLimitingSampler( samplingInterval );
             break;
 
          case LAST_N:
             final int numSamples = wicaChannelProperties.getFilterNumSamples();
-            logger.info("Creating channel value filter with filterType='last-n', n='{}'", numSamples );
+            logger.info("Creating channel value filter for MONITORED channels with filterType='last-n', n='{}'", numSamples );
             filter = new WicaChannelValueFilterLatestValueSampler( numSamples );
             break;
 
          case ONE_IN_M:
             final int cycleLength = wicaChannelProperties.getFilterCycleLength();
-            logger.info("Creating channel value filter with filterType='one-in-m', m='{}'", cycleLength );
+            logger.info("Creating channel value filter for MONITORED channels with filterType='one-in-m', m='{}'", cycleLength );
             filter = new WicaChannelValueFilterFixedCycleSampler( cycleLength );
             break;
 
          case CHANGE_FILTERER:
             final double deadband = wicaChannelProperties.getFilterDeadband();
-            logger.info("Creating channel value filter with filterType='changes', deadband='{}'", deadband );
+            logger.info("Creating channel value filter for MONITORED channels with filterType='changes', deadband='{}'", deadband );
             filter = new WicaChannelValueFilterChangeFilteringSampler(deadband );
             break;
 
          default:
             logger.warn("The filterType parameter was not recognised. Using default (last-n) filter.");
             final int defaultMaxNumberOfSamples = 1;
-            logger.info("Creating channel value filter with filterType='last-n', n='{}'", defaultMaxNumberOfSamples );
+            logger.info("Creating channel value filter for MONITORED channels with filterType='last-n', n='{}'", defaultMaxNumberOfSamples );
             filter = new WicaChannelValueFilterLatestValueSampler( defaultMaxNumberOfSamples );
             break;
       }

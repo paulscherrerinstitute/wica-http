@@ -154,6 +154,7 @@ public class WicaStreamProperties
             "heartbeatFluxInterval=" + heartbeatFluxInterval +
             ", changedValueFluxInterval=" + changedValueFluxInterval +
             ", polledValueFluxInterval=" + polledValueFluxInterval +
+            ", polledValueSampleRatio=" + polledValueSampleRatio +
             ", numericPrecision=" + numericPrecision +
             ", fieldsOfInterest=" + fieldsOfInterest +
             ", dataAcquisitionMode=" + dataAcquisitionMode +
@@ -169,5 +170,6 @@ public class WicaStreamProperties
    }
 
 /*- Nested Classes -----------------------------------------------------------*/
+
 
 }

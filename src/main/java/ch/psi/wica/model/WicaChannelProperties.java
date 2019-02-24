@@ -64,8 +64,7 @@ public class WicaChannelProperties
                                  @JsonProperty( "n"        ) Integer filterNumSamples,
                                  @JsonProperty( "m"        ) Integer filterCycleLength,
                                  @JsonProperty( "interval" ) Integer filterSamplingIntervalInMillis,
-                                 @JsonProperty( "deadband" ) Double filterDeadband
-   )
+                                 @JsonProperty( "deadband" ) Double filterDeadband )
    {
       this.dataAcquisitionMode = dataAcquisitionMode;
       this.polledValueSamplingRatio = polledValueSamplingRatio;

@@ -66,7 +66,7 @@
  *  underlying type is numeric; the information for all other channel types passes through unchanged.
  *
  * @typedef module:shared-definitions.WicaChannelFilterTypeChangeFilteringSampler
- * @property {string} filterType - "change-filterer" - the string literal that configures this type of filter.
+ * @property {string} filterType - "changes" - the string literal that configures this type of filter.
  * @property {number} deadband - Defines the absolute change which must occur in the input value in order for
  *     the new value to be passed through the filter.
  */
@@ -78,7 +78,6 @@
  * and {@link module:shared-definitions.WicaChannelMetadataEpics WicaChannelMetadataEpics}.
  *
  * @typedef module:shared-definitions.WicaChannelMetadata
- *
  */
 
 /**
@@ -240,10 +239,15 @@ export const WicaRenderingProperties = Object.freeze ({
  *
  * @property {number} [heartbeat=15000] - The interval in milliseconds between heartbeat messages.
  * @property {number} [changeint=100] The interval in milliseconds between channel value
- *     change messages.
- * @property {number} [pollint=100] The interval in milliseconds between polled
- *     channel value messages.
- * @property {string} [fields=val;sevr;ts] - A semicolon delimited list defining the data fields that
+ *     messages where the data acquisition mode is monitoring and where the value has changed
+ *     since the prevous notification message.
+ * @property {number} [pollint=100] The interval in milliseconds between channel value messages
+ *     where the data acquisition mode is polling.
+ * @property {number} [daqmode=monitor] - The default data acquisition mode.
+ * @property {number} [pollrat=1] - The default number of polling cycles before a sample is taken.
+ * @property {number} [prec=6] - The precision (= number of digits after the decimal point) to be used when
+ *     sending numeric information.
+ * @property {string} [fields=val;sevr] - A semicolon delimited list defining the data fields that
  *    should be included by default in the stream of WicaChannelValues. Can be overridden by individual
  *    settings in the WicaChannelProperties object.
  */
@@ -251,22 +255,41 @@ export const WicaStreamProperties = Object.freeze ({
     heartbeat: 15000,
     changeint: 100,
     pollint: 1000,
+    daqmode: "monitor",
+    pollrat: 1,
+    prec: 6,
     fields: "val;sevr"
 } );
 
 /**
- * JS Object that defines the properties supported by a WicaChannel and the default values.
+ * JS Object that defines the properties supported by a WicaChannel and their default values.
  *
- * @property {number} [prec=8] - The precision (= number of digits after the decimal point) to be used when
- *     sending numeric information.
- * @property {WicaChannelFilterType} [filter=WicaChannelFilterTypeAllValueSampler] - The type of filtering to be used on the
- *     channel. See {@link module:shared-definitions.WicaChannelFilterType WicaChannelFilterType}.
+ * @property {number} [daqmode] - The data acquisition mode. Optional parameter which overrides
+ *     property set on the stream.
+ * @property {number} [pollrat] - The number of polling cycles before a sample is taken.
+ * @property {string} [fields] - A semicolon delimited list defining the data fields that
+ *    should be included when sending value information for this channel.
+ * @property {number} [prec] - The precision (= number of digits after the decimal point) to be
+ *     used when sending numeric information.
+ * @property {WicaChannelFilterType} [filter=WicaChannelFilterTypeLatestValueSampler] - The type of filtering to be
+ *     used on the channel. See {@link module:shared-definitions.WicaChannelFilterType WicaChannelFilterType}.
+ * @property {string} [n=1] - The filter number of samples.
+ *     See {@link module:shared-definitions.WicaChannelFilterTypeLatestValueSampler WicaChannelFilterTypeLatestValueSampler}.
+ * @property {string} [m=1] - The filter cycle length.
+ *     See {@link module:shared-definitions.WicaChannelFilterTypeFixedCycleSampler WicaChannelFilterTypeFixedCycleSampler}.
+ * @property {string} [interval=1] - The filter sampling interval.
+ *     See {@link module:shared-definitions.WicaChannelFilterTypeRateLimitingSampler WicaChannelFilterTypeRateLimitingSampler}.
+ * @property {string} [deadband=1.0] - The filter deadband.
+ *     See {@link module:shared-definitions.WicaChannelFilterTypeChangeFilteringSampler WicaChannelFilterTypeChangeFilteringSampler}.
  */
 export const WicaChannelProperties = Object.freeze ({
-    prec: 8,
+    daqmode: null,
+    pollrat: null,
+    fields: null,
+    prec: null,
     filter: "last-n",
-    nsamples: 1,
-    changeint: null,
-    pollint: null,
-    fields: null
+    n: 1,
+    m: 1,
+    interval: 1,
+    deadband: 1.0,
 } );
