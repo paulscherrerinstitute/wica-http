@@ -29,6 +29,11 @@ public class WicaStreamService
    private final ControlSystemMonitoringService controlSystemMonitoringService;
    private final WicaStreamDataSupplier wicaStreamDataSupplier;
 
+   private int streamsCreated;
+   private int streamsDeleted;
+
+
+
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
@@ -41,6 +46,16 @@ public class WicaStreamService
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
+
+   public int getStreamsCreated()
+   {
+      return streamsCreated;
+   }
+
+   public int getStreamsDeleted()
+   {
+      return streamsDeleted;
+   }
 
    /**
     * Creates an activated wica stream based on the supplied configuration string.
@@ -67,6 +82,7 @@ public class WicaStreamService
          throw new IllegalArgumentException( "The JSON configuration string did not define any channels.");
       }
 
+      streamsCreated++;
       final WicaStreamId wicaStreamId = WicaStreamId.createNext();
       final WicaStream wicaStream = new WicaStream( wicaStreamId, decoder.getWicaStreamProperties(), decoder.getWicaChannels() );
       final WicaStreamPublisher wicaStreamPublisher = new WicaStreamPublisher( wicaStream, wicaStreamDataSupplier );
@@ -89,6 +105,8 @@ public class WicaStreamService
    {
       Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null" );
       Validate.isTrue(( isKnownId( wicaStreamId ) ),"The 'wicaStreamId' argument was not recognised"  );
+
+      streamsDeleted++;
 
       final WicaStreamPublisher wicaStreamPublisher = wicaStreamPublisherMap.get( wicaStreamId );
       wicaStreamPublisher.shutdown();

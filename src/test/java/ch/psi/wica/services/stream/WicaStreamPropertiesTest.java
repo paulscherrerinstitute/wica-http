@@ -70,10 +70,11 @@ class WicaStreamPropertiesTest
       final String inputString = "{}";
       final WicaStreamProperties props = mapper.readValue( inputString, WicaStreamProperties.class );
       assertEquals( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS, props.getHeartbeatFluxIntervalInMillis() );
-      assertEquals(WicaStreamProperties.DEFAULT_CHANGED_VALUE_FLUX_INTERVAL_IN_MILLIS, props.getChangedValueFluxIntervalInMillis() );
-      assertEquals(WicaStreamProperties.DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS, props.getPolledValueFluxIntervalInMillis() );
+      assertEquals( WicaStreamProperties.DEFAULT_CHANGED_VALUE_FLUX_INTERVAL_IN_MILLIS, props.getChangedValueFluxIntervalInMillis() );
+      assertEquals( WicaStreamProperties.DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS, props.getPolledValueFluxIntervalInMillis() );
+      assertEquals( WicaStreamProperties.DEFAULT_POLLED_VALUE_SAMPLE_RATIO, props.getPolledValueSampleRatio() );
       assertEquals( WicaStreamProperties.DEFAULT_NUMERIC_PRECISION, props.getNumericPrecision() );
-      assertEquals(WicaStreamProperties.DEFAULT_DATA_ACQUISITION_MODE, props.getDataAcquisitionMode() );
+      assertEquals( WicaStreamProperties.DEFAULT_DATA_ACQUISITION_MODE, props.getDataAcquisitionMode() );
       assertEquals( Set.of( WicaStreamProperties.DEFAULT_FIELDS_OF_INTEREST.split(";") ), props.getFieldsOfInterest() );
    }
 

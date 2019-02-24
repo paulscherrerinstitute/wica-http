@@ -5,8 +5,8 @@ package ch.psi.wica.controllers;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.WicaApplication;
-import ch.psi.wica.model.WicaStreamId;
 import ch.psi.wica.services.epics.EpicsChannelMonitorService;
+import ch.psi.wica.services.stream.WicaStreamService;
 import net.jcip.annotations.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +39,20 @@ class WicaAdminPageController
 
    private final Logger logger = LoggerFactory.getLogger(WicaAdminPageController.class );
 
-   @Autowired
-   private EpicsChannelMonitorService epicsChannelMonitorService;
+   private final EpicsChannelMonitorService epicsChannelMonitorService;
+   private final WicaStreamService wicaStreamService;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
-/*- Class methods ------------------------------------------------------------*/
-/*- Class methods ------------------------------------------------------------*/
 
+   public WicaAdminPageController( @Autowired WicaStreamService wicaStreamService,
+                                   @Autowired EpicsChannelMonitorService epicsChannelMonitorService )
+   {
+      this.wicaStreamService = wicaStreamService;
+      this.epicsChannelMonitorService = epicsChannelMonitorService;
+   }
+   /*- Class methods ------------------------------------------------------------*/
+/*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
    // Leave the default MVC handling for this method. This means that the returned value will
@@ -74,10 +80,11 @@ class WicaAdminPageController
       serverStatisticsMap.put( "Server Started",    formattedServerStartTime );
       serverStatisticsMap.put( "Server Uptime",     formattedServerUpTime );
 
-      serverStatisticsMap.put( "WICA Streams Created",     String.valueOf( WicaStreamId.getCreationCount() ) );
+      serverStatisticsMap.put( "WICA Streams Created",     String.valueOf( wicaStreamService.getStreamsCreated() ) );
+      serverStatisticsMap.put( "WICA Streams Deleted",     String.valueOf( wicaStreamService.getStreamsDeleted() ) );
       serverStatisticsMap.put( "EPICS Channels Created",   String.valueOf( epicsChannelMonitorService.getChannelsCreatedCount()   ) );
       serverStatisticsMap.put( "EPICS Channels Deleted",   String.valueOf( epicsChannelMonitorService.getChannelsDeletedCount()   ) );
-      serverStatisticsMap.put( "EPICS Channels Active",    String.valueOf( epicsChannelMonitorService.getChannelsActiveCount()      ) );
+      serverStatisticsMap.put( "EPICS Channels Active",    String.valueOf( epicsChannelMonitorService.getChannelsActiveCount()    ) );
       serverStatisticsMap.put( "EPICS Channels Connected", String.valueOf( epicsChannelMonitorService.getChannelsConnectedCount() ) );
       serverStatisticsMap.put( "EPICS Monitors Active",    String.valueOf( epicsChannelMonitorService.getMonitorsConnectedCount() ) );
 

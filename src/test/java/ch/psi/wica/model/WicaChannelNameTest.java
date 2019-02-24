@@ -82,8 +82,18 @@ class WicaChannelNameTest
       logger.info( "WicaChannelName looks like this '{}' ", wicaChannelName.asString() );
    }
 
+   @Test
+   void test5()
+   {
+      WicaChannelName wicaChannelName = WicaChannelName.of( "abc##0" );
+      assertEquals( ControlSystemName.of( "abc" ), wicaChannelName.getControlSystemName() );
+      assertEquals( WicaChannelName.DEFAULT_PROTOCOL, wicaChannelName.getProtocol() );
+      assertEquals( 0, wicaChannelName.getInstance() );
+      assertEquals( "abc##0", wicaChannelName.asString() );
+      logger.info( "WicaChannelName looks like this '{}' ", wicaChannelName.asString() );
+   }
 
-   /*- Private methods ----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

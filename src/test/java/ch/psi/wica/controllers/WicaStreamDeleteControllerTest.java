@@ -46,11 +46,7 @@ class WicaStreamDeleteControllerTest
 	@Autowired
 	private EpicsChannelMonitorService epicsChannelMonitorService;
 
-	@Autowired
-   private EpicsControlSystemMonitoringService epicsControlSystemMonitoringService;
-
    private String epicsChannelListOk;
-
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -62,7 +58,6 @@ class WicaStreamDeleteControllerTest
    {
       epicsChannelListOk = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_ok.json") );
       WicaStreamId.resetAllocationSequencer();
-      //epicsControlSystemMonitoringService.resetCache();
    }
 
    @Test

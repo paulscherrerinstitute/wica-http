@@ -44,14 +44,7 @@ function findWicaElementsWithAttributeName( attributeName )
  */
 function findWicaElementsWithChannelName( channelName )
 {
-    const controlSystemNameEndIndexExclusive = channelName.indexOf( "##" );
-    const controlSystemName = channelName.substring( 5, controlSystemNameEndIndexExclusive );
-    const result = findWicaElementsWithAttributeValue( WicaElementConnectionAttributes.channelName, controlSystemName );
-    if ( result.length !== 0 )
-    {
-       return result;
-    }
-    return findWicaElementsWithAttributeValue( WicaElementConnectionAttributes.channelName, channelName.substring( 5 ) );
+    return findWicaElementsWithAttributeValue( WicaElementConnectionAttributes.channelName, channelName );
 }
 
 /**

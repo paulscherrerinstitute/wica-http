@@ -104,7 +104,7 @@ public class WicaStreamPublisher
     */
    Flux<ServerSentEvent<String>> getFlux()
    {
-      Validate.validState( combinedFlux != null );
+      Validate.validState(combinedFlux != null, "The flux was not in a valid state" );
       return combinedFlux;
    }
 
@@ -118,7 +118,7 @@ public class WicaStreamPublisher
     */
    public void shutdown()
    {
-      Validate.validState( combinedFlux != null,"the flux has already been shutdown" );
+      Validate.validState( combinedFlux != null,"The flux has already been shutdown" );
 
       final Disposable d = combinedFlux.subscribe( (c) -> {} );
       d.dispose();

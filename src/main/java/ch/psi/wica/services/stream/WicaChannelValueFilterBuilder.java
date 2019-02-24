@@ -108,7 +108,7 @@ public class WicaChannelValueFilterBuilder
             wicaStreamProperties.getPolledValueSampleRatio();
 
       // Return the filter
-      logger.info("Creating channel value filter with filterType='one-in-m', m='{}'", cycleLength );
+      logger.info("Creating channel value filter for POLLED channels with filterType='one-in-m', m='{}'", cycleLength );
       return new WicaChannelValueFilterFixedCycleSampler( cycleLength );
    }
 
