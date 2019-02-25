@@ -16,6 +16,9 @@ import {DocumentTextRenderer} from "./document-text-renderer.js";
 import {DocumentEventManager} from "./document-event-manager.js";
 import * as JsonUtilities from './json5-wrapper.js'
 
+/**
+ * Provides the functionality necessary to support a wica-aware html page.
+ */
 export class DocumentSupportLoader
 {
     /**

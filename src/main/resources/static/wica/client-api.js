@@ -22,6 +22,9 @@ export {
      */
     StreamManager,
 
+    /**
+     * Provides the functionality necessary to support a wica-aware html page.
+     */
     DocumentSupportLoader
 }
 
