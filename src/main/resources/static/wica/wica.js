@@ -5,17 +5,17 @@
  */
 console.debug( "Executing script in wica.js module...");
 
-import * as log from "./picolog-wrapper.js"
+import * as Picolog from "./picolog-wrapper.js"
 import * as ClientAPI from "./client-api.js"
 
 const WICA_HOST="https://gfa-wica-dev.psi.ch";
 
 var documentSupportLoader;
 
-log.load(() => {
+Picolog.load(() => {
 
     // The logging library needs to load before everything else
-    // Once it has loaded we can pull in the other modules
+    // Once it has loaded we can pull in the other modules.
     log.info( "Picolog library loaded ok !!" );
 
     // Create and activate a document support loader to server this document

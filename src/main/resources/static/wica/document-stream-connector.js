@@ -84,25 +84,25 @@ export class DocumentStreamConnector
     configureStreamConnectionHandlers_( streamConnectionStateAttribute )
     {
         this.streamConnectionHandlers.streamConnect = (count) => {
-            console.warn("Event stream connect: " + count );
-            console.warn("Setting wica stream state on all html elements to: 'connect-" + count + "'" );
+            log.warn("Event stream connect: " + count );
+            log.warn("Setting wica stream state on all html elements to: 'connect-" + count + "'" );
             DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "connect-" + count ) );
         };
 
         this.streamConnectionHandlers.streamOpened = (id) => {
-            console.warn("Event stream opened: " + id);
-            console.warn("Setting wica stream state on all html elements to: 'opened-" + id + "'" );
+            log.warn("Event stream opened: " + id);
+            log.warn("Setting wica stream state on all html elements to: 'opened-" + id + "'" );
             DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "opened-" + id));
             this.lastOpenedStreamId = id;
         };
 
         this.streamConnectionHandlers.streamClosed = (id) => {
-            console.log("Event stream closed: " + id);
+            log.log("Event stream closed: " + id);
             if ( id === this.lastOpenedStreamId ) {
-                console.warn("Setting wica stream state on all html elements to: 'closed'");
+                log.warn("Setting wica stream state on all html elements to: 'closed'");
                 DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "closed-" + id));
             } else {
-                console.warn("Wica stream state on all html elements will be left unchanged as a newer event source is already open !");
+                log.warn("Wica stream state on all html elements will be left unchanged as a newer event source is already open !");
             }
         };
     }
@@ -160,7 +160,7 @@ export class DocumentStreamConnector
     {
         // Look for all wica-aware elements in the current page
         const wicaElements = DocumentUtilities.findWicaElements();
-        console.log( "Number of Wica elements found: ", wicaElements.length );
+        log.log( "Number of Wica elements found: ", wicaElements.length );
 
         // Create an array of the associated channel names
         const channels = [];
@@ -193,7 +193,7 @@ export class DocumentStreamConnector
      */
     updateDocumentMetadataAttributes_( metadataMap, channelMetadataAttribute )
     {
-        console.log("Event stream received new channel metadata map.");
+        log.log("Event stream received new channel metadata map.");
 
         // Go through all the elements in the update object and assign each element's metadata to
         // the element's metadata attribute.
@@ -204,7 +204,7 @@ export class DocumentStreamConnector
             const metadataAsString = JsonUtilities.stringify(channelMetadata);
             elements.forEach(ele => {
                 ele.setAttribute( channelMetadataAttribute, metadataAsString);
-                console.log( "Metadata updated on channel: '" + key + "', new value: '" + metadataAsString + "'" );
+                log.log( "Metadata updated on channel: '" + key + "', new value: '" + metadataAsString + "'" );
             });
         });
     }
@@ -222,7 +222,7 @@ export class DocumentStreamConnector
     updateDocumentValueAttributes_( valueMap, channelValueArrayAttribute, channelValueLatestAttribute,
                                     channelConnectionStateAttribute, channelAlarmStateAttribute )
     {
-        //console.log( "WicaStream received new channel value map.");
+        //log.log( "WicaStream received new channel value map.");
 
         // Go through all the elements in the update object and assign each element's value information
         // to the relevant element attributes.
@@ -234,7 +234,7 @@ export class DocumentStreamConnector
 
             if (!Array.isArray( channelValueArray )
             ) {
-                console.warn("Stream Error: not an array !");
+                log.warn("Stream Error: not an array !");
                 return;
             }
             const channelValueLatest = channelValueArray.pop();
@@ -245,7 +245,7 @@ export class DocumentStreamConnector
                 ele.setAttribute( channelValueLatestAttribute, channelValueLatestAsString);
                 ele.setAttribute( channelConnectionStateAttribute, channelConnectionState);
                 ele.setAttribute( channelAlarmStateAttribute, channelValueLatest.sevr);
-                //console.log("Value updated: " + channelValueLatest);
+                //log.log("Value updated: " + channelValueLatest);
             });
         });
     };

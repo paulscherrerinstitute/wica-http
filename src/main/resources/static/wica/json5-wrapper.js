@@ -2,8 +2,6 @@
  * Provides support for parsing and stringifying JSON5.
  * @module
  */
-import * as log from "./picolog-wrapper.js"
-
 console.info( "Executing script in json5-wrapper.js module...");
 
 /**

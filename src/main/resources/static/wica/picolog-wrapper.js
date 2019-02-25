@@ -5,8 +5,7 @@
  */
 console.debug( "Executing script in picolog-wrapper.js module...");
 
-
-export { load, trace, debug, log, info, warn, error };
+export { load };
 
 /**
  * Loads the library. Invokes the callback handler when complete.
