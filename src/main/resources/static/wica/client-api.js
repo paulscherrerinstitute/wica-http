@@ -27,5 +27,3 @@ export {
      */
     DocumentSupportLoader
 }
-
-const plotBuffer = new PlotBuffer();
