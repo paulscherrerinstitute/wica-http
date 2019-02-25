@@ -47,7 +47,7 @@ function load( callback )
         script.onload = function()
         {
             setLibraryLoaded_();
-            console.log( "picolog wrapper: initialised ok !");
+            console.log( "Picolog wrapper: initialised ok !");
             callback();
         };
         document.head.appendChild( script );
@@ -55,13 +55,13 @@ function load( callback )
     else
     {
         if ( isLibraryLoaded_() ) {
-            console.log("picolog wrapper library is already loaded.");
+            console.log("Picolog wrapper library is already loaded.");
             callback();
         }
         else {
-            console.log("picolog wrapper library is loading...");
+            console.log("Picolog wrapper library is loading...");
             awaitLibraryLoad_( callback );
-            console.log("picolog wrapper library is now loaded.");
+            console.log("Picolog wrapper library is now loaded.");
         }
     }
 }

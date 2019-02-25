@@ -14,7 +14,6 @@ import {
 import {DocumentStreamConnector} from "./document-stream-connector.js";
 import {DocumentTextRenderer} from "./document-text-renderer.js";
 import {DocumentEventManager} from "./document-event-manager.js";
-import * as Picolog from "./picolog-wrapper.js";
 import * as JsonUtilities from "./json5-wrapper.js";
 
 /**

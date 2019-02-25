@@ -5,23 +5,28 @@
  */
 console.debug( "Executing script in wica.js module...");
 
-import {DocumentSupportLoader} from "./client-api.js"
-import * as Picolog from "./picolog-wrapper.js"
+import * as log from "./picolog-wrapper.js"
+import * as ClientAPI from "./client-api.js"
 
 const WICA_HOST="https://gfa-wica-dev.psi.ch";
 
-// Create and activate a document support loader to server this document
-const documentSupportLoader = new DocumentSupportLoader( WICA_HOST );
+var documentSupportLoader;
 
-Picolog.load(() => {
-    Picolog.info( "Picolog library loaded ok !!" );
+log.load(() => {
+
+    // The logging library needs to load before everything else
+    // Once it has loaded we can pull in the other modules
+    log.info( "Picolog library loaded ok !!" );
+
+    // Create and activate a document support loader to server this document
+    documentSupportLoader = new ClientAPI.DocumentSupportLoader( WICA_HOST );
     documentSupportLoader.activate( 200, 200 );
 } );
 
 
 // Attach a handler to shut things down when the browser navigates away
 window.onbeforeunload = () => {
-    console.log( "Shutting down wica document support..." );
+    log.info( "Shutting down wica document support..." );
     documentSupportLoader.shutdown();
-    console.log( "Done." );
-}
+    log.info( "Done." );
+};
