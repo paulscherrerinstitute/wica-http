@@ -2,8 +2,7 @@
  * Provides support for parsing and stringifying JSON5.
  * @module
  */
-import * as log from "./picolog-wrapper.js"
-log.debug( "Executing script in json5-wrapper.js module...");
+console.debug( "Executing script in json5-wrapper.js module...");
 
 /**
  * This module causes the browser to load the JSON5 library (thereby,
@@ -43,7 +42,7 @@ function parse( text, reviver )
     else
     {
         const msg = "Programming Error: call to JSON5.parse() before library initialised.";
-        log.warn( msg );
+        console.warn( msg );
         throw Error( msg );
     }
 }
@@ -85,7 +84,7 @@ function stringify( value, replacer, space )
     else
     {
         const msg = "Programming Error: call to JSON5.stringify() before library initialised.";
-        log.warn( msg );
+        console.warn( msg );
         throw Error( msg );
     }
 }
@@ -105,7 +104,7 @@ function load( callback )
         script.onload = function()
         {
             setLibraryLoaded_();
-            log.info( "JSON5 wrapper: initialised ok !");
+            console.info( "JSON5 wrapper: initialised ok !");
             callback();
         };
         document.head.appendChild( script );
@@ -113,13 +112,13 @@ function load( callback )
     else
     {
         if ( isLibraryLoaded_() ) {
-            log.info("JSON5 wrapper library is already loaded.");
+            console.info("JSON5 wrapper library is already loaded.");
             callback();
         }
         else {
-            log.info( "JSON5 wrapper library is loading...");
+            console.info( "JSON5 wrapper library is loading...");
             awaitLibraryLoad( callback );
-            log.info( "JSON5 wrapper library is now loaded.");
+            console.info( "JSON5 wrapper library is now loaded.");
         }
     }
 }

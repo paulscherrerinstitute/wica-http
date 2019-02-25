@@ -68,19 +68,20 @@ function load( callback )
 
 function getAndSetLibraryLoadStarted_()
 {
-    const result = ( typeof window.json5LibLoadStarted !== "undefined" );
-    window.json5LibLoadStarted = true;
+    const result = ( typeof window.picologLibLoadStarted !== "undefined" );
+    window.picologLibLoadStarted = true;
     return result;
 }
 
 function isLibraryLoaded_()
 {
-    return typeof window.json5LibLoaded !== "undefined";
+    return typeof window.picologLibLoaded !== "undefined";
 }
 
 function setLibraryLoaded_()
 {
-    window.json5LibLoaded = true;
+    window.picologLibLoaded = true;
+    log.level = log.DEBUG;
 }
 
 function awaitLibraryLoad( callback )
