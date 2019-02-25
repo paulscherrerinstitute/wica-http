@@ -1,4 +1,4 @@
-console.debug( "Executing script in json5-wrapper.js module...");
+console.debug( "Executing script in picolog-wrapper.js module...");
 
 /**
  * This module causes the browser to load the JSON5 library (thereby,
@@ -11,7 +11,7 @@ console.debug( "Executing script in json5-wrapper.js module...");
  * The current implementation is from JSON5.org. See: https://json5.org/
  */
 
-export { load, info };
+export { load, loadSync, info };
 
 /**
  * Wrapper for the picolog log.info message.
@@ -30,6 +30,12 @@ function info( message )
         console.warn( msg );
         throw Error( msg );
     }
+}
+
+function loadSync()
+{
+    load( () => {} );
+    awaitLibraryLoad_( () => {} );
 }
 
 /**
@@ -60,7 +66,7 @@ function load( callback )
         }
         else {
             console.log("picolog wrapper library is loading...");
-            awaitLibraryLoad( callback );
+            awaitLibraryLoad_( callback );
             console.log("picolog wrapper library is now loaded.");
         }
     }
@@ -84,14 +90,14 @@ function setLibraryLoaded_()
     log.level = log.DEBUG;
 }
 
-function awaitLibraryLoad( callback )
+function awaitLibraryLoad_( callback )
 {
     setTimeout( () => {
         if( isLibraryLoaded_() ) {
             callback();
         }
         else {
-            awaitLibraryLoad( callback );
+            awaitLibraryLoad_( callback );
         } }, 100
     );
 }
