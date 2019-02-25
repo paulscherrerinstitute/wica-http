@@ -2,10 +2,7 @@
  * Provides support for parsing and stringifying JSON5.
  * @module
  */
-import * as Picolog from "./picolog-wrapper.js"
-
-Picolog.loadSync();
-Picolog.info( "Executing script in json5-wrapper.js module...");
+console.info( "Executing script in json5-wrapper.js module...");
 
 /**
  * This module causes the browser to load the JSON5 library (thereby,

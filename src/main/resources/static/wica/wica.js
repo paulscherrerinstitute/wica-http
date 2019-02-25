@@ -14,7 +14,7 @@ const WICA_HOST="https://gfa-wica-dev.psi.ch";
 const documentSupportLoader = new DocumentSupportLoader( WICA_HOST );
 
 Picolog.load(() => {
-    info( "PICOLOG IS KING !!" );
+    Picolog.info( "Picolog library loaded ok !!" );
     documentSupportLoader.activate( 200, 200 );
 } );
 

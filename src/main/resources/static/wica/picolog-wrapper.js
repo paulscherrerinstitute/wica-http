@@ -11,7 +11,7 @@ console.debug( "Executing script in picolog-wrapper.js module...");
  * The current implementation is from JSON5.org. See: https://json5.org/
  */
 
-export { load, loadSync, info };
+export { load, info };
 
 /**
  * Wrapper for the picolog log.info message.
@@ -30,12 +30,6 @@ function info( message )
         console.warn( msg );
         throw Error( msg );
     }
-}
-
-function loadSync()
-{
-    load( () => {} );
-    awaitLibraryLoad_( () => {} );
 }
 
 /**
