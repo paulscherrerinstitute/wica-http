@@ -1,36 +1,12 @@
+/**
+ * Provides wica logging support.
+ *
+ * @module
+ */
 console.debug( "Executing script in picolog-wrapper.js module...");
 
-/**
- * This module causes the browser to load the JSON5 library (thereby,
- * as a side-effect, making it available in the Global memory space).
- *
- * Critical functions of the library are wrapped and exported for use
- * elsewhere inside the application, thus making it independent of the
- * specific implementation.
- *
- * The current implementation is from JSON5.org. See: https://json5.org/
- */
 
-export { load, info };
-
-/**
- * Wrapper for the picolog log.info message.
- *
- * @return {string} the message to log
- */
-function info( message )
-{
-    if ( isLibraryLoaded_() )
-    {
-        return log.info( message );
-    }
-    else
-    {
-        const msg = "Programming Error: call to log.info() before library initialised.";
-        console.warn( msg );
-        throw Error( msg );
-    }
-}
+export { load, trace, debug, log, info, warn, error };
 
 /**
  * Loads the library. Invokes the callback handler when complete.
@@ -42,7 +18,7 @@ function load( callback )
     if ( ! getAndSetLibraryLoadStarted_() )
     {
         const script = document.createElement('script');
-        script.id = 'wica-piolog-wrapper-id';
+        script.id = 'wica-picolog-wrapper-id';
         script.src = "/wica/picolog.min.js";
         script.onload = function()
         {
