@@ -174,9 +174,16 @@ public class EpicsChannelMonitorService implements AutoCloseable
       Validate.isTrue( channels.containsKey( epicsChannelName ), "channel name not recognised" );
       channelsDeletedCount++;
 
-      logger.debug("'{}' - stopping monitor... ", epicsChannelName);
+      logger.debug("'{}' - stopping monitoring on... ", epicsChannelName);
       channels.get( epicsChannelName ).close();
       channels.remove( epicsChannelName );
+
+      boolean channelCloseAlsoDisposesMonitorResources = true;
+      if ( !channelCloseAlsoDisposesMonitorResources )
+      {
+         monitors.get(epicsChannelName).close();
+      }
+      monitors.remove( epicsChannelName );
    }
 
    /**

@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -35,7 +34,7 @@ class WicaChannelNameTest
       assertThrows( IllegalArgumentException.class, () -> WicaChannelName.Protocol.of( "cA://" ) );
       assertThrows( IllegalArgumentException.class, () -> WicaChannelName.Protocol.of( "Ca://" ) );
       assertThrows( IllegalArgumentException.class, () -> WicaChannelName.Protocol.of( "CA://" ) );
-      assertThrows(  IllegalArgumentException.class, () -> WicaChannelName.Protocol.of( "PV://") );
+      assertThrows( IllegalArgumentException.class, () -> WicaChannelName.Protocol.of( "PV://" ) );
    }
 
    @Test
@@ -43,8 +42,8 @@ class WicaChannelNameTest
    {
       WicaChannelName wicaChannelName = WicaChannelName.of( "abc" );
       assertEquals( ControlSystemName.of( "abc" ), wicaChannelName.getControlSystemName() );
-      assertEquals( WicaChannelName.DEFAULT_PROTOCOL, wicaChannelName.getProtocol() );
-      assertEquals( WicaChannelName.DEFAULT_INSTANCE, wicaChannelName.getInstance() );
+      assertFalse( wicaChannelName.getProtocol().isPresent() );
+      assertFalse( wicaChannelName.getInstance().isPresent() );
       assertEquals( "abc", wicaChannelName.asString() );
       logger.info( "WicaChannelName looks like this '{}' ", wicaChannelName.asString() );
    }
@@ -54,8 +53,8 @@ class WicaChannelNameTest
    {
       WicaChannelName wicaChannelName = WicaChannelName.of( "abc##4" );
       assertEquals( ControlSystemName.of( "abc" ), wicaChannelName.getControlSystemName() );
-      assertEquals( WicaChannelName.DEFAULT_PROTOCOL, wicaChannelName.getProtocol() );
-      assertEquals( 4, wicaChannelName.getInstance() );
+      assertFalse( wicaChannelName.getProtocol().isPresent() );
+      assertEquals( 4, wicaChannelName.getInstance().get().intValue() );
       assertEquals( "abc##4", wicaChannelName.asString() );
       logger.info( "WicaChannelName looks like this '{}' ", wicaChannelName.asString() );
    }
@@ -65,9 +64,9 @@ class WicaChannelNameTest
    {
       WicaChannelName wicaChannelName = WicaChannelName.of( "ca://abc##00006" );
       assertEquals( ControlSystemName.of( "abc" ), wicaChannelName.getControlSystemName() );
-      assertEquals( WicaChannelName.Protocol.CA, wicaChannelName.getProtocol() );
-      assertEquals( 6, wicaChannelName.getInstance() );
-      assertEquals( "abc##6", wicaChannelName.asString() );
+      assertEquals( WicaChannelName.Protocol.CA, wicaChannelName.getProtocol().get() );
+      assertEquals( 6, wicaChannelName.getInstance().get().intValue() );
+      assertEquals( "ca://abc##00006", wicaChannelName.asString() );
       logger.info( "WicaChannelName looks like this '{}' ", wicaChannelName.asString() );
    }
 
@@ -76,9 +75,9 @@ class WicaChannelNameTest
    {
       WicaChannelName wicaChannelName = WicaChannelName.of( "pv://abc##00006" );
       assertEquals( ControlSystemName.of( "abc" ), wicaChannelName.getControlSystemName() );
-      assertEquals( WicaChannelName.Protocol.PV, wicaChannelName.getProtocol() );
-      assertEquals( 6, wicaChannelName.getInstance() );
-      assertEquals( "pv://abc##6", wicaChannelName.asString() );
+      assertEquals( WicaChannelName.Protocol.PV, wicaChannelName.getProtocol().get() );
+      assertEquals( 6, wicaChannelName.getInstance().get().intValue() );
+      assertEquals( "pv://abc##00006", wicaChannelName.asString() );
       logger.info( "WicaChannelName looks like this '{}' ", wicaChannelName.asString() );
    }
 
@@ -87,13 +86,24 @@ class WicaChannelNameTest
    {
       WicaChannelName wicaChannelName = WicaChannelName.of( "abc##0" );
       assertEquals( ControlSystemName.of( "abc" ), wicaChannelName.getControlSystemName() );
-      assertEquals( WicaChannelName.DEFAULT_PROTOCOL, wicaChannelName.getProtocol() );
-      assertEquals( 0, wicaChannelName.getInstance() );
+      assertFalse( wicaChannelName.getProtocol().isPresent() );
+      assertEquals( 0, wicaChannelName.getInstance().get().intValue()  );
       assertEquals( "abc##0", wicaChannelName.asString() );
       logger.info( "WicaChannelName looks like this '{}' ", wicaChannelName.asString() );
    }
 
-/*- Private methods ----------------------------------------------------------*/
+   @Test
+   void test6()
+   {
+      WicaChannelName wicaChannelName = WicaChannelName.of( "abc##1" );
+      assertEquals( ControlSystemName.of( "abc" ), wicaChannelName.getControlSystemName() );
+      assertFalse( wicaChannelName.getProtocol().isPresent() );
+      assertEquals( 1, wicaChannelName.getInstance().get().intValue()  );
+      assertEquals( "abc##1", wicaChannelName.asString() );
+      logger.info( "WicaChannelName looks like this '{}' ", wicaChannelName.asString() );
+   }
+
+   /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

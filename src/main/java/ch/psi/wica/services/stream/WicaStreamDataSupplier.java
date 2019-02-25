@@ -112,7 +112,7 @@ class WicaStreamDataSupplier
    /**
     * Returns a map of all channels and their most recent buffered values obtained
     * through MONITORING the channel's data source.
-    * *
+    *
     * Note: following data acquisition the returned map will be FILTERED according
     * to the rules defined for each channel.
     *

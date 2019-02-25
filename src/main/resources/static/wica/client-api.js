@@ -9,7 +9,20 @@ import {StreamManager} from "./stream-manager.js";
 import {PlotBuffer} from "./plot-buffer.js";
 
 export {
+
+    /**
+     * Provides a facility to buffer the received information for one or more wica-aware elements,
+     * subsequently making it available to third-parties who may wish to poll for it.
+     */
     PlotBuffer,
+
+    /**
+     * Provides support for creating a new WicaStream on the Wica server, for subscribing to it and for
+     * publishing the received information.
+     */
     StreamManager,
+
     DocumentSupportLoader
 }
+
+const plotBuffer = new PlotBuffer();

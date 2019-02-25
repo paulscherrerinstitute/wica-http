@@ -8,7 +8,7 @@ project whose stated goal was to provide a:
 
 > _**"Simple, but powerful, Channel Access to REST service."**_ 
 
-Wica2 includes the goal of the earlier project but expands the vision to target the following primary use case:
+Wica2 includes the goal of the earlier project but expands the vision to target the following use case:
 
 > _**"Create some software that will enable an end-user to easily create their own customised web pages that
 show the evolving, live status of one or more EPICS channels of interest."**_

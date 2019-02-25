@@ -185,7 +185,8 @@ export class StreamManager
             }
         };
 
-        // Now send off the request
+        // Now send off the request. Note async is FALSE so that the page does not
+        // get a chance to unload before the request has been sent.
         const deleteUrl = this.serverUrl + "/ca/streams/" + streamId;
         xhttp.withCredentials = true;
         xhttp.open("DELETE", deleteUrl, false );

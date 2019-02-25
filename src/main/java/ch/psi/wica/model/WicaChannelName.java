@@ -8,6 +8,7 @@ import org.apache.commons.lang3.Validate;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,27 +22,26 @@ public class WicaChannelName
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   static final Protocol DEFAULT_PROTOCOL = Protocol.CA;
-   static final int DEFAULT_INSTANCE = 0;
-
    private static final String PROTOCOL_REGEX = "(?<protocol>ca://|pv://)";
-   private static final String CSNAME_REGEX = "(?<csname>[A-Z|a-z|0-9|:|_|\\-|<|>]+)";
+   private static final String CSNAME_REGEX = "(?<csname>[A-Za-z0-9:_\\-<>]+)";
    private static final String INSTANCE_REGEX = "(?<instance>##[0-9]+)";
    private static final String WICA_CHANNEL_NAME_FORMAT = PROTOCOL_REGEX + "?" + CSNAME_REGEX + INSTANCE_REGEX + "?";
    private static final Pattern pattern = Pattern.compile( WICA_CHANNEL_NAME_FORMAT );
 
    private final Protocol protocol;
    private final ControlSystemName controlSystemName;
-   private final int instance;
+   private final Integer instance;
+   private final String stringRepresentation;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelName( Protocol protocol, ControlSystemName controlSystemName, int instance )
+   public WicaChannelName( Protocol protocol, ControlSystemName controlSystemName, Integer instance, String strSpecifier )
    {
       this.protocol = protocol;
       this.controlSystemName = Validate.notNull( controlSystemName );
       this.instance = instance;
+      this.stringRepresentation = strSpecifier;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -50,35 +50,37 @@ public class WicaChannelName
    {
       final Matcher matcher = pattern.matcher( strSpecifier );
 
-      Validate.isTrue( matcher.matches() );
+      Validate.isTrue( matcher.matches(), "The string: '" + strSpecifier + "' was not a valid channel name." );
 
       // The protocol token may or man not be present. When not present we choose the default.
       final Protocol protocol = matcher.group("protocol" ) == null ?
-            DEFAULT_PROTOCOL : Protocol.of( matcher.group ("protocol" ) );
+            null : Protocol.of( matcher.group ("protocol" ) );
 
       // The csname token MUST be present so we just grab it.
       final ControlSystemName csName = ControlSystemName.of( matcher.group( "csname" ) );
 
       // The instance token may or may not be present. When not present we choose the default.
-      final int instance = matcher.group("instance" ) == null ?
-            DEFAULT_INSTANCE : Integer.parseInt( matcher.group("instance" ).split( "##" )[ 1] );
+      final Integer instance = matcher.group("instance" ) == null ?
+            null : Integer.parseInt( matcher.group("instance" ).split( "##" )[ 1] );
 
-      return new WicaChannelName( protocol, csName, instance );
+      return new WicaChannelName( protocol, csName, instance, strSpecifier );
    }
 
 /*- Public methods -----------------------------------------------------------*/
 
-   public Protocol getProtocol()
+   public Optional<Protocol> getProtocol()
    {
-      return protocol;
+      return Optional.ofNullable( protocol );
    }
+
    public ControlSystemName getControlSystemName()
    {
       return controlSystemName;
    }
-   public int getInstance()
+
+   public Optional<Integer> getInstance()
    {
-      return instance;
+      return Optional.ofNullable( instance );
    }
 
    /**
@@ -88,9 +90,7 @@ public class WicaChannelName
     */
    public String asString()
    {
-      final String prot = protocol == DEFAULT_PROTOCOL ? "" : protocol.getName();
-      final String inst = instance == DEFAULT_INSTANCE ? "" : "##" + String.valueOf( instance );
-      return prot + controlSystemName.asString() + inst;
+      return stringRepresentation;
    }
 
    /**
@@ -105,16 +105,15 @@ public class WicaChannelName
       return asString();
    }
 
-
    @Override
    public boolean equals( Object o )
    {
       if ( this == o ) return true;
       if ( !(o instanceof WicaChannelName) ) return false;
       WicaChannelName that = (WicaChannelName) o;
-      return instance == that.instance &&
-            protocol == that.protocol &&
-            Objects.equals(controlSystemName, that.controlSystemName);
+      return protocol == that.protocol &&
+            Objects.equals(controlSystemName, that.controlSystemName) &&
+            Objects.equals(instance, that.instance);
    }
 
    @Override

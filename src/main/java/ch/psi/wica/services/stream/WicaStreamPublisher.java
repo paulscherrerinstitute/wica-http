@@ -79,12 +79,14 @@ public class WicaStreamPublisher
       Validate.validState( combinedFlux == null, "the flux is already activated" );
 
       final Flux<ServerSentEvent<String>> heartbeatFlux = createHeartbeatFlux();
-      final Flux<ServerSentEvent<String>> channelMetadataFlux = createMetadataFlux();
+      final Flux<ServerSentEvent<String>> metadataFlux = createMetadataFlux();
+      final Flux<ServerSentEvent<String>> initialValueFlux = createChannelInitialValueFlux();
       final Flux<ServerSentEvent<String>> changedValueFlux = createChangedValueFlux();
       final Flux<ServerSentEvent<String>> polledValueFlux = createPolledValueFlux();
 
       // Create a single Flux which merges all of the above.
-      combinedFlux = heartbeatFlux.mergeWith( channelMetadataFlux )
+      combinedFlux = heartbeatFlux.mergeWith( metadataFlux )
+                                  .mergeWith( initialValueFlux )
                                   .mergeWith( changedValueFlux )
                                   .mergeWith( polledValueFlux )
                                   .doOnComplete( () -> logger.warn( "Wica combinedflux completed" ))
@@ -179,7 +181,32 @@ public class WicaStreamPublisher
    }
 
    /**
-    *  Creates the CHANNEL CHANGED VALUE FLUX.
+    * Create the CHANNEL INITIAL VALUE FLUX.
+    *
+    * The purpose of this flux is to publish the last received value for ALL channels
+    * in the stream.
+    *
+    * This flux runs just once and delivers its payload on initial connection to the stream.
+    *
+    * @return the flux.
+    */
+   private Flux<ServerSentEvent<String>> createChannelInitialValueFlux()
+   {
+      return Flux.range(1, 1)
+            .map(l -> {
+               logger.trace("channel-value flux is publishing new SSE...");
+               var map = wicaStreamDataSupplier.getNotifiedValues( wicaStream );
+               final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
+               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUES_INITIAL.build( wicaStreamId, jsonServerSentEventString );
+            } )
+            .doOnComplete( () -> logger.warn( "channel-initial-values flux completed" ))
+            .doOnCancel( () -> logger.warn("channel-initial-values flux was cancelled"))
+            .doOnError( (e) -> logger.warn( "channel-initial-values flux had error {}", e ));
+      //.log();
+   }
+
+   /**
+    * Creates the CHANNEL CHANGED VALUE FLUX.
     *
     * The purpose of this flux is to publish the last received values for any channels
     * which have received monitor notifications since the last update.
