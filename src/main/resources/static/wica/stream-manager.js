@@ -12,7 +12,7 @@ export {StreamManager}
 
 /*- Script Execution Starts Here ---------------------------------------------*/
 
-log.debug( "Executing script in stream-manager.js module...");
+log.log( "Executing script in stream-manager.js module...");
 
 /**
  * Callback invoked when the stream connect sequence begins.

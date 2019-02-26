@@ -18,7 +18,7 @@ export { DocumentSupportLoader }
 
 /*- Script Execution Starts Here ---------------------------------------------*/
 
-log.debug( "Executing script in document-support-loader.js module...");
+log.log( "Executing script in document-support-loader.js module...");
 
 /**
  * Provides the functionality necessary to support a wica-aware html page.

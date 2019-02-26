@@ -56,15 +56,15 @@ public class WicaChannelProperties
       this.filterDeadband = DEFAULT_FILTER_DEADBAND;
    }
 
-   public WicaChannelProperties( @JsonProperty( "daqmode"  ) DataAcquisitionMode dataAcquisitionMode,
-                                 @JsonProperty( "pollrat"  ) Integer polledValueSamplingRatio,
-                                 @JsonProperty( "fields"   ) String fieldsOfInterest,
-                                 @JsonProperty( "prec"     ) Integer numericPrecision,
-                                 @JsonProperty( "filter"   ) FilterType filterType,
-                                 @JsonProperty( "n"        ) Integer filterNumSamples,
-                                 @JsonProperty( "m"        ) Integer filterCycleLength,
-                                 @JsonProperty( "interval" ) Integer filterSamplingIntervalInMillis,
-                                 @JsonProperty( "deadband" ) Double filterDeadband )
+   public WicaChannelProperties( @JsonProperty( "daqmode"   ) DataAcquisitionMode dataAcquisitionMode,
+                                 @JsonProperty( "pollratio" ) Integer polledValueSamplingRatio,
+                                 @JsonProperty( "fields"    ) String fieldsOfInterest,
+                                 @JsonProperty( "prec"      ) Integer numericPrecision,
+                                 @JsonProperty( "filter"    ) FilterType filterType,
+                                 @JsonProperty( "n"         ) Integer filterNumSamples,
+                                 @JsonProperty( "m"         ) Integer filterCycleLength,
+                                 @JsonProperty( "interval"  ) Integer filterSamplingIntervalInMillis,
+                                 @JsonProperty( "deadband"  ) Double filterDeadband )
    {
       this.dataAcquisitionMode = dataAcquisitionMode;
       this.polledValueSamplingRatio = polledValueSamplingRatio;

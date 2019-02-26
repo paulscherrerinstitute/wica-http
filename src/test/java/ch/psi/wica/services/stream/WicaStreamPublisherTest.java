@@ -84,7 +84,7 @@ class WicaStreamPublisherTest
    @Test
    void testSubscribeToPollOnlyStream() throws InterruptedException
    {
-      final String configString = "{ \"props\" :   {  \"daqmode\" : \"poll\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"pollrat\" : 1, \"changeint\" : 320 }, " +
+      final String configString = "{ \"props\" :   {  \"daqmode\" : \"poll\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"pollratio\" : 1, \"changeint\" : 320 }, " +
                                     "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" } ] }";
 
       WicaStreamId.resetAllocationSequencer();
@@ -261,7 +261,7 @@ class WicaStreamPublisherTest
    @Test
    void testSubscribeToPollAndMonitorStream() throws InterruptedException
    {
-      final String configString = "{ \"props\" :   {  \"daqmode\" : \"poll-and-monitor\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"pollrat\" : 1, \"changeint\" : 320 }, " +
+      final String configString = "{ \"props\" :   {  \"daqmode\" : \"poll-and-monitor\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"pollratio\" : 1, \"changeint\" : 320 }, " +
                                     "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" } ] }";
 
       WicaStreamId.resetAllocationSequencer();

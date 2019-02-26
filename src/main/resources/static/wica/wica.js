@@ -13,9 +13,9 @@ import * as ClientAPI from "./client-api.js"
 /*- Script Execution Starts Here ---------------------------------------------*/
 
 // Configure the logging level required for this application.
-log.setLevel( LOGGING_LEVEL, logLevels.LOG );
+log.setLevel( log.logLevels.LOG );
 
-log.debug( "Executing script in wica.js module...");
+log.info( "Wica is loading support for the current document... ");
 
 // Define the server this application is intended to target.
 const WICA_HOST="https://gfa-wica-dev.psi.ch";
@@ -27,10 +27,10 @@ documentSupportLoader.activate( 200, 200 );
 
 // Attach a handler to shut things down when the browser navigates away.
 window.onbeforeunload = () => {
-    log.info( "Shutting down wica document support..." );
+    log.info( "Wica is shutting down support for the current document..." );
     documentSupportLoader.shutdown();
-    log.info( "Done." );
+    log.info( "Wica unloaded OK." );
 };
 
-
+log.info( "Wica support loaded OK. ");
 

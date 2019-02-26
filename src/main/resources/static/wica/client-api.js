@@ -33,4 +33,4 @@ export {
 
 /*- Script Execution Starts Here ---------------------------------------------*/
 
-log.debug( "Executing script in client-api.js module...");
+log.log( "Executing script in client-api.js module...");

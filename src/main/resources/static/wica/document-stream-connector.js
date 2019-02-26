@@ -15,7 +15,7 @@ export { DocumentStreamConnector }
 
 /*- Script Execution Starts Here ---------------------------------------------*/
 
-log.debug( "Executing script in document-stream-connector.js module...");
+log.log( "Executing script in document-stream-connector.js module...");
 
 /**
  * Provides real-time updates to wica-aware elements in the current document based on information streamed

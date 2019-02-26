@@ -22,7 +22,7 @@ export { load, parse, stringify };
 
 /*- Script Execution Starts Here ---------------------------------------------*/
 
-log.debug( "Executing script in json5-wrapper.js module...");
+log.log( "Executing script in json5-wrapper.js module...");
 
 /**
  * Wrapper for the JSON5 "flexible" parser that can handle real numbers sent as NaNs, Infinity etc.

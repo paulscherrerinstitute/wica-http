@@ -14,7 +14,7 @@ export { DocumentTextRenderer}
 
 /*- Script Execution Starts Here ---------------------------------------------*/
 
-log.debug( "Executing script in document-text-renderer.js module...");
+log.log( "Executing script in document-text-renderer.js module...");
 
 /**
  * The default precision to be used when rendering a wica-aware widget's text content with a numeric value.

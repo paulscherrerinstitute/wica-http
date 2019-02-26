@@ -90,7 +90,7 @@ public class WicaStreamProperties
    public WicaStreamProperties( @JsonProperty( "heartbeat" ) Integer heartbeatFluxIntervalInMillis,
                                 @JsonProperty( "changeint" ) Integer changedValueFluxIntervalInMillis,
                                 @JsonProperty( "pollint"   ) Integer polledValueFluxIntervalInMillis,
-                                @JsonProperty( "pollrat"   ) Integer polledValueSampleRatio,
+                                @JsonProperty( "pollratio"   ) Integer polledValueSampleRatio,
                                 @JsonProperty( "prec"      ) Integer numericPrecision,
                                 @JsonProperty( "fields"    ) String fieldsOfInterest,
                                 @JsonProperty( "daqmode"   ) WicaChannelProperties.DataAcquisitionMode dataAcquisitionMode )

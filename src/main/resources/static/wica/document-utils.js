@@ -14,7 +14,7 @@ export { findWicaElements, findWicaElementsWithAttributeName,
 
 /*- Script Execution Starts Here ---------------------------------------------*/
 
-log.debug( "Executing script in document-utils.js module...");
+log.log( "Executing script in document-utils.js module...");
 
 /**
  * Finds all "wica-aware" HTML elements in the current document. That's to say, all elements

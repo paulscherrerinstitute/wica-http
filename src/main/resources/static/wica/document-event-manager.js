@@ -16,7 +16,7 @@ export { DocumentEventManager }
 
 /*- Script Execution Starts Here ---------------------------------------------*/
 
-log.debug( "Executing script in document-event-manager.js module...");
+log.log( "Executing script in document-event-manager.js module...");
 
 /**
  * Provides a type definition for a JS CustomEvent object that is fired to inform observers of the

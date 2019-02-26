@@ -132,8 +132,6 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-XXXX](https://jira.psi.ch/browse/CTRLIT-XXXX): XXXX
 
 
-
-
 # Project Ideas Completed
 
 1. Consider refactoring so that the app only uses one context (channels can then be cached and shared between 

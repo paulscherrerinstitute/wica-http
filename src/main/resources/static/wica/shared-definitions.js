@@ -14,7 +14,7 @@ export { WicaElementEventAttributes, WicaElementConnectionAttributes,
 
 /*- Script Execution Starts Here ---------------------------------------------*/
 
-log.debug( "Executing script in shared-definitions.js module...");
+log.log( "Executing script in shared-definitions.js module...");
 
 /*---------------------------------------------------------------------------*/
 /* 1.0 SHARED TYPEDEFS                                                       */
@@ -257,7 +257,7 @@ const WicaRenderingProperties = Object.freeze ({
  * @property {number} [pollint=100] The interval in milliseconds between channel value messages
  *     where the data acquisition mode is polling.
  * @property {number} [daqmode=monitor] - The default data acquisition mode.
- * @property {number} [pollrat=1] - The default number of polling cycles before a sample is taken.
+ * @property {number} [pollratio=1] - The default number of polling cycles before a sample is taken.
  * @property {number} [prec=6] - The precision (= number of digits after the decimal point) to be used when
  *     sending numeric information.
  * @property {string} [fields=val;sevr] - A semicolon delimited list defining the data fields that
@@ -269,7 +269,7 @@ const WicaStreamProperties = Object.freeze ({
     changeint: 100,
     pollint: 1000,
     daqmode: "monitor",
-    pollrat: 1,
+    pollratio: 1,
     prec: 6,
     fields: "val;sevr"
 } );
@@ -279,7 +279,7 @@ const WicaStreamProperties = Object.freeze ({
  *
  * @property {number} [daqmode] - The data acquisition mode. Optional parameter which overrides
  *     property set on the stream.
- * @property {number} [pollrat] - The number of polling cycles before a sample is taken.
+ * @property {number} [pollratio] - The number of polling cycles before a sample is taken.
  * @property {string} [fields] - A semicolon delimited list defining the data fields that
  *    should be included when sending value information for this channel.
  * @property {number} [prec] - The precision (= number of digits after the decimal point) to be
@@ -297,7 +297,7 @@ const WicaStreamProperties = Object.freeze ({
  */
 const WicaChannelProperties = Object.freeze ({
     daqmode: null,
-    pollrat: null,
+    pollratio: null,
     fields: null,
     prec: null,
     filter: "last-n",

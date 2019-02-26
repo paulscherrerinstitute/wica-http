@@ -19,7 +19,7 @@ export {PlotBuffer}
 
 /*- Script Execution Starts Here ---------------------------------------------*/
 
-log.debug( "Executing script in plot-buffer.js module...");
+log.log( "Executing script in plot-buffer.js module...");
 
 class PlotBuffer
 {
