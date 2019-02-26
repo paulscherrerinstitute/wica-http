@@ -2,24 +2,28 @@
  * Loads the services that are required to provide Wica support for the current HTML document.
  * @module
  */
-console.debug( "Executing script in document-support-loader.js module...");
 
-import {
-    WicaElementConnectionAttributes,
-    WicaElementEventAttributes,
-    WicaElementRenderingAttributes,
-    WicaStreamProperties
-} from './shared-definitions.js';
+/*- Import/Export Declarations -----------------------------------------------*/
+
+import * as log from "./logger.js"
+import { WicaElementConnectionAttributes, WicaElementEventAttributes,
+         WicaElementRenderingAttributes, WicaStreamProperties} from './shared-definitions.js';
 
 import {DocumentStreamConnector} from "./document-stream-connector.js";
 import {DocumentTextRenderer} from "./document-text-renderer.js";
 import {DocumentEventManager} from "./document-event-manager.js";
 import * as JsonUtilities from "./json5-wrapper.js";
 
+export { DocumentSupportLoader }
+
+/*- Script Execution Starts Here ---------------------------------------------*/
+
+log.debug( "Executing script in document-support-loader.js module...");
+
 /**
  * Provides the functionality necessary to support a wica-aware html page.
  */
-export class DocumentSupportLoader
+class DocumentSupportLoader
 {
     /**
      * Constructs a new instance to work with the specified Wica Server.

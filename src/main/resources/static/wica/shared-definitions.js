@@ -3,6 +3,19 @@
  * @module
  */
 
+/*- Import/Export Declarations -----------------------------------------------*/
+
+import * as log from "./logger.js"
+
+export { WicaElementEventAttributes, WicaElementConnectionAttributes,
+         WicaElementRenderingAttributes, WicaRenderingProperties,
+         WicaStreamProperties, WicaChannelProperties }
+
+
+/*- Script Execution Starts Here ---------------------------------------------*/
+
+log.debug( "Executing script in shared-definitions.js module...");
+
 /*---------------------------------------------------------------------------*/
 /* 1.0 SHARED TYPEDEFS                                                       */
 /*---------------------------------------------------------------------------*/
@@ -139,7 +152,7 @@
  * @property {string} eventHandler="onchange" - The name of the attribute which will be
  *     examined to look for a wica custom event handler.
  */
-export const WicaElementEventAttributes = Object.freeze ({
+const WicaElementEventAttributes = Object.freeze ({
     eventHandler: "onchange"
 } );
 
@@ -183,7 +196,7 @@ export const WicaElementEventAttributes = Object.freeze ({
  *     the alarm status most recently obtained from the channel. Format: JS number literal with possible values:
  *     [ 0 (= "NO_ALARM"), 1 (= "MINOR_ALARM"), 2 (= "MAJOR_ALARM"), 3 (= "INVALID_ALARM") ].
  */
-export const WicaElementConnectionAttributes = Object.freeze ({
+const WicaElementConnectionAttributes = Object.freeze ({
     streamState:            "data-wica-stream-state",
     channelName:            "data-wica-channel-name",
     channelProperties:      "data-wica-channel-props",
@@ -208,7 +221,7 @@ export const WicaElementConnectionAttributes = Object.freeze ({
  *     representing JS {@link module:shared-definitions.WicaRenderingProperties WicaRenderingProperties}
  *     object.
  */
-export const WicaElementRenderingAttributes = Object.freeze ({
+const WicaElementRenderingAttributes = Object.freeze ({
     tooltip:             "data-wica-tooltip",
     renderingProperties: "data-wica-rendering-props"
 } );
@@ -227,7 +240,7 @@ export const WicaElementRenderingAttributes = Object.freeze ({
  * @property {number} [prec=8] - The precision (= number of digits after the decimal point) to be used for
  *     channels which return numeric data.
  */
-export const WicaRenderingProperties = Object.freeze ({
+const WicaRenderingProperties = Object.freeze ({
     disable: false,
     exp: false,
     prec: 8,
@@ -251,7 +264,7 @@ export const WicaRenderingProperties = Object.freeze ({
  *    should be included by default in the stream of WicaChannelValues. Can be overridden by individual
  *    settings in the WicaChannelProperties object.
  */
-export const WicaStreamProperties = Object.freeze ({
+const WicaStreamProperties = Object.freeze ({
     heartbeat: 15000,
     changeint: 100,
     pollint: 1000,
@@ -282,7 +295,7 @@ export const WicaStreamProperties = Object.freeze ({
  * @property {string} [deadband=1.0] - The filter deadband.
  *     See {@link module:shared-definitions.WicaChannelFilterTypeChangeFilteringSampler WicaChannelFilterTypeChangeFilteringSampler}.
  */
-export const WicaChannelProperties = Object.freeze ({
+const WicaChannelProperties = Object.freeze ({
     daqmode: null,
     pollrat: null,
     fields: null,

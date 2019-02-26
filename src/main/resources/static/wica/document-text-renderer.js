@@ -2,10 +2,19 @@
  * Provides support for rendering the textual content of wica-aware elements in the current document.
  * @module
  */
-console.debug( "Executing script in document-text-renderer.js module...");
 
+/*- Import/Export Declarations -----------------------------------------------*/
+
+import * as log from "./logger.js"
 import * as DocumentUtilities from './document-utils.js'
 import * as JsonUtilities from './json5-wrapper.js'
+
+export { DocumentTextRenderer}
+
+
+/*- Script Execution Starts Here ---------------------------------------------*/
+
+log.debug( "Executing script in document-text-renderer.js module...");
 
 /**
  * The default precision to be used when rendering a wica-aware widget's text content with a numeric value.
@@ -16,7 +25,7 @@ const DEFAULT_PRECISION = 8;
  * Renders the visual state of wica-aware elements in the current document based on attribute information
  * obtained from the Wica server on the backend.
  */
-export class DocumentTextRenderer
+class DocumentTextRenderer
 {
     /**
      * Constructs a new instance.
@@ -140,7 +149,7 @@ export class DocumentTextRenderer
             // Bail out if the value obtained from the stream was not an array
             if ( ! Array.isArray( channelValueArray ) )
             {
-                console.warn("Stream error: received value object that was not an array !");
+                log.warn("Stream error: received value object that was not an array !");
                 return;
             }
 
@@ -314,7 +323,7 @@ export class DocumentTextRenderer
             }
         }
         vDebug += "Details: [" + err.toString() + "]";
-        console.warn( msg + vDebug );
+        log.warn( msg + vDebug );
     }
 
 }

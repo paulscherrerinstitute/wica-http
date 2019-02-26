@@ -2,17 +2,26 @@
  * Provides support for updating the current document with live information from the data sources on the backend.
  * @module
  */
-console.debug( "Executing script in document-stream-connector.js module...");
 
+/*- Import/Export Declarations -----------------------------------------------*/
+
+import * as log from "./logger.js"
 import {StreamManager} from './stream-manager.js'
 import * as DocumentUtilities from './document-utils.js'
 import * as JsonUtilities from './json5-wrapper.js'
+
+export { DocumentStreamConnector }
+
+
+/*- Script Execution Starts Here ---------------------------------------------*/
+
+log.debug( "Executing script in document-stream-connector.js module...");
 
 /**
  * Provides real-time updates to wica-aware elements in the current document based on information streamed
  * from the Wica server on the backend.
  */
-export class DocumentStreamConnector
+class DocumentStreamConnector
 {
     /**
      * Constructs a new instance to work with the specified backend server.
@@ -84,25 +93,25 @@ export class DocumentStreamConnector
     configureStreamConnectionHandlers_( streamConnectionStateAttribute )
     {
         this.streamConnectionHandlers.streamConnect = (count) => {
-            log.warn("Event stream connect: " + count );
-            log.warn("Setting wica stream state on all html elements to: 'connect-" + count + "'" );
+            log.info( "Event stream connect: " + count );
+            log.info( "Setting wica stream state on all html elements to: 'connect-" + count + "'" );
             DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "connect-" + count ) );
         };
 
         this.streamConnectionHandlers.streamOpened = (id) => {
-            log.warn("Event stream opened: " + id);
-            log.warn("Setting wica stream state on all html elements to: 'opened-" + id + "'" );
+            log.info( "Event stream opened: " + id);
+            log.info( "Setting wica stream state on all html elements to: 'opened-" + id + "'" );
             DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "opened-" + id));
             this.lastOpenedStreamId = id;
         };
 
         this.streamConnectionHandlers.streamClosed = (id) => {
-            log.log("Event stream closed: " + id);
+            log.info("Event stream closed: " + id);
             if ( id === this.lastOpenedStreamId ) {
-                log.warn("Setting wica stream state on all html elements to: 'closed'");
+                log.info("Setting wica stream state on all html elements to: 'closed'");
                 DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "closed-" + id));
             } else {
-                log.warn("Wica stream state on all html elements will be left unchanged as a newer event source is already open !");
+                log.info("Wica stream state on all html elements will be left unchanged as a newer event source is already open !");
             }
         };
     }
@@ -160,7 +169,7 @@ export class DocumentStreamConnector
     {
         // Look for all wica-aware elements in the current page
         const wicaElements = DocumentUtilities.findWicaElements();
-        log.log( "Number of Wica elements found: ", wicaElements.length );
+        log.info( "Number of Wica elements found: ", wicaElements.length );
 
         // Create an array of the associated channel names
         const channels = [];
@@ -193,7 +202,7 @@ export class DocumentStreamConnector
      */
     updateDocumentMetadataAttributes_( metadataMap, channelMetadataAttribute )
     {
-        log.log("Event stream received new channel metadata map.");
+        log.trace("Event stream received new channel metadata map.");
 
         // Go through all the elements in the update object and assign each element's metadata to
         // the element's metadata attribute.
@@ -204,7 +213,7 @@ export class DocumentStreamConnector
             const metadataAsString = JsonUtilities.stringify(channelMetadata);
             elements.forEach(ele => {
                 ele.setAttribute( channelMetadataAttribute, metadataAsString);
-                log.log( "Metadata updated on channel: '" + key + "', new value: '" + metadataAsString + "'" );
+                log.info( "Metadata updated on channel: '" + key + "', new value: '" + metadataAsString + "'" );
             });
         });
     }
@@ -222,7 +231,7 @@ export class DocumentStreamConnector
     updateDocumentValueAttributes_( valueMap, channelValueArrayAttribute, channelValueLatestAttribute,
                                     channelConnectionStateAttribute, channelAlarmStateAttribute )
     {
-        //log.log( "WicaStream received new channel value map.");
+        log.trace( "WicaStream received new channel value map.");
 
         // Go through all the elements in the update object and assign each element's value information
         // to the relevant element attributes.
@@ -245,7 +254,7 @@ export class DocumentStreamConnector
                 ele.setAttribute( channelValueLatestAttribute, channelValueLatestAsString);
                 ele.setAttribute( channelConnectionStateAttribute, channelConnectionState);
                 ele.setAttribute( channelAlarmStateAttribute, channelValueLatest.sevr);
-                //log.log("Value updated: " + channelValueLatest);
+                log.log( "Value updated on channel: '" + key + "', new value: '" + channelValueLatest + "'" );
             });
         });
     };

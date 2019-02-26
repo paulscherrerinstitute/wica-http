@@ -2,9 +2,17 @@
  * Provides support for creating and using Wica streams.
  * @module
  */
-console.debug( "Executing script in stream-manager.js module...");
 
+/*- Import/Export Declarations -----------------------------------------------*/
+
+import * as log from "./logger.js"
 import * as JsonUtilities from './json5-wrapper.js'
+
+export {StreamManager}
+
+/*- Script Execution Starts Here ---------------------------------------------*/
+
+log.debug( "Executing script in stream-manager.js module...");
 
 /**
  * Callback invoked when the stream connect sequence begins.
@@ -52,7 +60,7 @@ import * as JsonUtilities from './json5-wrapper.js'
  * Provides support for creating a new WicaStream on the Wica server, for subscribing to it and for
  * publishing the received information.
  */
-export class StreamManager
+class StreamManager
 {
     /**
      * Constructs a new instance.
@@ -171,17 +179,17 @@ export class StreamManager
 
         // Add a handler which will print an error message if the stream couldn't be deleted.
         xhttp.onerror = () => {
-            console.warn( "XHTTP error when sending request to delete event source" );
+            log.warn( "XHTTP error when sending request to delete event source" );
         };
 
         // Add a handler which will subscribe to the stream once it has been created.
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status === 200) {
                 const deletedId = xhttp.responseText;
-                console.warn( "Stream deleted, deleted id was: ", deletedId );
+                log.info( "Stream deleted, deleted id was: ", deletedId );
             }
             if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status !== 200) {
-                console.warn( "Error when sending delete stream request." );
+                log.warn( "Error when sending delete stream request." );
             }
         };
 
@@ -204,13 +212,13 @@ export class StreamManager
         const ONE_SECOND_IN_TIMER_UNITS = 1000;
         this.intervalTimer = setInterval( () => {
             if ( this.countdownInSeconds === 0 ) {
-                console.warn("Event source 'stream': creating new...");
+                log.info( "Event source 'stream': creating new...");
                 // Set up an asynchronous chain of events that will create a stream
                 // then subscribe to it, then start monitoring it. If the heartbeat
                 // signal is not seen the process will repeat itself after the
                 // heartbeat interval timeout.
                 this.createStream_();
-                console.warn("Event source: 'stream' - OK: create event stream task started");
+                log.info( "Event source: 'stream' - OK: create event stream task started");
                 this.countdownInSeconds = this.streamReconnectIntervalInSeconds;
             }
             this.countdownInSeconds--;
@@ -232,19 +240,19 @@ export class StreamManager
 
         // Add a handler which will print an error message if the stream couldn't be created.
         xhttp.onerror = () => {
-            console.warn( "XHTTP error when sending request to create event source" );
+            log.warn( "XHTTP error when sending request to create event source" );
         };
 
         // Add a handler which will subscribe to the stream once it has been created.
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status === 200) {
                 const streamId = xhttp.responseText;
-                console.warn( "Stream created, returned id is: ", streamId );
+                log.info( "Stream created, returned id is: ", streamId );
                 const subscribeUrl = this.serverUrl + "/ca/streams/" + streamId;
                 this.subscribeStream_( subscribeUrl );
             }
             if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status !== 200) {
-                console.warn( "Error when sending create stream request." );
+                log.warn( "Error when sending create stream request." );
             }
         };
 
@@ -276,7 +284,7 @@ export class StreamManager
         eventSource.addEventListener( 'ev-wica-server-heartbeat', ev => {
             if ( this.crossOriginCheckOk_( ev ) ) {
                 const id = StreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
-                console.warn("Event source: 'wica stream' - heartbeat event on stream with id: " + id );
+                log.info( "Event source: 'wica stream' - heartbeat event on stream with id: " + id );
                 this.countdownInSeconds = this.streamTimeoutIntervalInSeconds;
             }
         }, false) ;
@@ -300,7 +308,7 @@ export class StreamManager
             if ( this.crossOriginCheckOk_( ev ) ) {
                 const id = StreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
                 this.streamOpened( id );
-                console.warn("Event source: 'wica stream' - open event on stream with id: " + id );
+                log.info( "Event source: 'wica stream' - open event on stream with id: " + id );
                 this.activeStreamId = id;
             }
         }, false);
@@ -308,7 +316,7 @@ export class StreamManager
         eventSource.addEventListener( 'error', ev => {
             if ( this.crossOriginCheckOk_( ev ) ) {
                 const id = StreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
-                console.warn("Event source: 'wica stream'  - error event on stream with id: " + id );
+                log.warn("Event source: 'wica stream'  - error event on stream with id: " + id );
                 ev.target.close();  // close the event source that triggered this message
                 this.streamClosed( id );
             }
@@ -335,7 +343,7 @@ export class StreamManager
             return true;
         }
         else {
-            console.warn( "Event source: 'stream' unexpected event origin." );
+            log.warn( "Event source: 'stream' unexpected event origin." );
             return false;
         }
     }

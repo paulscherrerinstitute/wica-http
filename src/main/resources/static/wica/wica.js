@@ -3,30 +3,34 @@
  *
  * @module
  */
-console.debug( "Executing script in wica.js module...");
 
-import * as Picolog from "./picolog-wrapper.js"
+/*- Import/Export Declarations -----------------------------------------------*/
+
+import * as log from "./logger.js"
 import * as ClientAPI from "./client-api.js"
 
+
+/*- Script Execution Starts Here ---------------------------------------------*/
+
+// Configure the logging level required for this application.
+log.setLevel( LOGGING_LEVEL, logLevels.LOG );
+
+log.debug( "Executing script in wica.js module...");
+
+// Define the server this application is intended to target.
 const WICA_HOST="https://gfa-wica-dev.psi.ch";
 
-var documentSupportLoader;
+// Create and activate a document support loader for the document
+// which loads this library.
+const documentSupportLoader = new ClientAPI.DocumentSupportLoader( WICA_HOST );
+documentSupportLoader.activate( 200, 200 );
 
-Picolog.load(() => {
-
-    // The logging library needs to load before everything else
-    // Once it has loaded we can pull in the other modules.
-    log.info( "Picolog library loaded ok !!" );
-
-    // Create and activate a document support loader to server this document
-    documentSupportLoader = new ClientAPI.DocumentSupportLoader( WICA_HOST );
-    documentSupportLoader.activate( 200, 200 );
-} );
-
-
-// Attach a handler to shut things down when the browser navigates away
+// Attach a handler to shut things down when the browser navigates away.
 window.onbeforeunload = () => {
     log.info( "Shutting down wica document support..." );
     documentSupportLoader.shutdown();
     log.info( "Done." );
 };
+
+
+

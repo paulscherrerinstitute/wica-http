@@ -4,10 +4,19 @@
  *
  * @module
  */
-console.debug( "Executing script in document-event-manager.js module...");
 
+/*- Import/Export Declarations -----------------------------------------------*/
+
+import * as log from "./logger.js"
 import * as DocumentUtilities from './document-utils.js'
 import * as JsonUtilities from './json5-wrapper.js'
+
+export { DocumentEventManager }
+
+
+/*- Script Execution Starts Here ---------------------------------------------*/
+
+log.debug( "Executing script in document-event-manager.js module...");
 
 /**
  * Provides a type definition for a JS CustomEvent object that is fired to inform observers of the
@@ -38,7 +47,7 @@ import * as JsonUtilities from './json5-wrapper.js'
  * OnWicaEvent} to inform the attached observers of the latest status received from the wica event
  * stream.
  */
-export class DocumentEventManager
+class DocumentEventManager
 {
     /**
      * Constructs a new instance.
@@ -177,7 +186,7 @@ export class DocumentEventManager
 
             // Check that the received value object really was an array
             if (!Array.isArray( channelValueArray )) {
-                console.warn("Stream error: received value object was not an array !");
+                log.warn("Stream error: received value object was not an array !");
                 return;
             }
 
@@ -230,7 +239,6 @@ export class DocumentEventManager
             }
         }
         vDebug += "Details: [" + err.toString() + "]";
-        console.warn( msg + vDebug );
+        log.warn( msg + vDebug );
     }
-
 }

@@ -2,16 +2,19 @@
  * Provides helper functions for wica-aware html pages.
  * @module
  */
-console.debug( "Executing script in document-utils.js module...");
 
+/*- Import/Export Declarations -----------------------------------------------*/
+
+import * as log from "./logger.js"
 import {WicaElementConnectionAttributes} from './shared-definitions.js';
 
-export {
-    findWicaElements,
-    findWicaElementsWithAttributeName,
-    findWicaElementsWithChannelName,
-    findWicaElementsWithAttributeValue
-}
+export { findWicaElements, findWicaElementsWithAttributeName,
+         findWicaElementsWithChannelName, findWicaElementsWithAttributeValue }
+
+
+/*- Script Execution Starts Here ---------------------------------------------*/
+
+log.debug( "Executing script in document-utils.js module...");
 
 /**
  * Finds all "wica-aware" HTML elements in the current document. That's to say, all elements

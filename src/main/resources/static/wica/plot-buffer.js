@@ -3,16 +3,25 @@
 *
 * @module
 */
-console.debug( "Executing script in plot-buffer.js module...");
 
+/*- Import/Export Declarations -----------------------------------------------*/
+
+import * as log from "./logger.js"
 import * as JsonUtilities from './json5-wrapper.js'
 import {WicaElementConnectionAttributes} from './shared-definitions.js';
+
+export {PlotBuffer}
 
 /**
  * Provides a facility to buffer the received information for one or more wica-aware elements,
  * subsequently making it available to third-parties who may wish to poll for it.
  */
-export class PlotBuffer
+
+/*- Script Execution Starts Here ---------------------------------------------*/
+
+log.debug( "Executing script in plot-buffer.js module...");
+
+class PlotBuffer
 {
 
     /**
@@ -45,12 +54,12 @@ export class PlotBuffer
                 }
                 else
                 {
-                    console.warn( "One or more element ID's did not correspond to a wica-aware element" );
+                    log.warn( "One or more element ID's did not correspond to a wica-aware element" );
                 }
             }
             else
             {
-                console.warn( "One or more element ID's were not found " );
+                log.warn( "One or more element ID's were not found " );
             }
         }
 
@@ -197,7 +206,7 @@ export class PlotBuffer
                     this.updateBufferedChannelValues_( channelName, valueArray );
                 }
 
-                // console.log( "Mutation on attribute: '" + mutation.attributeName + "' of wica element: '" + channelName + "'" );
+                log.trace( "Mutation on attribute: '" + mutation.attributeName + "' of wica element: '" + channelName + "'" );
             }
         } );
     }

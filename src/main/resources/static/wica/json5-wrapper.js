@@ -2,10 +2,9 @@
  * Provides support for parsing and stringifying JSON5.
  * @module
  */
-console.info( "Executing script in json5-wrapper.js module...");
 
 /**
- * This module causes the browser to load the JSON5 library (thereby,
+ * This module causes the browser to load the JSON5 library as a script (thereby,
  * as a side-effect, making it available in the Global memory space).
  *
  * Critical functions of the library are wrapped and exported for use
@@ -15,7 +14,15 @@ console.info( "Executing script in json5-wrapper.js module...");
  * The current implementation is from JSON5.org. See: https://json5.org/
  */
 
+/*- Import/Export Declarations -----------------------------------------------*/
+
+import * as log from "./logger.js"
 export { load, parse, stringify };
+
+
+/*- Script Execution Starts Here ---------------------------------------------*/
+
+log.debug( "Executing script in json5-wrapper.js module...");
 
 /**
  * Wrapper for the JSON5 "flexible" parser that can handle real numbers sent as NaNs, Infinity etc.
@@ -33,7 +40,7 @@ export { load, parse, stringify };
  *
  * @return {*} the object corresponding to the given JSON5 text.
  */
-function parse( text, reviver )
+const parse = function parse( text, reviver )
 {
     if ( isLibraryLoaded_() )
     {
@@ -45,7 +52,7 @@ function parse( text, reviver )
         log.warn( msg );
         throw Error( msg );
     }
-}
+};
 
 /**
  * Wrapper for the JSON5 alternative stringifier.
@@ -75,7 +82,7 @@ function parse( text, reviver )
  *
  * @return {string} A JSON5 string representing the value.
  */
-function stringify( value, replacer, space )
+const stringify = function( value, replacer, space )
 {
     if ( isLibraryLoaded_() )
     {
@@ -87,14 +94,14 @@ function stringify( value, replacer, space )
         log.warn( msg );
         throw Error( msg );
     }
-}
+};
 
 /**
  * Loads the library. Invokes the callback handler when complete.
  *
  * @param callback the handler to callback when the library is loaded.
  */
-function load( callback )
+const load = function( callback )
 {
     if ( ! getAndSetLibraryLoadStarted_() )
     {
@@ -121,7 +128,7 @@ function load( callback )
             log.info( "JSON5 wrapper library is now loaded.");
         }
     }
-}
+};
 
 function getAndSetLibraryLoadStarted_()
 {

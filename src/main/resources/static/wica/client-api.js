@@ -2,8 +2,10 @@
  * Provides the entrypoint API for leveraging all functionality associated with Wica.
  * @module
  */
-console.debug( "Executing script in client-api.js module...");
 
+/*- Import/Export Declarations -----------------------------------------------*/
+
+import * as log from "./logger.js"
 import {DocumentSupportLoader} from "./document-support-loader.js";
 import {StreamManager} from "./stream-manager.js";
 import {PlotBuffer} from "./plot-buffer.js";
@@ -27,3 +29,8 @@ export {
      */
     DocumentSupportLoader
 }
+
+
+/*- Script Execution Starts Here ---------------------------------------------*/
+
+log.debug( "Executing script in client-api.js module...");
