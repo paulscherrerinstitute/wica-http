@@ -11,26 +11,31 @@ export { logLevels, setLevel, trace, debug, log, info, warn, error };
 
 /*- Script Execution Starts Here ---------------------------------------------*/
 
-console.log( "Executing script in logger.js module...");
+setLevel( logLevels.DEFAULT );
+log( "Executing script in logger.js module...");
 
 /**
- * Defines the integer values associated with the available logging levels.
- * @type {{TRACE: number,
- *         LOG: number,
- *         ERROR: number,
- *         NONE: number,
- *         INFO: number,
- *         DEBUG: number,
- *         WARN: number}}
+ * JS Object that defines the available log levels includingthe default that
+ * will be used in the absence of an explict call to the setLevel function.
+ *
+ * @property {number} [NONE = 0]
+ * @property {number} [ERROR = 1]
+ * @property {number} [WARN = 2]
+ * @property {number} [INFO = 3]
+ * @property {number} [LOG = 4]
+ * @property {number} [DEBUG = 5]
+ * @property {number} [TRACE = 6]
+ * @property {number} [DEFAULT = 2]
  */
 const logLevels = {
-    "NONE":  0,
-    "ERROR": 1,
-    "WARN":  2,
-    "INFO":  3,
-    "LOG":   4,
-    "DEBUG": 5,
-    "TRACE": 6
+    "NONE":    0,
+    "ERROR":   1,
+    "WARN":    2,
+    "INFO":    3,
+    "LOG":     4,
+    "DEBUG":   5,
+    "TRACE":   6,
+    "DEFAULT": 2
 };
 
 /**
@@ -107,7 +112,3 @@ const consoleLogMap_ = {
     "trace" : { "level": logLevels[ "TRACE" ], "func": console.trace },
 };
 
-// Set the default log level that will be used in tha absence
-// of an explicit  call to the setLevel function.
-const DEFAULT_LOG_LEVEL = logLevels.INFO;
-setLevel( DEFAULT_LOG_LEVEL );
