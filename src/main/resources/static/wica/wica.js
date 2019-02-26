@@ -13,7 +13,7 @@ import * as ClientAPI from "./client-api.js"
 /*- Script Execution Starts Here ---------------------------------------------*/
 
 // Configure the logging level required for this application.
-log.setLevel( log.logLevels.LOG );
+log.setLevel( log.logLevels.WARN );
 
 log.info( "Wica is loading support for the current document... ");
 
