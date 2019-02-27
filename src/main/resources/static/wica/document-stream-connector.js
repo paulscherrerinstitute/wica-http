@@ -93,25 +93,25 @@ class DocumentStreamConnector
     configureStreamConnectionHandlers_( streamConnectionStateAttribute )
     {
         this.streamConnectionHandlers.streamConnect = (count) => {
-            log.info( "Event stream connect: " + count );
-            log.info( "Setting wica stream state on all html elements to: 'connect-" + count + "'" );
+            log.log( "Event stream connect: " + count );
+            log.log( "Setting wica stream state on all html elements to: 'connect-" + count + "'" );
             DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "connect-" + count ) );
         };
 
         this.streamConnectionHandlers.streamOpened = (id) => {
-            log.info( "Event stream opened: " + id);
-            log.info( "Setting wica stream state on all html elements to: 'opened-" + id + "'" );
+            log.log( "Event stream opened: " + id);
+            log.log( "Setting wica stream state on all html elements to: 'opened-" + id + "'" );
             DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "opened-" + id));
             this.lastOpenedStreamId = id;
         };
 
         this.streamConnectionHandlers.streamClosed = (id) => {
-            log.info("Event stream closed: " + id);
+            log.log("Event stream closed: " + id);
             if ( id === this.lastOpenedStreamId ) {
-                log.info("Setting wica stream state on all html elements to: 'closed'");
+                log.log("Setting wica stream state on all html elements to: 'closed'");
                 DocumentUtilities.findWicaElements().forEach(element => element.setAttribute( streamConnectionStateAttribute, "closed-" + id));
             } else {
-                log.info("Wica stream state on all html elements will be left unchanged as a newer event source is already open !");
+                log.log("Wica stream state on all html elements will be left unchanged as a newer event source is already open !");
             }
         };
     }
@@ -169,7 +169,7 @@ class DocumentStreamConnector
     {
         // Look for all wica-aware elements in the current page
         const wicaElements = DocumentUtilities.findWicaElements();
-        log.info( "Number of Wica elements found: ", wicaElements.length );
+        log.info( "Number of wica-aware elements found in document: ", wicaElements.length );
 
         // Create an array of the associated channel names
         const channels = [];
@@ -213,7 +213,7 @@ class DocumentStreamConnector
             const metadataAsString = JsonUtilities.stringify(channelMetadata);
             elements.forEach(ele => {
                 ele.setAttribute( channelMetadataAttribute, metadataAsString);
-                log.info( "Metadata updated on channel: '" + key + "', new value: '" + metadataAsString + "'" );
+                log.log( "Metadata updated on channel: '" + key + "', new value: '" + metadataAsString + "'" );
             });
         });
     }

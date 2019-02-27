@@ -212,13 +212,13 @@ class StreamManager
         const ONE_SECOND_IN_TIMER_UNITS = 1000;
         this.intervalTimer = setInterval( () => {
             if ( this.countdownInSeconds === 0 ) {
-                log.info( "Event source 'stream': creating new...");
+                log.log( "Event source 'stream': creating new...");
                 // Set up an asynchronous chain of events that will create a stream
                 // then subscribe to it, then start monitoring it. If the heartbeat
                 // signal is not seen the process will repeat itself after the
                 // heartbeat interval timeout.
                 this.createStream_();
-                log.info( "Event source: 'stream' - OK: create event stream task started");
+                log.log( "Event source: 'stream' - OK: create event stream task started");
                 this.countdownInSeconds = this.streamReconnectIntervalInSeconds;
             }
             this.countdownInSeconds--;
@@ -247,7 +247,7 @@ class StreamManager
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status === 200) {
                 const streamId = xhttp.responseText;
-                log.info( "Stream created, returned id is: ", streamId );
+                log.log( "Stream created, returned id is: ", streamId );
                 const subscribeUrl = this.serverUrl + "/ca/streams/" + streamId;
                 this.subscribeStream_( subscribeUrl );
             }
@@ -284,7 +284,7 @@ class StreamManager
         eventSource.addEventListener( 'ev-wica-server-heartbeat', ev => {
             if ( this.crossOriginCheckOk_( ev ) ) {
                 const id = StreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
-                log.info( "Event source: 'wica stream' - heartbeat event on stream with id: " + id );
+                log.log( "Event source: 'wica stream' - heartbeat event on stream with id: " + id );
                 this.countdownInSeconds = this.streamTimeoutIntervalInSeconds;
             }
         }, false) ;
@@ -308,7 +308,7 @@ class StreamManager
             if ( this.crossOriginCheckOk_( ev ) ) {
                 const id = StreamManager.extractEventSourceStreamIdFromUrl_( ev.target.url );
                 this.streamOpened( id );
-                log.info( "Event source: 'wica stream' - open event on stream with id: " + id );
+                log.log( "Event source: 'wica stream' - open event on stream with id: " + id );
                 this.activeStreamId = id;
             }
         }, false);

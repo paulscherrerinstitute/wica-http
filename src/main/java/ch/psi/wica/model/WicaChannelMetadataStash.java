@@ -92,6 +92,7 @@ public class WicaChannelMetadataStash
     * @throws IllegalStateException if the stash has no previously stored
     *         metadata for this channel.
     */
+   @SuppressWarnings( "unused" )
    public WicaChannelMetadata get( ControlSystemName controlSystemName )
    {
       Validate.notNull( controlSystemName );

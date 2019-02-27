@@ -9,7 +9,7 @@ Github at [this](https://github.com/channelaccess/ca_matlab) location.
 
 Wica2 tries to optimise its use of the library to keep the costs (eg CPU and memory consumption) reasonable. 
 To do so the library was tested to assess the cost of various operations. The results were originally discussed 
-on [this page](EPICS_TESTS). Subsequently a new CA library release has been made and the results will now and
+on [this page](EPICS_TESTS.md). Subsequently a new CA library release has been made and the results will now and
 in the future be published on the project's [Github site](https://github.com/channelaccess/ca/blob/master/MONITOR_INFO.md)
  
 Following this test program the following design decisions have been made:

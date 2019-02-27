@@ -253,7 +253,7 @@ const WicaRenderingProperties = Object.freeze ({
  * @property {number} [heartbeat=15000] - The interval in milliseconds between heartbeat messages.
  * @property {number} [changeint=100] The interval in milliseconds between channel value
  *     messages where the data acquisition mode is monitoring and where the value has changed
- *     since the prevous notification message.
+ *     since the previous notification message.
  * @property {number} [pollint=100] The interval in milliseconds between channel value messages
  *     where the data acquisition mode is polling.
  * @property {number} [daqmode=monitor] - The default data acquisition mode.

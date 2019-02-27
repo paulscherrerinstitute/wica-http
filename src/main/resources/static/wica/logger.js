@@ -12,7 +12,7 @@ export { logLevels, setLevel, trace, debug, log, info, warn, error };
 /*- Script Execution Starts Here ---------------------------------------------*/
 
 /**
- * JS Object that defines the available log levels includingthe default that
+ * JS Object that defines the available log levels including the default that
  * will be used in the absence of an explict call to the setLevel function.
  *
  * @property {number} [NONE = 0]
@@ -38,44 +38,56 @@ const logLevels = {
 /**
  * Outputs a log message at TRACE level.
  *
- * @param {string} msg the message.
+ * @param {string} msg - A message string containing zero or more substitution strings.
+ * @param {Object} msgOptions - Zero or more objects with which to replace substitution
+ *     strings within msg.
  */
-function trace( msg ) { logger_.trace( msg ) }
+function trace( msg, ...msgOptions  ) { logger_.trace( msg, ...msgOptions ) }
 
 /**
  * Outputs a log message at DEBUG level.
  *
- * @param {string} msg the message.
+ * @param {string} msg - A message string containing zero or more substitution strings.
+ * @param {Object} msgOptions - Zero or more objects with which to replace substitution
+ *     strings within msg.
  */
-function debug( msg ) { logger_.debug( msg ) }
+function debug(msg, ...msgOptions  ) { logger_.debug( msg, ...msgOptions ) }
 
 /**
  * Outputs a log message at LOG level.
  *
- * @param {string} msg the message.
+ * @param {string} msg - A message string containing zero or more substitution strings.
+ * @param {Object} msgOptions - Zero or more objects with which to replace substitution
+ *     strings within msg.
  */
-function log( msg ) {   logger_.log( msg ) }
+function log( msg, ...msgOptions  ) { logger_.log( msg, ...msgOptions ) }
 
 /**
  * Outputs a log message at INFO level.
  *
- * @param {string} msg the message.
+ * @param {string} msg - A message string containing zero or more substitution strings.
+ * @param {Object} msgOptions - Zero or more objects with which to replace substitution
+ *     strings within msg.
  */
-function info( msg ) {  logger_.info( msg ) }
+function info( msg, ...msgOptions  ) { logger_.info( msg, ...msgOptions ) }
 
 /**
  * Outputs a log message at WARN level.
  *
- * @param {string} msg the message.
+ * @param {string} msg - A message string containing zero or more substitution strings.
+ * @param {Object} msgOptions - Zero or more objects with which to replace substitution
+ *     strings within msg.
  */
-function warn( msg ) {  logger_.warn( msg ) }
+function warn( msg, ...msgOptions  ) { logger_.warn( msg, ...msgOptions ) }
 
 /**
  * Outputs a log message at TRACE level.
  *
- * @param {string} msg the message.
+ * @param {string} msg - A message string containing zero or more substitution strings.
+ * @param {Object} msgOptions - Zero or more objects with which to replace substitution
+ *     strings within msg.
  */
-function error( msg ) { logger_.error( msg ) }
+function error(msg, ...msgOptions  ) { logger_.error( msg, ...msgOptions ) }
 
 /**
  * Sets the logging level. Zero means log nothing.
@@ -110,4 +122,3 @@ const consoleLogMap_ = {
 };
 
 setLevel( logLevels.DEFAULT );
-

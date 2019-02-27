@@ -45,9 +45,7 @@ public class WicaStreamId
       nextAllocationId = 0;
    }
 
-   public static int getCreationCount() { return nextAllocationId; }
-
-   /*- Public methods -----------------------------------------------------------*/
+/*- Public methods -----------------------------------------------------------*/
 
    @Override
    public boolean equals( Object o )

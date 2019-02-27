@@ -80,16 +80,6 @@ public class EpicsChannelMonitorService implements AutoCloseable
    }
 
 /*- Class methods ------------------------------------------------------------*/
-
-   /**
-    * Provided for unit testing only.
-    */
-   void resetCache()
-   {
-      channels.clear();
-      monitors.clear();
-   }
-
 /*- Public methods -----------------------------------------------------------*/
 
    /**
@@ -178,8 +168,9 @@ public class EpicsChannelMonitorService implements AutoCloseable
       channels.get( epicsChannelName ).close();
       channels.remove( epicsChannelName );
 
-      boolean channelCloseAlsoDisposesMonitorResources = true;
-      if ( !channelCloseAlsoDisposesMonitorResources )
+      final boolean channelCloseAlsoDisposesMonitorCache = true;
+      //noinspection ConstantConditions,PointlessBooleanExpression
+      if ( !channelCloseAlsoDisposesMonitorCache )
       {
          monitors.get(epicsChannelName).close();
       }
@@ -198,7 +189,7 @@ public class EpicsChannelMonitorService implements AutoCloseable
       // Dispose of any references that are no longer required
       logger.debug( "'{}' - disposing resources...", this );
 
-      // Note: closing the context dispoes of any open channels and monitors
+      // Note: closing the context disposes of any open channels and monitors
       caContext.close();
       monitors.clear();
       channels.clear();

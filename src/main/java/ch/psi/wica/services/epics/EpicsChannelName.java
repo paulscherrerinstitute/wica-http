@@ -41,18 +41,6 @@ class EpicsChannelName extends ControlSystemName
       return super.equals(o);
    }
 
-   @Override
-   public int hashCode()
-   {
-      return super.hashCode();
-   }
-
-   @Override
-   public String asString()
-   {
-      return super.asString();
-   }
-
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 

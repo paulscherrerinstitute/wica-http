@@ -23,9 +23,9 @@ public class WicaChannelName
 /*- Private attributes -------------------------------------------------------*/
 
    private static final String PROTOCOL_REGEX = "(?<protocol>ca://|pv://)";
-   private static final String CSNAME_REGEX = "(?<csname>[A-Za-z0-9:_\\-<>]+)";
+   private static final String CONTROL_SYSTEM_NAME_REGEX = "(?<csname>[A-Za-z0-9:_\\-<>]+)";
    private static final String INSTANCE_REGEX = "(?<instance>##[0-9]+)";
-   private static final String WICA_CHANNEL_NAME_FORMAT = PROTOCOL_REGEX + "?" + CSNAME_REGEX + INSTANCE_REGEX + "?";
+   private static final String WICA_CHANNEL_NAME_FORMAT = PROTOCOL_REGEX + "?" + CONTROL_SYSTEM_NAME_REGEX + INSTANCE_REGEX + "?";
    private static final Pattern pattern = Pattern.compile( WICA_CHANNEL_NAME_FORMAT );
 
    private final Protocol protocol;
@@ -36,7 +36,7 @@ public class WicaChannelName
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelName( Protocol protocol, ControlSystemName controlSystemName, Integer instance, String strSpecifier )
+   private WicaChannelName( Protocol protocol, ControlSystemName controlSystemName, Integer instance, String strSpecifier )
    {
       this.protocol = protocol;
       this.controlSystemName = Validate.notNull( controlSystemName );
@@ -56,14 +56,15 @@ public class WicaChannelName
       final Protocol protocol = matcher.group("protocol" ) == null ?
             null : Protocol.of( matcher.group ("protocol" ) );
 
-      // The csname token MUST be present so we just grab it.
-      final ControlSystemName csName = ControlSystemName.of( matcher.group( "csname" ) );
+      // The control system name token MUST be present so we just grab it.
+      @SuppressWarnings( "SpellCheckingInspection" )
+      final ControlSystemName controlSystemName = ControlSystemName.of(matcher.group("csname" ) );
 
       // The instance token may or may not be present. When not present we choose the default.
       final Integer instance = matcher.group("instance" ) == null ?
             null : Integer.parseInt( matcher.group("instance" ).split( "##" )[ 1] );
 
-      return new WicaChannelName( protocol, csName, instance, strSpecifier );
+      return new WicaChannelName( protocol, controlSystemName, instance, strSpecifier );
    }
 
 /*- Public methods -----------------------------------------------------------*/

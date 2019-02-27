@@ -58,7 +58,7 @@ public class WicaStreamProperties
    public static final String DEFAULT_FIELDS_OF_INTEREST = "val;sevr";
 
    /**
-    * Default value for the data acqusition mode that will be assigned if
+    * Default value for the data acquisition mode that will be assigned if
     * the property is not explicitly set by configuration on the client.
     */
    public static final WicaChannelProperties.DataAcquisitionMode DEFAULT_DATA_ACQUISITION_MODE = WicaChannelProperties.DataAcquisitionMode.MONITOR;
@@ -90,7 +90,7 @@ public class WicaStreamProperties
    public WicaStreamProperties( @JsonProperty( "heartbeat" ) Integer heartbeatFluxIntervalInMillis,
                                 @JsonProperty( "changeint" ) Integer changedValueFluxIntervalInMillis,
                                 @JsonProperty( "pollint"   ) Integer polledValueFluxIntervalInMillis,
-                                @JsonProperty( "pollratio"   ) Integer polledValueSampleRatio,
+                                @JsonProperty( "pollratio" ) Integer polledValueSampleRatio,
                                 @JsonProperty( "prec"      ) Integer numericPrecision,
                                 @JsonProperty( "fields"    ) String fieldsOfInterest,
                                 @JsonProperty( "daqmode"   ) WicaChannelProperties.DataAcquisitionMode dataAcquisitionMode )

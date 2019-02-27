@@ -5,6 +5,7 @@ package ch.psi.wica.model;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+@SuppressWarnings( "ALL" )
 public enum WicaChannelAlarmSeverity
 {
 

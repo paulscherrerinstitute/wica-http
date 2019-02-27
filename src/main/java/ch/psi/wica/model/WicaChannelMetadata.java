@@ -122,6 +122,7 @@ public abstract class WicaChannelMetadata extends WicaChannelData
          super( WicaChannelType.STRING );
       }
 
+      @SuppressWarnings( "SameParameterValue" )
       WicaChannelMetadataString( WicaChannelType subtype )
       {
          super( subtype );
@@ -154,6 +155,7 @@ public abstract class WicaChannelMetadata extends WicaChannelData
       private final int upperWarning;
       private final int lowerWarning;
 
+      @SuppressWarnings( "Duplicates" )
       private WicaChannelMetadataInteger( WicaChannelType subType,
                                           String units,
                                           int upperDisplay, int lowerDisplay,
@@ -282,6 +284,7 @@ public abstract class WicaChannelMetadata extends WicaChannelData
       private final double lowerWarning;
 
 
+      @SuppressWarnings( "Duplicates" )
       private WicaChannelMetadataReal( WicaChannelType subType,
                                        String units,
                                        int precision,

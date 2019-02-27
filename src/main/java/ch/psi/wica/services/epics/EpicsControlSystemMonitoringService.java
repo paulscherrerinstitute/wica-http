@@ -56,17 +56,6 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
    }
 
 /*- Class methods ------------------------------------------------------------*/
-
-   /**
-    * Provided for unit testing only.
-    */
-   public void resetCache()
-   {
-       controlSystemInterestMap.clear();
-       epicsChannelMonitorService.resetCache();
-   }
-
-
 /*- Public methods -----------------------------------------------------------*/
 
    @Override

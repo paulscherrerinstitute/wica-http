@@ -21,7 +21,6 @@ public class WicaChannel
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(WicaChannel.class );
    private final WicaChannelName wicaChannelName;
    private final WicaChannelProperties wicaChannelProperties;
    private final WicaChannelValueFilter wicaChannelValueFilterForMonitoredChannels;
@@ -36,6 +35,7 @@ public class WicaChannel
     * @param wicaChannelName the name of the channel.
     * @param wicaStreamProperties the properties of the stream with which this channel is associated.
     */
+   @SuppressWarnings( "WeakerAccess" )
    public WicaChannel( WicaChannelName wicaChannelName, WicaStreamProperties wicaStreamProperties )
    {
       this( wicaChannelName, wicaStreamProperties, new WicaChannelProperties() );
@@ -51,6 +51,7 @@ public class WicaChannel
     */
    public WicaChannel( WicaChannelName wicaChannelName, WicaStreamProperties wicaStreamProperties, WicaChannelProperties wicaChannelProperties )
    {
+      final Logger logger = LoggerFactory.getLogger(WicaChannel.class );
       logger.info( "Creating new WicaChannel with name {}, stream properties {} and channel properties {}.", wicaChannelName,
                     wicaStreamProperties, wicaChannelProperties );
 
@@ -80,6 +81,7 @@ public class WicaChannel
     * @param wicaChannelName the channel's name.
     * @return the channel.
     */
+   @SuppressWarnings( "unused" )
    public static WicaChannel of( WicaChannelName wicaChannelName )
    {
       return new WicaChannel( wicaChannelName, new WicaStreamProperties() );
