@@ -195,7 +195,7 @@ public class WicaStreamPublisher
       return Flux.range(1, 1)
             .map(l -> {
                logger.trace("channel-value flux is publishing new SSE...");
-               var map = wicaStreamDataSupplier.getNotifiedValues( wicaStream );
+               var map = wicaStreamDataSupplier.getValueMap( wicaStream );
                final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUES_INITIAL.build( wicaStreamId, jsonServerSentEventString );
             } )

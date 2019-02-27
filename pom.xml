@@ -5,12 +5,11 @@
 
     <groupId>ch.psi</groupId>
     <artifactId>wica</artifactId>
-    <version>0.9.5-RELEASE</version>
+    <version>1.0.0-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>wica2</name>
     <description>Web Interface for EPICS Channel Access Protocol</description>
-
 
     <parent>
         <groupId>org.springframework.boot</groupId>

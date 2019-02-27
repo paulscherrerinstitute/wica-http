@@ -18,7 +18,7 @@ log.setLevel( log.logLevels.WARN );
 log.info( "Wica is loading support for the current document... ");
 
 // Define the server this application is intended to target.
-const WICA_HOST="https://gfa-wica-dev.psi.ch";
+const WICA_HOST="https://gfa-wica.psi.ch";
 
 // Create and activate a document support loader for the document
 // which loads this library.

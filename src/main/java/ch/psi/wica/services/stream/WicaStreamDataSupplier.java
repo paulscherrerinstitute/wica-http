@@ -65,6 +65,16 @@ class WicaStreamDataSupplier
    }
 
    /**
+    * Returns a map of all channels and their associated values.
+    *
+    * @return the apply.
+    */
+   Map<WicaChannelName,List<WicaChannelValue>> getValueMap( WicaStream wicaStream)
+   {
+      return wicaChannelValueStash.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
+   }
+
+   /**
     * Returns a map of all channels and their most recent values obtained by POLLING
     * (either the data source directly, or the most recently cached value obtained
     * through notification).

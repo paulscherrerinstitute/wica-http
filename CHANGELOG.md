@@ -128,9 +128,13 @@ This log describes the functionality of tagged versions within the repository.
                                                             - support for cpu metrics
                                                             - added support for static locations and add extra information to actuator. Add initial get filterT.
 
-* [0.9.5-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/0.9.5-RELEASE)
-   - [CTRLIT-XXXX](https://jira.psi.ch/browse/CTRLIT-XXXX): XXXX
-
+* [1.0.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/1.0.0-RELEASE)
+  This is the first production release.  It now runs on OpenJdk11. 131 unit tests passed. The PSI library ca tests
+  are currently disabled as they should not really be part of the Wica project.
+   - [CTRLIT-6994](https://jira.psi.ch/browse/CTRLIT-6994): Create First Production 1.0.0-Release
+   - [CTRLIT-6620](https://jira.psi.ch/browse/CTRLIT-6620): Add first support for JS and Java API docs.
+   - [CTRLIT-6901](https://jira.psi.ch/browse/CTRLIT-6901): Address issues raised by Simon during recent tests.
+    
 
 # Project Ideas Completed
 
@@ -151,18 +155,31 @@ so one is left with a screen with lost of pink background (pink = the Wica serve
 1. Provide some example displays for Hubert. DONE.
 1. Feature Enhancement: enhance PROSCAN display so that the design is fully responsive (currently it only works well on 
 a desktop monitor). DONE.
+1. Optimisation: WICA clients that connect for the first time should receive the full list of channels with current 
+  values. They should then only be advised of CHANGES to the value. DONE.
+1. Cleanup message id's to support the following:
+     - metadata-stream: Sends all values with SLOW periodicity. DONE (SENT ONCE)
+     - value-snapshot-stream: Sends all values with SLOW periodicity. DONE (VIA POLLING MECHANISM)
+     - value-change-stream: Sends only changed values but with fast periodicity.  DONE.
 
 # Project Ideas Backlog
 
 When an idea is under serious consideration and a candidate for
 implementation it will be placed on the project's [Jira Kanban Board](https://jira.psi.ch/secure/RapidBoard.jspa?rapidView=1631)
 1. Create end-to-end tests to measure performance.
-1. Optimisation: WICA clients that connect for the first time should receive the full list of channels with current 
-values. They should then only be advised of CHANGES to the value.
+1. Add support to the REST service to support channel access GET and PUT.
+1. Improve behaviour when navigating away from Wica Pages. 
+1. Consider switching to http2. Need to resolve bug exposed when client navigates away.
+1. Improve page load times by minifying all JS.
+1. Review existing state of Javadoc and Jsdoc and make improvements.
+1. Work out how best to integrate with K8ie's work on SVG.
+1. Improve the admin page by reporting on the active clients and their IP's.
+1. Consider a better name.
+1. Consider splitting up backend and frontend server.
+1. Refactor stream-manager to use promises and/or new JS async semantics.
+1. Go through all code TODO's and try to resolve them.   
+1. Add reporting on test coverage.
+1. Run units tests on GitLab server on check in.
+1. Organise design review with Simon and/or others.
+1. Automate units tests so that we dont have to start an EPICS IOC manually before running the tests.
 
-1. Cleanup message id's to support the following:
-   - metadata-stream: Sends all values with SLOW periodicity. 
-   - value-snapshot-stream: Sends all values with SLOW periodicity. 
-   - value-change-stream: Sends only changed values but with fast periodicity.
-
-   

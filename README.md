@@ -109,9 +109,8 @@ ToDo: document the supported properties.
 The Wica frontend (JSdoc) and backend (Javadoc) API documentation is built automatically every time a new commit is
 pushed to the GitLab repository that hosts this project.
 
-  * [Frontend](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica) 
-  * [Backend](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/java)
-
+  * [JS Frontend](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica) 
+  * [Javadoc Backend](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/java)
 
 # Wica REST Service API 
 
@@ -139,7 +138,7 @@ GET /ca/streams/<streamId>
 GET /wica/wica.js
 ```
 
-## New Features Coming Soon (status: 2019-01-14)
+## New Features Coming Soon (status: 2019-02-27)
 
 ##### Get value of a channel
 ```

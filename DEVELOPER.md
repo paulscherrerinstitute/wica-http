@@ -108,3 +108,9 @@ Future Strategy:
 to be encoded with UTF-8.
 - Provide a styling override to allow the units/precision etc to be overridden
   by definitions in the html files.
+
+
+# Additional Note on Unit Tests
+
+Note to run the unit tests you newd to start an epics IOC something like this:
+~/base-3.14.12.7/bin/darwin-x86/softIoc -d epics_tests.db 
