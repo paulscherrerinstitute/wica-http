@@ -134,7 +134,11 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-6994](https://jira.psi.ch/browse/CTRLIT-6994): Create First Production 1.0.0-Release
    - [CTRLIT-6620](https://jira.psi.ch/browse/CTRLIT-6620): Add first support for JS and Java API docs.
    - [CTRLIT-6901](https://jira.psi.ch/browse/CTRLIT-6901): Address issues raised by Simon during recent tests.
-    
+   
+* [1.0.1-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/1.0.1-RELEASE)
+   - [CTRLIT-7103](https://jira.psi.ch/browse/CTRLIT-7103): Fix 1.0.0 Regression Bug.
+   - [CTRLIT-7104](https://jira.psi.ch/browse/CTRLIT-7104): Create 1.0.1-RELEASE.
+
 
 # Project Ideas Completed
 
@@ -182,4 +186,5 @@ implementation it will be placed on the project's [Jira Kanban Board](https://ji
 1. Run units tests on GitLab server on check in.
 1. Organise design review with Simon and/or others.
 1. Automate units tests so that we dont have to start an EPICS IOC manually before running the tests.
-
+1. Check validity of all JCIP thread safety annotations.
+1. Provide automanagement for channel names which share the same epics channel.

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -19,6 +20,9 @@ public class WicaStream
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
+
+   private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
+   private LocalDateTime lastPublicationTime = LONG_AGO;
 
    private final WicaStreamId wicaStreamId;
    private final WicaStreamProperties wicaStreamProperties;
@@ -95,6 +99,26 @@ public class WicaStream
              ", wicaStreamProperties=" + getWicaStreamProperties() +
              ", wicaChannels=" + getWicaChannels() +
       "}'";
+   }
+
+   /**
+    * Returns the timestamp for the last time the values from the
+    * stream were published.
+    *
+    * @return the timestamp.
+    */
+   public LocalDateTime getLastPublicationTime()
+   {
+      return lastPublicationTime;
+   }
+
+   /**
+    * Sets with the current time the timestamp which indicates the last time
+    * the stream was published.
+    */
+   public void updateLastPublicationTime()
+   {
+      lastPublicationTime = LocalDateTime.now();
    }
 
 /*- Private methods ----------------------------------------------------------*/

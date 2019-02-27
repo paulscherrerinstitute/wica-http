@@ -31,9 +31,6 @@ class WicaStreamDataSupplier
    private final WicaChannelMetadataStash wicaChannelMetadataStash;
    private final WicaChannelValueStash wicaChannelValueStash;
 
-   private LocalDateTime lastPublicationTime = LONG_AGO;
-
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
@@ -163,8 +160,8 @@ class WicaStreamDataSupplier
     */
    Map<WicaChannelName, List<WicaChannelValue>> getNotifiedValueChanges( WicaStream wicaStream)
    {
-      final var latestChannelValueMap = wicaChannelValueStash.getLaterThan( wicaStream.getWicaChannels(), getLastPublicationTime() );
-      updateLastPublicationTime();
+      final var latestChannelValueMap = wicaChannelValueStash.getLaterThan( wicaStream.getWicaChannels(), wicaStream.getLastPublicationTime() );
+      wicaStream.updateLastPublicationTime();
 
       final Map<WicaChannelName,List<WicaChannelValue>> outputMap = new HashMap<>();
       wicaStream.getWicaChannels().stream()
@@ -182,26 +179,6 @@ class WicaStreamDataSupplier
    }
 
 /*- Private methods ----------------------------------------------------------*/
-
-   /**
-    * Returns the timestamp for the last time the values from the
-    * stream were published.
-    *
-    * @return the timestamp.
-    */
-   private LocalDateTime getLastPublicationTime()
-   {
-      return lastPublicationTime;
-   }
-
-   /**
-    * Sets with the current time the timestamp which indicates the last time
-    * the stream was published.
-    */
-   private void updateLastPublicationTime()
-   {
-      lastPublicationTime = LocalDateTime.now();
-   }
 
    /**
     * Returns the Daqmode for the specified channel, either directly from the
