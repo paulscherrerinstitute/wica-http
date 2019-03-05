@@ -54,6 +54,7 @@ class WicaStreamDataSupplier
    /**
     * Returns a map of all channels and their associated metadata.
     *
+    * @param wicaStream the stream.
     * @return the apply.
     */
    Map<WicaChannelName, WicaChannelMetadata> getMetadataMap( WicaStream wicaStream)
@@ -64,6 +65,7 @@ class WicaStreamDataSupplier
    /**
     * Returns a map of all channels and their associated values.
     *
+    * @param wicaStream the stream.
     * @return the apply.
     */
    Map<WicaChannelName,List<WicaChannelValue>> getValueMap( WicaStream wicaStream)
@@ -79,6 +81,7 @@ class WicaStreamDataSupplier
     * Note: following data acquisition the returned map will be FILTERED according
     * to the rules defined for each channel.
     *
+    * @param wicaStream the stream.
     * @return the map.
     */
    Map<WicaChannelName,List<WicaChannelValue>> getPolledValues( WicaStream wicaStream )
@@ -123,6 +126,7 @@ class WicaStreamDataSupplier
     * Note: following data acquisition the returned map will be FILTERED according
     * to the rules defined for each channel.
     *
+    * @param wicaStream the stream.
     * @return the map.
     */
    Map<WicaChannelName, List<WicaChannelValue>> getNotifiedValues( WicaStream wicaStream )
@@ -155,6 +159,7 @@ class WicaStreamDataSupplier
     * Note: following data acquisition the returned map will be FILTERED according
     * to the rules defined for each channel.
     *
+    * @param wicaStream the stream.
     * @return the map of channels and list of changes that have occurred since the
     *     last time this method was invoked.
     */
@@ -185,6 +190,7 @@ class WicaStreamDataSupplier
     * channel properties, or when, not available from the properties of the
     * WicaStream.
     *
+    * @param wicaStream the stream.
     * @param wicaChannel the channel to check.
     * @return the result.
     */

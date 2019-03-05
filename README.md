@@ -133,22 +133,22 @@ Returns <streamId> a unique reference string that can be used when getting the s
 GET /ca/streams/<streamId>
 ```
 
-##### Download the Wica javascript library module:
+##### Download the Wica javascript client library module:
 ```
 GET /wica/wica.js
 ```
 
-## New Features Coming Soon (status: 2019-02-27)
-
 ##### Get value of a channel
 ```
 GET /ca/channels/<channel>
+
+Returns JSON string representation of the value of the channel.
 ```
 
 #####  Set the value of channel
 ```
 PUT /ca/channels/<channel>
-Content-Type: application/json or text/plain
+Content-Type: text/plain the new value
 
 somevalue
 ```

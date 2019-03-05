@@ -92,8 +92,8 @@ public class WicaChannelValueFilterBuilder
     * whose cycle length (ie m) will be configured according to the configured
     * sampling ratio (taken either from the stream or channel properties).
     *
-    * @param wicaChannelProperties the channel properties object
-    *
+    * @param wicaStreamProperties the stream properties object.
+    * @param wicaChannelProperties the channel properties object.
     * @return the filter.
     */
    public static WicaChannelValueFilter createFilterForPolledChannels( WicaStreamProperties wicaStreamProperties,

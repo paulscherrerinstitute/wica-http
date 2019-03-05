@@ -17,6 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.TimeUnit;
+
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
@@ -57,30 +59,34 @@ class WicaChannelGetController
     * Handles an HTTP GET request to return the value of the specified channel.
     *
     * @param channelName the name of the channel whose value is to be fetched.
+    * @param timeoutInMilliseconds the timeout to be applied when attempting to
+    *     get the channel value from the underlying data source. If a timeout
+    *     occurs the returned value will be WicaChannelValueDisconnected.
     *
-    * @return the returned event stream.
+    * @return the returned channel value.
     */
    @GetMapping( value="/{channelName}", produces = MediaType.APPLICATION_JSON_VALUE )
-   public ResponseEntity<String> getChannelValue( @PathVariable String channelName )
+   public ResponseEntity<String> getChannelValue( @PathVariable String channelName,
+                                                  @RequestParam( value="timeout", required = false, defaultValue = "1000" ) int timeoutInMilliseconds )
    {
       // Check that the Spring framework gives us something in the channelName field.
       Validate.notNull( channelName, "The 'channelName' field was empty." );
 
-      logger.info( "GET: Handling get channel request for channel named: '{}'", channelName );
+      logger.info( "'{}' - Handling GET channel request...", channelName );
 
       // Handle the normal case
-      final WicaChannelValue wicaChannelValue = wicaChannelService.get( WicaChannelName.of( channelName ) );
+      final WicaChannelValue wicaChannelValue = wicaChannelService.get( WicaChannelName.of( channelName ), timeoutInMilliseconds, TimeUnit.MILLISECONDS );
 
       final WicaChannelValueSerializer wicaChannelValueSerializer = new WicaChannelValueSerializer( 8, false );
 
-      logger.info( "Returning wica channel value for channel named: '{}'", channelName );
+      logger.info( "'{}' - OK: Returning wica channel value.", channelName );
       return new ResponseEntity<>( wicaChannelValueSerializer.serialize( wicaChannelValue ), HttpStatus.OK );
    }
 
    @ExceptionHandler( Exception.class )
    public void handleException( Exception ex)
    {
-      logger.info( "Exception handler called with exception '{}'", ex.toString() );
+      logger.info( "ERROR: Exception handler called with exception '{}'", ex.toString() );
    }
 
 /*- Private methods ----------------------------------------------------------*/

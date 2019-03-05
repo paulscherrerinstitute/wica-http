@@ -5,7 +5,7 @@
 
     <groupId>ch.psi</groupId>
     <artifactId>wica</artifactId>
-    <version>1.0.1-RELEASE</version>
+    <version>1.1.0-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>wica2</name>
@@ -191,6 +191,7 @@
                 </executions>
                 <configuration>
                     <repository>docker.psi.ch:5000/gfa-wica</repository>
+                    <!--<repository>docker.io/paulscherrerinstitute/gfa-wica</repository>-->
                     <tag>${project.version}</tag>
                     <buildArgs>
                         <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>

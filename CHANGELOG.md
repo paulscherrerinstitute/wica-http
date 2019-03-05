@@ -139,6 +139,12 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-7103](https://jira.psi.ch/browse/CTRLIT-7103): Fix 1.0.0 Regression Bug.
    - [CTRLIT-7104](https://jira.psi.ch/browse/CTRLIT-7104): Create 1.0.1-RELEASE.
 
+* [1.1.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/1.1.0-RELEASE)
+First release of embryonic feature channel GET and PUT endpoints.
+   - [CTRLIT-7105](https://jira.psi.ch/browse/CTRLIT-7108): Make status panels available in PSI's demilitarized zone.
+   - [CTRLIT-7108](https://jira.psi.ch/browse/CTRLIT-7108): Add support to the REST service to support channel access GET and PUT.
+   - [CTRLIT-7110](https://jira.psi.ch/browse/CTRLIT-7104): Create 1.1.0-RELEASE.
+
 
 # Project Ideas Completed
 
@@ -165,16 +171,17 @@ a desktop monitor). DONE.
      - metadata-stream: Sends all values with SLOW periodicity. DONE (SENT ONCE)
      - value-snapshot-stream: Sends all values with SLOW periodicity. DONE (VIA POLLING MECHANISM)
      - value-change-stream: Sends only changed values but with fast periodicity.  DONE.
+1. Add support to the REST service to support channel access GET and PUT. COMPLETED (BUT PERFORMANCE COULD BE IMPROVED).
 
 # Project Ideas Backlog
 
 When an idea is under serious consideration and a candidate for
 implementation it will be placed on the project's [Jira Kanban Board](https://jira.psi.ch/secure/RapidBoard.jspa?rapidView=1631)
 1. Create end-to-end tests to measure performance.
-1. Add support to the REST service to support channel access GET and PUT.
+
 1. Improve behaviour when navigating away from Wica Pages. 
 1. Consider switching to http2. Need to resolve bug exposed when client navigates away.
-1. Improve page load times by minifying all JS.
+1. Improve page load times by minifying loadable artifacts.
 1. Review existing state of Javadoc and Jsdoc and make improvements.
 1. Work out how best to integrate with K8ie's work on SVG.
 1. Improve the admin page by reporting on the active clients and their IP's.
@@ -188,3 +195,8 @@ implementation it will be placed on the project's [Jira Kanban Board](https://ji
 1. Automate units tests so that we dont have to start an EPICS IOC manually before running the tests.
 1. Check validity of all JCIP thread safety annotations.
 1. Provide automanagement for channel names which share the same epics channel.
+1. Ability to set stream properties on html page rather than just accept defaults. 
+1. Improve diagnostic messages when HTML page contains json content that is not valid.
+1. Fix bug whereby whereby metadata says type UNKNOWN (causes occasional problem with formatting).
+1. Make status panels available in PSI's demilitarised zone.
+1. Improve performance of channel GET and PUT.

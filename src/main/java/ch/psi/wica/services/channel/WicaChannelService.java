@@ -14,6 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 @Service
 public class WicaChannelService
 {
@@ -22,8 +26,7 @@ public class WicaChannelService
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger(EpicsChannelMonitorService.class );
-
-   private Context context;
+   private final Context context;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -49,84 +52,124 @@ public class WicaChannelService
    /**
     * Synchronously gets the value of a channel.
     *
-    * This method incurs the network cost of establishing a channel
-    * to the remote data source and performing a synchronous (=
-    * confirmed) get.
+    * This method incurs the network cost of establishing a channel to the remote
+    * data source and performing a synchronous (=confirmed) GET operation.
     *
     * @param wicaChannelName the name of the channel.
+    * @param timeout the timeout to be applied when attempting to get the channel
+    *     value from the underlying data source. If a timeout occurs the returned
+    *     value will be WicaChannelValueDisconnected.
+    * @param timeUnit the time units to be used.
     * @return the value.
     */
-   public WicaChannelValue get( WicaChannelName wicaChannelName )
+   public WicaChannelValue get( WicaChannelName wicaChannelName, long timeout, TimeUnit timeUnit )
    {
+      // Create a new channel
       final String channelName = wicaChannelName.getControlSystemName().asString();
       final Channel<String> caChannel;
       try
       {
-         logger.info( "Synchronously connecting to channel '{}'...", channelName );
+         logger.info( "'{}' - Creating channel...", channelName );
          caChannel = context.createChannel( channelName, String.class );
-         caChannel.connect();
-         logger.info( "Synchronously connected to channel '{}'.", channelName );
+         logger.info( "'{}' - OK: channel created.", channelName );
       }
       catch ( Throwable ex )
       {
-         logger.info( "Exception whilst synchronously connecting to channel '{}'", channelName );
+         logger.info( "'{}' - ERROR: Exception whilst creating channel. Details: '{}'", channelName, ex.getMessage() );
          return WicaChannelValue.createChannelValueDisconnected();
       }
 
-      // Perform try with resources, ie cleanup channel after put operation.
+      // Wait for it to connect
+      try
+      {
+         logger.info( "'{}' - Connecting channel with timeout {} {}...", channelName, timeout, timeUnit );
+         caChannel.connectAsync().get( timeout, timeUnit );
+         logger.info( "'{}' - OK: channel connected.", channelName );
+      }
+      catch ( InterruptedException | ExecutionException | TimeoutException ex )
+      {
+         logger.info( "'{}' - ERROR: Exception whilst connecting channel. Details: '{}'.", channelName, ex.toString() );
+         return WicaChannelValue.createChannelValueDisconnected();
+      }
+
+
+      // Now get value, ensuring channel gets closed afterwards.
       final String channelValue;
       try( Channel<String> channel = caChannel )
       {
-         logger.info( "Synchronously Getting from channel '{}'...", channelName );
-         channelValue = channel.get();
-         logger.info( "Synchronous Get completed on channel '{}'", channelName );
+         logger.info( "'{}' - Getting from channel with timeout {} {}...", channelName, timeout, timeUnit );
+         channelValue = channel.getAsync().get( timeout, timeUnit );
+         logger.info( "'{}' - OK: channel GET completed.", channelName );
       }
       catch ( Throwable ex )
       {
-         logger.info( "Exception whilst getting from channel '{}'", channelName );
+         logger.info( "ERROR: Exception whilst getting from channel '{}'. Details: '{}'.", channelName, ex.getMessage() );
          return WicaChannelValue.createChannelValueDisconnected();
       }
 
+      // If we get here return the String representation of the channel we obtained.
       return WicaChannelValue.createChannelValueConnected( channelValue );
    }
 
    /**
     * Synchronously sets the value of a channel.
     *
-    * This method incurs the network cost of establishing a channel
-    * to the remote data source and performing a synchronous (= confirmed) put.
+    * This method incurs the network cost of establishing a channel to the remote
+    * data source and performing a synchronous (= confirmed) PUT operation.
     *
     * @param wicaChannelName the channel name.
     * @param channelValue the channel value.
+    * @param timeout the timeout to be applied when attempting to get the channel
+    *     value from the underlying data source. If a timeout occurs the returned
+    *     value will be WicaChannelValueDisconnected.
+    * @param timeUnit the time units to be used.
+    * @return boolean set true when the put completed successfully.
     */
-   public void put( WicaChannelName wicaChannelName, String channelValue )
+   public boolean put( WicaChannelName wicaChannelName, String channelValue, long timeout, TimeUnit timeUnit )
    {
+      // Create a new channel
       final String channelName = wicaChannelName.getControlSystemName().asString();
       final Channel<String> caChannel;
       try
       {
-         logger.info( "Synchronously connecting to channel '{}'...", channelName );
+         logger.info( "'{}' - Creating channel...", channelName );
          caChannel = context.createChannel( channelName, String.class );
-         caChannel.connect();
-         logger.info( "Synchronously connected to channel '{}'.", channelName );
+         logger.info( "'{}' - OK: channel created.", channelName );
       }
       catch ( Throwable ex )
       {
-         logger.info( "Exception whilst synchronously connecting to channel '{}'", channelName );
-         return;
+         logger.info( "'{}' - ERROR: Exception whilst creating channel. Details: '{}'", channelName, ex.getMessage() );
+         return false;
       }
 
-      // Perform try with resources, ie cleanup channel after put operation.
+      // Wait for it to connect
+      try
+      {
+         logger.info( "'{}' - Connecting channel with timeout {} {}...", channelName, timeout, timeUnit );
+         caChannel.connectAsync().get( timeout, timeUnit );
+         logger.info( "'{}' - OK: channel connected.", channelName );
+      }
+      catch ( InterruptedException | ExecutionException | TimeoutException ex )
+      {
+         logger.info( "'{}' - ERROR: Exception whilst connecting channel. Details: '{}'.", channelName, ex.toString() );
+         return false;
+      }
+
+      // Now set the value, ensuring channel gets closed afterwards.
       try( Channel<String> channel = caChannel )
       {
-         logger.info( "Synchronously Putting value '{}' to channel '{}'...", channelValue, channelName );
-         channel.put( channelValue );
-         logger.info( "Synchronous Put completed on channel '{}'", channelName );
+         logger.info( "'{}' - Putting to channel with timeout {} {}...", channelName, timeout, timeUnit );
+         channel.putAsync( channelValue ).get( timeout, timeUnit );
+         logger.info( "'{}' - OK: Channel PUT completed.", channelName );
       }
       catch ( Throwable ex )
       {
-         logger.info( "Exception whilst putting to channel '{}'", channelName );
+         logger.info( "ERROR: Exception whilst putting to channel '{}'. Details: '{}'.", channelName, ex.getMessage() );
+         return false;
       }
+
+      // If we get here return a token to indicate that the put was successful
+      return true;
    }
 
 

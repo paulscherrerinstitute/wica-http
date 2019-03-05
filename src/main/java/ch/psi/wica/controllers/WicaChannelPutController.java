@@ -4,9 +4,7 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.infrastructure.WicaChannelValueSerializer;
 import ch.psi.wica.model.WicaChannelName;
-import ch.psi.wica.model.WicaChannelValue;
 import ch.psi.wica.services.channel.WicaChannelService;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -16,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.TimeUnit;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -57,30 +57,37 @@ class WicaChannelPutController
     * Handles an HTTP PUT request to set the value of the specified channel.
     *
     * @param channelName the name of the channel whose value is to be changed.
+    * @param timeoutInMilliseconds the timeout to be applied when attempting to
+    *     get the channel value from the underlying data source. If a timeout
+    *     occurs the returned value will be WicaChannelValueDisconnected.         *
     * @param channelValue the string representation of the new value.
+    *
     *
     * @return the returned event stream.
     */
-   @PutMapping( value="/{channelName}", produces = MediaType.TEXT_PLAIN_VALUE )
+   @PutMapping( value="/{channelName}", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.TEXT_PLAIN_VALUE )
    public ResponseEntity<String> putChannelValue( @PathVariable String channelName,
+                                                  @RequestParam( value="timeout", required = false, defaultValue = "1000" ) int timeoutInMilliseconds,
                                                   @RequestBody String channelValue )
    {
       // Check that the Spring framework gives us something in the channelName field.
       Validate.notNull( channelName, "The 'channelName' field was empty." );
 
-      logger.info( "PUT: Handling put channel request for channel named: '{}', value '{}'", channelName, channelValue );
+      logger.info( "'{}' - Handling PUT channel request...", channelName );
 
       // Handle the normal case
-      wicaChannelService.put( WicaChannelName.of( channelName ), channelValue );
+      final boolean result = wicaChannelService.put( WicaChannelName.of( channelName ), channelValue,
+                                                     timeoutInMilliseconds, TimeUnit.MILLISECONDS );
 
-      logger.info("PUT: handled request on channel '{}' ok" , channelName );
-      return new ResponseEntity<>("OK", HttpStatus.OK );
+
+      logger.info( "'{}' - OK: PUT channel request.", channelName );
+      return result ? new ResponseEntity<>("OK", HttpStatus.OK ) : new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR );
    }
 
    @ExceptionHandler( Exception.class )
    public void handleException( Exception ex)
    {
-      logger.info( "Exception handler called with exception '{}'", ex.toString() );
+      logger.info( "ERROR: Exception handler called with exception '{}'", ex.toString() );
    }
 
 /*- Private methods ----------------------------------------------------------*/

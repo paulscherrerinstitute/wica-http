@@ -74,6 +74,9 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
 
    /**
     * Provided for unit testing only.
+    *
+    * @param wicaChannelName the name of the channel.
+    * @return the result.
     */
    int getInterestCountForChannel( WicaChannelName wicaChannelName)
    {
