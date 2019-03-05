@@ -172,7 +172,7 @@ const WicaElementEventAttributes = Object.freeze ({
  *
  * @property {string} channelProperties="data-wica-channel-properties" - The name of the element attribute which
  *     specifies the wica channel properties. Format: JSON string literal, representing JS
- *     {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties} object.
+ *     {@link module:shared-definitions~WicaChannelProperties WicaChannelProperties} object.
  *
  * @property {string} channelConnectionState="data-wica-channel-connection-state" - The name of the element
  *     attribute which reflects the state of the connection between the wica server and the wica
@@ -218,7 +218,7 @@ const WicaElementConnectionAttributes = Object.freeze ({
  *
  * @property {string} renderingProperties="data-wica-rendering-props" - The name of the attribute which provides
  *     other miscellaneous properties which affect the way the element is rendered. Format: JSON string literal
- *     representing JS {@link module:shared-definitions.WicaRenderingProperties WicaRenderingProperties}
+ *     representing JS {@link module:shared-definitions~WicaRenderingProperties WicaRenderingProperties}
  *     object.
  */
 const WicaElementRenderingAttributes = Object.freeze ({

@@ -75,10 +75,10 @@ class StreamManager
      *
      * @param {Object<WicaChannelName, WicaChannelProperties>[]} streamConfiguration.channels - Array specifying
      *     the configuration of each stream channel. See {@link module:shared-definitions.WicaChannelName WicaChannelName}
-     *     and {@link module:shared-definitions.WicaChannelProperties WicaChannelProperties}.
+     *     and {@link module:shared-definitions~WicaChannelProperties WicaChannelProperties}.
      *
      * @param {WicaStreamProperties} [streamConfiguration.props] - The stream properties object.
-     *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
+     *     See {@link module:shared-definitions~WicaStreamProperties WicaStreamProperties}.
      *
      * @param {Object} connectionHandlers - Callbacks for handling connection state changes.
      * @param {StreamConnectCallback} connectionHandlers.streamConnect - Called when the stream manager begins

@@ -36,7 +36,7 @@ class DocumentTextRenderer
      *
      * @param {!WicaElementRenderingAttributes} wicaElementRenderingAttributes - The names of the wica-aware
      *     element attributes that are to be used in the rendering process.
-     *     See {@link module:shared-definitions.WicaElementRenderingAttributes WicaElementRenderingAttributes}.
+     *     See {@link module:shared-definitions~WicaElementRenderingAttributes WicaElementRenderingAttributes}.
      */
     constructor( wicaElementConnectionAttributes, wicaElementRenderingAttributes,  )
     {

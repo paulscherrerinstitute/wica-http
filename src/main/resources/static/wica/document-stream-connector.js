@@ -33,7 +33,7 @@ class DocumentStreamConnector
      *
      * @param {!WicaStreamProperties} streamProperties - The properties of the stream that will be created to
      *     obtain the required information from the data sources.
-     *     See {@link module:shared-definitions.WicaStreamProperties WicaStreamProperties}.
+     *     See {@link module:shared-definitions~WicaStreamProperties WicaStreamProperties}.
      *
      * @param {!WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware
      *     element attributes that are to be used in the communication process.

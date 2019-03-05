@@ -58,7 +58,7 @@ class DocumentEventManager
      *
      * @param {!WicaElementEventAttributes} wicaElementEventAttributes - The names of the wica-aware
      *     element attributes that can be examined to determine whether a wica-aware element has any attached handlers.
-     *     See {@link module:shared-definitions.WicaElementEventAttributes WicaElementEventAttributes}.
+     *     See {@link module:shared-definitions~WicaElementEventAttributes WicaElementEventAttributes}.
      *
      * @implNote
      *
