@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.*;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Provides a SpringBoot REST Controller to handle the {code /status} endpoint.
+ * Provides a SpringBoot REST Controller to handle DELETE operations on the
+ * {code /ca/streams} endpoint.
  */
 @RestController
 @RequestMapping( "/ca/streams")

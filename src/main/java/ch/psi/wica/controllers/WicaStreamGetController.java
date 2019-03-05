@@ -21,7 +21,8 @@ import reactor.core.publisher.Flux;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Provides a SpringBoot REST Controller to handle the {code /status} endpoint.
+ * Provides a SpringBoot REST Controller to handle GET operations on the
+ * {code /ca/streams} endpoint.
  */
 @RestController
 @RequestMapping( "/ca/streams")

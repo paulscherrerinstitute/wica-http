@@ -35,12 +35,12 @@ public class WicaChannelValueSerializer
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   WicaChannelValueSerializer( int numericScale, boolean quoteNumericStrings )
+   public WicaChannelValueSerializer( int numericScale, boolean quoteNumericStrings )
    {
       this.wicaChannelDataSerializer = new WicaChannelDataSerializer( numericScale, quoteNumericStrings );
    }
 
-   WicaChannelValueSerializer( Set<String> fieldsOfInterest, int numericScale, boolean quoteNumericStrings )
+   public WicaChannelValueSerializer( Set<String> fieldsOfInterest, int numericScale, boolean quoteNumericStrings )
    {
       this.wicaChannelDataSerializer = new WicaChannelDataSerializer( fieldsOfInterest, numericScale, quoteNumericStrings );
    }
