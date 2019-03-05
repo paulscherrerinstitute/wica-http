@@ -73,7 +73,7 @@ class StreamManager
      *     the configuration of each of the stream's channels, together with, optionally, the stream properties
      *     object.
      *
-     * @param {Object<WicaChannelName, WicaChannelProperties>[]} streamConfiguration.channels - Array specifying
+     * @param {Object[]<WicaChannelName, WicaChannelProperties>} streamConfiguration.channels - Array specifying
      *     the configuration of each stream channel. See {@link module:shared-definitions.WicaChannelName WicaChannelName}
      *     and {@link module:shared-definitions~WicaChannelProperties WicaChannelProperties}.
      *
