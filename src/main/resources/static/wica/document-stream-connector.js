@@ -37,7 +37,7 @@ class DocumentStreamConnector
      *
      * @param {!WicaElementConnectionAttributes} wicaElementConnectionAttributes - The names of the wica-aware
      *     element attributes that are to be used in the communication process.
-     *     See {@link module:shared-definitions.WicaElementConnectionAttributes WicaElementConnectionAttributes}.
+     *     See {@link module:shared-definitions~WicaElementConnectionAttributes WicaElementConnectionAttributes}.
      */
     constructor( streamServerUrl, streamProperties, wicaElementConnectionAttributes )
     {
