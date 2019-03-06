@@ -110,8 +110,8 @@ The list of currently supported properties is as follows:
 | :----------------- | :------------------------------------------------------------------------- |
 | daqMode            | Sets the Data Acquisition Mode. Can be monitoring or polling.              |
 | pollratio          | Sets the number of polling cycles before a sample is taken.                |
-| fields             | a semicolon delimited list defining the data fields that should be included when sending value information for this channel.|
-| prec               | the number of digits after the decimal point to be used when sending numeric information. |
+| fields             | A semicolon delimited list defining the data fields that should be included when sending value information for this channel.|
+| prec               | Sets the number of digits after the decimal point to be used when sending numeric information. |
 | filter             | Sets the type of filtering to be used for this channel.                    |
 | n                  | Sets the the number of samples (latest value sampling filter only)         |
 | m                  | Sets the the cycle length (fixed cycle sampling filter only)               |
