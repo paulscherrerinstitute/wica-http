@@ -132,9 +132,7 @@ pushed to the GitLab repository that hosts this project.
 
 # Wica REST Service API 
 
-## Currently Supported Features 
-
-##### Get the Value of a Channel
+## Get the Value of a Channel
 
 ```
 GET /ca/channels/<channelName>[?timeout=XXX]
@@ -143,7 +141,7 @@ Returns JSON string representation of the value of the channel. For a channel wh
 {"type":"STRING","conn":true,"val":"15.101","sevr":0,"stat":0,"ts":"2019-03-06T09:37:22.103198","wsts":"2019-03-06T09:37:22.103211","wsts-alt":1551865042103,"dsts-alt":1551865042103}
 ```
 
-#####  Set the Value of a Channel
+##  Set the Value of a Channel
 
 ```
 PUT /ca/channels/<channelName>
@@ -152,7 +150,7 @@ Content-Type: text/plain the new value
 somevalue
 ```
 
-##### Create Wica Stream
+## Create Wica Stream
 
 ```
 POST /ca/streams
@@ -164,7 +162,7 @@ Content-Type: application/json
 Returns <streamId> a unique reference string that can be used when getting the stream (see below).
 ```
 
-##### Subscribe to Wica Stream
+## Subscribe to Wica Stream
 ```
 GET /ca/streams/<streamId>
 
@@ -173,7 +171,7 @@ Returns an event stream.
 
 The returned event stream contains the following message types:
 
-__Channel Metadata Information__ (sent once)
+### Channel Metadata Information (sent once)
 ```
 id:0
 event:ev-wica-channel-metadata
