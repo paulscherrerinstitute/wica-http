@@ -1,9 +1,11 @@
 # Overview
 
 WICA stands for "Web Interface for Controls Applications". The idea is to provide web-based access to PSI's controls 
-infrastructure. Currently this infrastructure is based on EPICS IOC's accessed by channel access protocol. Wica supports
-this as its primary use case but its central abstractions are designed to be extensible to other additional control 
-system types and/or network protocols.
+infrastructure. 
+
+Currently this infrastructure is based on EPICS IOC's accessed by channel access protocol. Wica supports
+this as its primary use case but its central abstractions are designed to be extensible to other additional 
+control system types and/or network protocols as well.
 
 The **Wica2** project is the successor to PSI's earlier [Wica](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica)
 project whose stated goal was to provide a: 
