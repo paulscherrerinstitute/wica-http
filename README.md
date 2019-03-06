@@ -103,6 +103,23 @@ the properties of the channel. For example:
 
 In the above example the precision of the channel is set to 0 decimal places. This means that when 
 streamed down the wire the channel's numeric value is represented stream with zero decimal places.
+
+The list of currently supported proerties are as follows:
+
+* daqMode - the data acquisition mode. Can be monitoring or polling.
+* pollratio - the number of polling cycles before a sample is taken.
+* fields - a semicolon delimited list defining the data fields that should be included when sending value information for this channel.
+* prec - the number of digits after the decimal point to be used when sending numeric information.
+* filter - the type of filtering to be used for this channel.
+* n - the number of samples (latest value sampling filter only)
+* m - the cycle length (fixed cycle sampling filter only)
+* interval - the filter sampling interval (rate limiting sampling filter only)
+* deadband - the filter deadband ( change filtering sampler only)
+
+For the latest information please consult the [JS](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica) 
+and [Javadoc](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/java) information which is built automatically 
+with every software release.
+
 ToDo: document the supported properties.
 
 # Wica API Documentation
