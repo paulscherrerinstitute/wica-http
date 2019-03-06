@@ -215,7 +215,7 @@ data:2019-03-06T09:39:54.348562
 GET /wica/wica.js
 ```
 
-# Javascript Client API
+# Wica Javascript Client API
 
 The Javascript client library contains a module named [client-api](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica/module-client-api.html)
 
