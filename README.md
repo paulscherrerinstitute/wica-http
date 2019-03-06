@@ -171,7 +171,7 @@ Returns an event stream.
 
 The returned event stream contains the following message types:
 
-#### Channel Metadata Information (sent once)
+__ Channel Metadata Information__ (sent once)
 ```
 id:0
 event:ev-wica-channel-metadata
@@ -179,14 +179,13 @@ data:{"AMAKI1:IST:2":{"type":"REAL","egu":"A","prec":3,"hopr":72.000000,"lopr":-
 :2019-03-06 09:39:39.407 - initial channel metadata
 ```
 
-#### Channel Initial Values__ (sent once)
+__ Channel Initial Values__ (sent once)
 ```
 id:0
 event:ev-wica-channel-metadata
 data:{"BMB1:STA:2":[{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Offen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Offen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Offen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Offen","sevr":0}]}
 :2019-03-06 09:39:39.518 - initial channel values
 ```
-
 
 __Channel Value Changes__ (sent periodically eg every 100ms)
 ```
