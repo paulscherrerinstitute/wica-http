@@ -134,6 +134,23 @@ pushed to the GitLab repository that hosts this project.
 
 ## Currently Supported Features 
 
+##### Get value of a channel
+
+```
+GET /ca/channels/<channelName>[?timeout=XXX]
+
+Returns JSON string representation of the value of the channel. For a channel whose underlying data source is EPICS the returned information looks like this:
+{"type":"STRING","conn":true,"val":"15.101","sevr":0,"stat":0,"ts":"2019-03-06T09:37:22.103198","wsts":"2019-03-06T09:37:22.103211","wsts-alt":1551865042103,"dsts-alt":1551865042103}
+```
+
+#####  Set the value of channel
+
+```
+PUT /ca/channels/<channelName>
+Content-Type: text/plain the new value
+
+somevalue
+```
 ##### Create Wica Stream
 
 ```
@@ -155,7 +172,7 @@ Returns an event stream.
 
 The returned event stream contains the following message types:
 
-Channel Metadata Information (sent once)
+##### Channel Metadata Information (sent once)
 ```
 id:0
 event:ev-wica-channel-metadata
@@ -200,21 +217,6 @@ data:{"MMAC3:STR:2##2":[{"val":15.069581,"ts":"2019-03-06T09:39:54.527468"}],"CM
 GET /wica/wica.js
 ```
 
-##### Get value of a channel
-```
-GET /ca/channels/<channelName>[?timeout=XXX]
-
-Returns JSON string representation of the value of the channel. For a channel whose underlying data source is EPICS the returned information looks like this:
-{"type":"STRING","conn":true,"val":"15.101","sevr":0,"stat":0,"ts":"2019-03-06T09:37:22.103198","wsts":"2019-03-06T09:37:22.103211","wsts-alt":1551865042103,"dsts-alt":1551865042103}
-```
-
-#####  Set the value of channel
-```
-PUT /ca/channels/<channelName>
-Content-Type: text/plain the new value
-
-somevalue
-```
 
 # Project Changes and Tagged Releases
 
