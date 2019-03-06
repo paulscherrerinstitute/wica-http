@@ -102,8 +102,7 @@ the properties of the channel. For example:
 ```
 
 In the above example the precision of the channel is set to 0 decimal places. This means that when 
-the channel's numeric value is streamed down the wire it can be represented in the stream with zero
-decimal places.
+streamed down the wire the channel's numeric value is represented stream with zero decimal places.
 ToDo: document the supported properties.
 
 # Wica API Documentation
