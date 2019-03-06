@@ -140,11 +140,10 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-7104](https://jira.psi.ch/browse/CTRLIT-7104): Create 1.0.1-RELEASE.
 
 * [1.1.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/1.1.0-RELEASE)
-First release of embryonic feature channel GET and PUT endpoints.
+First release which supports embryonic feature: channel GET and PUT operations..  
    - [CTRLIT-7105](https://jira.psi.ch/browse/CTRLIT-7108): Make status panels available in PSI's demilitarized zone.
    - [CTRLIT-7108](https://jira.psi.ch/browse/CTRLIT-7108): Add support to the REST service to support channel access GET and PUT.
    - [CTRLIT-7110](https://jira.psi.ch/browse/CTRLIT-7104): Create 1.1.0-RELEASE.
-
 
 # Project Ideas Completed
 
@@ -178,7 +177,6 @@ a desktop monitor). DONE.
 When an idea is under serious consideration and a candidate for
 implementation it will be placed on the project's [Jira Kanban Board](https://jira.psi.ch/secure/RapidBoard.jspa?rapidView=1631)
 1. Create end-to-end tests to measure performance.
-
 1. Improve behaviour when navigating away from Wica Pages. 
 1. Consider switching to http2. Need to resolve bug exposed when client navigates away.
 1. Improve page load times by minifying loadable artifacts.
@@ -186,7 +184,7 @@ implementation it will be placed on the project's [Jira Kanban Board](https://ji
 1. Work out how best to integrate with K8ie's work on SVG.
 1. Improve the admin page by reporting on the active clients and their IP's.
 1. Consider a better name.
-1. Consider splitting up backend and frontend server.
+1. Consider splitting up backend and frontend server into separate Git repositories.
 1. Refactor stream-manager to use promises and/or new JS async semantics.
 1. Go through all code TODO's and try to resolve them.   
 1. Add reporting on test coverage.
