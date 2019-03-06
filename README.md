@@ -213,12 +213,11 @@ GET /wica/wica.js
 
 # Javascript Client API
 
-The Javascript client library contains a module named [client-api].
-(http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica/module-client-api.html)
+The Javascript client library contains a module named [client-api](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica/module-client-api.html)
 
-This is the start point for leveraging Wica on the client side.
+This is the start point for leveraging Wica functionality on the client side. Please consult the API documentation for further information.
 
-# Further API Documentation
+# Wica Automatic API Documentation
 
 The Wica frontend (JSdoc) and backend (Javadoc) API documentation is built automatically every time a new commit is
 pushed to the GitLab repository that hosts this project.
