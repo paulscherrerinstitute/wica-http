@@ -10,14 +10,14 @@ project whose stated goal was to provide a:
 
 Wica2 includes the goal of the earlier project but expands the vision to target the following use case:
 
-> _**"Create some software that will enable an end-user to easily create their own customised web pages that
+> _**"Create some software that will enable end-users to easily create their own customised web pages to
 show the evolving, live status of one or more EPICS channels of interest."**_
 
 Wica2 provides a REST backend service with similar functionality to Wica. Additionally it provides a 
-frontend library which can stream live data from the backend, using the received information to dynamically 
+frontend library which streams live data from the backend, using the received information to dynamically 
 update the end-user's web page.
 
-Wica2 is based on technologies that are currently being actively used within PSI's GFA Controls Section. The main 
+Wica2 is based on technologies that are currently in active use within PSI's GFA Controls Section. The main 
 technology differences between Wica and Wica2 are as follows:
 
 | Original WICA Project                         | WICA2 Project                                           |
@@ -25,7 +25,7 @@ technology differences between Wica and Wica2 are as follows:
 | Backend runs on Glassfish Application Server. | Backend uses JavaSpring Boot containers (Tomcat/Netty). |
 | Backend runs directly on linux host.          | Backend runs in Docker container.                       |
 | Backend uses EPICS JCA/CAJ CA library.        | Backend uses PSI's EPICS CA client library.             |
-| No direct support for frontend (webpages).    | Frontend uses JS library to leverage off modern HTML5 features (eg Server Sent Events (SSE), data-* attributes...)
+| No direct support for frontend (webpages).    | Frontend uses JS library to leverage off HTML5 features (eg Server Sent Events (SSE), data-* attributes...)
 
 
 # Simple Wica Webpage Example
@@ -46,7 +46,7 @@ The simplest Wica2 webpage looks like this:
 
 </html>
 ```
-In this example a single channel named "abc:def" is monitored. When the page is loaded the div element's
+In this example a single channel named "abc:def" is being monitored. When the page is loaded the div element's
 text content will be dynamically updated with the latest values received from the wica channel.
 
 # How it Works
@@ -56,10 +56,10 @@ library scans the document from which it was loaded for elements whose 'data-wic
 This attribute is used as a means of indicating that the element is "wica-aware". 
 
 The library then communicates the channel names associated with all wica-aware elements to the Wica REST Server 
-(on the backend) which instigates monitoring of the associated data sources and the streaming back of channel 
-metadata and value information to the frontend.
+(on the backend) which starts monitoring the associated data sources and streaming back the channel metadata 
+(eg alarm and display limits) and value information to the frontend.
 
-In response to the received event stream the Wica JS library module then updates the following attributes of each 
+In response to the received data stream the Wica JS library module then updates the following attributes of each 
 wica-aware html element:
 
 | Attribute                           | Meaning                                                    | Possible Values                                           |
@@ -101,7 +101,9 @@ the properties of the channel. For example:
 </html>
 ```
 
-In the above example the precision of the channel is set to 0 decimal places.
+In the above example the precision of the channel is set to 0 decimal places. This means that when 
+the channel's numeric value is streamed down the wire it can be represented in the stream with zero
+decimal places.
 ToDo: document the supported properties.
 
 # Wica API Documentation
@@ -131,6 +133,50 @@ Returns <streamId> a unique reference string that can be used when getting the s
 ##### Subscribe to Wica Stream
 ```
 GET /ca/streams/<streamId>
+
+Returns an event stream.
+```
+
+The returned event stream contains the following message types:
+
+Channel Metadata Information (sent once)
+```
+id:0
+event:ev-wica-channel-metadata
+data:{"AMAKI1:IST:2":{"type":"REAL","egu":"A","prec":3,"hopr":72.000000,"lopr":-72.000000,"drvh":72.000000,"drvl":-72.000000,"hihi":NaN,"lolo":NaN,"high":NaN,"low":NaN}, ...etc }
+:2019-03-06 09:39:39.407 - initial channel metadata
+```
+
+Channel Initial Values (sent once)
+```
+id:0
+event:ev-wica-channel-metadata
+data:{"BMB1:STA:2":[{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Offen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Offen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Offen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Offen","sevr":0}]}
+:2019-03-06 09:39:39.518 - initial channel values
+```
+
+Channel Heartbeat (sent periodically eg every 15 seconds)
+```
+id:0
+event:ev-wica-server-heartbeat
+data:2019-03-06T09:39:54.348562
+:2019-03-06 09:39:54.348 - server heartbeat
+```
+
+Channel Value Changes (sent periodically eg every 100ms)
+```
+id:0
+event:ev-wica-channel-value
+data:{"MMAC3:STR:2":[{"val":15.069581,"sevr":0}],"SMA1Y:IST:2":[{"val":-0.966167,"sevr":0}],"QMA2:IST:2":[{"val":102.363586,"sevr":0}],"QMA1:IST:2":[{"val":-91.472626,"sevr":0}],"QMA3:IST:2":[{"val":-97.093582,"sevr":0}]}
+:2019-03-06 09:39:54.526 - channel value changes
+```
+
+Channel Polled Values (sent periodically eg every second)
+```
+id:0
+event:ev-wica-channel-value
+data:{"MMAC3:STR:2##2":[{"val":15.069581,"ts":"2019-03-06T09:39:54.527468"}],"CMJSEV:PWRF:2##2":[{"val":113.888885,"ts":"2019-03-06T09:39:54.527522"}],"EMJCYV:IST:2##2":[{"val":0.922709,"ts":"2019-03-06T09:39:54.527459"}]}
+:2019-03-06 09:39:54.528 - polled channel values
 ```
 
 ##### Download the Wica javascript client library module:
@@ -140,14 +186,15 @@ GET /wica/wica.js
 
 ##### Get value of a channel
 ```
-GET /ca/channels/<channel>
+GET /ca/channels/<channelName>[?timeout=XXX]
 
-Returns JSON string representation of the value of the channel.
+Returns JSON string representation of the value of the channel. For a channel whose underlying data source is EPICS the returned information looks like this:
+{"type":"STRING","conn":true,"val":"15.101","sevr":0,"stat":0,"ts":"2019-03-06T09:37:22.103198","wsts":"2019-03-06T09:37:22.103211","wsts-alt":1551865042103,"dsts-alt":1551865042103}
 ```
 
 #####  Set the value of channel
 ```
-PUT /ca/channels/<channel>
+PUT /ca/channels/<channelName>
 Content-Type: text/plain the new value
 
 somevalue
