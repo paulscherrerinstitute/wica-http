@@ -50,7 +50,7 @@ public class WicaChannelService
 /*- Public methods -----------------------------------------------------------*/
 
    /**
-    * Synchronously gets the value of a channel.
+    * Gets the value of a channel.
     *
     * This method incurs the network cost of establishing a channel to the remote
     * data source and performing a synchronous (=confirmed) GET operation.
@@ -112,7 +112,7 @@ public class WicaChannelService
    }
 
    /**
-    * Synchronously sets the value of a channel.
+    * Sets the value of a channel.
     *
     * This method incurs the network cost of establishing a channel to the remote
     * data source and performing a synchronous (= confirmed) PUT operation.
