@@ -25,7 +25,7 @@ const WICA_DMZ_HOST = "https://gfa-dmz-01.psi.ch";
 
 // Create and activate a document support loader for the document
 // which loads this library.
-const documentSupportLoader = new ClientAPI.DocumentSupportLoader( WICA_DEV_HOST );
+const documentSupportLoader = new ClientAPI.DocumentSupportLoader( WICA_PROD_HOST );
 documentSupportLoader.activate( 200, 200 );
 
 // Attach a handler to shut things down when the browser navigates away.
