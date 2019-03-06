@@ -130,6 +130,10 @@ with every software release.
 
 On the Wica Backend Server the following endpoints are provided for leveraging the functionality of the system.
 
+### Download the Wica Javascript Client Library
+```
+GET /wica/wica.js
+```
 
 ### Get the Value of a Channel
 
@@ -208,11 +212,6 @@ id:0
 event:ev-wica-server-heartbeat
 data:2019-03-06T09:39:54.348562
 :2019-03-06 09:39:54.348 - server heartbeat
-```
-
-### Download the Wica Javascript Client Library
-```
-GET /wica/wica.js
 ```
 
 # Wica Javascript Client Library API
