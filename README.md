@@ -141,7 +141,7 @@ Returns JSON string representation of the value of the channel. For a channel wh
 {"type":"STRING","conn":true,"val":"15.101","sevr":0,"stat":0,"ts":"2019-03-06T09:37:22.103198","wsts":"2019-03-06T09:37:22.103211","wsts-alt":1551865042103,"dsts-alt":1551865042103}
 ```
 
-##  Set the Value of a Channel
+## Set the Value of a Channel
 
 ```
 PUT /ca/channels/<channelName>
@@ -171,7 +171,7 @@ Returns an event stream.
 
 The returned event stream contains the following message types:
 
-__ Channel Metadata Information__ (sent once)
+__Channel Metadata Information__ (sent once)
 ```
 id:0
 event:ev-wica-channel-metadata
@@ -179,7 +179,7 @@ data:{"AMAKI1:IST:2":{"type":"REAL","egu":"A","prec":3,"hopr":72.000000,"lopr":-
 :2019-03-06 09:39:39.407 - initial channel metadata
 ```
 
-__ Channel Initial Values__ (sent once)
+__Channel Initial Values__ (sent once)
 ```
 id:0
 event:ev-wica-channel-metadata
@@ -211,10 +211,13 @@ data:2019-03-06T09:39:54.348562
 :2019-03-06 09:39:54.348 - server heartbeat
 ```
 
-##### Download the Wica javascript client library module:
+## Download the Wica javascript client library module:
 ```
 GET /wica/wica.js
 ```
+
+# Javascript Client API
+
 
 
 # Project Changes and Tagged Releases
