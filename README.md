@@ -20,7 +20,7 @@ information to dynamically update the end-user's web page.
 Wica2 is based on technologies that are currently in active use within PSI's GFA Controls Section. The main 
 technology differences between Wica and Wica2 are as follows:
 
-| Original WICA Project                         | WICA2 Project                                           |
+| _Original WICA Project_                       | _WICA2 Project_                                         |
 | :-------------------------------------------- | :------------------------------------------------------ |
 | Backend runs on Glassfish Application Server. | Backend uses JavaSpring Boot containers (Tomcat/Netty). |
 | Backend runs directly on linux host.          | Backend runs in Docker container.                       |
