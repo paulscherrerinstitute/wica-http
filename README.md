@@ -124,6 +124,9 @@ with every software release.
 
 # Wica REST Service API 
 
+On the Wica Backend Server the following endpoints are provided for leveraging the functionality of the system.
+
+
 ## Get the Value of a Channel
 
 ```
@@ -210,6 +213,10 @@ GET /wica/wica.js
 
 # Javascript Client API
 
+The Javascript client library contains a module named [client-api].
+(http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica/module-client-api.html)
+
+This is the start point for leveraging Wica on the client side.
 
 # Further API Documentation
 
@@ -218,7 +225,6 @@ pushed to the GitLab repository that hosts this project.
 
   * [JS Frontend](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica) 
   * [Javadoc Backend](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/java)
-
 
 
 # Project Changes and Tagged Releases
