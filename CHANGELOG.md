@@ -140,7 +140,7 @@ This log describes the functionality of tagged versions within the repository.
    - [CTRLIT-7104](https://jira.psi.ch/browse/CTRLIT-7104): Create 1.0.1-RELEASE.
 
 * [1.1.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/1.1.0-RELEASE)
-   - First release which supports newembryonic feature: channel GET and PUT operations..  
+\\First release which supports newembryonic feature: channel GET and PUT operations..  
    - [CTRLIT-7105](https://jira.psi.ch/browse/CTRLIT-7108): Make status panels available in PSI's demilitarized zone.
    - [CTRLIT-7108](https://jira.psi.ch/browse/CTRLIT-7108): Add support to the REST service to support channel access GET and PUT.
    - [CTRLIT-7110](https://jira.psi.ch/browse/CTRLIT-7104): Create 1.1.0-RELEASE.
