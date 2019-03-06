@@ -106,7 +106,7 @@ streamed down the wire the channel's numeric value is represented stream with ze
 
 The list of currently supported properties is as follows:
 
-| Property           | Decsription                                                                |
+| *Property*         | *Description*                                                              |
 | :----------------- | :------------------------------------------------------------------------- |
 | daqMode            | Sets the Data Acquisition Mode. Can be monitoring or polling.              |
 | pollratio          | Sets the number of polling cycles before a sample is taken.                |
