@@ -20,7 +20,7 @@ information to dynamically update the end-user's web page.
 Wica2 is based on technologies that are currently in active use within PSI's GFA Controls Section. The main 
 technology differences between Wica and Wica2 are as follows:
 
-| __Original WICA Project__                      | _WICA2 Project_                                         |
+| __Original WICA Project__                     | __WICA2 Project__                                       |
 | :-------------------------------------------- | :------------------------------------------------------ |
 | Backend runs on Glassfish Application Server. | Backend uses JavaSpring Boot containers (Tomcat/Netty). |
 | Backend runs directly on linux host.          | Backend runs in Docker container.                       |
@@ -62,7 +62,7 @@ The library then communicates the channel names associated with all wica-aware e
 In response to the received data stream the Wica JS library module then updates the following attributes of each 
 wica-aware html element:
 
-| Attribute                           | Meaning                                                    | Possible Values                                           |
+| __Attribute__                       | __Meaning__                                                | __Possible Values__                                       |
 | :---------------------------------- | :----------------------------------------------------------| :-------------------------------------------------------- |
 | data-wica-stream-state              | Contains status of connection to Wica Server.              | "connecting", "opened-XXX", "closed-XXX"                  |
 | data-wica-channel-connection-state  | Contains status of connection to data source.              | "disconnected", "connected"                               |
@@ -106,7 +106,7 @@ streamed down the wire the channel's numeric value is represented stream with ze
 
 The list of currently supported properties is as follows:
 
-| *Property*         | *Description*                                                              |
+| __Property__       | __Description__                                                            |
 | :----------------- | :------------------------------------------------------------------------- |
 | daqMode            | Sets the Data Acquisition Mode. Can be monitoring or polling.              |
 | pollratio          | Sets the number of polling cycles before a sample is taken.                |
