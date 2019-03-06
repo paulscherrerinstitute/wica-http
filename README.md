@@ -171,7 +171,7 @@ Returns an event stream.
 
 The returned event stream contains the following message types:
 
-### Channel Metadata Information (sent once)
+#### Channel Metadata Information (sent once)
 ```
 id:0
 event:ev-wica-channel-metadata
@@ -179,7 +179,7 @@ data:{"AMAKI1:IST:2":{"type":"REAL","egu":"A","prec":3,"hopr":72.000000,"lopr":-
 :2019-03-06 09:39:39.407 - initial channel metadata
 ```
 
-__Channel Initial Values__ (sent once)
+#### Channel Initial Values__ (sent once)
 ```
 id:0
 event:ev-wica-channel-metadata
