@@ -173,7 +173,7 @@ Returns an event stream.
 
 The returned event stream contains the following message types:
 
-_Channel Metadata Information (sent once)_
+__Channel Metadata Information__ (sent once)
 ```
 id:0
 event:ev-wica-channel-metadata
@@ -181,7 +181,7 @@ data:{"AMAKI1:IST:2":{"type":"REAL","egu":"A","prec":3,"hopr":72.000000,"lopr":-
 :2019-03-06 09:39:39.407 - initial channel metadata
 ```
 
-_Channel Initial Values (sent once)_
+__Channel Initial Values__ (sent once)
 ```
 id:0
 event:ev-wica-channel-metadata
@@ -189,15 +189,8 @@ data:{"BMB1:STA:2":[{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"v
 :2019-03-06 09:39:39.518 - initial channel values
 ```
 
-_Channel Heartbeat (sent periodically eg every 15 seconds)_
-```
-id:0
-event:ev-wica-server-heartbeat
-data:2019-03-06T09:39:54.348562
-:2019-03-06 09:39:54.348 - server heartbeat
-```
 
-_Channel Value Changes (sent periodically eg every 100ms)_
+__Channel Value Changes__ (sent periodically eg every 100ms)
 ```
 id:0
 event:ev-wica-channel-value
@@ -205,12 +198,20 @@ data:{"MMAC3:STR:2":[{"val":15.069581,"sevr":0}],"SMA1Y:IST:2":[{"val":-0.966167
 :2019-03-06 09:39:54.526 - channel value changes
 ```
 
-Channel Polled Values (sent periodically eg every second)
+__Channel Polled Values__ (sent periodically eg every second)
 ```
 id:0
 event:ev-wica-channel-value
 data:{"MMAC3:STR:2##2":[{"val":15.069581,"ts":"2019-03-06T09:39:54.527468"}],"CMJSEV:PWRF:2##2":[{"val":113.888885,"ts":"2019-03-06T09:39:54.527522"}],"EMJCYV:IST:2##2":[{"val":0.922709,"ts":"2019-03-06T09:39:54.527459"}]}
 :2019-03-06 09:39:54.528 - polled channel values
+```
+
+__Channel Heartbeat__ (sent periodically eg every 15 seconds)
+```
+id:0
+event:ev-wica-server-heartbeat
+data:2019-03-06T09:39:54.348562
+:2019-03-06 09:39:54.348 - server heartbeat
 ```
 
 ##### Download the Wica javascript client library module:
