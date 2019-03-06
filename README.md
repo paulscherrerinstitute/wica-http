@@ -122,14 +122,6 @@ For the latest information please consult the [JS](http://controls_highlevel_app
 and [Javadoc](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/java) information which is built automatically 
 with every software release.
 
-# Wica API Documentation
-
-The Wica frontend (JSdoc) and backend (Javadoc) API documentation is built automatically every time a new commit is
-pushed to the GitLab repository that hosts this project.
-
-  * [JS Frontend](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica) 
-  * [Javadoc Backend](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/java)
-
 # Wica REST Service API 
 
 ## Get the Value of a Channel
@@ -217,6 +209,15 @@ GET /wica/wica.js
 ```
 
 # Javascript Client API
+
+
+# Further API Documentation
+
+The Wica frontend (JSdoc) and backend (Javadoc) API documentation is built automatically every time a new commit is
+pushed to the GitLab repository that hosts this project.
+
+  * [JS Frontend](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica) 
+  * [Javadoc Backend](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/java)
 
 
 
