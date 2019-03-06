@@ -131,7 +131,7 @@ with every software release.
 On the Wica Backend Server the following endpoints are provided for leveraging the functionality of the system.
 
 
-## Get the Value of a Channel
+### Get the Value of a Channel
 
 ```
 GET /ca/channels/<channelName>[?timeout=XXX]
@@ -140,7 +140,7 @@ Returns JSON string representation of the value of the channel. For a channel wh
 {"type":"STRING","conn":true,"val":"15.101","sevr":0,"stat":0,"ts":"2019-03-06T09:37:22.103198","wsts":"2019-03-06T09:37:22.103211","wsts-alt":1551865042103,"dsts-alt":1551865042103}
 ```
 
-## Set the Value of a Channel
+### Set the Value of a Channel
 
 ```
 PUT /ca/channels/<channelName>
@@ -149,7 +149,7 @@ Content-Type: text/plain the new value
 somevalue
 ```
 
-## Create Wica Stream
+### Create Wica Stream
 
 ```
 POST /ca/streams
@@ -161,7 +161,7 @@ Content-Type: application/json
 Returns <streamId> a unique reference string that can be used when getting the stream (see below).
 ```
 
-## Subscribe to Wica Stream
+### Subscribe to Wica Stream
 ```
 GET /ca/streams/<streamId>
 
@@ -210,12 +210,12 @@ data:2019-03-06T09:39:54.348562
 :2019-03-06 09:39:54.348 - server heartbeat
 ```
 
-## Download the Wica javascript client library module:
+### Download the Wica Javascript Client Library
 ```
 GET /wica/wica.js
 ```
 
-# Wica Javascript Client API
+# Wica Javascript Client Library API
 
 The Javascript client library contains a module named [client-api](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica/module-client-api.html)
 
