@@ -14,8 +14,8 @@ Wica2 includes the goal of the earlier project but expands the vision to target 
 show the evolving, live status of one or more EPICS channels of interest."**_
 
 Wica2 provides a REST backend service with similar functionality to Wica. Additionally it provides a 
-frontend library which streams live data from the backend, using the received information to dynamically 
-update the end-user's web page.
+frontend library which streams live data from the backend, and then subsequently uses the received 
+information to dynamically update the end-user's web page.
 
 Wica2 is based on technologies that are currently in active use within PSI's GFA Controls Section. The main 
 technology differences between Wica and Wica2 are as follows:
