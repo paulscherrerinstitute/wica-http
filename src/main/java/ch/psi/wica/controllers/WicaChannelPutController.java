@@ -58,12 +58,10 @@ class WicaChannelPutController
     *
     * @param channelName the name of the channel whose value is to be changed.
     * @param timeoutInMilliseconds the timeout to be applied when attempting to
-    *     get the channel value from the underlying data source. If a timeout
-    *     occurs the returned value will be WicaChannelValueDisconnected.         *
+    *     put the channel value yo the underlying data source. If a timeout
+    *     occurs the returned value will be false.
     * @param channelValue the string representation of the new value.
-    *
-    *
-    * @return the returned event stream.
+    * @return String set to "OK" if the put operation completed successfully.
     */
    @PutMapping( value="/{channelName}", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.TEXT_PLAIN_VALUE )
    public ResponseEntity<String> putChannelValue( @PathVariable String channelName,

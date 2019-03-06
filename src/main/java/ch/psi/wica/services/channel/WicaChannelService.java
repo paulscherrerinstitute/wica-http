@@ -119,9 +119,9 @@ public class WicaChannelService
     *
     * @param wicaChannelName the channel name.
     * @param channelValue the channel value.
-    * @param timeout the timeout to be applied when attempting to get the channel
-    *     value from the underlying data source. If a timeout occurs the returned
-    *     value will be WicaChannelValueDisconnected.
+    * @param timeout the timeout to be applied when attempting to put the channel
+    *     value to the underlying data source. If a timeout occurs the returned
+    *     value will be false.
     * @param timeUnit the time units to be used.
     * @return boolean set true when the put completed successfully.
     */
@@ -168,7 +168,7 @@ public class WicaChannelService
          return false;
       }
 
-      // If we get here return a token to indicate that the put was successful
+      // If we get here return a token to indicate that the put was successful.
       return true;
    }
 
