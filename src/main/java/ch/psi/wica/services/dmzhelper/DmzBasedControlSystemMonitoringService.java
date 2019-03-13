@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * @implNote.
  * Channels are reused.
  */
-@Service
+//@Service
 @ThreadSafe
 public class DmzBasedControlSystemMonitoringService implements ControlSystemMonitoringService
 {

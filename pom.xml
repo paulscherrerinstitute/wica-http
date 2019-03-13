@@ -196,10 +196,10 @@
                 </executions>
                 <configuration>
                     <repository>docker.psi.ch:5000/gfa-wica</repository>
+                    <tag>${project.version}</tag>
                     <!--<repository>docker.io/paulscherrerinstitute/gfa-wica</repository>-->
                     <!--<username>simondelabici</username>-->
                     <!--<password>YYYYY</password>-->
-                    <!--<tag>${project.version}</tag>-->
                     <buildArgs>
                         <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
                     </buildArgs>
