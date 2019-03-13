@@ -21,7 +21,7 @@ log.info( "Wica is loading support for the current document... ");
 
 const WICA_DEV_HOST  = "https://gfa-wica-dev.psi.ch";
 const WICA_PROD_HOST = "https://gfa-wica.psi.ch";
-const WICA_DMZ_HOST = "https://gfa-dmz-01.psi.ch";
+const WICA_DMZ_HOST = "https://wica.psi.ch";
 
 // Create and activate a document support loader for the document
 // which loads this library.
