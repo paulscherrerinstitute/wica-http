@@ -115,7 +115,6 @@ WORKDIR /root
 #    apt-get clean &&                                 \
 #    rm -rf /var/lib/apt/lists/* /tmp/*
 
-
 RUN apk update && \
     apk add --no-cache bash && \
     apk add --no-cache openssh-client

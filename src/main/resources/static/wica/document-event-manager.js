@@ -87,7 +87,7 @@ class DocumentEventManager
      *
      * See also: {@link module:document-event-manager.DocumentEventManager#shutdown shutdown}.
      */
-    activate( refreshRateInMilliseconds = 100, supportEventListeners = false )
+    activate( refreshRateInMilliseconds = 100, supportEventListeners = true )
     {
         // Start update process if not already active. Otherwise do nothing.
         if ( this.intervalTimer === undefined )
