@@ -263,8 +263,8 @@ class DocumentTextRenderer
      * element's tooltip attribute.
      *
      * The implementation here does nothing if the tooltip attribute has already been set explicitly in
-     * the HTML document. If the attribute has not been set then the first time this method is invoked
-     * it will set the attribute to the name of the channel.
+     * the HTML document and if the set value matches the channel name. If this condition is not met
+     * then the tooltipAttribute value is copied from the channelNameAttribute.
      *
      * @param {Element} element - The element.
      * @param {string} tooltipAttribute - The name of the attribute which contains the tooltip.
@@ -273,9 +273,9 @@ class DocumentTextRenderer
      */
     static configureWicaElementToolTip_( element, tooltipAttribute, channelNameAttribute )
     {
-        if ( ! element.hasAttribute( tooltipAttribute ) )
+        const channelName = element.getAttribute( channelNameAttribute );
+        if ( ( ! element.hasAttribute( tooltipAttribute ) ) || ( element.getAttribute( tooltipAttribute ) !== channelName ) )
         {
-            const channelName = element.getAttribute( channelNameAttribute );
             element.setAttribute( tooltipAttribute, channelName );
         }
     }
