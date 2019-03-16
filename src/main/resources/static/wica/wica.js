@@ -35,5 +35,15 @@ window.onbeforeunload = () => {
     log.info( "Wica unloaded OK." );
 };
 
+// Provide a hook for restarting wica support of the current document
+function restartDocumentSupportLoader() {
+    log.info( "Wica is restarting support for the current document..." );
+    documentSupportLoader.shutdown();
+    log.info( "Wica document support loader was shutdown OK." );
+    documentSupportLoader.activate( 200, 200 );
+    log.info( "Wica document support loader was activated OK." );
+}
+document.wicaRestartDocumentSupportLoader = restartDocumentSupportLoader;
+
 log.info( "Wica support loaded OK. ");
 
