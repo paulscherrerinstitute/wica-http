@@ -147,7 +147,7 @@ First release which supports new embryonic feature: channel GET and PUT operatio
 
 * [1.2.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/1.2.0-RELEASE)
    - [CTRLIT-7142](https://jira.psi.ch/browse/CTRLIT-7142): Create 1.2.0-RELEASE which supports loading JSON5 library 
-   as module rather than using script tag.
+   as module rather than using script tag. Also wica Custom Event generation is now enabled.
 
 
 # Project Ideas Completed
