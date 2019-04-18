@@ -4,8 +4,7 @@
  */
 
 /**
- * This module causes the browser to load the JSON5 library as a script (thereby,
- * as a side-effect, making it available in the Global memory space).
+ * This module loads the JSON5 library.
  *
  * Critical functions of the library are wrapped and exported for use
  * elsewhere inside the application, thus making it independent of the
@@ -16,7 +15,9 @@
 
 /*- Import/Export Declarations -----------------------------------------------*/
 
-import * as log from "./logger.js"
+import JSON5 from './json5-latest.min.js';
+
+import * as log from "./logger.js";
 export { load, parse, stringify };
 
 
@@ -42,16 +43,7 @@ log.log( "Executing script in json5-wrapper.js module...");
  */
 const parse = function parse( text, reviver )
 {
-    if ( isLibraryLoaded_() )
-    {
-        return JSON5.parse( text, reviver );
-    }
-    else
-    {
-        const msg = "Programming Error: call to JSON5.parse() before library initialised.";
-        log.warn( msg );
-        throw Error( msg );
-    }
+    return JSON5.parse( text, reviver );
 };
 
 /**
@@ -84,16 +76,7 @@ const parse = function parse( text, reviver )
  */
 const stringify = function( value, replacer, space )
 {
-    if ( isLibraryLoaded_() )
-    {
-        return JSON5.stringify( value, replacer, space );
-    }
-    else
-    {
-        const msg = "Programming Error: call to JSON5.stringify() before library initialised.";
-        log.warn( msg );
-        throw Error( msg );
-    }
+    return JSON5.stringify( value, replacer, space );
 };
 
 /**
@@ -103,58 +86,5 @@ const stringify = function( value, replacer, space )
  */
 const load = function( callback )
 {
-    if ( ! getAndSetLibraryLoadStarted_() )
-    {
-        const script = document.createElement('script');
-        script.id = 'wica-json5-wrapper-id';
-        script.src = "/wica/json5-latest.min.js";
-        script.onload = function()
-        {
-            setLibraryLoaded_();
-            log.info( "JSON5 wrapper: initialised ok !");
-            callback();
-        };
-        document.head.appendChild( script );
-    }
-    else
-    {
-        if ( isLibraryLoaded_() ) {
-            log.info("JSON5 wrapper library is already loaded.");
-            callback();
-        }
-        else {
-            log.info( "JSON5 wrapper library is loading...");
-            awaitLibraryLoad( callback );
-            log.info( "JSON5 wrapper library is now loaded.");
-        }
-    }
+   callback();
 };
-
-function getAndSetLibraryLoadStarted_()
-{
-    const result = ( typeof window.json5LibLoadStarted !== "undefined" );
-    window.json5LibLoadStarted = true;
-    return result;
-}
-
-function isLibraryLoaded_()
-{
-    return typeof window.json5LibLoaded !== "undefined";
-}
-
-function setLibraryLoaded_()
-{
-    window.json5LibLoaded = true;
-}
-
-function awaitLibraryLoad( callback )
-{
-    setTimeout( () => {
-        if( isLibraryLoaded_() ) {
-            callback();
-        }
-        else {
-            awaitLibraryLoad( callback );
-        } }, 100
-    );
-}

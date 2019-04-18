@@ -145,6 +145,11 @@ First release which supports new embryonic feature: channel GET and PUT operatio
    - [CTRLIT-7108](https://jira.psi.ch/browse/CTRLIT-7108): Add support to the REST service to support channel access GET and PUT.
    - [CTRLIT-7110](https://jira.psi.ch/browse/CTRLIT-7104): Create 1.1.0-RELEASE.
 
+* [1.2.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/1.2.0-RELEASE)
+   - [CTRLIT-7142](https://jira.psi.ch/browse/CTRLIT-7142): Create 1.2.0-RELEASE which supports loading JSON5 library 
+   as module rather than using script tag.
+
+
 # Project Ideas Completed
 
 1. Consider refactoring so that the app only uses one context (channels can then be cached and shared between 
