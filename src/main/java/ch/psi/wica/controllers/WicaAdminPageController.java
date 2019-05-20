@@ -51,7 +51,8 @@ class WicaAdminPageController
       this.wicaStreamService = wicaStreamService;
       this.epicsChannelMonitorService = epicsChannelMonitorService;
    }
-   /*- Class methods ------------------------------------------------------------*/
+
+/*- Class methods ------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
