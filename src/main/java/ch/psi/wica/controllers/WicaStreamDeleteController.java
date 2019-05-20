@@ -51,6 +51,12 @@ class WicaStreamDeleteController
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Handles an HTTP DELETE request to destroy a wica stream.
+    *
+    * @param id the ID of the stream to be deleted.
+    * @return the ID.
+    */
    @DeleteMapping( value="/{id}", produces=MediaType.TEXT_PLAIN_VALUE )
    public ResponseEntity<String> deleteServerSentEventStream( @PathVariable String id )
    {
