@@ -88,7 +88,7 @@ EXPOSE 5065
 ENV KEYSTORE_PASS "XXXXXX"
 
 # Document the ports that will be exposed by the Spring Boot Application
-EXPOSE 8443
+EXPOSE 443
 
 # Setup the container so that it defaults to the timezone of PSI. This can
 # always be overridden later. This step is important as the timezone is used
