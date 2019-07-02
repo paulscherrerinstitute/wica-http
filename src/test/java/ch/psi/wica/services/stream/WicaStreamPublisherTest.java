@@ -8,6 +8,8 @@ import ch.psi.wica.model.WicaChannelMetadataStash;
 import ch.psi.wica.model.WicaChannelValueStash;
 import ch.psi.wica.model.WicaStream;
 import ch.psi.wica.model.WicaStreamId;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -49,12 +51,17 @@ class WicaStreamPublisherTest
    @Autowired
    private WicaChannelValueStash wicaChannelValueStash;
 
-//   private WicaStreamPublisher publisher;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
+
+   @BeforeEach
+   void beforeEach()
+   {
+      WicaStreamId.resetAllocationSequencer();
+   }
 
    @Test
    void testShutdown() throws InterruptedException
@@ -62,17 +69,18 @@ class WicaStreamPublisherTest
       final String configString = "{ \"props\" :   {  \"daqmode\" : \"poll\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"changeint\" : 320 }, " +
                                     "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" } ] }";
 
-      WicaStreamId.resetAllocationSequencer();
       final WicaStream stream = service.create( configString );
 
-      // Create a stream publisher and activate it.
+      // Create a stream publisher and subscribe to it.
       final WicaStreamDataSupplier supplier = new WicaStreamDataSupplier( wicaChannelMetadataStash, wicaChannelValueStash );
       final var publisher = new WicaStreamPublisher( stream, supplier );
-      publisher.activate();
+      final var flux = publisher.getFlux();
+      flux.subscribe( (c) -> logger.info( "c is: ------> {}", c ) );
 
+      // Let things run for a while
       Thread.sleep( 720 );
 
-      // Now shut it down
+      // Now shut down the publisher
       publisher.shutdown();
 
       // Verify that attempts to retrieve the flux following shutdown result
@@ -87,13 +95,11 @@ class WicaStreamPublisherTest
       final String configString = "{ \"props\" :   {  \"daqmode\" : \"poll\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"pollratio\" : 1, \"changeint\" : 320 }, " +
                                     "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" } ] }";
 
-      WicaStreamId.resetAllocationSequencer();
       final WicaStream stream = service.create( configString );
 
       // Create a stream publisher and activate it.
       final WicaStreamDataSupplier supplier = new WicaStreamDataSupplier( wicaChannelMetadataStash, wicaChannelValueStash );
       final var publisher = new WicaStreamPublisher( stream, supplier );
-      publisher.activate();
 
       // Subscribe to the stream
       final List<ServerSentEvent<String>> sseList = new ArrayList<>();
@@ -181,13 +187,11 @@ class WicaStreamPublisherTest
       final String configString = "{ \"props\" :   {  \"daqmode\" : \"monitor\",  \"heartbeat\" : 700,  \"pollint\" : 250, \"changeint\" : 320 }, " +
                                     "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" } ] }";
 
-      WicaStreamId.resetAllocationSequencer();
       final WicaStream stream = service.create( configString );
 
       // Create a stream publisher and activate it.
       final WicaStreamDataSupplier supplier = new WicaStreamDataSupplier( wicaChannelMetadataStash, wicaChannelValueStash );
       final var publisher = new WicaStreamPublisher( stream, supplier );
-      publisher.activate();
 
       // Subscribe to the stream
       final List<ServerSentEvent<String>> sseList = new ArrayList<>();
@@ -286,7 +290,6 @@ class WicaStreamPublisherTest
       // Create a stream publisher and activate it.
       final WicaStreamDataSupplier supplier = new WicaStreamDataSupplier( wicaChannelMetadataStash, wicaChannelValueStash );
       final var publisher = new WicaStreamPublisher( stream, supplier );
-      publisher.activate();
 
       // Subscribe to the stream
       final List<ServerSentEvent<String>> sseList = new ArrayList<>();

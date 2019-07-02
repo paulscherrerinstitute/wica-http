@@ -6,6 +6,7 @@ package ch.psi.wica.services.stream;
 
 import ch.psi.wica.infrastructure.*;
 import ch.psi.wica.model.*;
+import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+@ThreadSafe
 public class WicaStreamPublisher
 {
 
@@ -24,24 +27,22 @@ public class WicaStreamPublisher
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger( WicaStreamPublisher.class );
-
    private final WicaStream wicaStream;
    private final WicaStreamId wicaStreamId;
    private final WicaStreamProperties wicaStreamProperties;
    private final WicaStreamDataSupplier wicaStreamDataSupplier;
    private final WicaChannelMetadataMapSerializer wicaChannelMetadataMapSerializer;
    private final WicaChannelValueMapSerializer wicaChannelValueMapSerializer;
-
-   private Flux<ServerSentEvent<String>> combinedFlux;
-   private boolean stopSignal = false;
+   private final Flux<ServerSentEvent<String>> combinedFlux;
+   private final AtomicBoolean shutdown;
 
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    /**
-    * Constructs a new instance that will work with the specified stream and
-    * data supplier.
+    * Constructs a new instance that will work with the properties of the
+    * specified stream using the data from the specified stream data supplier.
     *
     * @param wicaStream the stream ID.
     * @param wicaStreamDataSupplier the data source.
@@ -61,15 +62,16 @@ public class WicaStreamPublisher
       this.wicaChannelValueMapSerializer = new WicaChannelValueMapSerializer( new WicaChannelDataFieldsOfInterestSupplier( wicaStream ),
                                                                               new WicaChannelDataNumericScaleSupplier( wicaStream ),
                                                                              false );
-   }
 
+      this.combinedFlux = createCombinedFlux();
+      this.shutdown = new AtomicBoolean( false );
+   }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
    /**
-    * Returns the stream that was associated with this publisher when the
-    * class was constructed.
+    * Returns this publisher's stream.
     *
     * @return the stream
     */
@@ -79,48 +81,19 @@ public class WicaStreamPublisher
    }
 
    /**
-    * Activates this publisher instance, creating a composite flux of Server
-    * Sent Events (SSE's) which describe the initial and evolving state of
-    * the channels in the stream.
-    *
-    * This method should only be called once, subsequent attempts to activate
-    * the flux will result in an IllegalStateException.
-    *
-    * @throws IllegalStateException if the flux has already been activated.
-    */
-   public void activate()
-   {
-      Validate.validState( combinedFlux == null, "the flux is already activated" );
-
-      final Flux<ServerSentEvent<String>> heartbeatFlux = createHeartbeatFlux();
-      final Flux<ServerSentEvent<String>> metadataFlux = createMetadataFlux();
-      final Flux<ServerSentEvent<String>> initialValueFlux = createChannelInitialValueFlux();
-      final Flux<ServerSentEvent<String>> changedValueFlux = createChangedValueFlux();
-      final Flux<ServerSentEvent<String>> polledValueFlux = createPolledValueFlux();
-
-      // Create a single Flux which merges all of the above.
-      combinedFlux = heartbeatFlux.mergeWith( metadataFlux )
-                                  .mergeWith( initialValueFlux )
-                                  .mergeWith( changedValueFlux )
-                                  .mergeWith( polledValueFlux )
-                                  .doOnComplete( () -> logger.warn( "Wica combinedflux completed" ))
-                                  .doOnCancel( () -> {
-                                      logger.warn( "eventStreamFlux was cancelled" );
-                                      handleErrors( wicaStreamId );
-                                  } )
-                                 .takeUntil( (x) -> stopSignal );
-                                  //.log();
-   }
-
-   /**
-    * Returns the combined flux.
+    * Returns a reference to this publisher's combined flux.
     *
     * @return the flux.
-    * @throws IllegalStateException if the flux is not in an active state.
+    *
+    * @throws IllegalStateException if the flux has been shutdown.
     */
    Flux<ServerSentEvent<String>> getFlux()
    {
-      Validate.validState(combinedFlux != null, "The flux was not in a valid state" );
+      if ( shutdown.get() )
+      {
+         logger.error( "Programming error: unexpected state - the flux has already been shutdown." );
+         throw new IllegalStateException( "The flux has already been shutdown." );
+      }
       return combinedFlux;
    }
 
@@ -134,8 +107,11 @@ public class WicaStreamPublisher
     */
    public void shutdown()
    {
-      Validate.validState( combinedFlux != null,"The flux has already been shutdown" );
-      stopSignal = true;
+      if ( shutdown.getAndSet( true ) )
+      {
+         logger.error( "Programming error: unexpected state - the flux has already been shutdown." );
+         throw new IllegalStateException( "The flux has already been shutdown." );
+      }
    }
 
 /*- Private methods ----------------------------------------------------------*/
@@ -265,7 +241,35 @@ public class WicaStreamPublisher
             .doOnError( (e) -> logger.warn( "channel-value-poll flux had error.", e ));
       //.log();
    }
-   
+
+   /**
+    * Creates the COMBINED FLUX.
+    *
+    * The purpose of this flux is to merge together all the individual fluxes in
+    * this publisher, returning a reference to a flux which can be cancelled
+    * by a call to the shutdown method.
+    */
+   private Flux<ServerSentEvent<String>> createCombinedFlux()
+   {
+      final Flux<ServerSentEvent<String>> heartbeatFlux = createHeartbeatFlux();
+      final Flux<ServerSentEvent<String>> metadataFlux = createMetadataFlux();
+      final Flux<ServerSentEvent<String>> initialValueFlux = createChannelInitialValueFlux();
+      final Flux<ServerSentEvent<String>> changedValueFlux = createChangedValueFlux();
+      final Flux<ServerSentEvent<String>> polledValueFlux = createPolledValueFlux();
+
+      // Create a single Flux which merges all of the above.
+      return heartbeatFlux.mergeWith( metadataFlux )
+            .mergeWith( initialValueFlux )
+            .mergeWith( changedValueFlux )
+            .mergeWith( polledValueFlux )
+            .doOnComplete( () -> logger.warn( "Wica combinedflux completed" ))
+            .doOnCancel( () -> {
+               logger.warn( "Wica combinedflux was cancelled" );
+               handleErrors( wicaStreamId );
+            } )
+            .takeUntil( (x) -> shutdown.get() );
+      //.log();
+   }
 
    private void handleErrors( WicaStreamId id )
    {
