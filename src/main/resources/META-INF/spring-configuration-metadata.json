@@ -1,0 +1,34 @@
+{
+  "properties": [
+    {
+      "name": "wica.channel-value-stash-buffer-size",
+      "type": "java.lang.Integer",
+      "description": "The number of values that can be stashed in the control system received value buffer before older values start getting thrown away."
+    },
+    {
+      "name": "wica.channel-get-timeout-interval-in-ms",
+      "type": "java.lang.Integer",
+      "description": "The default timeout in milliseconds to be applied when getting the current value of a wica channel."
+    },
+    {
+      "name": "wica.channel-get-numeric-scale",
+      "type": "java.lang.Integer",
+      "description": "The default number of digits after the decimal point when getting the current value of a wica channel."
+    },
+    {
+      "name": "wica.channel-put-timeout-interval-in-ms",
+      "type": "java.lang.Integer",
+      "description": "The default timeout in milliseconds to be applied when putting a new value to a wica channel."
+    },
+    {
+      "name": "wica.serialize-nan-as-string",
+      "type": "java.lang.Boolean",
+      "description": "Whether strict JSON compliance should be used when serializing double NaN values (=true) or whether JSON5 serialization compliance is acceptable (=false)."
+    },
+    {
+      "name": "wica.serialize-infinity-as-string",
+      "type": "java.lang.Boolean",
+      "description": "Whether strict JSON compliance should be used when serializing double Infinity values (=true) or whether JSON5 serialization compliance is acceptable (=false)."
+    }
+  ]
+}
