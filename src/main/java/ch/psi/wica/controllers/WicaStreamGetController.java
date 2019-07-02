@@ -73,7 +73,7 @@ class WicaStreamGetController
    @GetMapping( value = { "", "/{optStreamId}"}, produces = MediaType.TEXT_EVENT_STREAM_VALUE )
    public ResponseEntity<Flux<ServerSentEvent<String>>> get( @PathVariable Optional<String> optStreamId )
    {
-      logger.info( "GET: Handling subscribe stream request for ID: '{}'", optStreamId );
+      logger.info( "GET: Handling subscribe stream request." );
 
       // Note: by NOT insisting that the RequestBody is provided we can process
       // its absence within this method and provide the appropriate handling.
@@ -86,6 +86,8 @@ class WicaStreamGetController
          logger.warn( "GET: Rejected request because '{}'.", errorMessage  );
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
+
+      logger.info( "GET: Handling subscribe stream request for ID: '{}'", optStreamId );
 
       // Handle the situation where the stream ID string is blank.
       if( optStreamId.get().isBlank() )

@@ -75,7 +75,7 @@ class WicaStreamCreateController
    @PostMapping( consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.TEXT_PLAIN_VALUE )
    public ResponseEntity<String> create( @RequestBody( required = false ) Optional<String> optJsonStreamConfiguration )
    {
-      logger.info( "POST: Handling create stream request with configuration string: '{}'", optJsonStreamConfiguration );
+      logger.info( "POST: Handling create stream request." );
 
       // Note: by NOT insisting that the RequestBody is provided we can process
       // its absence within this method and provide the appropriate handling.
@@ -88,6 +88,9 @@ class WicaStreamCreateController
          logger.warn( "POST: Rejected request because '{}'.", errorMessage  );
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
+
+      logger.info( "POST: Handling create stream request with configuration string: '{}'", optJsonStreamConfiguration.get() );
+
 
       // Handle the situation where the stream configuration string is blank.
       if( optJsonStreamConfiguration.get().isBlank() )

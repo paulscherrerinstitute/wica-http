@@ -70,7 +70,7 @@ class WicaStreamDeleteController
    @DeleteMapping( value = { "", "/{optStreamId}"}, produces=MediaType.TEXT_PLAIN_VALUE )
    public ResponseEntity<String> deleteStream( @PathVariable( required=false ) Optional<String> optStreamId )
    {
-      logger.info( "DELETE: Handling delete stream request for ID: '{}'", optStreamId );
+      logger.info( "DELETE: Handling delete stream request." );
 
       // Note: by NOT insisting that the RequestBody is provided we can process
       // its absence within this method and provide the appropriate handling.
@@ -83,6 +83,8 @@ class WicaStreamDeleteController
          logger.warn( "DELETE: Rejected request because '{}'.", errorMessage  );
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
+
+      logger.info( "DELETE: Handling delete stream request for ID: '{}'", optStreamId.get() );
 
       // Handle the situation where the stream ID string is blank.
       if( optStreamId.get().isBlank() )

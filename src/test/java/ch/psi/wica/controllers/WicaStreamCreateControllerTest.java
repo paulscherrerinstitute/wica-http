@@ -3,6 +3,7 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.WicaStreamId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,6 +60,8 @@ class WicaStreamCreateControllerTest
       epicsChannelListOk1 = Files.readString(Paths.get("src/test/resources/epics/epics_channel_list_ok.json") );
       epicsChannelListOk2 = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_ok2.json") );
       epicsChannelListEmpty = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_empty.json") );
+
+      WicaStreamId.resetAllocationSequencer();
    }
 
 	@Test
