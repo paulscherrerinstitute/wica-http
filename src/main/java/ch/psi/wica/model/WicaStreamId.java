@@ -37,7 +37,7 @@ public class WicaStreamId
 
    public static WicaStreamId of( String string )
    {
-      return new WicaStreamId(string );
+      return new WicaStreamId( string );
    }
 
    public static void resetAllocationSequencer()
