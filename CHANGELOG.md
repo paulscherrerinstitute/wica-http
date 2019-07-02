@@ -149,8 +149,27 @@ First release which supports new embryonic feature: channel GET and PUT operatio
    - [CTRLIT-7142](https://jira.psi.ch/browse/CTRLIT-7142): Create 1.2.0-RELEASE which supports loading JSON5 library 
    as module rather than using script tag. Also wica Custom Event generation is now enabled.
 
+* [1.3.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/1.3.0-RELEASE)
+  Supports new X-WICA_ERROR header. Delete Stream bug now fixed. See "Project Ideas Completed in Latest Release"
+  for more information.
+   - [CTRLIT-7199](https://jira.psi.ch/browse/CTRLIT-7199): Create 1.3.0-RELEASE. 
 
-# Project Ideas Completed
+
+# Project Ideas Completed in Latest Release
+  
+1. BUG FIX: delete stream operation now removes id from map so stream cannot be deleted more than once.
+1. BUG FIX: Shutdown method now correctly signals subscribers that the stream has been disposed of.
+1. ENHANCEMENT: Improved Javadoc.
+1. ENHANCEMENT: Now supports X-WICA-ERROR header to consistently describe the cause of any failures.
+1. ENHANCEMENT: improved Spring documentation on configurable parameters.
+1. ENHANCEMENT: Added support for more thorough reactive flux testing using StepVerifier.
+1. ENHANCEMENT: added support for configuring default timeouts for GET and PUT operations and for setting default 
+   numeric precision of GET operations.
+1. REMOVED: Make status panels available in PSI's demilitarised zone. WILL BE COMPLETED IN WICA RELAY PROJECT.
+1. REMOVED: Work out how best to integrate with K8ie's work on SVG. WILL BE COMPLETED IN WICA PANELS PROJECT.
+
+
+# Project Ideas Completed in Earlier Releases
 
 1. Consider refactoring so that the app only uses one context (channels can then be cached and shared between 
 different streams). DONE.
@@ -177,6 +196,7 @@ a desktop monitor). DONE.
      - value-change-stream: Sends only changed values but with fast periodicity.  DONE.
 1. Add support to the REST service to support channel access GET and PUT. COMPLETED (BUT PERFORMANCE COULD BE IMPROVED).
 
+
 # Project Ideas Backlog
 
 When an idea is under serious consideration and a candidate for
@@ -186,7 +206,6 @@ implementation it will be placed on the project's [Jira Kanban Board](https://ji
 1. Consider switching to http2. Need to resolve bug exposed when client navigates away.
 1. Improve page load times by minifying loadable artifacts.
 1. Review existing state of Javadoc and Jsdoc and make improvements.
-1. Work out how best to integrate with K8ie's work on SVG.
 1. Improve the admin page by reporting on the active clients and their IP's.
 1. Consider a better name.
 1. Consider splitting up backend and frontend server into separate Git repositories.
@@ -201,5 +220,4 @@ implementation it will be placed on the project's [Jira Kanban Board](https://ji
 1. Ability to set stream properties on html page rather than just accept defaults. 
 1. Improve diagnostic messages when HTML page contains json content that is not valid.
 1. Fix bug whereby whereby metadata says type UNKNOWN (causes occasional problem with formatting).
-1. Make status panels available in PSI's demilitarised zone.
 1. Improve performance of channel GET and PUT.
