@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -43,7 +45,7 @@ class WicaStreamCreateController
     * @param wicaStreamService reference to the service object which can be used
     *        to create the reactive stream.
     */
-   private WicaStreamCreateController( @Autowired WicaStreamService wicaStreamService )
+   public WicaStreamCreateController( @Autowired WicaStreamService wicaStreamService )
    {
       this.wicaStreamService = Validate.notNull( wicaStreamService );
    }
@@ -52,38 +54,60 @@ class WicaStreamCreateController
 /*- Public methods -----------------------------------------------------------*/
 
    /**
-    * Handles an HTTP POST request to start monitoring (= observing the value
-    * of) a list of wica channels.
+    * Handles an HTTP request to CREATE a new stream to monitor the
+    * the wica channels specified in the JSON stream configuration. When
+    * successful the HTTP response includes the ID of the stream which was
+    * created. This can be used in subsequent stream GET requests to
+    * subscribe to an event stream which tracks the evolving status of
+    * the channels.
     *
-    * @param jsonStreamConfiguration JSON string providing the stream configuration.
+    * @param optJsonStreamConfiguration JSON string providing the stream
+    *        configuration.
     *
-    * @return the ID of the resource which was created. This ID can be used in
-    *         one or more subsequent HTTP GET requests to return a stream of
-    *         events which follows the evolving state of the underlying Wica
-    *         channel.
+    * @return an HTTP response whose status code will be set to 'OK' (= 200)
+    *      if the create operation completes successfully or 'Bad Request'
+    *      (= 400) if some error occurs.  When successful the body of the
+    *      HTTP response contains the ID of the stream which was created.
+    *      When unsuccessful an additional response header 'X-WICA-ERROR'
+    *      is written with a more detailed description of the error.
     */
+   @SuppressWarnings( "OptionalUsedAsFieldOrParameterType" )
    @PostMapping( consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.TEXT_PLAIN_VALUE )
-   public ResponseEntity<String> createStream( @RequestBody String jsonStreamConfiguration )
+   public ResponseEntity<String> create( @RequestBody( required = false ) Optional<String> optJsonStreamConfiguration )
    {
-      // Check that the Spring framework gives us something in the stream configuration field.
-      Validate.notEmpty( jsonStreamConfiguration,"The 'jsonStreamConfiguration' information was null" );
+      logger.info( "POST: Handling create stream request with configuration string: '{}'", optJsonStreamConfiguration );
 
-      logger.info( "POST: Handling create stream request with configuration string: '{}'", jsonStreamConfiguration );
+      // Note: by NOT insisting that the RequestBody is provided we can process
+      // its absence within this method and provide the appropriate handling.
+
+      // Handle the situation where the Spring framework doesn't give us anything
+      // in the stream configuration field.
+      if( optJsonStreamConfiguration.isEmpty() )
+      {
+         final String errorMessage = "WICA SERVER: The stream configuration string was empty/null.";
+         logger.warn( "POST: Rejected request because '{}'.", errorMessage  );
+         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
+      }
+
+      // Handle the situation where the stream configuration string is blank.
+      if( optJsonStreamConfiguration.get().isBlank() )
+      {
+         final String errorMessage = "WICA SERVER: The stream configuration string was blank.";
+         logger.warn( "POST: Rejected request because '{}'.", errorMessage  );
+         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
+      }
 
       // Attempt to build a WicaStream based on the supplied configuration string
       final WicaStream wicaStream;
       try
       {
-         wicaStream = wicaStreamService.create( jsonStreamConfiguration );
+         wicaStream = wicaStreamService.create( optJsonStreamConfiguration.get() );
       }
       catch( Exception ex )
       {
-         final String errorMessage = ex.getMessage();
-         final String className = ex.getStackTrace().length > 1 ?  "C="  + ex.getStackTrace()[ 1 ].getClassName() + "," : "";
-         final String methodName = ex.getStackTrace().length > 1 ? "M=" + ex.getStackTrace()[ 1 ].getMethodName() + "," : "";
-         final String lineNumber = ex.getStackTrace().length > 1 ? "L="   + ex.getStackTrace()[ 1 ].getLineNumber() : "";
-         logger.warn( "POST: Rejected request because {} [{} {} {}]", errorMessage, className, methodName, lineNumber );
-         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+         final String errorMessage = "WICA SERVER: " + ex.getMessage();
+         logger.warn( "POST: Rejected request because '{}'.", errorMessage  );
+         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
       logger.info("POST: allocated stream with id: '{}'" , wicaStream.getWicaStreamId() );
@@ -93,7 +117,7 @@ class WicaStreamCreateController
    @ExceptionHandler( Exception.class )
    public void handleException( Exception ex)
    {
-      logger.info( "SSE Exception handler called with exception '{}'", ex.toString() );
+      logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
    }
 
 /*- Private methods ----------------------------------------------------------*/

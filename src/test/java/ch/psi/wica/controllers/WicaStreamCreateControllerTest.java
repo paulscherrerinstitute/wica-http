@@ -3,6 +3,7 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -22,6 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,24 +62,27 @@ class WicaStreamCreateControllerTest
    }
 
 	@Test
-   void testPost_RequestIsProcessedNormallyWhenEpicsChannelListOk() throws Exception
+   void testSendValidRequest_RequestIsProcessedNormallyWhenEpicsChannelListOk() throws Exception
    {
       // Send a POST request with a list containing a couple of EPICS channels
       final RequestBuilder rb1 = MockMvcRequestBuilders.post( "/ca/streams" ).content( epicsChannelListOk1 ).contentType(MediaType.APPLICATION_JSON_VALUE ).accept(MediaType.TEXT_PLAIN_VALUE );
-   	final MvcResult response1 = mockMvc.perform( rb1 ).andDo( print() ).andExpect( status().isOk() ).andReturn();
+   	final MvcResult response = mockMvc.perform( rb1 ).andDo( print() ).andExpect( status().isOk() ).andReturn();
 
    	// Check that the status code was ok
-   	final int statusCode = response1.getResponse().getStatus();
+   	final int statusCode = response.getResponse().getStatus();
       logger.info( "Response status code was: '{}'", statusCode  );
       assertEquals( HttpStatus.OK.value(), statusCode );
 
       // Check that the ContentType in the response is just normal text
-      final String contentType = response1.getResponse().getContentType();
+      final String contentType = response.getResponse().getContentType();
    	logger.info( "Returned ContentType was: '{}'", contentType );
       assertEquals("text/plain;charset=UTF-8", contentType );
 
+      // Check that the X-WICA-ERROR header is NOT written.
+      assertNull( response.getResponse().getHeader( "X-WICA-ERROR" ) );
+
       // Check that the first stream that was allocated was Stream with id "0"
-      final String content1 = response1.getResponse().getContentAsString();
+      final String content1 = response.getResponse().getContentAsString();
       logger.info( "Returned Content was: '{}'", content1 );
       assertEquals( "0", content1 );
 
@@ -89,14 +95,89 @@ class WicaStreamCreateControllerTest
    }
 
    @Test
-   void testPost_RequestIsRejectedWhenEpicsChannelListIsEmpty() throws Exception
+   void testSendInvalidRequest_BlankContentString_ShouldBeRejected() throws Exception
    {
-      // Send a POST request with an empty EPICS channel list
-      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams" ).content(epicsChannelListEmpty).contentType(MediaType.APPLICATION_JSON_VALUE ).accept(MediaType.TEXT_PLAIN_VALUE );
+      // Send the request with an empty string as the content
+      final RequestBuilder rb = MockMvcRequestBuilders.post("/ca/streams" )
+            .content( " " )
+            .contentType( MediaType.APPLICATION_JSON_VALUE )
+            .accept( MediaType.TEXT_PLAIN_VALUE );
       final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest() ).andReturn();
+
+      // Now check all the expectations were satisfied.
+      Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
+      final String responseHeader = result.getResponse().getHeader("X-WICA-ERROR" );
+      assertNotNull( responseHeader );
+      assertEquals("WICA SERVER: The stream configuration string was blank.", responseHeader );
+
+      // Check that the body content was empty as expected.
       final String content = result.getResponse().getContentAsString();
+      assertEquals( "", content );
       logger.info( "Returned Content was: '{}'", content );
-      assertEquals("The JSON configuration string did not define any channels.", content );
+   }
+
+   @Test
+   void testSendInvalidRequestEmptyContentString_ShouldBeRejected() throws Exception
+   {
+      // Send the request with an empty string as the content
+      final RequestBuilder rb = MockMvcRequestBuilders.post("/ca/streams" )
+            .content( "" )
+            .contentType( MediaType.APPLICATION_JSON_VALUE )
+            .accept( MediaType.TEXT_PLAIN_VALUE );
+      final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest() ).andReturn();
+
+      // Now check all the expectations were satisfied.
+      Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
+      final String responseHeader = result.getResponse().getHeader("X-WICA-ERROR" );
+      assertNotNull( responseHeader );
+      assertEquals("WICA SERVER: The stream configuration string was empty/null.", responseHeader );
+
+      // Check that the body content was empty as expected.
+      final String content = result.getResponse().getContentAsString();
+      assertEquals( "", content );
+      logger.info( "Returned Content was: '{}'", content );
+   }
+
+   @Test
+   void testSendInvalidRequestEmptyChannelList_ShouldBeRejected() throws Exception
+   {
+      // Send the request with an empty EPICS channel list
+      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams" )
+            .content(epicsChannelListEmpty)
+            .contentType(MediaType.APPLICATION_JSON_VALUE )
+            .accept(MediaType.TEXT_PLAIN_VALUE );
+      final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest() ).andReturn();
+
+      // Check that the X-WICA-ERROR is as expected
+      final String errorHeader = result.getResponse().getHeader( "X-WICA-ERROR" );
+      assertNotNull( errorHeader );
+      assertEquals( "WICA SERVER: The JSON configuration string did not define any channels.", errorHeader );
+
+      // Check that the body content was empty as expected.
+      final String content = result.getResponse().getContentAsString();
+      assertEquals( "", content );
+      logger.info( "Returned Content was: '{}'", content );
+   }
+
+   @Test
+   void testSendInvalidRequestBadJson_ShouldBeRejected() throws Exception
+   {
+      // Send the request with an empty EPICS channel list
+      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams" )
+            .content( "This is not JSON!" )
+            .contentType(MediaType.APPLICATION_JSON_VALUE )
+            .accept(MediaType.TEXT_PLAIN_VALUE );
+      final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest() ).andReturn();
+
+      // Check that the X-WICA-ERROR is as expected
+      final String errorHeader = result.getResponse().getHeader( "X-WICA-ERROR" );
+      assertNotNull( errorHeader );
+      assertEquals( "WICA SERVER: The JSON configuration string 'This is not JSON!' was invalid.", errorHeader );
+
+      // Check that the body content was empty as expected.
+      final String content = result.getResponse().getContentAsString();
+      assertEquals( "", content );
+      logger.info( "Returned Content was: '{}'", content );
    }
 
 /*- Private methods ----------------------------------------------------------*/

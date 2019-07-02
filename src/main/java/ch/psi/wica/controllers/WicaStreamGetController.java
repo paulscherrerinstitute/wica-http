@@ -17,6 +17,8 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
+import java.util.Optional;
+
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
@@ -45,7 +47,7 @@ class WicaStreamGetController
     * @param wicaStreamService reference to the service object which can be used
     *        to fetch the reactive streams.
     */
-   private WicaStreamGetController( @Autowired WicaStreamService wicaStreamService )
+   public WicaStreamGetController( @Autowired WicaStreamService wicaStreamService )
    {
       this.wicaStreamService = Validate.notNull(wicaStreamService);
    }
@@ -54,41 +56,75 @@ class WicaStreamGetController
 /*- Public methods -----------------------------------------------------------*/
 
    /**
-    * Handles an HTTP GET request to return the event stream associated with
-    * the specified ID.
+    * Handles an HTTP request to GET (= subscribe to) the wica stream with the
+    * specified ID.
     *
-    * @param id the ID of the event stream to fetch.
+    * @param optStreamId the ID of the stream to be subscribed to.
     *
-    * @return the returned event stream.
+    * @return an HTTP response whose status code will be set to 'OK' (= 200)
+    *     if the operation completes successfully or 'Bad Request' (= 400) if
+    *     some error occurs.  When successful the the HTTP response remains
+    *     open and the evolving state of the stream's channels are written
+    *     to the response body as a sequence of Server Sent Events (SSE's).
+    *     When unsuccessful the response header 'X-WICA-ERROR' is written
+    *     with a more detailed description of the error.
     */
-   @GetMapping( value="/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE )
-   public ResponseEntity<Flux<ServerSentEvent<String>>> getServerSentEventStream( @PathVariable String id )
+   @SuppressWarnings( "OptionalUsedAsFieldOrParameterType" )
+   @GetMapping( value = { "", "/{optStreamId}"}, produces = MediaType.TEXT_EVENT_STREAM_VALUE )
+   public ResponseEntity<Flux<ServerSentEvent<String>>> get( @PathVariable Optional<String> optStreamId )
    {
-      // Check that the Spring framework gives us something in the id field.
-      Validate.notNull( id, "The event stream 'id' field was empty." );
+      logger.info( "GET: Handling subscribe stream request for ID: '{}'", optStreamId );
 
-      logger.info( "GET: Handling get stream request for ID: '{}'", id );
+      // Note: by NOT insisting that the RequestBody is provided we can process
+      // its absence within this method and provide the appropriate handling.
 
-      // Handle the situation where an unknown WicaStreamId is given
-      if ( ! wicaStreamService.isKnownId( WicaStreamId.of( id ) ) )
+      // Handle the situation where the Spring framework doesn't give us anything
+      // in the stream ID field.
+      if( optStreamId.isEmpty() )
       {
-         final String errorMessage = "the event stream 'id' was not recognised";
-         logger.warn( "GET: Rejected request because {}", errorMessage  );
-         return new ResponseEntity<>( HttpStatus.BAD_REQUEST );
+         final String errorMessage = "WICA SERVER: The stream ID was empty/null.";
+         logger.warn( "GET: Rejected request because '{}'.", errorMessage  );
+         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
-      // Handle the normal case
-      final Flux<ServerSentEvent<String>> wicaStreamFlux = wicaStreamService.getFluxFromId(WicaStreamId.of(id ) );
+      // Handle the situation where the stream ID string is blank.
+      if( optStreamId.get().isBlank() )
+      {
+         final String errorMessage = "WICA SERVER: The stream ID was blank.";
+         logger.warn( "GET: Rejected request because '{}'.", errorMessage  );
+         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
+      }
 
-      logger.info( "Returning event stream with id: '{}'", id );
+      // Handle the situation where an unknown stream ID is given
+      final WicaStreamId wicaStreamId = WicaStreamId.of( optStreamId.get() );
+      if ( ! wicaStreamService.isKnownId( wicaStreamId ) )
+      {
+         final String errorMessage = "WICA SERVER: The stream ID '" + optStreamId.get() + "' was not recognised.";
+         logger.warn( "GET: Rejected request because {}", errorMessage  );
+         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
+      }
+
+      // Attempt to get the specified stream.
+      final Flux<ServerSentEvent<String>> wicaStreamFlux;
+      try
+      {
+         wicaStreamFlux = wicaStreamService.getFluxFromId( wicaStreamId );
+      }
+      catch( Exception ex )
+      {
+         final String errorMessage = "WICA SERVER: " + ex.getMessage();
+         logger.warn( "GET: Rejected request because '{}'.", errorMessage  );
+         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
+      }
+
+      logger.info( "Returning stream with id: '{}'", optStreamId );
       return new ResponseEntity<>( wicaStreamFlux, HttpStatus.OK );
    }
 
    @ExceptionHandler( Exception.class )
    public void handleException( Exception ex)
    {
-      logger.info( "SSE Exception handler called with exception '{}'", ex.toString() );
-      ex.printStackTrace();
+      logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
    }
 
 /*- Private methods ----------------------------------------------------------*/
