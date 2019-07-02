@@ -10,7 +10,6 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.codec.ServerSentEvent;
-import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
@@ -34,15 +33,27 @@ public class WicaStreamPublisher
    private final WicaChannelValueMapSerializer wicaChannelValueMapSerializer;
 
    private Flux<ServerSentEvent<String>> combinedFlux;
+   private boolean stopSignal = false;
+
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Constructs a new instance that will work with the specified stream and
+    * data supplier.
+    *
+    * @param wicaStream the stream ID.
+    * @param wicaStreamDataSupplier the data source.
+    */
    WicaStreamPublisher( WicaStream wicaStream, WicaStreamDataSupplier wicaStreamDataSupplier )
    {
-      this.wicaStream = wicaStream;
-      this.wicaStreamId = wicaStream.getWicaStreamId();
-      this.wicaStreamProperties = wicaStream.getWicaStreamProperties();
+      this.wicaStream = Validate.notNull( wicaStream );
+      this.wicaStreamDataSupplier = Validate.notNull( wicaStreamDataSupplier );
+
+      this.wicaStreamId = Validate.notNull( wicaStream.getWicaStreamId() );
+      this.wicaStreamProperties = Validate.notNull( wicaStream.getWicaStreamProperties() );
+
       this.wicaChannelMetadataMapSerializer = new WicaChannelMetadataMapSerializer( c -> Set.of(),
                                                                                     new WicaChannelDataNumericScaleSupplier( wicaStream ),
                                                                                    false );
@@ -50,14 +61,15 @@ public class WicaStreamPublisher
       this.wicaChannelValueMapSerializer = new WicaChannelValueMapSerializer( new WicaChannelDataFieldsOfInterestSupplier( wicaStream ),
                                                                               new WicaChannelDataNumericScaleSupplier( wicaStream ),
                                                                              false );
-      this.wicaStreamDataSupplier = wicaStreamDataSupplier;
    }
+
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
    /**
-    * Returns the stream associated with this publisher.
+    * Returns the stream that was associated with this publisher when the
+    * class was constructed.
     *
     * @return the stream
     */
@@ -67,12 +79,14 @@ public class WicaStreamPublisher
    }
 
    /**
-    * Activates this flux.
+    * Activates this publisher instance, creating a composite flux of Server
+    * Sent Events (SSE's) which describe the initial and evolving state of
+    * the channels in the stream.
     *
     * This method should only be called once, subsequent attempts to activate
     * the flux will result in an IllegalStateException.
     *
-    * @throws IllegalStateException if the flux has already been shutdown.
+    * @throws IllegalStateException if the flux has already been activated.
     */
    public void activate()
    {
@@ -93,15 +107,15 @@ public class WicaStreamPublisher
                                   .doOnCancel( () -> {
                                       logger.warn( "eventStreamFlux was cancelled" );
                                       handleErrors( wicaStreamId );
-                                  } );
+                                  } )
+                                 .takeUntil( (x) -> stopSignal );
                                   //.log();
    }
-
 
    /**
     * Returns the combined flux.
     *
-    * @return the flux
+    * @return the flux.
     * @throws IllegalStateException if the flux is not in an active state.
     */
    Flux<ServerSentEvent<String>> getFlux()
@@ -121,10 +135,7 @@ public class WicaStreamPublisher
    public void shutdown()
    {
       Validate.validState( combinedFlux != null,"The flux has already been shutdown" );
-
-      final Disposable d = combinedFlux.subscribe( (c) -> {} );
-      d.dispose();
-      combinedFlux = null;
+      stopSignal = true;
    }
 
 /*- Private methods ----------------------------------------------------------*/
@@ -148,9 +159,9 @@ public class WicaStreamPublisher
                final String jsonHeartbeatString = LocalDateTime.now().toString();
                return WicaServerSentEventBuilder.EV_WICA_SERVER_HEARTBEAT.build( wicaStreamId, jsonHeartbeatString );
             })
-            .doOnComplete( () -> logger.warn( "heartbeat flux completed" ))
-            .doOnCancel( () -> logger.warn( "heartbeat flux was cancelled"))
-            .doOnError( (e) -> logger.warn( "heartbeat flux had error {}", e ));
+            .doOnComplete( () -> logger.warn( "heartbeat flux completed." ))
+            .doOnCancel( () -> logger.warn( "heartbeat flux was cancelled."))
+            .doOnError( (e) -> logger.warn( "heartbeat flux had error.", e ));
       //.log();
    }
 
@@ -174,9 +185,9 @@ public class WicaStreamPublisher
                final String jsonMetadataString = wicaChannelMetadataMapSerializer.serialize( channelMetadataMap );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build ( wicaStreamId, jsonMetadataString );
             } )
-            .doOnComplete( () -> logger.warn( "channel-metadata flux completed" ))
-            .doOnCancel( () -> logger.warn( "channel-metadata flux was cancelled" ) )
-            .doOnError( (e) -> logger.warn( "heartbeat flux had error {}", e ));
+            .doOnComplete( () -> logger.warn( "channel-metadata flux completed." ))
+            .doOnCancel( () -> logger.warn( "channel-metadata flux was cancelled." ) )
+            .doOnError( (e) -> logger.warn( "heartbeat flux had error.", e ));
       //.log();
    }
 
@@ -199,9 +210,9 @@ public class WicaStreamPublisher
                final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUES_INITIAL.build( wicaStreamId, jsonServerSentEventString );
             } )
-            .doOnComplete( () -> logger.warn( "channel-initial-values flux completed" ))
-            .doOnCancel( () -> logger.warn("channel-initial-values flux was cancelled"))
-            .doOnError( (e) -> logger.warn( "channel-initial-values flux had error {}", e ));
+            .doOnComplete( () -> logger.warn( "channel-initial-values flux completed." ))
+            .doOnCancel( () -> logger.warn("channel-initial-values flux was cancelled."))
+            .doOnError( (e) -> logger.warn( "channel-initial-values flux had error.", e ));
       //.log();
    }
 
@@ -224,9 +235,9 @@ public class WicaStreamPublisher
                final var jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_CHANGED_VALUES.build( wicaStreamId, jsonServerSentEventString );
             } )
-            .doOnComplete( () -> logger.warn( "channel-value-change flux completed" ))
-            .doOnCancel( () -> logger.warn( "channel-value-change flux was cancelled" ) )
-            .doOnError( (e) -> logger.warn( "channel-value-change flux had error {}", e ));
+            .doOnComplete( () -> logger.warn( "channel-value-change flux completed." ))
+            .doOnCancel( () -> logger.warn( "channel-value-change flux was cancelled." ) )
+            .doOnError( (e) -> logger.warn( "channel-value-change flux had error.", e ));
       //.log();
    }
 
@@ -249,9 +260,9 @@ public class WicaStreamPublisher
                final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_POLLED_VALUES.build(wicaStreamId, jsonServerSentEventString );
             } )
-            .doOnComplete( () -> logger.warn( "channel-value-poll flux completed" ))
-            .doOnCancel( () -> logger.warn("channel-value-poll flux was cancelled"))
-            .doOnError( (e) -> logger.warn( "channel-value-poll flux had error {}", e ));
+            .doOnComplete( () -> logger.warn( "channel-value-poll flux completed." ))
+            .doOnCancel( () -> logger.warn("channel-value-poll flux was cancelled."))
+            .doOnError( (e) -> logger.warn( "channel-value-poll flux had error.", e ));
       //.log();
    }
    
