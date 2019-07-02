@@ -45,7 +45,7 @@ public class WicaChannelValueStash
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   // @Value( "channel_value_stash_buffer_size" ) int bufferSize
+   // @Value( "channel-value-stash-buffer-size" ) int bufferSize
 
    public WicaChannelValueStash( @Value( "16" ) int bufferSize  )
    {
@@ -135,7 +135,7 @@ public class WicaChannelValueStash
     *
     * @throws IllegalStateException if the stash has no previously stored values for this channel.
     */
-   public List<WicaChannelValue> getLaterThan( ControlSystemName controlSystemName, LocalDateTime since )
+   List<WicaChannelValue> getLaterThan( ControlSystemName controlSystemName, LocalDateTime since )
    {
       Validate.notNull( controlSystemName );
       Validate.notNull( since );
@@ -162,7 +162,7 @@ public class WicaChannelValueStash
     *
     * @throws IllegalStateException if the stash has no previously stored value for this channel.
     */
-   public WicaChannelValue getLatest( ControlSystemName controlSystemName )
+   WicaChannelValue getLatest( ControlSystemName controlSystemName )
    {
       Validate.notNull( controlSystemName );
       Validate.validState( stash.containsKey( controlSystemName ), "no value data for channel with name: ", controlSystemName );

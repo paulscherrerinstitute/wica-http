@@ -26,7 +26,7 @@ public class WicaChannelMetadataSerializer
     * TRUE for strict JSON compliance. Set to FALSE for "relaxed" JSON5
     * format.
     */
-   @Value( "${wica.serialize_nan_as_string}" )
+   @Value( "${wica.serialize-nan-as-string}" )
    private static final boolean quoteNumericStrings = false;
 
    private final WicaChannelDataSerializer wicaChannelDataSerializer;
