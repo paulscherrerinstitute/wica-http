@@ -85,7 +85,6 @@ public class WicaStreamService
       final WicaStreamId wicaStreamId = WicaStreamId.createNext();
       final WicaStream wicaStream = new WicaStream( wicaStreamId, decoder.getWicaStreamProperties(), decoder.getWicaChannels() );
       final WicaStreamPublisher wicaStreamPublisher = new WicaStreamPublisher( wicaStream, wicaStreamDataSupplier );
-      wicaStreamPublisher.activate();
 
       // Lastly start monitoring all the channels of interest.
       controlSystemMonitoringService.startMonitoring( wicaStream );
