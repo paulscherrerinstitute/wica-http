@@ -1,0 +1,5 @@
+{
+  "props": { "changeint": 3000, "pollint": 4000, "heartbeat" : 5000 },
+  "channels" : [ { "name": "test:counter00" },
+                 { "name": "test:counter01" } ]
+}
