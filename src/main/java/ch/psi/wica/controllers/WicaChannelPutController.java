@@ -57,11 +57,20 @@ class WicaChannelPutController
     * Handles an HTTP PUT request to set the value of the specified channel.
     *
     * @param channelName the name of the channel whose value is to be changed.
+    *
     * @param timeoutInMilliseconds the timeout to be applied when attempting to
-    *     put the channel value yo the underlying data source. If a timeout
-    *     occurs the returned value will be false.
+    *     put the channel value to the underlying data source. If a timeout
+    *     occurs the returned value will be set to indicate an internal
+    *     server error.
+    *
     * @param channelValue the string representation of the new value.
-    * @return String set to "OK" if the put operation completed successfully.
+    *
+    * @return ResponseEntity set to return an HTTP status code of 'OK'
+    *    (= 200) if the put operation completes successfully or
+    *    'Internal Server Error' (= 500) if a timeout occurs.  When
+    *    successful the body of the response contains the string "OK".
+    *    When unsuccessful the response header 'X-WICA-ERROR' is
+    *    written with a description of the error.
     */
    @PutMapping( value="/{channelName}", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.TEXT_PLAIN_VALUE )
    public ResponseEntity<String> putChannelValue( @PathVariable String channelName,
@@ -73,13 +82,17 @@ class WicaChannelPutController
 
       logger.info( "'{}' - Handling PUT channel request...", channelName );
 
-      // Handle the normal case
-      final boolean result = wicaChannelService.put( WicaChannelName.of( channelName ), channelValue,
-                                                     timeoutInMilliseconds, TimeUnit.MILLISECONDS );
+      // Handle failure of the command.
+      if ( ! wicaChannelService.put( WicaChannelName.of( channelName ), channelValue, timeoutInMilliseconds, TimeUnit.MILLISECONDS ) )
+      {
+         final String errorMessage = "a timeout occurred (channel = '" + channelName + "', value = '" + channelValue + "').";
+         logger.warn( "PUT: Rejected request because {}", errorMessage  );
+         return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR ).header( "X-WICA-ERROR", errorMessage ).build();
+      }
 
-
+      // Handle the normal situation.
       logger.info( "'{}' - OK: PUT channel request.", channelName );
-      return result ? new ResponseEntity<>("OK", HttpStatus.OK ) : new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR );
+      return new ResponseEntity<>("OK", HttpStatus.OK );
    }
 
    @ExceptionHandler( Exception.class )
