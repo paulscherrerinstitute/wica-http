@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -41,6 +42,9 @@ class WicaChannelGetControllerTest
    @Autowired
 	private MockMvc mockMvc;
 
+   @Value( "${wica.channel-get-timeout-interval-in-ms}")
+   private int DEFAULT_GET_TIMEOUT;
+
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -55,7 +59,7 @@ class WicaChannelGetControllerTest
                                                               .accept(MediaType.APPLICATION_JSON_VALUE );
 
       // Check that the method returns in less than the default timeout
-      final int methodDefaultTimeout = 1000;
+      final int methodDefaultTimeout = DEFAULT_GET_TIMEOUT;
       final int guardTime = 200;
       final int testTimeoutInMillis = methodDefaultTimeout + guardTime;
       assertTimeoutPreemptively( Duration.ofMillis( testTimeoutInMillis ), () -> {
@@ -97,7 +101,7 @@ class WicaChannelGetControllerTest
                                                               .accept( MediaType.APPLICATION_JSON_VALUE );
 
       // Check that the method returns in less than the default timeout
-      final int methodDefaultTimeout = 1000;
+      final int methodDefaultTimeout = DEFAULT_GET_TIMEOUT;
       final int guardTime = 200;
       final int testTimeoutInMillis = methodDefaultTimeout + guardTime;
       assertTimeoutPreemptively( Duration.ofMillis( testTimeoutInMillis ), () -> {

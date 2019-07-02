@@ -10,6 +10,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,19 +35,27 @@ class WicaChannelPutController
 
    private final Logger logger = LoggerFactory.getLogger( WicaChannelPutController.class );
    private final WicaChannelService wicaChannelService;
-
+   private final int defaultTimeoutInMillis;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    /**
-    * Constructs a new controller for handling channel PUT requests.
+    * Constructs a new controller for handling channel GET requests.
     *
+    * @param defaultTimeoutInMillis the default timeout that will be used
+    *        when putting data to the wica channel.
+
     * @param wicaChannelService reference to the service object which can be used
     *        to put values to a wica channel.
     */
-   private WicaChannelPutController( @Autowired WicaChannelService wicaChannelService )
+   private WicaChannelPutController( @Value( "${wica.channel-get-timeout-interval-in-ms}") int defaultTimeoutInMillis,
+                                     @Autowired WicaChannelService wicaChannelService )
    {
+      Validate.isTrue( defaultTimeoutInMillis > 0 );
+      Validate.notNull( wicaChannelService );
+
+      this.defaultTimeoutInMillis = defaultTimeoutInMillis;
       this.wicaChannelService = Validate.notNull( wicaChannelService );
    }
 
@@ -58,10 +67,10 @@ class WicaChannelPutController
     *
     * @param channelName the name of the channel whose value is to be changed.
     *
-    * @param timeoutInMilliseconds the timeout to be applied when attempting to
-    *     put the channel value to the underlying data source. If a timeout
-    *     occurs the returned value will be set to indicate an internal
-    *     server error.
+    * @param timeoutInMillis the timeout to be applied when attempting to
+    *     get the channel value from the underlying data source. If this
+    *     optional parameter is not provided then the configured default
+    *     value will be used.
     *
     * @param channelValue the string representation of the new value.
     *
@@ -74,16 +83,19 @@ class WicaChannelPutController
     */
    @PutMapping( value="/{channelName}", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.TEXT_PLAIN_VALUE )
    public ResponseEntity<String> putChannelValue( @PathVariable String channelName,
-                                                  @RequestParam( value="timeout", required = false, defaultValue = "1000" ) int timeoutInMilliseconds,
+                                                  @RequestParam( value="timeout", required = false ) Integer timeoutInMillis,
                                                   @RequestBody String channelValue )
    {
       // Check that the Spring framework gives us something in the channelName field.
       Validate.notNull( channelName, "The 'channelName' field was empty." );
 
+      // Assign default values when not explicitly provided.
+      timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
+
       logger.info( "'{}' - Handling PUT channel request...", channelName );
 
       // Handle failure of the command.
-      if ( ! wicaChannelService.put( WicaChannelName.of( channelName ), channelValue, timeoutInMilliseconds, TimeUnit.MILLISECONDS ) )
+      if ( ! wicaChannelService.put( WicaChannelName.of( channelName ), channelValue, timeoutInMillis, TimeUnit.MILLISECONDS ) )
       {
          final String errorMessage = "a timeout occurred (channel = '" + channelName + "', value = '" + channelValue + "').";
          logger.warn( "PUT: Rejected request because {}", errorMessage  );
@@ -98,7 +110,7 @@ class WicaChannelPutController
    @ExceptionHandler( Exception.class )
    public void handleException( Exception ex)
    {
-      logger.info( "ERROR: Exception handler called with exception '{}'", ex.toString() );
+      logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
    }
 
 /*- Private methods ----------------------------------------------------------*/

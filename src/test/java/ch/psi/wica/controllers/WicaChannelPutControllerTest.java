@@ -5,6 +5,7 @@ package ch.psi.wica.controllers;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -33,6 +34,8 @@ class WicaChannelPutControllerTest
    @Autowired
 	private MockMvc mockMvc;
 
+   @Value( "${wica.channel-get-timeout-interval-in-ms}")
+   private int DEFAULT_PUT_TIMEOUT;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -49,7 +52,7 @@ class WicaChannelPutControllerTest
                                                               .content( "25" );
 
       // Check that the method returns in less than the default timeout
-      final int methodDefaultTimeout = 1000;
+      final int methodDefaultTimeout = DEFAULT_PUT_TIMEOUT;
       final int guardTime = 200;
       final int testTimeoutInMillis = methodDefaultTimeout + guardTime;
       assertTimeoutPreemptively( Duration.ofMillis( testTimeoutInMillis ), () -> {
@@ -91,7 +94,7 @@ class WicaChannelPutControllerTest
                                                               .content( "25" );
 
       // Check that the method returns in less than the default timeout
-      final int methodDefaultTimeout = 1000;
+      final int methodDefaultTimeout = DEFAULT_PUT_TIMEOUT;
       final int guardTime = 200;
       final int testTimeoutInMillis = methodDefaultTimeout + guardTime;
       assertTimeoutPreemptively( Duration.ofMillis( testTimeoutInMillis ), () -> {
