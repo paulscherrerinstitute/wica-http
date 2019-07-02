@@ -59,11 +59,14 @@ class WicaChannelGetController
     * Handles an HTTP GET request to return the value of the specified channel.
     *
     * @param channelName the name of the channel whose value is to be fetched.
-    * @param timeoutInMilliseconds the timeout to be applied when attempting to
-    *     get the channel value from the underlying data source. If a timeout
-    *     occurs the returned value will be WicaChannelValueDisconnected.
     *
-    * @return the returned channel value.
+    * @param timeoutInMilliseconds the timeout to be applied when attempting to
+    *     get the channel value from the underlying data source.
+    *
+    * @return ResponseEntity set to return an HTTP status code of 'OK'
+    *    (= 200) and a body which includes the JSON string representation of
+    *    the current channel value. If a timeout occurred the JSON representation
+    *    will be set to show that the channel is currently disconnected.
     */
    @GetMapping( value="/{channelName}", produces = MediaType.APPLICATION_JSON_VALUE )
    public ResponseEntity<String> getChannelValue( @PathVariable String channelName,
