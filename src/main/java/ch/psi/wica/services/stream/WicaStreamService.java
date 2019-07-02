@@ -33,7 +33,6 @@ public class WicaStreamService
    private int streamsDeleted;
 
 
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
@@ -65,7 +64,7 @@ public class WicaStreamService
     */
    public WicaStream create( String jsonStreamConfiguration )
    {
-      Validate.notEmpty( jsonStreamConfiguration, "The 'jsonStreamConfiguration' argument was null" );
+      Validate.notEmpty( jsonStreamConfiguration, "The 'jsonStreamConfiguration' argument was null." );
 
       final WicaStreamConfigurationDecoder decoder;
       try
@@ -103,8 +102,8 @@ public class WicaStreamService
     */
    public void delete( WicaStreamId wicaStreamId )
    {
-      Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null" );
-      Validate.isTrue(( isKnownId( wicaStreamId ) ),"The 'wicaStreamId' argument was not recognised"  );
+      Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null." );
+      Validate.isTrue(( isKnownId( wicaStreamId ) ),"The 'wicaStreamId' argument was not recognised."  );
 
       streamsDeleted++;
 
@@ -113,6 +112,8 @@ public class WicaStreamService
 
       // Lastly stop monitoring all the channels of interest.
       controlSystemMonitoringService.stopMonitoring( wicaStreamPublisher.getStream() );
+
+      wicaStreamPublisherMap.remove( wicaStreamId );
    }
 
    /**
@@ -123,7 +124,7 @@ public class WicaStreamService
     */
    public Flux<ServerSentEvent<String>> getFluxFromId( WicaStreamId wicaStreamId  )
    {
-      Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null" );
+      Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null." );
       return wicaStreamPublisherMap.get( wicaStreamId ).getFlux();
    }
 
@@ -135,7 +136,7 @@ public class WicaStreamService
     */
    public boolean isKnownId( WicaStreamId wicaStreamId )
    {
-      Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null" );
+      Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null." );
       return wicaStreamPublisherMap.containsKey( wicaStreamId );
    }
 
