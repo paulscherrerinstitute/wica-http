@@ -1,6 +1,16 @@
 {
   "properties": [
     {
+      "name": "wica.epics-ca-library-monitor-notifier-impl",
+      "type": "java.lang.String",
+      "description": "The configuration for PSI's CA library when using it to establish channel access monitors."
+    },
+    {
+      "name": "wica.epics-ca-library-debug-level",
+      "type": "java.lang.Integer",
+      "description": "The configuration for PSI's CA library when logging."
+    },
+    {
       "name": "wica.channel-value-stash-buffer-size",
       "type": "java.lang.Integer",
       "description": "The number of values that can be stashed in the control system received value buffer before older values start getting thrown away."
