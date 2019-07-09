@@ -57,7 +57,8 @@ public class WicaStreamService
    }
 
    /**
-    * Creates an activated wica stream based on the supplied configuration string.
+    * Creates a wica stream based on the supplied configuration string and starts
+    * monitoring the wica channels that are included in it.
     *
     * @param jsonStreamConfiguration the configuration string.
     * @return the returned stream.
@@ -86,7 +87,7 @@ public class WicaStreamService
       final WicaStream wicaStream = new WicaStream( wicaStreamId, decoder.getWicaStreamProperties(), decoder.getWicaChannels() );
       final WicaStreamPublisher wicaStreamPublisher = new WicaStreamPublisher( wicaStream, wicaStreamDataSupplier );
 
-      // Lastly start monitoring all the channels of interest.
+      // Lastly start monitoring all the channels in the stream.
       controlSystemMonitoringService.startMonitoring( wicaStream );
 
       // Update the map of known fluxes
