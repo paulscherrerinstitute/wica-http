@@ -55,7 +55,7 @@ class WicaStreamDataSupplier
     * Returns a map of all channels and their associated metadata.
     *
     * @param wicaStream the stream.
-    * @return the apply.
+    * @return the map.
     */
    Map<WicaChannelName, WicaChannelMetadata> getMetadataMap( WicaStream wicaStream)
    {
@@ -63,10 +63,12 @@ class WicaStreamDataSupplier
    }
 
    /**
-    * Returns a map of all channels and their associated values.
+    * Returns a map of all channels and the most recent N values that have been
+    * received for them, where N is the size of the internal received value
+    * notification buffer.
     *
     * @param wicaStream the stream.
-    * @return the apply.
+    * @return the map.
     */
    Map<WicaChannelName,List<WicaChannelValue>> getValueMap( WicaStream wicaStream)
    {
