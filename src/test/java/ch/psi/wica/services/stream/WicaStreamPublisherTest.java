@@ -8,7 +8,6 @@ import ch.psi.wica.model.WicaChannelMetadataStash;
 import ch.psi.wica.model.WicaChannelValueStash;
 import ch.psi.wica.model.WicaStream;
 import ch.psi.wica.model.WicaStreamId;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
