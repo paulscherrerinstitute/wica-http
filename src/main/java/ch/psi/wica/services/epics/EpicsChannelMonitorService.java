@@ -15,11 +15,11 @@ import org.epics.ca.data.Timestamped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -57,12 +57,28 @@ public class EpicsChannelMonitorService implements AutoCloseable
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Returns a new instance that will extract information from the EPICS channels
+    * of interest using the default metadata and value publishers.
+    */
    public EpicsChannelMonitorService()
    {
-      this( new EpicsChannelMetadataPublisher(), new EpicsChannelValuePublisher() );
+      this("BlockingQueueMultipleWorkerMonitorNotificationServiceImpl,16,10",1,
+            new EpicsChannelMetadataPublisher(), new EpicsChannelValuePublisher() );
    }
 
-   public EpicsChannelMonitorService( @Autowired EpicsChannelMetadataPublisher epicsChannelMetadataPublisher,
+   /**
+    * Returns a new instance that will extract information from the EPICS channels
+    * of interest using the supplied metadata and value publishers.
+    *
+    * @param epicsCaLibraryMonitorNotifierImpl the CA library monitor notifier configuration.
+    * @param epicsCaLibraryDebugLevel the CA library debug level.
+    * @param epicsChannelMetadataPublisher the metadata publisher.
+    * @param epicsChannelValuePublisher the value publisher.
+    */
+   public EpicsChannelMonitorService( @Value( "wica.epics-ca-library-monitor-notifier-impl") String  epicsCaLibraryMonitorNotifierImpl,
+                                      @Value( "wica.epics-ca-library-debug-level") Integer  epicsCaLibraryDebugLevel,
+                                      @Autowired EpicsChannelMetadataPublisher epicsChannelMetadataPublisher,
                                       @Autowired EpicsChannelValuePublisher epicsChannelValuePublisher )
    {
       logger.debug( "'{}' - constructing new EpicsChannelMonitorService instance...", this );
@@ -70,10 +86,10 @@ public class EpicsChannelMonitorService implements AutoCloseable
       this.epicsChannelMetadataPublisher = epicsChannelMetadataPublisher;
       this.epicsChannelValuePublisher = epicsChannelValuePublisher;
 
-      // Setup a context that does no buffering. This is good enough for most
-      // status display purposes to humans.
-      System.setProperty( "CA_MONITOR_NOTIFIER_IMPL", "BlockingQueueMultipleWorkerMonitorNotificationServiceImpl,16,10" );
-      System.setProperty( "CA_DEBUG", "1" );
+      // Setup a context that uses the monitor notification policy and debug
+      // message log level defined in the configuration file.
+      System.setProperty( "CA_MONITOR_NOTIFIER_IMPL", epicsCaLibraryMonitorNotifierImpl );
+      System.setProperty( "CA_DEBUG", String.valueOf( epicsCaLibraryDebugLevel ) );
 
       caContext = new Context();
       logger.debug( "'{}' - service instance constructed ok.", this );
@@ -99,13 +115,19 @@ public class EpicsChannelMonitorService implements AutoCloseable
     *
     * The supplied handlers will be potentially called back on multiple threads.
     *
+    * It is the responsibility of the caller to ensure that monitoring should
+    * not already have been established on the targeted EPICS channel. Should
+    * this precondition be violated an IllegalStateException will be thrown.
+    *
     * @param epicsChannelName the name of the channel to be monitored.
     * @param connectionStateChangeHandler the handler to be informed of changes
     *        to the channel's connection state.
     * @param metadataChangeHandler the handler to be informed of metadata changes.
     * @param valueChangeHandler the handler to be informed of value changes.
     * @throws NullPointerException if any of the input arguments were null.
-    *
+    * @throws IllegalStateException if this monitor service was previously closed.
+    * @throws IllegalStateException if the channel to be monitored is already
+    *     being monitored.
     */
     void startMonitoring( EpicsChannelName epicsChannelName,
                           Consumer<Boolean> connectionStateChangeHandler,
@@ -117,7 +139,7 @@ public class EpicsChannelMonitorService implements AutoCloseable
       Validate.notNull( metadataChangeHandler );
       Validate.notNull( valueChangeHandler );
       Validate.validState( ! closed, "The monitor service was previously closed and can no longer be used" );
-      Validate.isTrue( ! channels.containsKey( epicsChannelName ),"Channel name already exists: '" + epicsChannelName.asString() +"'" );
+      Validate.validState( ! channels.containsKey( epicsChannelName ),"Channel name already exists: '" + epicsChannelName.asString() + "'" );
 
       logger.debug("'{}' - starting to monitor... ", epicsChannelName);
       channelsCreatedCount++;
@@ -136,32 +158,41 @@ public class EpicsChannelMonitorService implements AutoCloseable
          logger.debug("'{}' - connection listener added ok.", epicsChannelName);
 
          logger.debug("'{}' - connecting asynchronously to... ", epicsChannelName);
-         final CompletableFuture<Channel<Object>> completableFuture = channel.connectAsync();
-         logger.debug("'{}' - asynchronous connect completed ok.", epicsChannelName);
-
-         completableFuture.thenRunAsync( () -> {
-            logger.debug("'{}' - channel connected ok.", epicsChannelName);
-            epicsChannelMetadataPublisher.getAndPublishMetadata( channel, metadataChangeHandler );
-            epicsChannelValuePublisher.getAndPublishValue( channel, valueChangeHandler );
-            registerValueChangeHandler( channel, valueChangeHandler );
-         } );
+         channel.connectAsync()
+                .thenRunAsync( () -> {
+                   logger.debug("'{}' - asynchronous connect completed ok.", epicsChannelName);
+                   epicsChannelMetadataPublisher.getAndPublishMetadata( channel, metadataChangeHandler );
+                   epicsChannelValuePublisher.getAndPublishValue(channel, valueChangeHandler);
+                   registerValueChangeHandler( channel, valueChangeHandler );
+                } )
+               .exceptionally( (ex) -> {
+                  logger.warn("'{}' - exception on channel, details were as follows: {}", this, ex.toString() );
+                  return null;
+               } );
       }
       catch ( Exception ex )
       {
-         logger.debug("'{}' - exception on channel, details were as follows: ", epicsChannelName, ex.toString() );
+         logger.warn("'{}' - exception on channel, details were as follows: {}", epicsChannelName, ex.toString() );
       }
    }
 
    /**
     * Stop monitoring the specified channel.
     *
+    * It is the responsibility of the caller to ensure that monitoring should
+    * already have been established on the targeted EPICS channel. Should
+    * this precondition be violated an IllegalStateException will be thrown.
+    *
     * @param epicsChannelName the channel which is no longer of interest.
+    * @throws IllegalStateException if this monitor service was previously closed.
+    * @throws IllegalStateException if the channel whose monitoring to be stopped
+    *     was not already being monitored.
     */
    void stopMonitoring( EpicsChannelName epicsChannelName )
    {
       Validate.notNull( epicsChannelName );
       Validate.validState( ! closed, "The monitor service was previously closed and can no longer be used" );
-      Validate.isTrue( channels.containsKey( epicsChannelName ), "channel name not recognised" );
+      Validate.validState( channels.containsKey( epicsChannelName ), "channel name not recognised" );
       channelsDeletedCount++;
 
       logger.debug("'{}' - stopping monitoring on... ", epicsChannelName);
