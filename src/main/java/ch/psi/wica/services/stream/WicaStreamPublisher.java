@@ -15,6 +15,7 @@ import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -182,7 +183,7 @@ public class WicaStreamPublisher
       return Flux.range(1, 1)
             .map(l -> {
                logger.trace("channel-value flux is publishing new SSE...");
-               var map = wicaStreamDataSupplier.getValueMap( wicaStream );
+               final Map<WicaChannelName, List<WicaChannelValue>> map = wicaStreamDataSupplier.getValueMap( wicaStream );
                final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUES_INITIAL.build( wicaStreamId, jsonServerSentEventString );
             } )
@@ -195,7 +196,7 @@ public class WicaStreamPublisher
    /**
     * Creates the CHANNEL CHANGED VALUE FLUX.
     *
-    * The purpose of this flux is to publish the last received values for any channels
+    * The purpose of this flux is to publish the last received values of any channels
     * which have received monitor notifications since the last update.
     *
     * This flux runs with a periodicity defined by the channelValueChangeFluxReportingInterval.
@@ -207,7 +208,7 @@ public class WicaStreamPublisher
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getChangedValueFluxIntervalInMillis() ) )
             .map( l -> {
                logger.trace( "channel-value-change flux is publishing new SSE..." );
-               final var map = wicaStreamDataSupplier.getNotifiedValueChanges( wicaStream );
+               final Map<WicaChannelName, List<WicaChannelValue>> map = wicaStreamDataSupplier.getNotifiedValueChanges( wicaStream );
                final var jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_CHANGED_VALUES.build( wicaStreamId, jsonServerSentEventString );
             } )
