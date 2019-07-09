@@ -69,7 +69,6 @@ public class WicaChannelDataNumericScaleSupplier implements NumericScaleSupplier
       wicaChannels.stream()
             .filter( ch -> ch.getProperties().getNumericPrecision().isPresent() )
             .forEach( ch -> {
-               @SuppressWarnings( "OptionalGetWithoutIsPresent" )
                final int numericScaleOverride = ch.getProperties().getNumericPrecision().get();
                logger.info("Channel '{}' had numericScale override '{}'", ch, numericScaleOverride );
                map.put( ch.getName(), numericScaleOverride);
