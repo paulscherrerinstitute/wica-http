@@ -35,7 +35,6 @@ public class WicaChannel
     * @param wicaChannelName the name of the channel.
     * @param wicaStreamProperties the properties of the stream with which this channel is associated.
     */
-   @SuppressWarnings( "WeakerAccess" )
    public WicaChannel( WicaChannelName wicaChannelName, WicaStreamProperties wicaStreamProperties )
    {
       this( wicaChannelName, wicaStreamProperties, new WicaChannelProperties() );
@@ -52,7 +51,7 @@ public class WicaChannel
    public WicaChannel( WicaChannelName wicaChannelName, WicaStreamProperties wicaStreamProperties, WicaChannelProperties wicaChannelProperties )
    {
       final Logger logger = LoggerFactory.getLogger(WicaChannel.class );
-      logger.info( "Creating new WicaChannel with name {}, stream properties {} and channel properties {}.", wicaChannelName,
+      logger.trace( "Creating new WicaChannel with name {}, stream properties {} and channel properties {}.", wicaChannelName,
                     wicaStreamProperties, wicaChannelProperties );
 
       this.wicaChannelName = wicaChannelName;
@@ -116,7 +115,8 @@ public class WicaChannel
             "wicaChannelName=" + wicaChannelName +
             '}';
    }
-   /*- Private methods ----------------------------------------------------------*/
+
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
