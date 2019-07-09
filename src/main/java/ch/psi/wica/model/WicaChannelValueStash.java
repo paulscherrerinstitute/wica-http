@@ -114,7 +114,7 @@ public class WicaChannelValueStash
       final Map<WicaChannelName, List<WicaChannelValue>> outputMap = new ConcurrentHashMap<>();
       wicaChannels.forEach( c -> {
          final List<WicaChannelValue> laterThanList = getLaterThan( c.getName().getControlSystemName(), since );
-         // Only return apply entries where there is at least one new value.
+         // Only return map entries where there is at least one new value.
          // TODO: probably this could be done more elegantly using some declarative approach
          if ( laterThanList.size() > 0 )
          {
