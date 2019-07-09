@@ -5,6 +5,8 @@ package ch.psi.wica.controllers;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.infrastructure.WicaChannelValueSerializer;
+import ch.psi.wica.model.StatisticsCollectable;
+import ch.psi.wica.model.StatisticsCollector;
 import ch.psi.wica.model.WicaChannelName;
 import ch.psi.wica.model.WicaChannelValue;
 import ch.psi.wica.services.channel.WicaChannelService;
@@ -18,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -29,7 +32,7 @@ import java.util.concurrent.TimeUnit;
  */
 @RestController
 @RequestMapping( "/ca/channel")
-class WicaChannelGetController
+class WicaChannelGetController implements StatisticsCollectable
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -39,6 +42,8 @@ class WicaChannelGetController
    private final WicaChannelService wicaChannelService;
    private final int defaultTimeoutInMillis;
    private final int defaultNumericScale;
+
+   private final StatisticsCollector statisticsCollector = new StatisticsCollector();
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -65,7 +70,7 @@ class WicaChannelGetController
 
       this.defaultTimeoutInMillis = defaultTimeoutInMillis;
       this.defaultNumericScale = defaultNumericScale;
-      this.wicaChannelService = Validate.notNull( wicaChannelService );
+      this.wicaChannelService = wicaChannelService;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -81,10 +86,13 @@ class WicaChannelGetController
     *     optional parameter is not provided then the configured default
     *     value will be used.
     *
-    * @param numericScale The default number of digits after the decimal
+    * @param numericScale the default number of digits after the decimal
     *     point when getting the current value of a wica channel. If this
-    *     *     optional parameter is not provided then the configured default
-    *     *     value will be used.
+    *     optional parameter is not provided then the configured default
+    *     value will be used.
+    *
+    * @param httpServletRequest contextual information for the request; used
+    *     for statistics collection only.
     *
     * @return ResponseEntity set to return an HTTP status code of 'OK'
     *    (= 200) and a body which includes the JSON string representation of
@@ -94,16 +102,21 @@ class WicaChannelGetController
    @GetMapping( value="/{channelName}", produces = MediaType.APPLICATION_JSON_VALUE )
    public ResponseEntity<String> getChannelValue( @PathVariable String channelName,
                                                   @RequestParam( value="timeout", required = false ) Integer timeoutInMillis,
-                                                  @RequestParam( value="numericScale", required = false ) Integer numericScale )
+                                                  @RequestParam( value="numericScale", required = false ) Integer numericScale,
+                                                  HttpServletRequest httpServletRequest )
    {
-      // Check that the Spring framework gives us something in the channelName field.
+      statisticsCollector.incrementRequests();
+      statisticsCollector.addClient(httpServletRequest.getRemoteHost() );
+
+      // Check that the Spring framework gives us something in the HttpServletRequest and channelName fields.
+      Validate.notNull( httpServletRequest, "The 'httpServletRequest' field was empty." );
       Validate.notNull( channelName, "The 'channelName' field was empty." );
 
       // Assign default values when not explicitly provided.
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
       numericScale = numericScale == null ? defaultNumericScale : numericScale;
 
-      logger.info( "'{}' - Handling GET channel request...", channelName );
+      logger.info( "'{}' - Handling GET channel request from remote host {}", channelName, httpServletRequest.getRemoteHost() );
 
       final WicaChannelValue wicaChannelValue = wicaChannelService.get( WicaChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
       final WicaChannelValueSerializer wicaChannelValueSerializer = new WicaChannelValueSerializer( numericScale, false );
@@ -116,6 +129,20 @@ class WicaChannelGetController
    public void handleException( Exception ex)
    {
       logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
+   }
+
+/*- Package-level methods ----------------------------------------------------*/
+
+   @Override
+   public StatisticsCollector getStatistics()
+   {
+      return statisticsCollector;
+   }
+
+   @Override
+   public void resetStatistics()
+   {
+      statisticsCollector.reset();
    }
 
 /*- Private methods ----------------------------------------------------------*/

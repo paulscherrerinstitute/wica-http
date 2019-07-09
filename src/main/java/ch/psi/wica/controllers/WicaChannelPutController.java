@@ -4,6 +4,8 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.StatisticsCollectable;
+import ch.psi.wica.model.StatisticsCollector;
 import ch.psi.wica.model.WicaChannelName;
 import ch.psi.wica.services.channel.WicaChannelService;
 import org.apache.commons.lang3.Validate;
@@ -16,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -27,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  */
 @RestController
 @RequestMapping( "/ca/channel")
-class WicaChannelPutController
+class WicaChannelPutController implements StatisticsCollectable
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -36,6 +39,8 @@ class WicaChannelPutController
    private final Logger logger = LoggerFactory.getLogger( WicaChannelPutController.class );
    private final WicaChannelService wicaChannelService;
    private final int defaultTimeoutInMillis;
+   private final StatisticsCollector statisticsCollector = new StatisticsCollector();
+
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -74,6 +79,9 @@ class WicaChannelPutController
     *
     * @param channelValue the string representation of the new value.
     *
+    * @param httpServletRequest contextual information for the request; used
+    *     for statistics collection only.
+    *
     * @return ResponseEntity set to return an HTTP status code of 'OK'
     *    (= 200) if the put operation completes successfully or
     *    'Internal Server Error' (= 500) if a timeout occurs.  When
@@ -84,8 +92,12 @@ class WicaChannelPutController
    @PutMapping( value="/{channelName}", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.TEXT_PLAIN_VALUE )
    public ResponseEntity<String> putChannelValue( @PathVariable String channelName,
                                                   @RequestParam( value="timeout", required = false ) Integer timeoutInMillis,
-                                                  @RequestBody String channelValue )
+                                                  @RequestBody String channelValue,
+                                                  HttpServletRequest httpServletRequest )
    {
+      statisticsCollector.incrementRequests();
+      statisticsCollector.addClient(httpServletRequest.getRemoteHost() );
+
       // Check that the Spring framework gives us something in the channelName field.
       Validate.notNull( channelName, "The 'channelName' field was empty." );
 
@@ -113,7 +125,23 @@ class WicaChannelPutController
       logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
    }
 
-/*- Private methods ----------------------------------------------------------*/
+
+/*- Package-level methods ----------------------------------------------------*/
+
+   @Override
+   public StatisticsCollector getStatistics()
+   {
+      return statisticsCollector;
+   }
+
+   @Override
+   public void resetStatistics()
+   {
+      statisticsCollector.reset();
+   }
+
+
+   /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
