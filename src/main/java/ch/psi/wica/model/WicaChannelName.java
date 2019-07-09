@@ -23,7 +23,15 @@ public class WicaChannelName
 /*- Private attributes -------------------------------------------------------*/
 
    private static final String PROTOCOL_REGEX = "(?<protocol>ca://|pv://)";
-   private static final String CONTROL_SYSTEM_NAME_REGEX = "(?<csname>[A-Za-z0-9:_\\-<>]+)";
+
+   /**
+    * The regex below needs to include as a minimum the set of allowed characters
+    * that are valid for an EPICS channel name. According to section 6.3.2 of the
+    * EPICS Application Developer's Guide this includes the following:
+    *    a-z A-Z 0-9 _ - : . [ ] < >
+    */
+   private static final String CONTROL_SYSTEM_NAME_REGEX = "(?<csname>[a-zA-Z0-9_\\-:.\\[\\]<>]+)";
+
    private static final String INSTANCE_REGEX = "(?<instance>##[0-9]+)";
    private static final String WICA_CHANNEL_NAME_FORMAT = PROTOCOL_REGEX + "?" + CONTROL_SYSTEM_NAME_REGEX + INSTANCE_REGEX + "?";
    private static final Pattern pattern = Pattern.compile( WICA_CHANNEL_NAME_FORMAT );
