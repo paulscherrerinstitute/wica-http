@@ -69,7 +69,6 @@ public class WicaChannelDataFieldsOfInterestSupplier implements FieldsOfInterest
       wicaChannels.stream()
                   .filter( ch -> ch.getProperties().getFieldsOfInterest().isPresent() )
                   .forEach( ch -> {
-                     @SuppressWarnings( "OptionalGetWithoutIsPresent" )
                      final Set<String> fieldsOfInterestOverride = ch.getProperties().getFieldsOfInterest().get();
                      logger.info("Channel '{}' had fieldsOfInterest override '{}'", ch, fieldsOfInterestOverride );
                      map.put( ch.getName(), fieldsOfInterestOverride);
