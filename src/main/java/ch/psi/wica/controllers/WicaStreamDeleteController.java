@@ -4,7 +4,8 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.WicaStream;
+import ch.psi.wica.model.StatisticsCollectable;
+import ch.psi.wica.model.StatisticsCollector;
 import ch.psi.wica.model.WicaStreamId;
 import ch.psi.wica.services.stream.WicaStreamService;
 import org.apache.commons.lang3.Validate;
@@ -16,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -27,7 +29,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping( "/ca/streams")
-class WicaStreamDeleteController
+class WicaStreamDeleteController  implements StatisticsCollectable
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -35,6 +37,7 @@ class WicaStreamDeleteController
 
    private final Logger logger = LoggerFactory.getLogger(WicaStreamDeleteController.class );
    private final WicaStreamService wicaStreamService;
+   private final StatisticsCollector statisticsCollector = new StatisticsCollector();
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -59,6 +62,9 @@ class WicaStreamDeleteController
     *
     * @param optStreamId the ID of the stream to be deleted.
     *
+    * @param httpServletRequest contextual information for the request; used
+    *     for statistics collection only.
+    *
     * @return an HTTP response whose status code will be set to 'OK' (= 200)
     *     if the delete operation completes successfully or 'Bad Request'
     *     (= 400) if some error occurs.  When successful the body of the HTTP
@@ -68,9 +74,13 @@ class WicaStreamDeleteController
     */
    @SuppressWarnings( "OptionalUsedAsFieldOrParameterType" )
    @DeleteMapping( value = { "", "/{optStreamId}"}, produces=MediaType.TEXT_PLAIN_VALUE )
-   public ResponseEntity<String> deleteStream( @PathVariable( required=false ) Optional<String> optStreamId )
+   public ResponseEntity<String> deleteStream( @PathVariable( required=false ) Optional<String> optStreamId,
+                                               HttpServletRequest httpServletRequest  )
    {
       logger.info( "DELETE: Handling delete stream request." );
+
+      statisticsCollector.incrementRequests();
+      statisticsCollector.addClient(httpServletRequest.getRemoteHost() );
 
       // Note: by NOT insisting that the RequestBody is provided we can process
       // its absence within this method and provide the appropriate handling.
@@ -126,7 +136,23 @@ class WicaStreamDeleteController
       logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
    }
 
-/*- Private methods ----------------------------------------------------------*/
+
+/*- Package-level methods ----------------------------------------------------*/
+
+   @Override
+   public StatisticsCollector getStatistics()
+   {
+      return statisticsCollector;
+   }
+
+   @Override
+   public void resetStatistics()
+   {
+      statisticsCollector.reset();
+   }
+
+
+   /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

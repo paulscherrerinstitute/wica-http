@@ -4,6 +4,8 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.StatisticsCollectable;
+import ch.psi.wica.model.StatisticsCollector;
 import ch.psi.wica.model.WicaStreamId;
 import ch.psi.wica.services.stream.WicaStreamService;
 import org.apache.commons.lang3.Validate;
@@ -17,6 +19,7 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -28,7 +31,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping( "/ca/streams")
-class WicaStreamGetController
+class WicaStreamGetController implements StatisticsCollectable
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -36,6 +39,7 @@ class WicaStreamGetController
 
    private final Logger logger = LoggerFactory.getLogger(WicaStreamGetController.class );
    private final WicaStreamService wicaStreamService;
+   private final StatisticsCollector statisticsCollector = new StatisticsCollector();
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -61,6 +65,9 @@ class WicaStreamGetController
     *
     * @param optStreamId the ID of the stream to be subscribed to.
     *
+    * @param httpServletRequest contextual information for the request; used
+    *     for statistics collection only.
+    *
     * @return an HTTP response whose status code will be set to 'OK' (= 200)
     *     if the operation completes successfully or 'Bad Request' (= 400) if
     *     some error occurs.  When successful the the HTTP response remains
@@ -71,9 +78,16 @@ class WicaStreamGetController
     */
    @SuppressWarnings( "OptionalUsedAsFieldOrParameterType" )
    @GetMapping( value = { "", "/{optStreamId}"}, produces = MediaType.TEXT_EVENT_STREAM_VALUE )
-   public ResponseEntity<Flux<ServerSentEvent<String>>> get( @PathVariable Optional<String> optStreamId )
+   public ResponseEntity<Flux<ServerSentEvent<String>>> get( @PathVariable Optional<String> optStreamId,
+                                                             HttpServletRequest httpServletRequest )
    {
       logger.info( "GET: Handling subscribe stream request." );
+
+      statisticsCollector.incrementRequests();
+      if ( httpServletRequest != null )
+      {
+         statisticsCollector.addClient(httpServletRequest.getRemoteHost());
+      }
 
       // Note: by NOT insisting that the RequestBody is provided we can process
       // its absence within this method and provide the appropriate handling.
@@ -128,6 +142,21 @@ class WicaStreamGetController
    {
       logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
    }
+
+/*- Package-level methods ----------------------------------------------------*/
+
+   @Override
+   public StatisticsCollector getStatistics()
+   {
+      return statisticsCollector;
+   }
+
+   @Override
+   public void resetStatistics()
+   {
+      statisticsCollector.reset();
+   }
+
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

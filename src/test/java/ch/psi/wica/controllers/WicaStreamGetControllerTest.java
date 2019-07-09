@@ -21,15 +21,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -132,7 +129,7 @@ class WicaStreamGetControllerTest
 
       final MvcResult postRequestResult = mockMvc.perform( postRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
       final String id = postRequestResult.getResponse().getContentAsString();
-      final ResponseEntity<Flux<ServerSentEvent<String>>> responseEntity = wicaStreamGetController.get( Optional.of( id ) );
+      final ResponseEntity<Flux<ServerSentEvent<String>>> responseEntity = wicaStreamGetController.get( Optional.of( id ), null );
       final Flux<ServerSentEvent<String>> flux = responseEntity.getBody();
 
       StepVerifier.create( flux )
