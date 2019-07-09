@@ -4,6 +4,8 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.StatisticsCollectable;
+import ch.psi.wica.model.StatisticsCollector;
 import ch.psi.wica.model.WicaStream;
 import ch.psi.wica.services.stream.WicaStreamService;
 import org.apache.commons.lang3.Validate;
@@ -15,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 
@@ -27,7 +30,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping( "/ca/streams")
-class WicaStreamCreateController
+class WicaStreamCreateController implements StatisticsCollectable
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -35,6 +38,8 @@ class WicaStreamCreateController
 
    private final Logger logger = LoggerFactory.getLogger( WicaStreamCreateController.class );
    private final WicaStreamService wicaStreamService;
+   private final StatisticsCollector statisticsCollector = new StatisticsCollector();
+
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -64,6 +69,9 @@ class WicaStreamCreateController
     * @param optJsonStreamConfiguration JSON string providing the stream
     *        configuration.
     *
+    * @param httpServletRequest contextual information for the request; used
+    *     for statistics collection only.
+    *
     * @return an HTTP response whose status code will be set to 'OK' (= 200)
     *      if the create operation completes successfully or 'Bad Request'
     *      (= 400) if some error occurs.  When successful the body of the
@@ -73,9 +81,13 @@ class WicaStreamCreateController
     */
    @SuppressWarnings( "OptionalUsedAsFieldOrParameterType" )
    @PostMapping( consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.TEXT_PLAIN_VALUE )
-   public ResponseEntity<String> create( @RequestBody( required = false ) Optional<String> optJsonStreamConfiguration )
+   public ResponseEntity<String> create( @RequestBody( required = false ) Optional<String> optJsonStreamConfiguration,
+                                         HttpServletRequest httpServletRequest )
    {
       logger.info( "POST: Handling create stream request." );
+
+      statisticsCollector.incrementRequests();
+      statisticsCollector.addClient(httpServletRequest.getRemoteHost() );
 
       // Note: by NOT insisting that the RequestBody is provided we can process
       // its absence within this method and provide the appropriate handling.
@@ -123,7 +135,23 @@ class WicaStreamCreateController
       logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
    }
 
-/*- Private methods ----------------------------------------------------------*/
+
+/*- Package-level methods ----------------------------------------------------*/
+
+   @Override
+   public StatisticsCollector getStatistics()
+   {
+      return statisticsCollector;
+   }
+
+   @Override
+   public void resetStatistics()
+   {
+      statisticsCollector.reset();
+   }
+
+
+   /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
