@@ -32,7 +32,8 @@ public class WicaStream
 /*- Constructor --------------------------------------------------------------*/
 
    /**
-    * Constructs a new stream with no special stream properties.
+    * Constructs a new stream for the specified channels with the default
+    * stream properties.
     *
     * @param wicaStreamId the stream's id.
     * @param wicaChannels the stream's channels.
@@ -42,6 +43,14 @@ public class WicaStream
       this( wicaStreamId, new WicaStreamProperties(), wicaChannels );
    }
 
+   /**
+    * Constructs a new stream for the specified channels with the specified
+    * stream properties.
+    *
+    * @param wicaStreamId the stream's id.
+    * @param wicaStreamProperties the stream's properties.
+    * @param wicaChannels the stream's channels.
+    */
    public WicaStream( WicaStreamId wicaStreamId,
                       WicaStreamProperties wicaStreamProperties,
                       Set<WicaChannel> wicaChannels )
@@ -60,7 +69,7 @@ public class WicaStream
 /*- Public methods -----------------------------------------------------------*/
 
    /**
-    * Returns the stream's id object.
+    * Returns the stream's id.
     * @return the object.
     */
    public WicaStreamId getWicaStreamId()
@@ -69,7 +78,7 @@ public class WicaStream
    }
 
    /**
-    * Returns the stream's properties object.
+    * Returns the stream's properties.
     * @return the object.
     */
    public WicaStreamProperties getWicaStreamProperties()
@@ -102,8 +111,8 @@ public class WicaStream
    }
 
    /**
-    * Returns the timestamp for the last time the values from the
-    * stream were published.
+    * Returns the timestamp for the last time the values from the stream were
+    * published.
     *
     * @return the timestamp.
     */
@@ -113,8 +122,8 @@ public class WicaStream
    }
 
    /**
-    * Sets with the current time the timestamp which indicates the last time
-    * the stream was published.
+    * Updates the the timestamp which indicates the last time this stream
+    * instance was published.
     */
    public void updateLastPublicationTime()
    {
