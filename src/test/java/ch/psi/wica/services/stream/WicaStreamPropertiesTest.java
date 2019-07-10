@@ -7,10 +7,7 @@ import ch.psi.wica.model.WicaStreamProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,8 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@RunWith( SpringRunner.class)
-@SpringBootTest
+@SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.NONE )
 class WicaStreamPropertiesTest
 {
 
@@ -32,13 +28,11 @@ class WicaStreamPropertiesTest
 /*- Public methods -----------------------------------------------------------*/
 
    @Test
-   void testUnrecognisedFieldThrowsException() throws Exception
+   void testUnrecognisedFieldThrowsException()
    {
       final ObjectMapper mapper = new ObjectMapper();
       final String inputString = "{" + "\"XXX\"" + ":" + 12345 + "}";
-      assertThrows( UnrecognizedPropertyException.class, () -> {
-         mapper.readValue( inputString, WicaStreamProperties.class);
-      } );
+      assertThrows( UnrecognizedPropertyException.class, () -> mapper.readValue(inputString, WicaStreamProperties.class));
    }
 
 
