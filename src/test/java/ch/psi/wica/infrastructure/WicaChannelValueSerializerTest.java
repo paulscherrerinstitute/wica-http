@@ -82,7 +82,7 @@ class WicaChannelValueSerializerTest
       final var serializer = new WicaChannelValueSerializer( 5, false );
       final var jsonStr =  serializer.serialize( strValue );
       logger.info("JSON Value STRING serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
-      final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
+      final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "val") );
       assertEquals( JsonNodeType.STRING, rootNode.get( "val" ).getNodeType() );
@@ -110,7 +110,7 @@ class WicaChannelValueSerializerTest
       final var serializer = new WicaChannelValueSerializer( 5, false);
       final var jsonStr =  serializer.serialize( intValue );
       logger.info("JSON Value INTEGER serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
-      final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
+      final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "val") );
       assertEquals( JsonNodeType.NUMBER, rootNode.get( "val" ).getNodeType() );
@@ -123,7 +123,7 @@ class WicaChannelValueSerializerTest
       final var serializer = new WicaChannelValueSerializer( 5, false );
       final var jsonStr =  serializer.serialize( intArrValue );
       logger.info("JSON Value INTEGER ARRAY serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr )  );
-      final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
+      final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "val") );
       assertEquals( JsonNodeType.ARRAY, rootNode.get( "val" ).getNodeType() );
@@ -138,7 +138,7 @@ class WicaChannelValueSerializerTest
       final var serializer = new WicaChannelValueSerializer( 3, false );
       final var jsonStr =  serializer.serialize( realValue );
       logger.info("JSON Value REAL serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
-      final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
+      final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "val") );
       assertEquals( JsonNodeType.NUMBER, rootNode.get( "val" ).getNodeType() );
