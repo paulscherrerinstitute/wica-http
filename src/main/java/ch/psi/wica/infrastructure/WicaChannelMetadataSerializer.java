@@ -34,16 +34,53 @@ public class WicaChannelMetadataSerializer
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Constructs a new instance that will generate serialized string representations
+    * of wica channel metadata which include ALL @JsonProperty annotations in the
+    * WicaChannelMetadata object, that serialize numeric values using the specified
+    * numeric scale, and with the default (= configured) approach to quoting numeric
+    * strings.
+    *
+    * @param numericScale a non-negative number specifying the number of digits to
+    *     appear after the decimal point in the serialized representation.
+    */
    WicaChannelMetadataSerializer( int numericScale )
    {
       this.wicaChannelDataSerializer = new WicaChannelDataSerializer( numericScale, quoteNumericStrings );
    }
 
+   /**
+    * Constructs a new instance that will generate serialized string representations
+    * of wica channel metadata which include SELECTED @JsonProperty annotations in the
+    * WicaChannelMetadata object, that serialize numeric values using the specified
+    * numeric scale, and with the specified approach to quoting numeric strings.
+    *
+    * @param fieldsOfInterest specifies the fields that are to be serialised
+    *     according to the @JsonProperty annotations in the ChannelDataObject.
+    *
+    * @param numericScale a non-negative number specifying the number of digits to
+    *     appear after the decimal point in the serialized representation.
+    */
    WicaChannelMetadataSerializer( Set<String> fieldsOfInterest, int numericScale )
    {
       this.wicaChannelDataSerializer = new WicaChannelDataSerializer( fieldsOfInterest, numericScale, quoteNumericStrings );
    }
 
+   /**
+    * Constructs a new instance that will generate serialized string representations
+    * of wica channel metadata which include SELECTED @JsonProperty annotations in the
+    * WicaChannelMetadata object, that serialize numeric values using the specified
+    * numeric scale, and with the specified approach to quoting numeric strings.
+    *
+    * @param fieldsOfInterest specifies the fields that are to be serialised
+    *     according to the @JsonProperty annotations in the ChannelDataObject.
+    *
+    * @param numericScale a non-negative number specifying the number of digits to
+    *     appear after the decimal point in the serialized representation.
+    *
+    * @param quoteNumericStrings determines whether the special double
+    *     values NaN and Infinity will be serialised as numbers or strings.
+    */
    WicaChannelMetadataSerializer( Set<String> fieldsOfInterest, int numericScale, boolean quoteNumericStrings )
    {
       this.wicaChannelDataSerializer = new WicaChannelDataSerializer( fieldsOfInterest, numericScale, quoteNumericStrings );
