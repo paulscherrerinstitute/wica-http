@@ -8,19 +8,17 @@ import ch.psi.wica.model.WicaChannelValue;
 import ch.psi.wica.model.WicaStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
+
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@RunWith( SpringRunner.class)
-@SpringBootTest
+@SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.NONE )
 class WicaStreamDataSupplierTest
 {
 
