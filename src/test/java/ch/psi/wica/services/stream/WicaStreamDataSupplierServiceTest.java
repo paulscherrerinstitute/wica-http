@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 /*- Class Declaration --------------------------------------------------------*/
 
 @SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.NONE )
-class WicaStreamDataSupplierTest
+class WicaStreamDataSupplierServiceTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -29,7 +29,7 @@ class WicaStreamDataSupplierTest
    private WicaStreamService wicaStreamService;
 
    @Autowired
-   private WicaStreamDataSupplier wicaStreamDataSupplier;
+   private WicaStreamDataSupplierService wicaStreamDataSupplierService;
 
    private WicaStream wicaStream;
 
@@ -52,7 +52,7 @@ class WicaStreamDataSupplierTest
    void test_getNotifiedValues()
    {
       // Verify that a first call to getNotifiedValues does indeed get everything
-      final var valueMap = wicaStreamDataSupplier.getNotifiedValues( wicaStream );
+      final var valueMap = wicaStreamDataSupplierService.getNotifiedValues(wicaStream );
       assertEquals( 3, valueMap.size() );
 
       assertTrue( valueMap.containsKey( WicaChannelName.of( "CH1##1") ) );
@@ -75,7 +75,7 @@ class WicaStreamDataSupplierTest
    void test_getNotifiedValueChanges()
    {
       // Verify that a first call to getNotifiedValues does indeed get everything
-      final var valueMap = wicaStreamDataSupplier.getNotifiedValueChanges( wicaStream );
+      final var valueMap = wicaStreamDataSupplierService.getNotifiedValueChanges(wicaStream );
       assertEquals( 3, valueMap.size() );
 
       assertTrue( valueMap.containsKey( WicaChannelName.of("CH1##1") ) );
