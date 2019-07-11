@@ -1,9 +1,11 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.services.epics;
+package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.*;
+import ch.psi.wica.services.channel.WicaChannelMetadataBufferService;
+import ch.psi.wica.services.channel.WicaChannelValueBufferService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -28,9 +30,8 @@ class EpicsControlSystemMonitoringServiceTest
 
    private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
 
-   private EpicsChannelMonitorService monitorServiceMock;
-   private WicaChannelMetadataStash wicaChannelMetadataStashMock;
-   private WicaChannelValueStash wicaChannelValueStashMock;
+   private WicaChannelMetadataBufferService wicaChannelMetadataBufferServiceMock;
+   private WicaChannelValueBufferService wicaChannelValueBufferServiceMock;
 
    private EpicsControlSystemMonitoringService epicsControlSystemMonitoringService;
 
@@ -56,21 +57,21 @@ class EpicsControlSystemMonitoringServiceTest
    void setup()
    {
       MockitoAnnotations.initMocks(this );
-      monitorServiceMock = Mockito.mock( EpicsChannelMonitorService.class );
-      wicaChannelMetadataStashMock = Mockito.mock( WicaChannelMetadataStash.class );
-      wicaChannelValueStashMock = Mockito.mock( WicaChannelValueStash.class );
+      final EpicsChannelMonitorService monitorServiceMock = Mockito.mock( EpicsChannelMonitorService.class );
+      wicaChannelMetadataBufferServiceMock = Mockito.mock(WicaChannelMetadataBufferService.class );
+      wicaChannelValueBufferServiceMock = Mockito.mock(WicaChannelValueBufferService.class );
 
       epicsControlSystemMonitoringService = new EpicsControlSystemMonitoringService( monitorServiceMock,
-                                                                                     wicaChannelMetadataStashMock,
-                                                                                     wicaChannelValueStashMock );
+                                                                                     wicaChannelMetadataBufferServiceMock,
+                                                                                     wicaChannelValueBufferServiceMock);
    }
 
    @Test
    void testConstructor_ThrowsNullPointerExceptionWhenArgumentNull()
    {
       assertThrows( NullPointerException.class, () -> new EpicsControlSystemMonitoringService(null,
-                                                                                              wicaChannelMetadataStashMock,
-                                                                                              wicaChannelValueStashMock ) );
+                                                                                              wicaChannelMetadataBufferServiceMock,
+                                                                                              wicaChannelValueBufferServiceMock) );
    }
 
    @Test
@@ -234,8 +235,8 @@ class EpicsControlSystemMonitoringServiceTest
 //      final List<Consumer<WicaChannelMetadata>> metadataChangedHandlers = metadataChangedCaptor.getAllValues();
 //      metadataChangedHandlers.get( 0 ).accept( wicaChannelMetadata );
 //      metadataChangedHandlers.get( 1 ).accept( wicaChannelMetadata );
-//      final WicaChannelMetadata wicaChannelMetadataRcvd1 = epicsControlSystemMonitoringService.getChannelMetadata( wicaChannelName1 );
-//      final WicaChannelMetadata wicaChannelMetadataRcvd2 = epicsControlSystemMonitoringService.getChannelMetadata( wicaChannelName1 );
+//      final WicaChannelMetadata wicaChannelMetadataRcvd1 = epicsControlSystemMonitoringService.get( wicaChannelName1 );
+//      final WicaChannelMetadata wicaChannelMetadataRcvd2 = epicsControlSystemMonitoringService.get( wicaChannelName1 );
 //      assertEquals( wicaChannelMetadata.getType(), wicaChannelMetadataRcvd1.getType() );
 //      assertEquals( wicaChannelMetadata.getType(), wicaChannelMetadataRcvd2.getType() );
 //   }

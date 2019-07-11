@@ -1,10 +1,12 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.services.epics;
+package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.*;
-import ch.psi.wica.services.stream.ControlSystemMonitoringService;
+import ch.psi.wica.services.channel.WicaChannelMetadataBufferService;
+import ch.psi.wica.services.channel.WicaChannelValueBufferService;
+import ch.psi.wica.controlsystem.ControlSystemMonitoringService;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -38,8 +40,8 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
 
    private static final Map<ControlSystemName,Integer> controlSystemInterestMap = Collections.synchronizedMap( new HashMap<>() );
 
-   private final WicaChannelMetadataStash channelMetadataStash;
-   private final WicaChannelValueStash channelValueStash;
+   private final WicaChannelMetadataBufferService wicaChannelMetadataBufferService;
+   private final WicaChannelValueBufferService wicaChannelValueBufferService;
    private final EpicsChannelMonitorService epicsChannelMonitorService;
 
 
@@ -47,12 +49,13 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
 /*- Constructor --------------------------------------------------------------*/
 
    EpicsControlSystemMonitoringService( EpicsChannelMonitorService epicsChannelMonitorService,
-                                        WicaChannelMetadataStash wicaChannelMetadataStash,
-                                        WicaChannelValueStash wicaChannelValueStash )
+                                        WicaChannelMetadataBufferService wicaChannelMetadataBufferService,
+                                        WicaChannelValueBufferService wicaChannelValueBufferService
+   )
    {
       this.epicsChannelMonitorService = Validate.notNull ( epicsChannelMonitorService );
-      this.channelMetadataStash = Validate.notNull( wicaChannelMetadataStash );
-      this.channelValueStash = Validate.notNull( wicaChannelValueStash );
+      this.wicaChannelMetadataBufferService = Validate.notNull(wicaChannelMetadataBufferService);
+      this.wicaChannelValueBufferService = Validate.notNull(wicaChannelValueBufferService);
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -118,8 +121,8 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
          logger.info("Subscribing to new control system channel named: '{}'", controlSystemName.asString() );
 
          // Set the initial state for the value and metadata stashes.
-         channelMetadataStash.put( wicaChannelName.getControlSystemName(), WicaChannelMetadata.createUnknownInstance() );
-         channelValueStash.add( wicaChannelName.getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
+         wicaChannelMetadataBufferService.put(wicaChannelName.getControlSystemName(), WicaChannelMetadata.createUnknownInstance() );
+         wicaChannelValueBufferService.add(wicaChannelName.getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
 
          // Now start monitoring
          final Consumer<Boolean> stateChangedHandler = b -> stateChanged( wicaChannelName, b );
@@ -188,7 +191,7 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
       {
          logger.debug("'{}' - value changed to NULL to indicate the connection was lost.", wicaChannelName);
          final WicaChannelValue disconnectedValue = WicaChannelValue.createChannelValueDisconnected();
-         channelValueStash.add( wicaChannelName.getControlSystemName(), disconnectedValue );
+         wicaChannelValueBufferService.add(wicaChannelName.getControlSystemName(), disconnectedValue );
       }
    }
 
@@ -204,7 +207,7 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
       Validate.notNull( wicaChannelValue, "The 'wicaChannelValue' argument was null");
 
       logger.trace("'{}' - value changed to: '{}'", wicaChannelName, wicaChannelValue);
-      channelValueStash.add( wicaChannelName.getControlSystemName(), wicaChannelValue );
+      wicaChannelValueBufferService.add(wicaChannelName.getControlSystemName(), wicaChannelValue );
    }
 
    /**
@@ -219,7 +222,7 @@ public class EpicsControlSystemMonitoringService implements ControlSystemMonitor
       Validate.notNull( wicaChannelMetadata, "The 'wicaChannelMetadata' argument was null");
 
       logger.trace("'{}' - metadata changed to: '{}'", wicaChannelName, wicaChannelMetadata);
-      channelMetadataStash.put( wicaChannelName.getControlSystemName(), wicaChannelMetadata);
+      wicaChannelMetadataBufferService.put(wicaChannelName.getControlSystemName(), wicaChannelMetadata);
    }
 
 

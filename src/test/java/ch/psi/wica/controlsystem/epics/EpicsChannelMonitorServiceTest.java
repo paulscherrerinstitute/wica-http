@@ -1,19 +1,22 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.services.epics;
+package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.WicaChannelValue;
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.function.Consumer;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -21,15 +24,19 @@ import static org.mockito.Mockito.*;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@Ignore
-@SpringBootTest
+// Need to rewire the service after each test since it will previously
+// have been closed down at the end of the previous test.
+@DirtiesContext( classMode= DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD )
+@SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.NONE )
 class EpicsChannelMonitorServiceTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private EpicsChannelMonitorService epicsChannelMonitorService = new EpicsChannelMonitorService( );
+   @Autowired
+   private EpicsChannelMonitorService epicsChannelMonitorService;
+
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -40,7 +47,6 @@ class EpicsChannelMonitorServiceTest
    @BeforeEach
    void beforeEach()
    {
-      epicsChannelMonitorService = new EpicsChannelMonitorService();
       assertEquals( 0, epicsChannelMonitorService.getChannelsCreatedCount() );
       assertEquals( 0, epicsChannelMonitorService.getChannelsDeletedCount() );
       assertEquals( 0, epicsChannelMonitorService.getChannelsActiveCount() );
@@ -64,7 +70,7 @@ class EpicsChannelMonitorServiceTest
    @Test
    void testStartMonitoring_ThrowsNullPointerExceptionWhenStateChangeHandlerIsNull()
    {
-      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring( new EpicsChannelName("abcd" ), null, (m)->{}, (v)->{} ) );
+      assertThrows( NullPointerException.class, () -> epicsChannelMonitorService.startMonitoring( new EpicsChannelName("abcd" ), null, ( m)->{}, ( v)->{} ) );
    }
 
    @Test
@@ -80,10 +86,11 @@ class EpicsChannelMonitorServiceTest
    }
 
    @Test
-   void testStartMonitoring_ThrowsIllegalArgumentExceptionWhenChannelNameNotUnique()
+   void testStartMonitoring_ThrowsIllegalStatExceptionWhenChannelNameNotUnique()
    {
       epicsChannelMonitorService.startMonitoring( new EpicsChannelName("abcd" ), (b)->{}, (m)->{}, (v)->{} );
-      assertThrows( IllegalArgumentException.class, () -> epicsChannelMonitorService.startMonitoring( new EpicsChannelName("abcd" ), (b)->{}, (m)->{}, (v)->{} ) );
+      final var ex = assertThrows( IllegalStateException.class, () -> epicsChannelMonitorService.startMonitoring( new EpicsChannelName("abcd" ), (b)->{}, (m)->{}, (v)->{} ) );
+      assertThat( ex.getMessage(), is( "The channel name: 'abcd' is already being monitored." ) );
    }
 
    @Test
@@ -111,9 +118,10 @@ class EpicsChannelMonitorServiceTest
    }
 
    @Test
-   void testStopMonitoring_ThrowsIllegalArgumentExceptionWhenChannelNameNotRecognised()
+   void testStopMonitoring_ThrowsIllegalStateExceptionWhenStoppingMonitoringChannelThatWasNeverPreviouslyMonitored()
    {
-      assertThrows( IllegalArgumentException.class, () -> epicsChannelMonitorService.stopMonitoring( new EpicsChannelName("unknown-channel" ) ) );
+      final var ex = assertThrows( IllegalStateException.class, () -> epicsChannelMonitorService.stopMonitoring( new EpicsChannelName( "unknown-channel" ) ) );
+      assertThat( ex.getMessage(), is( "The channel name: 'unknown-channel' was not recognised.") );
    }
 
    @Test
@@ -133,7 +141,6 @@ class EpicsChannelMonitorServiceTest
       assertEquals( 2, epicsChannelMonitorService.getChannelsActiveCount() );
       assertEquals( 0, epicsChannelMonitorService.getChannelsConnectedCount() );
    }
-
 
    @Test
    void testStartMonitoring_CheckMonitorStatisticsAsExpectedWhenDealingWithOfflineChannels()
@@ -206,13 +213,6 @@ class EpicsChannelMonitorServiceTest
       epicsChannelMonitorService.stopMonitoring( new EpicsChannelName( "test:db_ok" ) );
       assertEquals( 0, epicsChannelMonitorService.getChannelsConnectedCount() );
    }
-
-   @Test
-   void testStopMonitoring_verifyIllegalArgumentExceptionWhenChannelNotRecognised()
-   {
-      assertThrows( IllegalArgumentException.class, () ->  epicsChannelMonitorService.stopMonitoring( new EpicsChannelName( "XXXXX" ) ) );
-   }
-
 
 /*- Nested Classes -----------------------------------------------------------*/
 

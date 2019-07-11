@@ -1,5 +1,5 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.services.channel;
+package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 /*- Interface Declaration ----------------------------------------------------*/
@@ -7,11 +7,12 @@ package ch.psi.wica.services.channel;
 
 import ch.psi.wica.model.WicaChannelName;
 import ch.psi.wica.model.WicaChannelValue;
-import ch.psi.wica.services.epics.EpicsChannelMonitorService;
+import ch.psi.wica.controlsystem.epics.EpicsChannelMonitorService;
 import org.epics.ca.Channel;
 import org.epics.ca.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @Service
-public class WicaChannelService
+public class EpicsChannelGetAndPutService
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -30,17 +31,24 @@ public class WicaChannelService
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
+   /**
+    * Returns a new instance that will extract information from the EPICS channels
+    * of interest using the supplied metadata and value getters.
+    *
+    * @param epicsCaLibraryMonitorNotifierImpl the CA library monitor notifier configuration.
+    * @param epicsCaLibraryDebugLevel the CA library debug level.
 
-   public WicaChannelService()
+    */
+   public EpicsChannelGetAndPutService( @Value( "${wica.epics-ca-library-monitor-notifier-impl}") String  epicsCaLibraryMonitorNotifierImpl,
+                                        @Value( "${wica.epics-ca-library-debug-level}") int epicsCaLibraryDebugLevel )
    {
       logger.info( "Creating CA context for WicaChannelService..." );
 
-      System.setProperty(Context.Configuration.EPICS_CA_MAX_ARRAY_BYTES.toString(), "1000000");
-      //System.setProperty( Context.Configuration.EPICS_CA_ADDR_LIST.toString(), "129.129.130.255 129.129.131.255 129.129.137.255 129.129.145.255" );
-      //System.setProperty( "CA_DEBUG", "1" );
-      //System.setProperty( "CA_MONITOR_NOTIFIER", "MultipleWorkerBlockingQueueImpl" );
-      System.setProperty( "CA_MONITOR_NOTIFIER", "MultipleWorkerBlockingQueueMonitorNotificationServiceImpl" );
-      //System.setProperty( "CA_MONITOR_NOTIFIER", "DisruptorImpl" );
+      // Setup a context that uses the monitor notification policy and debug
+      // message log level defined in the configuration file.
+      System.setProperty( Context.Configuration.EPICS_CA_MAX_ARRAY_BYTES.toString(), "1000000");
+      System.setProperty( "CA_MONITOR_NOTIFIER_IMPL", epicsCaLibraryMonitorNotifierImpl );
+      System.setProperty( "CA_DEBUG", String.valueOf( epicsCaLibraryDebugLevel ) );
 
       context = new Context();
       logger.info( "Done.");

@@ -1,5 +1,5 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.services.epics;
+package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
