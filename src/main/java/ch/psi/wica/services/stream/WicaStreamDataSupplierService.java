@@ -4,6 +4,8 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.*;
+import ch.psi.wica.services.channel.WicaChannelMetadataBufferService;
+import ch.psi.wica.services.channel.WicaChannelValueBufferService;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,7 @@ import java.util.Map;
 
 @Service
 @Immutable
-class WicaStreamDataSupplier
+class WicaStreamDataSupplierService
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -28,8 +30,8 @@ class WicaStreamDataSupplier
 
    private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
 
-   private final WicaChannelMetadataStash wicaChannelMetadataStash;
-   private final WicaChannelValueStash wicaChannelValueStash;
+   private final WicaChannelMetadataBufferService wicaChannelMetadataBufferService;
+   private final WicaChannelValueBufferService wicaChannelValueBufferService;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -38,14 +40,15 @@ class WicaStreamDataSupplier
     * Constructs a new instance which can supply metadata and value information
     * about all channels in the specified stream.
     *
-    * @param wicaChannelMetadataStash the stash of received metadata.
-    * @param wicaChannelValueStash the stash of received values.
+    * @param wicaChannelMetadataBufferService the stash of received metadata.
+    * @param wicaChannelValueBufferService the stash of received values.
     */
-   WicaStreamDataSupplier( @Autowired WicaChannelMetadataStash wicaChannelMetadataStash,
-                           @Autowired WicaChannelValueStash wicaChannelValueStash )
+   WicaStreamDataSupplierService( @Autowired WicaChannelMetadataBufferService wicaChannelMetadataBufferService,
+                                  @Autowired WicaChannelValueBufferService wicaChannelValueBufferService
+   )
    {
-      this.wicaChannelMetadataStash = wicaChannelMetadataStash;
-      this.wicaChannelValueStash = wicaChannelValueStash;
+      this.wicaChannelMetadataBufferService = wicaChannelMetadataBufferService;
+      this.wicaChannelValueBufferService = wicaChannelValueBufferService;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -59,7 +62,7 @@ class WicaStreamDataSupplier
     */
    Map<WicaChannelName, WicaChannelMetadata> getMetadataMap( WicaStream wicaStream)
    {
-      return wicaChannelMetadataStash.get( wicaStream.getWicaChannels() );
+      return wicaChannelMetadataBufferService.get(wicaStream.getWicaChannels() );
    }
 
    /**
@@ -72,7 +75,7 @@ class WicaStreamDataSupplier
     */
    Map<WicaChannelName,List<WicaChannelValue>> getValueMap( WicaStream wicaStream)
    {
-      return wicaChannelValueStash.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
+      return wicaChannelValueBufferService.getLaterThan(wicaStream.getWicaChannels(), LONG_AGO );
    }
 
    /**
@@ -89,7 +92,7 @@ class WicaStreamDataSupplier
    Map<WicaChannelName,List<WicaChannelValue>> getPolledValues( WicaStream wicaStream )
    {
       // Poll the stash of cached values to get the notified values for each channel.
-      final var latestChannelValueMap = wicaChannelValueStash.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
+      final var latestChannelValueMap = wicaChannelValueBufferService.getLaterThan(wicaStream.getWicaChannels(), LONG_AGO );
 
       // Produce a map which includes the last notified value for each channel, but with
       // the timestamp information rewritten to reflect that the time is NOW.
@@ -133,7 +136,7 @@ class WicaStreamDataSupplier
     */
    Map<WicaChannelName, List<WicaChannelValue>> getNotifiedValues( WicaStream wicaStream )
    {
-      final var updatedChannelValueMap = wicaChannelValueStash.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
+      final var updatedChannelValueMap = wicaChannelValueBufferService.getLaterThan(wicaStream.getWicaChannels(), LONG_AGO );
 
       // Validate the precondition that every channel in the stream is represented in the returned map.
       Validate.isTrue( wicaStream.getWicaChannels().stream()
@@ -167,7 +170,7 @@ class WicaStreamDataSupplier
     */
    Map<WicaChannelName, List<WicaChannelValue>> getNotifiedValueChanges( WicaStream wicaStream)
    {
-      final var latestChannelValueMap = wicaChannelValueStash.getLaterThan( wicaStream.getWicaChannels(), wicaStream.getLastPublicationTime() );
+      final var latestChannelValueMap = wicaChannelValueBufferService.getLaterThan(wicaStream.getWicaChannels(), wicaStream.getLastPublicationTime() );
       wicaStream.updateLastPublicationTime();
 
       final Map<WicaChannelName,List<WicaChannelValue>> outputMap = new HashMap<>();
