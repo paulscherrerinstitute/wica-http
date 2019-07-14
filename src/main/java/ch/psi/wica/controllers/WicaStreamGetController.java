@@ -4,10 +4,10 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.StatisticsCollectable;
-import ch.psi.wica.model.StatisticsCollector;
-import ch.psi.wica.model.WicaStreamId;
-import ch.psi.wica.services.stream.WicaStreamService;
+import ch.psi.wica.model.app.StatisticsCollectable;
+import ch.psi.wica.model.app.StatisticsCollector;
+import ch.psi.wica.model.stream.WicaStreamId;
+import ch.psi.wica.services.stream.WicaStreamLifecycleService;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ class WicaStreamGetController implements StatisticsCollectable
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger(WicaStreamGetController.class );
-   private final WicaStreamService wicaStreamService;
+   private final WicaStreamLifecycleService wicaStreamLifecycleService;
    private final StatisticsCollector statisticsCollector = new StatisticsCollector();
 
 
@@ -48,12 +48,12 @@ class WicaStreamGetController implements StatisticsCollectable
    /**
     * Constructs a new controller for handling stream GET requests.
     *
-    * @param wicaStreamService reference to the service object which can be used
+    * @param wicaStreamLifecycleService reference to the service object which can be used
     *        to fetch the reactive streams.
     */
-   public WicaStreamGetController( @Autowired WicaStreamService wicaStreamService )
+   public WicaStreamGetController( @Autowired WicaStreamLifecycleService wicaStreamLifecycleService )
    {
-      this.wicaStreamService = Validate.notNull(wicaStreamService);
+      this.wicaStreamLifecycleService = Validate.notNull(wicaStreamLifecycleService);
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -81,13 +81,16 @@ class WicaStreamGetController implements StatisticsCollectable
    public ResponseEntity<Flux<ServerSentEvent<String>>> get( @PathVariable Optional<String> optStreamId,
                                                              HttpServletRequest httpServletRequest )
    {
-      logger.info( "GET: Handling subscribe stream request." );
+      logger.trace( "GET: Handling subscribe stream request." );
 
+      // Check that the Spring framework gives us something in the HttpServletRequest field.
+      Validate.notNull( httpServletRequest, "The 'httpServletRequest' field was empty." );
+
+      logger.trace( "GET: Handling subscribe stream request from remote host '{}'", httpServletRequest.getRemoteHost() );
+
+      // Update the usage statistics for this controller.
       statisticsCollector.incrementRequests();
-      if ( httpServletRequest != null )
-      {
-         statisticsCollector.addClient(httpServletRequest.getRemoteHost());
-      }
+      statisticsCollector.addClient( httpServletRequest.getRemoteHost() );
 
       // Note: by NOT insisting that the RequestBody is provided we can process
       // its absence within this method and provide the appropriate handling.
@@ -101,7 +104,7 @@ class WicaStreamGetController implements StatisticsCollectable
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
-      logger.info( "GET: Handling subscribe stream request for ID: '{}'", optStreamId );
+      logger.trace( "GET: Handling subscribe stream request for ID: '{}'", optStreamId );
 
       // Handle the situation where the stream ID string is blank.
       if( optStreamId.get().isBlank() )
@@ -113,7 +116,7 @@ class WicaStreamGetController implements StatisticsCollectable
 
       // Handle the situation where an unknown stream ID is given
       final WicaStreamId wicaStreamId = WicaStreamId.of( optStreamId.get() );
-      if ( ! wicaStreamService.isKnownId( wicaStreamId ) )
+      if ( ! wicaStreamLifecycleService.isKnown(wicaStreamId ) )
       {
          final String errorMessage = "WICA SERVER: The stream ID '" + optStreamId.get() + "' was not recognised.";
          logger.warn( "GET: Rejected request because {}", errorMessage  );
@@ -124,7 +127,7 @@ class WicaStreamGetController implements StatisticsCollectable
       final Flux<ServerSentEvent<String>> wicaStreamFlux;
       try
       {
-         wicaStreamFlux = wicaStreamService.getFluxFromId( wicaStreamId );
+         wicaStreamFlux = wicaStreamLifecycleService.getFlux(wicaStreamId );
       }
       catch( Exception ex )
       {
@@ -133,7 +136,7 @@ class WicaStreamGetController implements StatisticsCollectable
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
-      logger.info( "Returning stream with id: '{}'", optStreamId );
+      logger.trace( "Returning stream with id: '{}'", optStreamId );
       return new ResponseEntity<>( wicaStreamFlux, HttpStatus.OK );
    }
 

@@ -5,8 +5,8 @@ package ch.psi.wica.controllers;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.WicaApplication;
-import ch.psi.wica.services.epics.EpicsChannelMonitorService;
-import ch.psi.wica.services.stream.WicaStreamService;
+import ch.psi.wica.controlsystem.epics.EpicsChannelMonitorService;
+import ch.psi.wica.services.stream.WicaStreamLifecycleService;
 import net.jcip.annotations.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ class WicaAdminPageController
    private final WicaStreamDeleteController wicaStreamDeleteController;
    private final WicaStreamGetController wicaStreamGetController;
    private final EpicsChannelMonitorService epicsChannelMonitorService;
-   private final WicaStreamService wicaStreamService;
+   private final WicaStreamLifecycleService wicaStreamLifecycleService;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -59,7 +59,7 @@ class WicaAdminPageController
                                    @Autowired WicaStreamCreateController wicaStreamCreateController,
                                    @Autowired WicaStreamDeleteController wicaStreamDeleteController,
                                    @Autowired WicaStreamGetController wicaStreamGetController,
-                                   @Autowired WicaStreamService wicaStreamService,
+                                   @Autowired WicaStreamLifecycleService wicaStreamLifecycleService,
                                    @Autowired EpicsChannelMonitorService epicsChannelMonitorService )
    {
       this.wicaChannelGetController = wicaChannelGetController;
@@ -67,7 +67,7 @@ class WicaAdminPageController
       this.wicaStreamCreateController = wicaStreamCreateController;
       this.wicaStreamGetController = wicaStreamGetController;
       this.wicaStreamDeleteController = wicaStreamDeleteController;
-      this.wicaStreamService = wicaStreamService;
+      this.wicaStreamLifecycleService = wicaStreamLifecycleService;
       this.epicsChannelMonitorService = epicsChannelMonitorService;
    }
 
@@ -110,8 +110,8 @@ class WicaAdminPageController
       serverStatisticsMap.put( ".  ", "" );
 
       serverStatisticsMap.put( "STREAM:", " " );
-      serverStatisticsMap.put( "- WICA Streams Created",     String.valueOf( wicaStreamService.getStreamsCreated() ) );
-      serverStatisticsMap.put( "- WICA Streams Deleted",     String.valueOf( wicaStreamService.getStreamsDeleted() ) );
+      serverStatisticsMap.put( "- WICA Streams Created",     String.valueOf( wicaStreamLifecycleService.getStreamsCreated() ) );
+      serverStatisticsMap.put( "- WICA Streams Deleted",     String.valueOf( wicaStreamLifecycleService.getStreamsDeleted() ) );
       serverStatisticsMap.put( ".   ", "" );
 
       serverStatisticsMap.put( "CLIENTS:", " " );

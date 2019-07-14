@@ -4,10 +4,10 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.StatisticsCollectable;
-import ch.psi.wica.model.StatisticsCollector;
-import ch.psi.wica.model.WicaStreamId;
-import ch.psi.wica.services.stream.WicaStreamService;
+import ch.psi.wica.model.app.StatisticsCollectable;
+import ch.psi.wica.model.app.StatisticsCollector;
+import ch.psi.wica.model.stream.WicaStreamId;
+import ch.psi.wica.services.stream.WicaStreamLifecycleService;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ class WicaStreamDeleteController  implements StatisticsCollectable
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger(WicaStreamDeleteController.class );
-   private final WicaStreamService wicaStreamService;
+   private final WicaStreamLifecycleService wicaStreamLifecycleService;
    private final StatisticsCollector statisticsCollector = new StatisticsCollector();
 
 
@@ -46,12 +46,12 @@ class WicaStreamDeleteController  implements StatisticsCollectable
    /**
     * Constructs a new controller for handling stream DELETE requests.
     *
-    * @param wicaStreamService reference to the service object which can be used
+    * @param wicaStreamLifecycleService reference to the service object which can be used
     *        to delete the reactive stream.
     */
-   public WicaStreamDeleteController( @Autowired WicaStreamService wicaStreamService )
+   public WicaStreamDeleteController( @Autowired WicaStreamLifecycleService wicaStreamLifecycleService )
    {
-      this.wicaStreamService = Validate.notNull( wicaStreamService );
+      this.wicaStreamLifecycleService = Validate.notNull(wicaStreamLifecycleService);
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -77,10 +77,16 @@ class WicaStreamDeleteController  implements StatisticsCollectable
    public ResponseEntity<String> deleteStream( @PathVariable( required=false ) Optional<String> optStreamId,
                                                HttpServletRequest httpServletRequest  )
    {
-      logger.info( "DELETE: Handling delete stream request." );
+      logger.trace( "DELETE: Handling delete stream request." );
 
+      // Check that the Spring framework gives us something in the HttpServletRequest field.
+      Validate.notNull( httpServletRequest, "The 'httpServletRequest' field was empty." );
+
+      logger.trace( "DELETE: Handling delete stream request from remote host '{}'", httpServletRequest.getRemoteHost() );
+
+      // Update the usage statistics for this controller.
       statisticsCollector.incrementRequests();
-      statisticsCollector.addClient(httpServletRequest.getRemoteHost() );
+      statisticsCollector.addClient( httpServletRequest.getRemoteHost() );
 
       // Note: by NOT insisting that the RequestBody is provided we can process
       // its absence within this method and provide the appropriate handling.
@@ -94,7 +100,7 @@ class WicaStreamDeleteController  implements StatisticsCollectable
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
-      logger.info( "DELETE: Handling delete stream request for ID: '{}'", optStreamId.get() );
+      logger.trace( "DELETE: Handling delete stream request for ID: '{}'", optStreamId.get() );
 
       // Handle the situation where the stream ID string is blank.
       if( optStreamId.get().isBlank() )
@@ -106,7 +112,7 @@ class WicaStreamDeleteController  implements StatisticsCollectable
 
       // Handle the situation where an unknown stream ID is given
       final WicaStreamId wicaStreamId = WicaStreamId.of( optStreamId.get() );
-      if ( ! wicaStreamService.isKnownId( wicaStreamId ) )
+      if ( ! wicaStreamLifecycleService.isKnown(wicaStreamId ) )
       {
          final String errorMessage = "WICA SERVER: The stream ID '" + optStreamId.get() + "' was not recognised.";
          logger.warn( "DELETE: Rejected request because {}", errorMessage  );
@@ -116,7 +122,7 @@ class WicaStreamDeleteController  implements StatisticsCollectable
       // Attempt to delete the specified stream.
       try
       {
-         wicaStreamService.delete( wicaStreamId );
+         wicaStreamLifecycleService.delete( wicaStreamId );
       }
       catch( Exception ex )
       {
@@ -125,7 +131,7 @@ class WicaStreamDeleteController  implements StatisticsCollectable
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
-      logger.info("DELETE: deleted stream with id: '{}'" , optStreamId.get()  );
+      logger.trace("DELETE: deleted stream with id: '{}'" , optStreamId.get()  );
       return new ResponseEntity<>(  optStreamId.get() , HttpStatus.OK );
    }
 

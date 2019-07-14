@@ -75,7 +75,7 @@ public class WicaApplication implements DisposableBean
 	{
 		logger.info( "Wica Application READY Event." );
 		logger.info( "Wica Service: starting..." );
-		logger.info(" Wica Application started. ");
+		logger.info( "Wica Application started. ");
 		appLogger.info( "Wica Service: started");
 	}
 

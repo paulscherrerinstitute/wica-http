@@ -3,9 +3,9 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.ControlSystemName;
-import ch.psi.wica.model.WicaChannelMetadata;
-import ch.psi.wica.model.WicaChannelType;
+import ch.psi.wica.model.app.ControlSystemName;
+import ch.psi.wica.model.channel.WicaChannelMetadata;
+import ch.psi.wica.model.channel.WicaChannelType;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
@@ -62,19 +62,19 @@ class EpicsChannelMetadataGetter
     * This method operates synchronously and incurs the cost of a network
     * round trip to obtain the information fom the remote data source.
     *
-    * Precondition: the supplied channel should already be connected.
-    * Postcondition: the supplied channel will remain open.
+    * Precondition: the channel should have been connected at least once.
+    * Postcondition: the state of the channel will remain unaffected.
     *
     * @param channel the EPICS channel.
     * @return the wica metadata object.
     *
     * @throws NullPointerException if the channel argument was null.
-    * @throws IllegalStateException if the channel was not already connected.
+    * @throws IllegalStateException if the channel state was not as expected.
     */
    public WicaChannelMetadata get( Channel<Object> channel )
    {
-      Validate.notNull( channel );
-      Validate.isTrue( channel.getConnectionState() == ConnectionState.CONNECTED );
+      // Validate preconditions
+      validateChannelConnectionState( channel );
 
       // Obtain the control system name for logging purposes.
       final ControlSystemName controlSystemName = ControlSystemName.of( channel.getName() );
@@ -89,7 +89,7 @@ class EpicsChannelMetadataGetter
       // For all channel types...
       // Perform an initial, simple, channel GET request to determine the data source type.
       // This operation is supported on all EPICS data types.
-      logger.debug( "'{}' - getting first value...", controlSystemName);
+      logger.trace( "'{}' - getting first value...", controlSystemName);
       final Object firstGetObject = channel.get();
 
       // Decode the channel type.
@@ -97,11 +97,11 @@ class EpicsChannelMetadataGetter
       try
       {
          wicaChannelType = WicaChannelType.getTypeFromPojo( firstGetObject );
-         logger.debug( "'{}' - first value received was of type {}. ", controlSystemName, wicaChannelType );
+         logger.trace( "'{}' - first value received was of type {}. ", controlSystemName, wicaChannelType );
       }
       catch( IllegalArgumentException ex)
       {
-         logger.error( "'{}' - type was UNNKOWN (Programming Error)", controlSystemName );
+         logger.error( "'{}' - type was UNKNOWN (Programming Error)", controlSystemName );
          return WicaChannelMetadata.createUnknownInstance();
       }
 
@@ -117,9 +117,9 @@ class EpicsChannelMetadataGetter
       // Perform a second, more complex, channel GET request to obtain the properties
       // of the channel which remain fixed. Currently (2019-07-11) this includes the
       // control and alarm information and engineering units.
-      logger.debug( "'{}' - getting epics CTRL metadata...", controlSystemName );
+      logger.trace( "'{}' - getting epics CTRL metadata...", controlSystemName );
       final Control<?,?> epicsControlObject = (Control<?,?>) channel.get( Control.class );
-      logger.debug( "'{}' - EPICS CTRL metadata received.", controlSystemName) ;
+      logger.trace( "'{}' - EPICS CTRL metadata received.", controlSystemName) ;
 
       // Now construct and return a wica metadata object using the control object information.
       return wicaChannelMetadataBuilder.build( controlSystemName, wicaChannelType, epicsControlObject );
@@ -127,6 +127,22 @@ class EpicsChannelMetadataGetter
 
 
 /*- Private methods ----------------------------------------------------------*/
+
+   private void validateChannelConnectionState( Channel<Object> channel )
+   {
+      if ( channel == null )
+      {
+         throw new NullPointerException( "Programming Error: the channel argument was null." );
+      }
+
+      final ConnectionState connectionState = channel.getConnectionState();
+      final boolean invalidState = ( connectionState == ConnectionState.NEVER_CONNECTED );
+      if ( invalidState )
+      {
+         throw new IllegalStateException( "Programming Error: the channel was in an unexpected connection state: '" + connectionState + "'." );
+      }
+   }
+
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

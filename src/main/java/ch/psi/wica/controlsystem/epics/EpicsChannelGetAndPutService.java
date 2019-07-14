@@ -5,9 +5,8 @@ package ch.psi.wica.controlsystem.epics;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-import ch.psi.wica.model.WicaChannelName;
-import ch.psi.wica.model.WicaChannelValue;
-import ch.psi.wica.controlsystem.epics.EpicsChannelMonitorService;
+import ch.psi.wica.model.channel.WicaChannelName;
+import ch.psi.wica.model.channel.WicaChannelValue;
 import org.epics.ca.Channel;
 import org.epics.ca.Context;
 import org.slf4j.Logger;

@@ -4,10 +4,10 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.StatisticsCollectable;
-import ch.psi.wica.model.StatisticsCollector;
-import ch.psi.wica.model.WicaChannelName;
-import ch.psi.wica.services.channel.WicaChannelService;
+import ch.psi.wica.model.app.StatisticsCollectable;
+import ch.psi.wica.model.app.StatisticsCollector;
+import ch.psi.wica.model.channel.WicaChannelName;
+import ch.psi.wica.controlsystem.epics.EpicsChannelGetAndPutService;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ class WicaChannelPutController implements StatisticsCollectable
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger( WicaChannelPutController.class );
-   private final WicaChannelService wicaChannelService;
+   private final EpicsChannelGetAndPutService epicsChannelGetAndPutService;
    private final int defaultTimeoutInMillis;
    private final StatisticsCollector statisticsCollector = new StatisticsCollector();
 
@@ -51,17 +51,18 @@ class WicaChannelPutController implements StatisticsCollectable
     * @param defaultTimeoutInMillis the default timeout that will be used
     *        when putting data to the wica channel.
 
-    * @param wicaChannelService reference to the service object which can be used
+    * @param epicsChannelGetAndPutService reference to the service object which can be used
     *        to put values to a wica channel.
     */
    private WicaChannelPutController( @Value( "${wica.channel-get-timeout-interval-in-ms}") int defaultTimeoutInMillis,
-                                     @Autowired WicaChannelService wicaChannelService )
+                                     @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService
+   )
    {
       Validate.isTrue( defaultTimeoutInMillis > 0 );
-      Validate.notNull( wicaChannelService );
+      Validate.notNull(epicsChannelGetAndPutService);
 
       this.defaultTimeoutInMillis = defaultTimeoutInMillis;
-      this.wicaChannelService = Validate.notNull( wicaChannelService );
+      this.epicsChannelGetAndPutService = Validate.notNull(epicsChannelGetAndPutService);
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -95,19 +96,23 @@ class WicaChannelPutController implements StatisticsCollectable
                                                   @RequestBody String channelValue,
                                                   HttpServletRequest httpServletRequest )
    {
-      statisticsCollector.incrementRequests();
-      statisticsCollector.addClient(httpServletRequest.getRemoteHost() );
+      logger.info( "PUT: Handling channel put request." );
 
-      // Check that the Spring framework gives us something in the channelName field.
+      // Check that the Spring framework gives us something in the HttpServletRequest and channelName fields.
+      Validate.notNull( httpServletRequest, "The 'httpServletRequest' field was empty." );
       Validate.notNull( channelName, "The 'channelName' field was empty." );
+
+      logger.info( "PUT: Handling channel put request to channel '{}' from remote host '{}'", channelName, httpServletRequest.getRemoteHost() );
+
+      // Update the usage statistics for this controller.
+      statisticsCollector.incrementRequests();
+      statisticsCollector.addClient( httpServletRequest.getRemoteHost() );
 
       // Assign default values when not explicitly provided.
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
 
-      logger.info( "'{}' - Handling PUT channel request...", channelName );
-
       // Handle failure of the command.
-      if ( ! wicaChannelService.put( WicaChannelName.of( channelName ), channelValue, timeoutInMillis, TimeUnit.MILLISECONDS ) )
+      if ( ! epicsChannelGetAndPutService.put(WicaChannelName.of(channelName ), channelValue, timeoutInMillis, TimeUnit.MILLISECONDS ) )
       {
          final String errorMessage = "a timeout occurred (channel = '" + channelName + "', value = '" + channelValue + "').";
          logger.warn( "PUT: Rejected request because {}", errorMessage  );

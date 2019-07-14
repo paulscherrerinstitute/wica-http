@@ -3,7 +3,8 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.*;
+import ch.psi.wica.model.app.ControlSystemName;
+import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
@@ -59,19 +60,19 @@ class EpicsChannelValueGetter
     * This method operates synchronously and incurs the cost of a network
     * round trip to obtain the information fom the remote data source.
     *
-    * Precondition: the supplied channel should already be connected.
-    * Postcondition: the supplied channel will remain open.
+    * Precondition: the channel should have been connected at least once.
+    * Postcondition: the state of the channel will remain unaffected.
     *
     * @param channel the EPICS channel.
     * @return the wica value object
     *
     * @throws NullPointerException if the channel argument was null.
-    * @throws IllegalStateException if the channel was not already connected.
+    * @throws IllegalStateException if the channel state was not as expected.
     */
    WicaChannelValue get( Channel<Object> channel  )
    {
-      Validate.notNull( channel );
-      Validate.isTrue( channel.getConnectionState() == ConnectionState.CONNECTED );
+      // Validate preconditions
+      validateChannelConnectionState( channel );
 
       // Obtain the control system name for logging purposes.
       final ControlSystemName controlSystemName = ControlSystemName.of(channel.getName());
@@ -79,9 +80,9 @@ class EpicsChannelValueGetter
       // Perform a channel GET request to obtain the properties of the channel which
       // may change quickly. Currently (2019-07-11) this includes the current value,
       // the timestamp the and alarm state.
-      logger.debug( "'{}' - getting epics TIMESTAMPED metadata...", controlSystemName );
+      logger.trace( "'{}' - getting epics TIMESTAMPED metadata...", controlSystemName );
       final Timestamped<Object> epicsTimestampedObject = channel.get( Timestamped.class );
-      logger.debug( "'{}' - EPICS TIMESTAMPED metadata received.", controlSystemName) ;
+      logger.trace( "'{}' - EPICS TIMESTAMPED metadata received.", controlSystemName) ;
 
       // Now construct and return a wica value object using the timestamped object information.
       return wicaChannelValueBuilder.build( controlSystemName, epicsTimestampedObject );
@@ -89,6 +90,22 @@ class EpicsChannelValueGetter
 
 
 /*- Private methods ----------------------------------------------------------*/
+
+   private void validateChannelConnectionState( Channel<Object> channel )
+   {
+      if ( channel == null )
+      {
+         throw new NullPointerException( "Programming Error: the channel argument was null." );
+      }
+
+      final ConnectionState connectionState = channel.getConnectionState();
+      final boolean invalidState = ( connectionState == ConnectionState.NEVER_CONNECTED );
+      if ( invalidState )
+      {
+         throw new IllegalStateException( "Programming Error: the channel was in an unexpected connection state: '" + connectionState + "'." );
+      }
+   }
+
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

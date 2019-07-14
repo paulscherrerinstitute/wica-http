@@ -4,12 +4,12 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.infrastructure.WicaChannelValueSerializer;
-import ch.psi.wica.model.StatisticsCollectable;
-import ch.psi.wica.model.StatisticsCollector;
-import ch.psi.wica.model.WicaChannelName;
-import ch.psi.wica.model.WicaChannelValue;
-import ch.psi.wica.services.channel.WicaChannelService;
+import ch.psi.wica.infrastructure.channel.WicaChannelValueSerializer;
+import ch.psi.wica.model.app.StatisticsCollectable;
+import ch.psi.wica.model.app.StatisticsCollector;
+import ch.psi.wica.model.channel.WicaChannelName;
+import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.controlsystem.epics.EpicsChannelGetAndPutService;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ class WicaChannelGetController implements StatisticsCollectable
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger( WicaChannelGetController.class );
-   private final WicaChannelService wicaChannelService;
+   private final EpicsChannelGetAndPutService epicsChannelGetAndPutService;
    private final int defaultTimeoutInMillis;
    private final int defaultNumericScale;
 
@@ -54,23 +54,24 @@ class WicaChannelGetController implements StatisticsCollectable
     * @param defaultTimeoutInMillis the default timeout that will be used
     *        when getting data from the wica channel.
     *
-    * @param defaultNumericScale the defaault numeric scale that will be used
+    * @param defaultNumericScale the default numeric scale that will be used
     *        when returning the value of the channel.
     *
-    * @param wicaChannelService reference to the service object which can be used
+    * @param epicsChannelGetAndPutService reference to the service object which can be used
     *        to get values to or from a wica channel.
     */
    private WicaChannelGetController( @Value( "${wica.channel-get-timeout-interval-in-ms}") int defaultTimeoutInMillis,
                                      @Value( "${wica.channel-get-numeric-scale}") int defaultNumericScale,
-                                     @Autowired WicaChannelService wicaChannelService )
+                                     @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService
+   )
    {
       Validate.isTrue( defaultTimeoutInMillis > 0 );
       Validate.isTrue( defaultNumericScale > 0 );
-      Validate.notNull( wicaChannelService );
+      Validate.notNull(epicsChannelGetAndPutService);
 
       this.defaultTimeoutInMillis = defaultTimeoutInMillis;
       this.defaultNumericScale = defaultNumericScale;
-      this.wicaChannelService = wicaChannelService;
+      this.epicsChannelGetAndPutService = epicsChannelGetAndPutService;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -105,20 +106,23 @@ class WicaChannelGetController implements StatisticsCollectable
                                                   @RequestParam( value="numericScale", required = false ) Integer numericScale,
                                                   HttpServletRequest httpServletRequest )
    {
-      statisticsCollector.incrementRequests();
-      statisticsCollector.addClient(httpServletRequest.getRemoteHost() );
+      logger.info( "GET: Handling channel get request." );
 
       // Check that the Spring framework gives us something in the HttpServletRequest and channelName fields.
       Validate.notNull( httpServletRequest, "The 'httpServletRequest' field was empty." );
       Validate.notNull( channelName, "The 'channelName' field was empty." );
 
+      logger.info( "GET: Handling channel get request for channel '{}' from remote host '{}'", channelName, httpServletRequest.getRemoteHost() );
+
+      // Update the usage statistics for this controller.
+      statisticsCollector.incrementRequests();
+      statisticsCollector.addClient( httpServletRequest.getRemoteHost() );
+
       // Assign default values when not explicitly provided.
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
       numericScale = numericScale == null ? defaultNumericScale : numericScale;
 
-      logger.info( "'{}' - Handling GET channel request from remote host {}", channelName, httpServletRequest.getRemoteHost() );
-
-      final WicaChannelValue wicaChannelValue = wicaChannelService.get( WicaChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
+      final WicaChannelValue wicaChannelValue = epicsChannelGetAndPutService.get(WicaChannelName.of(channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
       final WicaChannelValueSerializer wicaChannelValueSerializer = new WicaChannelValueSerializer( numericScale, false );
 
       logger.info( "'{}' - OK: Returning wica channel value.", channelName );

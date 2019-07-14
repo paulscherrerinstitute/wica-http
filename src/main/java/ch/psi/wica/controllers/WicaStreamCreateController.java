@@ -4,10 +4,10 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.StatisticsCollectable;
-import ch.psi.wica.model.StatisticsCollector;
-import ch.psi.wica.model.WicaStream;
-import ch.psi.wica.services.stream.WicaStreamService;
+import ch.psi.wica.model.app.StatisticsCollectable;
+import ch.psi.wica.model.app.StatisticsCollector;
+import ch.psi.wica.model.stream.WicaStream;
+import ch.psi.wica.services.stream.WicaStreamLifecycleService;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ class WicaStreamCreateController implements StatisticsCollectable
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger( WicaStreamCreateController.class );
-   private final WicaStreamService wicaStreamService;
+   private final WicaStreamLifecycleService wicaStreamLifecycleService;
    private final StatisticsCollector statisticsCollector = new StatisticsCollector();
 
 
@@ -47,12 +47,12 @@ class WicaStreamCreateController implements StatisticsCollectable
    /**
     * Constructs a new controller for handling stream POST requests.
     *
-    * @param wicaStreamService reference to the service object which can be used
+    * @param wicaStreamLifecycleService reference to the service object which can be used
     *        to create the reactive stream.
     */
-   public WicaStreamCreateController( @Autowired WicaStreamService wicaStreamService )
+   public WicaStreamCreateController( @Autowired WicaStreamLifecycleService wicaStreamLifecycleService )
    {
-      this.wicaStreamService = Validate.notNull( wicaStreamService );
+      this.wicaStreamLifecycleService = Validate.notNull(wicaStreamLifecycleService);
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -84,10 +84,16 @@ class WicaStreamCreateController implements StatisticsCollectable
    public ResponseEntity<String> create( @RequestBody( required = false ) Optional<String> optJsonStreamConfiguration,
                                          HttpServletRequest httpServletRequest )
    {
-      logger.info( "POST: Handling create stream request." );
+      logger.trace( "POST: Handling create stream request." );
 
+      // Check that the Spring framework gives us something in the HttpServletRequest field.
+      Validate.notNull( httpServletRequest, "The 'httpServletRequest' field was empty." );
+
+      logger.trace( "POST: Handling create stream request from remote host '{}'", httpServletRequest.getRemoteHost() );
+
+      // Update the usage statistics for this controller.
       statisticsCollector.incrementRequests();
-      statisticsCollector.addClient(httpServletRequest.getRemoteHost() );
+      statisticsCollector.addClient( httpServletRequest.getRemoteHost() );
 
       // Note: by NOT insisting that the RequestBody is provided we can process
       // its absence within this method and provide the appropriate handling.
@@ -101,7 +107,7 @@ class WicaStreamCreateController implements StatisticsCollectable
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
-      logger.info( "POST: Handling create stream request with configuration string: '{}'", optJsonStreamConfiguration.get() );
+      logger.trace( "POST: Handling create stream request with configuration string: '{}'", optJsonStreamConfiguration.get() );
 
 
       // Handle the situation where the stream configuration string is blank.
@@ -116,7 +122,7 @@ class WicaStreamCreateController implements StatisticsCollectable
       final WicaStream wicaStream;
       try
       {
-         wicaStream = wicaStreamService.create( optJsonStreamConfiguration.get() );
+         wicaStream = wicaStreamLifecycleService.create(optJsonStreamConfiguration.get() );
       }
       catch( Exception ex )
       {
@@ -125,7 +131,7 @@ class WicaStreamCreateController implements StatisticsCollectable
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
-      logger.info("POST: allocated stream with id: '{}'" , wicaStream.getWicaStreamId() );
+      logger.trace("POST: allocated stream with id: '{}'" , wicaStream.getWicaStreamId() );
       return new ResponseEntity<>( wicaStream.getWicaStreamId().asString(), HttpStatus.OK );
    }
 

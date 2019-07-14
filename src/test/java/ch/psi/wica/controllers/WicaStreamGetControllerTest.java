@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -32,6 +34,7 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -58,6 +61,7 @@ class WicaStreamGetControllerTest
 
    @Autowired
    private WicaStreamGetController wicaStreamGetController;
+
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -129,9 +133,13 @@ class WicaStreamGetControllerTest
 
       final MvcResult postRequestResult = mockMvc.perform( postRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
       final String id = postRequestResult.getResponse().getContentAsString();
-      final ResponseEntity<Flux<ServerSentEvent<String>>> responseEntity = wicaStreamGetController.get( Optional.of( id ), null );
+
+      final HttpServletRequest httpServletRequestMock =  Mockito.mock( HttpServletRequest.class );
+      Mockito.when( httpServletRequestMock.getRemoteHost() ).thenReturn( "MyHostname" );
+      final ResponseEntity<Flux<ServerSentEvent<String>>> responseEntity = wicaStreamGetController.get( Optional.of( id ), httpServletRequestMock );
       final Flux<ServerSentEvent<String>> flux = responseEntity.getBody();
 
+      given( httpServletRequestMock.getRemoteHost()).willReturn( "localhost");
       StepVerifier.create( flux )
             .expectSubscription()
             .expectNextMatches( sse -> sseCommentContains( sse, "initial channel metadata" ) )

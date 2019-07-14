@@ -3,9 +3,8 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.ControlSystemName;
-import ch.psi.wica.model.WicaChannelType;
-import ch.psi.wica.model.WicaChannelValue;
+import ch.psi.wica.model.app.ControlSystemName;
+import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
@@ -62,20 +61,20 @@ class EpicsChannelValueChangeSubscriber
     * This method operates synchronously and incurs the cost of a network
     * round trip to establish the monitor on the remote data source.
     *
-    * Precondition: the supplied channel should already be connected.
-    * Postcondition: the supplied channel will remain open.
+    * Precondition: the channel should have been connected at least once.
+    * Postcondition: the state of the channel will remain unaffected.
     *
     * @param channel the EPICS channel.
     * @param valueChangeHandler the event consumer.
     * @return the EPICS monitor.
     *
     * @throws NullPointerException if the channel argument was null.
-    * @throws IllegalStateException if the channel was not already connected.
+    * @throws IllegalStateException if the channel state was not as expected.
     */
    Monitor<Timestamped<Object>> subscribe( Channel<Object> channel, Consumer<WicaChannelValue> valueChangeHandler )
    {
-      Validate.notNull( channel );
-      Validate.isTrue( channel.getConnectionState() == ConnectionState.CONNECTED );
+      // Validate preconditions
+      validateChannelConnectionState( channel );
 
       // Obtain the control system name for logging purposes.
       final ControlSystemName controlSystemName = ControlSystemName.of(channel.getName());
@@ -85,7 +84,7 @@ class EpicsChannelValueChangeSubscriber
       // information and value itself. In EPICS Channel Access this requirement
       // is fulfilled by the DBR_TIME_xxx type which is supported in PSI's
       // CA library via the Metadata<Timestamped> class.
-      logger.debug("'{}' - adding monitor...", controlSystemName );
+      logger.trace("'{}' - adding monitor...", controlSystemName );
 
       final Monitor<Timestamped<Object>> monitor = channel.addMonitor( Timestamped.class, wicaChannelValueObj -> {
          logger.trace("'{}' - publishing new value...", controlSystemName );
@@ -93,13 +92,29 @@ class EpicsChannelValueChangeSubscriber
          valueChangeHandler.accept( wicaChannelValue );
          logger.trace("'{}' - new value published.", controlSystemName );
       } );
-      logger.debug("'{}' - monitor added.", controlSystemName );
+      logger.trace("'{}' - monitor added.", controlSystemName );
       return monitor;
 
    }
 
 
-   /*- Private methods ----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
+
+   private void validateChannelConnectionState( Channel<Object> channel )
+   {
+      if ( channel == null )
+      {
+         throw new NullPointerException( "Programming Error: the channel argument was null." );
+      }
+
+      final ConnectionState connectionState = channel.getConnectionState();
+      final boolean invalidState = ( connectionState == ConnectionState.NEVER_CONNECTED );
+      if ( invalidState )
+      {
+         throw new IllegalStateException( "Programming Error: the channel was in an unexpected connection state: '" + connectionState + "'." );
+      }
+   }
+
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
