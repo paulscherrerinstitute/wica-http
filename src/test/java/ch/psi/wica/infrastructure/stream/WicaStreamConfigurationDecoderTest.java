@@ -170,7 +170,7 @@ class WicaStreamConfigurationDecoderTest
       final Set<WicaChannel> channels = decoder.getWicaChannels();
       channels.forEach( c -> {
          if ( c.getName().equals(WicaChannelName.of("MHC1:IST:2" ) ) ) {
-            //assertThat( c.getProperties().getFilterType(), is( WicaChannelProperties.FilterType.CHANGE_FILTERER ) );
+            assertThat( c.getProperties().getFilterType(), is( WicaChannelProperties.FilterType.CHANGE_FILTERER ) );
             assertThat( c.getProperties().getFilterDeadband(), is( 19.0) );
          }
          if ( c.getName().equals(WicaChannelName.of("MYC2:IST:2" ) ) ) {

@@ -4,12 +4,16 @@ package ch.psi.wica.model.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.channel.WicaChannel;
+import ch.psi.wica.model.channel.WicaChannelProperties;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -134,4 +138,41 @@ public class WicaStream
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
+   public static class Builder
+   {
+      private WicaStreamId wicaStreamId = WicaStreamId.createNext();
+      private WicaStreamProperties wicaStreamProperties = WicaStreamProperties.createDefaultInstance();
+      private List<WicaChannel> wicaChannels = new ArrayList<>();
+
+      public Builder withId( String wicaStreamId )
+      {
+         this.wicaStreamId = WicaStreamId.of( wicaStreamId );
+         return this;
+      }
+
+      public Builder withStreamProperties( WicaStreamProperties wicaStreamProperties )
+      {
+         this.wicaStreamProperties = wicaStreamProperties;
+         return this;
+      }
+
+      public Builder withChannelNamed( String wicaChannelName )
+      {
+         wicaChannels.add( WicaChannel.createFromName( wicaChannelName ) );
+         return this;
+      }
+
+      public Builder andChannelProperties( WicaChannelProperties wicaChannelProperties )
+      {
+         WicaChannel wicaChannel = wicaChannels.remove( wicaChannels.size() - 1 );
+         wicaChannels.add( WicaChannel.createFromNameAndProperties( wicaChannel.getName(), wicaChannelProperties ) );
+         return this;
+      }
+
+      public WicaStream build()
+      {
+         return new WicaStream( wicaStreamId, wicaStreamProperties, new HashSet<>( wicaChannels ) );
+      }
+
+   }
 }

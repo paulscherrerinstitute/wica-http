@@ -20,8 +20,7 @@ import java.util.Objects;
 @SuppressWarnings( { "WeakerAccess", "unused" } )
 @JsonIgnoreProperties()
 @Immutable
-public class
-WicaStreamProperties extends WicaChannelProperties
+public class WicaStreamProperties extends WicaChannelProperties
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -199,11 +198,20 @@ WicaStreamProperties extends WicaChannelProperties
 /*- Nested Classes -----------------------------------------------------------*/
 
    @SuppressWarnings( "unused" )
-   public static class Builder extends ChannelPropertyBuilder
+   public static class Builder
    {
       private int heartbeatFluxIntervalInMillis = DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS;
       private int changedValueFluxIntervalInMillis = DEFAULT_CHANGED_VALUE_FLUX_INTERVAL_IN_MILLIS;
       private int polledValueFluxIntervalInMillis = DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS;
+      private DataAcquisitionMode dataAcquisitionMode = WicaChannelProperties.DEFAULT_DATA_ACQUISITION_MODE;
+      private int polledValueSamplingRatio = DEFAULT_POLLED_VALUE_SAMPLE_RATIO;
+      private int numericPrecision = DEFAULT_NUMERIC_PRECISION;
+      private FilterType filterType = DEFAULT_FILTER_TYPE;
+      private int filterNumSamples = DEFAULT_FILTER_NUM_SAMPLES;
+      private int filterCycleLength = DEFAULT_FILTER_CYCLE_LENGTH;
+      private int filterSamplingInterval = DEFAULT_FILTER_SAMPLING_INTERVAL;
+      private double filterDeadband = DEFAULT_FILTER_DEADBAND;
+      private String fieldsOfInterest = DEFAULT_FIELDS_OF_INTEREST;
 
       public Builder withHeartbeatFluxInterval( int heartbeatFluxIntervalInMillis )
       {
@@ -223,11 +231,74 @@ WicaStreamProperties extends WicaChannelProperties
          return this;
       }
 
+      public Builder withDataAcquisitionMode( DataAcquisitionMode dataAcquisitionMode )
+      {
+         this.dataAcquisitionMode = dataAcquisitionMode;
+         return this;
+      }
+
+      public Builder withPolledValueSamplingRatio( int polledValueSamplingRatio )
+      {
+         this.polledValueSamplingRatio = polledValueSamplingRatio;
+         return this;
+      }
+
+      public Builder withFieldsOfInterest( String fieldsOfInterest )
+      {
+         this.fieldsOfInterest = fieldsOfInterest;
+         return this;
+      }
+
+      public Builder withNumericPrecision( int numericPrecision )
+      {
+         this.numericPrecision = numericPrecision;
+         return this;
+      }
+
+      public Builder withFilterType( FilterType filterType )
+      {
+         this.filterType = filterType;
+         return this;
+      }
+
+      public Builder withNumSamples( int filterNumSamples )
+      {
+         this.filterNumSamples = filterNumSamples;
+         return this;
+      }
+
+      public Builder withFilterCycleLength( int filterCycleLength )
+      {
+         this.filterCycleLength = filterCycleLength;
+         return this;
+      }
+
+      public Builder withFilterSamplingInterval( int filterSamplingInterval )
+      {
+         this.filterSamplingInterval = filterSamplingInterval;
+         return this;
+      }
+
+      public Builder withFilterDeadband( double filterDeadband )
+      {
+         this.filterDeadband = filterDeadband;
+         return this;
+      }
+
       public WicaStreamProperties build()
       {
          return new WicaStreamProperties( heartbeatFluxIntervalInMillis,
                                           changedValueFluxIntervalInMillis,
-                                          polledValueFluxIntervalInMillis );
+                                          polledValueFluxIntervalInMillis,
+                                          dataAcquisitionMode,
+                                          polledValueSamplingRatio,
+                                          fieldsOfInterest,
+                                          numericPrecision,
+                                          filterType,
+                                          filterNumSamples,
+                                          filterCycleLength,
+                                          filterSamplingInterval,
+                                          filterDeadband);
       }
 
    }

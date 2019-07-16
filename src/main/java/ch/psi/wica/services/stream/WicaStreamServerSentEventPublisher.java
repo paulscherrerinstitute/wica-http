@@ -41,7 +41,7 @@ public class WicaStreamServerSentEventPublisher
    private final WicaChannelMetadataMapSerializer wicaChannelMetadataMapSerializer;
    private final WicaChannelValueMapSerializer wicaChannelValueMapSerializer;
    private final Flux<ServerSentEvent<String>> combinedFlux;
-   private final AtomicBoolean shutdown;
+   private final AtomicBoolean shutdown = new AtomicBoolean( false );
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -69,7 +69,7 @@ public class WicaStreamServerSentEventPublisher
       this.wicaChannelValueMapSerializer = new WicaChannelValueMapSerializer( false );
 
       this.combinedFlux = createCombinedFlux();
-      this.shutdown = new AtomicBoolean( false );
+      shutdown.set( false );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -96,8 +96,8 @@ public class WicaStreamServerSentEventPublisher
    {
       if ( shutdown.get() )
       {
-         logger.error( "Programming error: unexpected state - the flux has already been shutdown." );
-         throw new IllegalStateException( "The flux has already been shutdown." );
+         logger.error( "Programming error: unexpected state - attempt to get flux after publisher has been shut down." );
+         throw new IllegalStateException( "Call to getFlux(), but the publisher has already been shut down." );
       }
       return combinedFlux;
    }
@@ -114,8 +114,8 @@ public class WicaStreamServerSentEventPublisher
    {
       if ( shutdown.getAndSet( true ) )
       {
-         logger.error( "Programming error: unexpected state - the flux has already been shutdown." );
-         throw new IllegalStateException( "The flux has already been shutdown." );
+         logger.error( "Programming error: unexpected state - attempt to shutdown the same publisher twice." );
+         throw new IllegalStateException( "Call to shutdown(), but the publisher has already been shut down." );
       }
    }
 
@@ -140,9 +140,9 @@ public class WicaStreamServerSentEventPublisher
                final String jsonHeartbeatString = LocalDateTime.now().toString();
                return WicaServerSentEventBuilder.EV_WICA_SERVER_HEARTBEAT.build(wicaStreamId, jsonHeartbeatString );
             })
-            .doOnComplete( () -> logger.warn( "heartbeat flux completed." ))
-            .doOnCancel( () -> logger.warn( "heartbeat flux was cancelled."))
-            .doOnError( (e) -> logger.warn( "heartbeat flux had error.", e ));
+            .doOnComplete( () -> logger.warn( "heartbeat flux with id: '{}' completed.", wicaStreamId   ))
+            .doOnCancel( () -> logger.warn( "heartbeat flux with id: '{}' was cancelled.", wicaStreamId  ))
+            .doOnError( (e) -> logger.warn( "heartbeat flux with id: '{}' had error.", wicaStreamId, e ));
       //.log();
    }
 
@@ -161,14 +161,14 @@ public class WicaStreamServerSentEventPublisher
    {
       return Flux.range( 1, 1 )
             .map( l -> {
-               logger.trace( "channel-metadata flux is publishing new SSE..." );
+               logger.trace( "channel-metadata flux with id: '{}' is publishing new SSE...", wicaStreamId  );
                final Map<WicaChannel, WicaChannelMetadata> channelMetadataMap = wicaStreamDataCollectorService.getMetadataMap(wicaStream );
                final String jsonMetadataString = wicaChannelMetadataMapSerializer.serialize( channelMetadataMap );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build ( wicaStreamId, jsonMetadataString );
             } )
-            .doOnComplete( () -> logger.warn( "channel-metadata flux completed." ))
-            .doOnCancel( () -> logger.warn( "channel-metadata flux was cancelled." ) )
-            .doOnError( (e) -> logger.warn( "heartbeat flux had error.", e ));
+            .doOnComplete( () -> logger.warn( "channel-metadata flux with id: '{}' completed.", wicaStreamId  ))
+            .doOnCancel( () -> logger.warn( "channel-metadata flux with id: '{}' was cancelled.", wicaStreamId  ) )
+            .doOnError( (e) -> logger.warn( "heartbeat flux with id: '{}' had error.", wicaStreamId, e ));
       //.log();
    }
 
@@ -186,14 +186,14 @@ public class WicaStreamServerSentEventPublisher
    {
       return Flux.range(1, 1)
             .map(l -> {
-               logger.trace("channel-value flux is publishing new SSE...");
-               final Map<WicaChannel, List<WicaChannelValue>> map = wicaStreamDataCollectorService.getValueMap(wicaStream );
+               logger.trace("channel-value flux with id: '{}' is publishing new SSE...", wicaStreamId );
+               final Map<WicaChannel, List<WicaChannelValue>> map = wicaStreamDataCollectorService.getInitialValueMap( wicaStream );
                final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUES_INITIAL.build( wicaStreamId, jsonServerSentEventString );
             } )
-            .doOnComplete( () -> logger.warn( "channel-initial-values flux completed." ))
-            .doOnCancel( () -> logger.warn("channel-initial-values flux was cancelled."))
-            .doOnError( (e) -> logger.warn( "channel-initial-values flux had error.", e ));
+            .doOnComplete( () -> logger.warn( "channel-initial-values flux with id: '{}' completed.", wicaStreamId ))
+            .doOnCancel( () -> logger.warn("channel-initial-values flux with id: '{}' was cancelled.", wicaStreamId))
+            .doOnError( (e) -> logger.warn( "channel-initial-values flux with id: '{}' had error.", wicaStreamId, e ));
       //.log();
    }
 
@@ -211,14 +211,14 @@ public class WicaStreamServerSentEventPublisher
    {
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getChangedValueFluxIntervalInMillis() ) )
             .map( l -> {
-               logger.trace( "channel-value-change flux is publishing new SSE..." );
-               final Map<WicaChannel, List<WicaChannelValue>> map = wicaStreamDataCollectorService.getNotifiedValueChanges( wicaStream );
+               logger.trace( "channel-value-change flux with id: '{}' is publishing new SSE...", wicaStreamId );
+               final Map<WicaChannel, List<WicaChannelValue>> map = wicaStreamDataCollectorService.getChangedValueMap(wicaStream );
                final var jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_CHANGED_VALUES.build( wicaStreamId, jsonServerSentEventString );
             } )
-            .doOnComplete( () -> logger.warn( "channel-value-change flux completed." ))
-            .doOnCancel( () -> logger.warn( "channel-value-change flux was cancelled." ) )
-            .doOnError( (e) -> logger.warn( "channel-value-change flux had error.", e ));
+            .doOnComplete( () -> logger.warn( "channel-value-change flux with id: '{}' completed.", wicaStreamId ))
+            .doOnCancel( () -> logger.warn( "channel-value-change flux with id: '{}' was cancelled.", wicaStreamId ) )
+            .doOnError( (e) -> logger.warn( "channel-value-change flux with id: '{}' had error.", wicaStreamId, e ));
       //.log();
    }
 
@@ -236,14 +236,14 @@ public class WicaStreamServerSentEventPublisher
    {
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getPolledValueFluxIntervalInMillis() ) )
             .map(l -> {
-               logger.trace("channel-value-poll flux is publishing new SSE...");
-               var map = wicaStreamDataCollectorService.getPolledValues( wicaStream );
+               logger.trace("channel-value-poll flux with id: '{}' is publishing new SSE...", wicaStreamId );
+               var map = wicaStreamDataCollectorService.getPolledValueMap(wicaStream );
                final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_POLLED_VALUES.build(wicaStreamId, jsonServerSentEventString );
             } )
-            .doOnComplete( () -> logger.warn( "channel-value-poll flux completed." ))
-            .doOnCancel( () -> logger.warn("channel-value-poll flux was cancelled."))
-            .doOnError( (e) -> logger.warn( "channel-value-poll flux had error.", e ));
+            .doOnComplete( () -> logger.warn( "channel-value-poll flux with id: '{}' completed.", wicaStreamId ))
+            .doOnCancel( () -> logger.warn("channel-value-poll flux with id: '{}' was cancelled.", wicaStreamId ))
+            .doOnError( (e) -> logger.warn( "channel-value-poll flux with id: '{}' had error.", wicaStreamId, e ));
       //.log();
    }
 
@@ -267,19 +267,20 @@ public class WicaStreamServerSentEventPublisher
             .mergeWith( initialValueFlux )
             .mergeWith( changedValueFlux )
             .mergeWith( polledValueFlux )
-            .doOnComplete( () -> logger.warn( "Wica combinedflux completed" ))
+            .doOnComplete( () -> logger.warn( "combined with id: '{}' flux completed.", wicaStreamId ))
             .doOnCancel( () -> {
-               logger.warn( "Wica combinedflux was cancelled" );
-               handleErrors( wicaStreamId );
+               logger.warn( "combined flux with id '{}' was cancelled.", wicaStreamId );
             } )
-            .takeUntil( (x) -> shutdown.get() );
+            .doOnError( (e) -> logger.warn( "combined flux with id: '{}' had error: '{}'", wicaStreamId, e ) )
+            .takeUntil( (sse) -> {
+               final boolean shutdownRequest = shutdown.get();
+               if ( shutdownRequest)
+               {
+                  logger.warn( "combined flux with id: '{}' discovered shutdown request when delivering SSE: '{}'",  wicaStreamId, sse );
+               }
+               return shutdownRequest;
+            } );
       //.log();
-   }
-
-   private void handleErrors( WicaStreamId id )
-   {
-      logger.info( "Some error occurred on monitor stream with Id: '{}' ", id );
-      logger.info( "Probably the client navigated away from the webpage and the eventsource was closed by the browser !! " );
    }
 
 /*- Nested Classes -----------------------------------------------------------*/

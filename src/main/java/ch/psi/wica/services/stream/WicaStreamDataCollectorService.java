@@ -48,8 +48,7 @@ class WicaStreamDataCollectorService
     */
    WicaStreamDataCollectorService( @Autowired WicaChannelMetadataBufferingService wicaChannelMetadataBufferingService,
                                    @Autowired WicaChannelValueBufferingService wicaChannelValueBufferingService,
-                                   @Autowired WicaChannelValueFilteringService wicaChannelValueFilteringService
-   )
+                                   @Autowired WicaChannelValueFilteringService wicaChannelValueFilteringService )
    {
       this.wicaChannelMetadataBufferingService = wicaChannelMetadataBufferingService;
       this.wicaChannelValueBufferingService = wicaChannelValueBufferingService;
@@ -78,9 +77,9 @@ class WicaStreamDataCollectorService
     * @param wicaStream the stream.
     * @return the map.
     */
-   Map<WicaChannel,List<WicaChannelValue>> getValueMap( WicaStream wicaStream)
+   Map<WicaChannel,List<WicaChannelValue>> getInitialValueMap( WicaStream wicaStream)
    {
-      return wicaChannelValueBufferingService.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
+      return this.getUnfilteredValueMap( wicaStream );
    }
 
    /**
@@ -94,7 +93,7 @@ class WicaStreamDataCollectorService
     * @param wicaStream the stream.
     * @return the map.
     */
-   Map<WicaChannel,List<WicaChannelValue>> getPolledValues( WicaStream wicaStream )
+   Map<WicaChannel,List<WicaChannelValue>> getPolledValueMap( WicaStream wicaStream )
    {
       // Poll the stash of cached values to get the notified values for each channel.
       final var latestChannelValueMap = wicaChannelValueBufferingService.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
@@ -119,7 +118,7 @@ class WicaStreamDataCollectorService
             .filter(lastChannelValueMap::containsKey)
             .filter( chan -> chan.getProperties().getDataAcquisitionMode().doesPolling() )
             .forEach( chan -> {
-               final var outputList = wicaChannelValueFilteringService.filterPolledValues(chan, lastChannelValueMap.get( chan ) );
+               final var outputList = wicaChannelValueFilteringService.filterPolledValues( chan, lastChannelValueMap.get( chan ) );
                if ( outputList.size() > 0 )
                {
                   outputMap.put( chan, outputList );
@@ -128,6 +127,54 @@ class WicaStreamDataCollectorService
 
       return Collections.unmodifiableMap( outputMap );
     }
+
+
+   /**
+    * Returns a map of all channels whose MONITORED values have changed since the
+    * last time this method was invoked.
+    *
+    * Note: following data acquisition the returned map will be FILTERED according
+    * to the rules defined for each channel.
+    *
+    * @param wicaStream the stream.
+    * @return the map of channels and list of changes that have occurred since the
+    *     last time this method was invoked.
+    */
+   Map<WicaChannel, List<WicaChannelValue>> getChangedValueMap( WicaStream wicaStream)
+   {
+      final var latestChannelValueMap = wicaChannelValueBufferingService.getLaterThan( wicaStream.getWicaChannels(), wicaStream.getLastPublicationTime() );
+      wicaStream.updateLastPublicationTime();
+
+      final Map<WicaChannel,List<WicaChannelValue>> outputMap = new HashMap<>();
+      wicaStream.getWicaChannels().stream()
+            .filter(latestChannelValueMap::containsKey)
+            .filter( chan -> chan.getProperties().getDataAcquisitionMode().doesMonitoring() )
+            .forEach( chan -> {
+               var outputList = wicaChannelValueFilteringService.filterMonitoredValues( chan, latestChannelValueMap.get(chan ) );
+               if ( outputList.size() > 0 )
+               {
+                  outputMap.put( chan, outputList );
+               }
+            } );
+
+      return Collections.unmodifiableMap( outputMap );
+   }
+
+/*- Private methods ----------------------------------------------------------*/
+
+   /**
+    * Returns a map of all channels and the most recent N values that have been
+    * received for them, where N is the size of the internal received value
+    * notification buffer.
+    *
+    * @param wicaStream the stream.
+    * @return the map.
+    */
+   private Map<WicaChannel,List<WicaChannelValue>> getUnfilteredValueMap( WicaStream wicaStream)
+   {
+      return wicaChannelValueBufferingService.getLaterThan( wicaStream.getWicaChannels(), LONG_AGO );
+   }
+
 
    /**
     * Returns a map of all channels and their most recent buffered values obtained
@@ -139,13 +186,13 @@ class WicaStreamDataCollectorService
     * @param wicaStream the stream.
     * @return the map.
     */
-   Map<WicaChannel, List<WicaChannelValue>> getNotifiedValues( WicaStream wicaStream )
+   private Map<WicaChannel, List<WicaChannelValue>> getFilteredMonitoredValueMap( WicaStream wicaStream )
    {
       final Map<WicaChannel, List<WicaChannelValue>> updatedChannelValueMap = wicaChannelValueBufferingService.getLaterThan(wicaStream.getWicaChannels(), LONG_AGO );
 
       // Validate the precondition that every channel in the stream is represented in the returned map.
       Validate.isTrue( wicaStream.getWicaChannels().stream()
-            .allMatch(updatedChannelValueMap::containsKey),"Programming Error: the EpicsChannelDataService did not know about one or more channels." );
+                             .allMatch(updatedChannelValueMap::containsKey),"Programming Error: the EpicsChannelDataService did not know about one or more channels." );
 
       final Map<WicaChannel,List<WicaChannelValue>> outputMap = new HashMap<>();
       wicaStream.getWicaChannels().stream()
@@ -161,38 +208,6 @@ class WicaStreamDataCollectorService
       return Collections.unmodifiableMap( outputMap );
    }
 
-   /**
-    * Returns a map of all channels whose MONITORED values have changed since the
-    * last time this method was invoked.
-    *
-    * Note: following data acquisition the returned map will be FILTERED according
-    * to the rules defined for each channel.
-    *
-    * @param wicaStream the stream.
-    * @return the map of channels and list of changes that have occurred since the
-    *     last time this method was invoked.
-    */
-   Map<WicaChannel, List<WicaChannelValue>> getNotifiedValueChanges( WicaStream wicaStream)
-   {
-      final var latestChannelValueMap = wicaChannelValueBufferingService.getLaterThan(wicaStream.getWicaChannels(), wicaStream.getLastPublicationTime() );
-      wicaStream.updateLastPublicationTime();
-
-      final Map<WicaChannel,List<WicaChannelValue>> outputMap = new HashMap<>();
-      wicaStream.getWicaChannels().stream()
-            .filter(latestChannelValueMap::containsKey)
-            .filter( chan -> chan.getProperties().getDataAcquisitionMode().doesMonitoring() )
-            .forEach( chan -> {
-               var outputList = wicaChannelValueFilteringService.filterMonitoredValues(chan, latestChannelValueMap.get(chan ) );
-               if ( outputList.size() > 0 )
-               {
-                  outputMap.put( chan, outputList );
-               }
-            } );
-
-      return Collections.unmodifiableMap( outputMap );
-   }
-
-/*- Private methods ----------------------------------------------------------*/
-/*- Nested Classes -----------------------------------------------------------*/
+   /*- Nested Classes -----------------------------------------------------------*/
 
 }

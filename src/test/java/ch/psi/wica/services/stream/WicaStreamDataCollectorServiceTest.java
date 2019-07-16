@@ -4,7 +4,6 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,10 +49,10 @@ class WicaStreamDataCollectorServiceTest
    }
 
    @Test
-   void test_getNotifiedValues()
+   void test_getInitialValueMap()
    {
-      // Verify that a first call to getNotifiedValues does indeed get everything
-      final var valueMap = wicaStreamDataCollectorService.getNotifiedValues( wicaStream );
+      // Verify that a first call to getFilteredMonitoredValueMap does indeed get everything
+      final var valueMap = wicaStreamDataCollectorService.getInitialValueMap( wicaStream );
       assertEquals( 3, valueMap.size() );
 
       assertTrue( valueMap.containsKey( WicaChannel.createFromName( "CH1##1") ) );
@@ -73,10 +72,10 @@ class WicaStreamDataCollectorServiceTest
    }
 
    @Test
-   void test_getNotifiedValueChanges()
+   void test_getFilteredChangedValueMap()
    {
-      // Verify that a first call to getNotifiedValues does indeed get everything
-      final var valueMap = wicaStreamDataCollectorService.getNotifiedValueChanges(wicaStream );
+      // Verify that a first call to getFilteredMonitoredValueMap does indeed get everything
+      final var valueMap = wicaStreamDataCollectorService.getChangedValueMap(wicaStream );
       assertEquals( 3, valueMap.size() );
 
       assertTrue( valueMap.containsKey( WicaChannel.createFromName("CH1##1") ) );

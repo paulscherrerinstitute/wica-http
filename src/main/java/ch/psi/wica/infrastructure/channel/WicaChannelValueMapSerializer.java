@@ -46,7 +46,7 @@ public class WicaChannelValueMapSerializer
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-    public String serialize( Map<WicaChannel,List<WicaChannelValue>> channelValueMap )
+   public String serialize( Map<WicaChannel,List<WicaChannelValue>> channelValueMap )
    {
       try
       {

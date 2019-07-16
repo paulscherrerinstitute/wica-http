@@ -70,7 +70,7 @@ public class WicaChannelMetadataMapSerializer
       MyCustomWicaChannelMetadataMapSerializer( boolean quoteNumericStrings)
       {
          super( Map.class );
-         this.quoteNumericStrings  = quoteNumericStrings;
+         this.quoteNumericStrings = quoteNumericStrings;
       }
 
       @Override
@@ -81,18 +81,7 @@ public class WicaChannelMetadataMapSerializer
          {
             final WicaChannel wicaChannel = (WicaChannel) channel;
             final int numericScale = wicaChannel.getProperties().getNumericPrecision();
-            final Set<String> fieldsOfInterest = wicaChannel.getProperties().getFieldsOfInterest();
-
-            final WicaChannelDataSerializer serializer;
-            if ( fieldsOfInterest.size() == 0 )
-            {
-               serializer = new WicaChannelDataSerializer( numericScale, quoteNumericStrings );
-            }
-            else
-            {
-               serializer = new WicaChannelDataSerializer( fieldsOfInterest, numericScale, quoteNumericStrings );
-            }
-
+            final WicaChannelDataSerializer serializer = new WicaChannelDataSerializer( numericScale, quoteNumericStrings );
             gen.writeFieldName( wicaChannel.getName().toString() );
             final WicaChannelMetadata wicaChannelMetadata = (WicaChannelMetadata) value.get( wicaChannel );
             final String str = serializer.serialize( wicaChannelMetadata );

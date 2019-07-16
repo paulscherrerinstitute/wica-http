@@ -59,8 +59,7 @@ public class WicaStreamLifecycleService
     *     information for the channels in the stream.
     */
    public WicaStreamLifecycleService( @Autowired WicaStreamDataRequesterService wicaStreamDataRequesterService,
-                                      @Autowired WicaStreamDataCollectorService wicaStreamDataCollectorService
-   )
+                                      @Autowired WicaStreamDataCollectorService wicaStreamDataCollectorService )
    {
       this.wicaStreamDataRequesterService = Validate.notNull(wicaStreamDataRequesterService);
       this.wicaStreamDataCollectorService = wicaStreamDataCollectorService;

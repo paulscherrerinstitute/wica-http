@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@Disabled
 @SpringBootTest
 @AutoConfigureMockMvc
 class WicaStreamLoadTest
