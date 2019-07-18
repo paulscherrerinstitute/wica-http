@@ -1,66 +1,131 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- Logback Configuration File -for Wica Application -->
-<configuration>
+<configuration scan="true">
 
-    <appender name="APP_LOG" class="ch.qos.logback.core.FileAppender">
+    <!-- APPENDER CONFIGURATION STARTS HERE -->
+
+    <!-- APP_LOG rolling file appender written to 'log/application.log' -->
+    <appender name="APP_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>log/application.log</file>
-        <append>true</append>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
-        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>log/error.log.%i.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>10</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>100MB</maxFileSize>
+        </triggeringPolicy>
         <encoder>
-            <!-- we just need the timestamp and the message in the deployment log -->
             <pattern>%date %msg%n</pattern>
         </encoder>
     </appender>
 
-    <appender name="DEBUG_LOG" class="ch.qos.logback.core.FileAppender">
-        <file>log/debug.log</file>
-        <append>true</append>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>DEBUG</level>
-        </filter>
+    <!-- ERROR_LOG rolling file appender written to 'log/error.log' -->
+    <appender name="ERROR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>log/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>log/error.log.%i.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>10</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>100MB</maxFileSize>
+        </triggeringPolicy>
         <encoder>
             <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
         </encoder>
     </appender>
 
-    <appender name="ERROR_LOG" class="ch.qos.logback.core.FileAppender">
-        <file>log/error.log</file>
-        <append>true</append>
+    <!-- DEBUG_LOG rolling file appender written to 'log/debug.log' -->
+    <appender name="DEBUG_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>log/debug.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>log/debug.log.%i.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>10</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>100MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- STDOUT_LOG console appender to stdout -->
+    <appender name="STDOUT_LOG" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ASYNC_APP_LOG asynchronous appender for APP_LOG -->
+    <appender name="ASYNC_APP_LOG" class="ch.qos.logback.classic.AsyncAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <queueSize>4000000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <!-- Use with care: turning ON the 'includeCallerData' feature significantly reduces logger throughput -->
+        <includeCallerData>false</includeCallerData>
+        <appender-ref ref="APP_LOG" />
+    </appender>
+
+    <!-- ASYNC_ERROR_LOG asynchronous appender for ERROR_LOG -->
+    <appender name="ASYNC_ERROR_LOG" class="ch.qos.logback.classic.AsyncAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
         </filter>
-        <encoder>
-            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <!-- Configure the APP appender to receive input only from the whole application -->
-    <logger name="APP_LOGGER">
-        <appender-ref ref="APP_LOG" />
-    </logger>
-
-    <!-- Configure the DEBUG appender to receive input from the whole application -->
-    <logger name="ch.psi.wica">
-        <appender-ref ref="DEBUG_LOG" />
-    </logger>
-
-    <!-- Configure the ERROR appender to receive input from the whole application -->
-    <logger name="ch.psi.wica">
+        <queueSize>4000000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <!-- Use with care: turning ON the 'includeCallerData' feature significantly reduces logger throughput -->
+        <includeCallerData>false</includeCallerData>
         <appender-ref ref="ERROR_LOG" />
+    </appender>
+
+    <!-- ASYNC_DEBUG_LOG asynchronous appender for DEBUG_LOG -->
+    <appender name="ASYNC_DEBUG_LOG" class="ch.qos.logback.classic.AsyncAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <queueSize>4000000</queueSize>
+        <queueSize>4000000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <!-- Use with care: turning ON the 'includeCallerData' feature significantly reduces logger throughput -->
+        <includeCallerData>false</includeCallerData>
+        <appender-ref ref="DEBUG_LOG" />
+    </appender>
+
+    <!-- ASYNC_STDOUT_LOG asynchronous appender for STDOUT_LOG -->
+    <appender name="ASYNC_STDOUT_LOG" class="ch.qos.logback.classic.AsyncAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <queueSize>4000000</queueSize>
+        <queueSize>4000000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <!-- Use with care: turning ON the 'includeCallerData' feature significantly reduces logger throughput -->
+        <includeCallerData>false</includeCallerData>
+        <appender-ref ref="STDOUT_LOG" />
+    </appender>
+
+
+    <!-- LOGGER CONFIGURATION STARTS HERE -->
+
+    <logger name="APP_LOGGER" level="INFO">
+        <appender-ref ref="ASYNC_APP_LOG" />
     </logger>
 
-    <!-- Configure the default level for all loggers that are not explicitly setup elsewhere -->
-    <root level="DEBUG">
-        <appender-ref ref="STDOUT" />
+    <logger name="ch.psi.wica" level="DEBUG"/>
+
+
+    <!-- ROOT CONFIGURATION STARTS HERE -->
+
+    <root level="INFO">
+        <appender-ref ref="ASYNC_STDOUT_LOG" />  -->
+        <appender-ref ref="ASYNC_ERROR_LOG" />
+        <appender-ref ref="ASYNC_DEBUG_LOG" />
     </root>
 
 </configuration>
