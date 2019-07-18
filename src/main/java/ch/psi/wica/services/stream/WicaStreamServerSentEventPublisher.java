@@ -136,7 +136,7 @@ public class WicaStreamServerSentEventPublisher
    {
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getHeartbeatFluxIntervalInMillis() ) )
             .map(l -> {
-               logger.info("heartbeat flux is publishing new SSE...");
+               logger.trace("heartbeat flux is publishing new SSE...");
                final String jsonHeartbeatString = LocalDateTime.now().toString();
                return WicaServerSentEventBuilder.EV_WICA_SERVER_HEARTBEAT.build(wicaStreamId, jsonHeartbeatString );
             })
@@ -268,9 +268,7 @@ public class WicaStreamServerSentEventPublisher
             .mergeWith( changedValueFlux )
             .mergeWith( polledValueFlux )
             .doOnComplete( () -> logger.warn( "combined with id: '{}' flux completed.", wicaStreamId ))
-            .doOnCancel( () -> {
-               logger.warn( "combined flux with id '{}' was cancelled.", wicaStreamId );
-            } )
+            .doOnCancel( () -> logger.warn("combined flux with id '{}' was cancelled.", wicaStreamId ))
             .doOnError( (e) -> logger.warn( "combined flux with id: '{}' had error: '{}'", wicaStreamId, e ) )
             .takeUntil( (sse) -> {
                final boolean shutdownRequest = shutdown.get();
