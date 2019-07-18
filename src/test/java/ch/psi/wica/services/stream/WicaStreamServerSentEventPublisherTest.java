@@ -5,7 +5,6 @@ package ch.psi.wica.services.stream;
 
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
-
 import ch.psi.wica.model.channel.WicaChannelProperties;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
@@ -593,7 +592,7 @@ class WicaStreamServerSentEventPublisherTest
    
    private WicaStreamServerSentEventPublisher getObjectUnderTestForStreamWithDaqMode( WicaChannelProperties.DataAcquisitionMode daqMode )
    {
-      final WicaStreamProperties wicaStreamProperties = new WicaStreamProperties.Builder()
+      final WicaStreamProperties wicaStreamProperties = WicaStreamProperties.createBuilder()
             .withDataAcquisitionMode( daqMode )
             .withHeartbeatFluxInterval( 1400 )
             .withPolledValueFluxInterval( 500 )
@@ -601,9 +600,10 @@ class WicaStreamServerSentEventPublisherTest
             .withPolledValueSamplingRatio( 1 )
             .build();
 
-      WicaStream wicaStream = new WicaStream.Builder().withStreamProperties( wicaStreamProperties)
-            .withChannelNamed( "CHAN_1" )
-            .withChannelNamed( "CHAN_2" )
+      final WicaStream wicaStream = WicaStream.createBuilder()
+            .withStreamProperties( wicaStreamProperties)
+            .withChannelName("CHAN_1" )
+            .withChannelName("CHAN_2" )
             .build();
 
       return new WicaStreamServerSentEventPublisher( wicaStream, wicaStreamDataCollectorServiceMock );
