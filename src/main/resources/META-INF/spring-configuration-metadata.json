@@ -1,6 +1,11 @@
 {
   "properties": [
     {
+      "name": "wica.test-logging-on-startup",
+      "type": "java.lang.Boolean",
+      "description": "Can be used to enable a test of logger performance when the application is started."
+    },
+    {
       "name": "wica.epics-ca-library-monitor-notifier-impl",
       "type": "java.lang.String",
       "description": "The configuration for PSI's CA library when using it to establish channel access monitors."
