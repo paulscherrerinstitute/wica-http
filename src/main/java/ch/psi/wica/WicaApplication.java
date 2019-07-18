@@ -4,16 +4,19 @@ package ch.psi.wica;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationFailedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
+import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -24,7 +27,7 @@ import java.time.LocalDateTime;
  * a distributed control system.
  */
 @SpringBootApplication
-public class WicaApplication implements DisposableBean
+public class WicaApplication
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -33,6 +36,8 @@ public class WicaApplication implements DisposableBean
    private static final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
 	private static final Logger logger = LoggerFactory.getLogger( WicaApplication.class );
 	private static final LocalDateTime serverStartTime = LocalDateTime.now();
+
+	private final boolean testLoggingOnStartup;
 
 /*- Main ---------------------------------------------------------------------*/
 
@@ -43,7 +48,7 @@ public class WicaApplication implements DisposableBean
 	 */
 	public static void main( String[] args )
 	{
-		logger.info( " Git Wica Application is starting...");
+		logger.info( " Wica Application is starting...");
 		if ( args.length != 1 )
 		{
 			logger.error( args.length > 1 ? "Too many arguments" : "Too few arguments" );
@@ -76,21 +81,33 @@ public class WicaApplication implements DisposableBean
 		logger.info( "Wica Application READY Event." );
 		logger.info( "Wica Service: starting..." );
 		logger.info( "Wica Application started. ");
-		appLogger.info( "Wica Service: started");
+		appLogger.info( "Wica Service: started.");
+
+		// When enabled run some performance checks on the application logging.
+		if ( testLoggingOnStartup )
+		{
+			this.testLogging("TRACE", 1000);
+			this.testLogging("DEBUG", 1000);
+			this.testLogging("INFO", 1000);
+			this.testLogging("WARN", 1000);
+			this.testLogging("ERROR", 1000);
+			this.testLogging("APP", 1000);
+		}
 	}
 
 	@EventListener( ApplicationFailedEvent.class)
 	public void doSomethingOnFailure()
 	{
-		logger.info( "Git Wica Application FAILURE Event." );
-		appLogger.info( "Git Wica Service: failure event.");
+		logger.info( "Wica Application FAILURE Event." );
+		appLogger.info( "Wica Service: failure event.");
+
 	}
 
-	// Previously the @PreDestroy annotation was used here. But this seems a mess under
-	// the Java 9 JPMS. The module 'java.xml.ws.annotation' has been deprecated so attempts
-	// to add it to the module path get flagged up in red. The approach now is to leverage
-	// of the DisposableBean marker interface. Seems to work !
-	public void destroy()
+	// With Java 11 / SpringBoot 2.1.6 the @PreDestroy method seems to be working again.
+	// In previous Spring releases this got broken and one had to use an
+	// approach using the DisposableBean interface.
+	@PreDestroy
+	public void doSomethingBeforeShutdown()
 	{
 		logger.info( "Wica Application DESTROY Event." );
 		logger.info( "Wica Service: stopped." );
@@ -100,7 +117,10 @@ public class WicaApplication implements DisposableBean
 
 /*- Constructor --------------------------------------------------------------*/
 
-	public WicaApplication() {}
+	public WicaApplication( @Value("${wica.test-logging-on-startup}") boolean testLoggingOnStartup )
+	{
+		this.testLoggingOnStartup = testLoggingOnStartup;
+	}
 
 
 /*- Class methods ------------------------------------------------------------*/
@@ -112,7 +132,61 @@ public class WicaApplication implements DisposableBean
 
 
 /*- Public methods -----------------------------------------------------------*/
+/*- Package-level methods ----------------------------------------------------*/
+
+	void testLogging( String logLevel, int durationInMillis )
+	{
+		log( "INFO", "Starting logging test..." );
+
+		final StopWatch stopWatch = StopWatch.createStarted();
+		long loopCounter = 0;
+		while( stopWatch.getTime(TimeUnit.MILLISECONDS ) < durationInMillis  )
+		{
+			log( logLevel, "{}: Logging Test Iteration: {}: This is a test.", logLevel, loopCounter++ );
+		}
+		long elapsedTimeInMiliiseconds = stopWatch.getTime(TimeUnit.MILLISECONDS );
+
+		logger.info( "Logging level = '{}': Managed to send {} messages in {}ms.", logLevel, String.format( "%,d",loopCounter ), elapsedTimeInMiliiseconds );
+		log( "INFO", "Starting logging completed." );
+	}
+
+
 /*- Private methods ----------------------------------------------------------*/
+
+	private void log( String logLevel, String format, Object ...args )
+	{
+		switch( logLevel )
+		{
+			case "TRACE":
+				logger.trace( "trace");
+				break;
+
+			case "DEBUG":
+				logger.debug( format, args );
+				break;
+
+			case "INFO":
+				logger.info( format, args );
+				break;
+
+			case "WARN":
+				logger.warn( format, args );
+				break;
+
+			case "ERROR":
+				logger.error( format, args );
+				break;
+
+			case "APP":
+				appLogger.info( format, args );
+				break;
+
+			default:
+				logger.error( "Unrecognised log level" );
+				break;
+		}
+	}
+
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
