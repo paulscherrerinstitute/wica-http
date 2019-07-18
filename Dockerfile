@@ -148,13 +148,14 @@ VOLUME /root/config
 # 7.0 Define the ENTRYPOINT
 ###############################################################################
 
-# Run the application on the Java 10 module path invoking the docker-run configuration profile
+# Run the application on the Java 11 module path invoking the docker-run configuration profile
 # and passing the contents of the SSH Deploy Key.
 # Note the 'file.encoding' setting determines how the application reconstitutes
 # String information that has been sent down the wire. By choosing the ISO8859-1
-# character set this means we can cater for DB files that are encoded the old-school
-# (ISO8859-1) way.
-ENTRYPOINT java -Dfile.encoding=ISO8859-1 \
+# character set this means we can cater for EPICS IOC DB files that are encoded
+# the old-school (ISO8859-1) way and which include special characters like 'mu'.
+# Here's looking at you HIPA !
+ENTRYPOINT exec java -Dfile.encoding=ISO8859-1 \
            -Dspring.config.location=config/application-docker-run.properties \
            -p lib/jarfile.jar \
            --add-modules ALL-DEFAULT \
