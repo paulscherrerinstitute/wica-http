@@ -14,12 +14,15 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -42,9 +45,11 @@ class WicaChannelValueBufferingServiceTest
    void setup()
    {
       serviceUnderTest = new WicaChannelValueBufferingService(3 );
-      stream = new WicaStream( WicaStreamId.createNext(), Set.of ( WicaChannel.createFromName("abc" ),
-                                                                   WicaChannel.createFromName("def" ),
-                                                                   WicaChannel.createFromName("ghi" ) ) );
+      stream = WicaStream.createBuilder().withId( WicaStreamId.createNext() )
+         .withChannelName("abc" )
+         .withChannelName("def" )
+         .withChannelName("ghi" )
+         .build();
    }
 
    @Test
@@ -68,7 +73,7 @@ class WicaChannelValueBufferingServiceTest
    }
 
    @Test
-   void testAddGetLaterThanChannel()
+   void testHandleValueUpdate_GetLaterThanChannel()
    {
       // Create 5 channel values after the begin time and assign them to channel abc
       // Since the serviceUnderTest is only 3 values in size only 3 of them should be accepted.
@@ -78,8 +83,8 @@ class WicaChannelValueBufferingServiceTest
       serviceUnderTest.handleValueUpdate( evUpdateABC );
       serviceUnderTest.handleValueUpdate( evUpdateABC );
       serviceUnderTest.handleValueUpdate( evUpdateABC );
-      serviceUnderTest.handleValueUpdate(evUpdateABC );
-      serviceUnderTest.handleValueUpdate(evUpdateABC );
+      serviceUnderTest.handleValueUpdate( evUpdateABC );
+      serviceUnderTest.handleValueUpdate( evUpdateABC );
 
       // Create 2 channel values after the middle time and assign them to channel def
       final LocalDateTime middleTime = LocalDateTime.now();
@@ -88,45 +93,43 @@ class WicaChannelValueBufferingServiceTest
       serviceUnderTest.handleValueUpdate(evUpdateDEF );
       serviceUnderTest.handleValueUpdate(evUpdateDEF );
 
-
       // Create 1 channel value after the end time and assign them to channel ghi
       final LocalDateTime endTime = LocalDateTime.now();
       final ControlSystemName ghi = ControlSystemName.of( "ghi" );
       final var evUpdateGHI =  new WicaChannelValueUpdateEvent( ghi, WicaChannelValue.createChannelValueDisconnected() );
       serviceUnderTest.handleValueUpdate(evUpdateGHI );
 
-      final List<WicaChannelValue> laterThanBeginTimeListAbc =  serviceUnderTest.getLaterThan(abc, beginTime  );
-      final List<WicaChannelValue> laterThanMiddleTimeListAbc = serviceUnderTest.getLaterThan(abc, middleTime );
-      final List<WicaChannelValue> laterThanEndTimeListAbc =    serviceUnderTest.getLaterThan(abc, endTime    );
-      final List<WicaChannelValue> laterThanBeginTimeListDef =  serviceUnderTest.getLaterThan(def, beginTime  );
-      final List<WicaChannelValue> laterThanMiddleTimeListDef = serviceUnderTest.getLaterThan(def, middleTime );
-      final List<WicaChannelValue> laterThanEndTimeListDef =    serviceUnderTest.getLaterThan(def, endTime    );
-      final List<WicaChannelValue> laterThanBeginTimeListGhi =  serviceUnderTest.getLaterThan(ghi, beginTime  );
-      final List<WicaChannelValue> laterThanMiddleTimeListGhi = serviceUnderTest.getLaterThan(ghi, middleTime );
-      final List<WicaChannelValue> laterThanEndTimeListGhi =    serviceUnderTest.getLaterThan(ghi, endTime    );
+      final List<WicaChannelValue> laterThanBeginTimeListAbc =  serviceUnderTest.getLaterThan( abc, beginTime  );
+      final List<WicaChannelValue> laterThanMiddleTimeListAbc = serviceUnderTest.getLaterThan( abc, middleTime );
+      final List<WicaChannelValue> laterThanEndTimeListAbc =    serviceUnderTest.getLaterThan( abc, endTime    );
+      final List<WicaChannelValue> laterThanBeginTimeListDef =  serviceUnderTest.getLaterThan( def, beginTime  );
+      final List<WicaChannelValue> laterThanMiddleTimeListDef = serviceUnderTest.getLaterThan( def, middleTime );
+      final List<WicaChannelValue> laterThanEndTimeListDef =    serviceUnderTest.getLaterThan( def, endTime    );
+      final List<WicaChannelValue> laterThanBeginTimeListGhi =  serviceUnderTest.getLaterThan( ghi, beginTime  );
+      final List<WicaChannelValue> laterThanMiddleTimeListGhi = serviceUnderTest.getLaterThan( ghi, middleTime );
+      final List<WicaChannelValue> laterThanEndTimeListGhi =    serviceUnderTest.getLaterThan( ghi, endTime    );
 
-      Assert.assertEquals( 3, laterThanBeginTimeListAbc.size() );
-      Assert.assertEquals( 0, laterThanMiddleTimeListAbc.size() );
-      Assert.assertEquals( 0, laterThanEndTimeListAbc.size() );
+      assertThat( laterThanBeginTimeListAbc.size(), is( 3 ) );
+      assertThat( laterThanMiddleTimeListAbc.size(), is( 0 ) );
+      assertThat( laterThanEndTimeListAbc.size(), is( 0 ) );
 
-      Assert.assertEquals( 2, laterThanBeginTimeListDef.size() );
-      Assert.assertEquals( 2, laterThanMiddleTimeListDef.size() );
-      Assert.assertEquals( 0, laterThanEndTimeListDef.size() );
+      assertThat( laterThanBeginTimeListDef.size(), is( 2) );
+      assertThat( laterThanMiddleTimeListDef.size(), is( 2 ) );
+      assertThat( laterThanEndTimeListDef.size(), is( 0 ) );
 
-      Assert.assertEquals( 1, laterThanBeginTimeListGhi.size() );
-      Assert.assertEquals( 1, laterThanMiddleTimeListGhi.size() );
-      Assert.assertEquals( 1, laterThanEndTimeListGhi.size() );
+      assertThat( laterThanBeginTimeListGhi.size(), is( 1 ) );
+      assertThat( laterThanMiddleTimeListGhi.size(), is( 1 ) );
+      assertThat( laterThanEndTimeListGhi.size(), is( 1) );
    }
 
    @Test
-   void testAddGetLaterThanMultipleValues() throws InterruptedException
+   void testHandleValueUpdate_GetLaterThanMultipleValues() throws InterruptedException
    {
       final ControlSystemName abc = ControlSystemName.of( "abc" );
       final LocalDateTime beginTime = LocalDateTime.MIN;
       final WicaChannelValue testValue1 = WicaChannelValue.createChannelValueDisconnected();
       final ExecutorService executorService = Executors.newFixedThreadPool(100);
       final var evUpdateABC =  new WicaChannelValueUpdateEvent( abc, testValue1 );
-
 
       for ( int i = 0; i < 200; i++ )
       {
@@ -135,50 +138,50 @@ class WicaChannelValueBufferingServiceTest
       }
       executorService.awaitTermination(1, TimeUnit.SECONDS );
 
-      final List<WicaChannelValue> laterThanBeginTimeList = serviceUnderTest.getLaterThan(abc, beginTime );
-      Assert.assertEquals( 3, laterThanBeginTimeList.size() );
-      Assert.assertEquals( testValue1, laterThanBeginTimeList.get( 0 ) );
+      final List<WicaChannelValue> laterThanBeginTimeList = serviceUnderTest.getLaterThan( abc, beginTime );
+      Assert.assertThat( laterThanBeginTimeList.size(), is (3) );
+      Assert.assertThat( laterThanBeginTimeList.get( 0 ), is( testValue1 ) );
    }
 
-//   @Test
-//   void testAddGetLaterThanStream()
-//   {
-//      // Create 5 channel values after the begin time and assign them to channel abc
-//      // Since the serviceUnderTest is only 3 values in size only 3 of them should be accepted
-//      final LocalDateTime beginTime = LocalDateTime.now();
-//      final ControlSystemName abc = ControlSystemName.of( "abc" );
-//      serviceUnderTest.add( abc, WicaChannelValue.createChannelValueDisconnected() );
-//      serviceUnderTest.add( abc, WicaChannelValue.createChannelValueDisconnected() );
-//      serviceUnderTest.add( abc, WicaChannelValue.createChannelValueDisconnected() );
-//      serviceUnderTest.add( abc, WicaChannelValue.createChannelValueDisconnected() );
-//      serviceUnderTest.add( abc, WicaChannelValue.createChannelValueDisconnected() );
-//
-//      // Create 2 channel values after the middle time and assign them to channel def
-//      final LocalDateTime middleTime = LocalDateTime.now();
-//      final ControlSystemName def = ControlSystemName.of( "def" );
-//      serviceUnderTest.add( def, WicaChannelValue.createChannelValueDisconnected() );
-//      serviceUnderTest.add( def, WicaChannelValue.createChannelValueDisconnected() );
-//
-//      // Create 1 channel value after the end time and assign them to channel ghi
-//      final LocalDateTime endTime = LocalDateTime.now();
-//      final ControlSystemName ghi = ControlSystemName.of( "ghi" );
-//      serviceUnderTest.add( ghi, WicaChannelValue.createChannelValueDisconnected() );
-//
-//      final Map<WicaChannelName, List<WicaChannelValue>> laterThanBeginTimeMap = serviceUnderTest.getLaterThan( stream.getWicaChannels(), beginTime );
-//      Assert.assertEquals( 3, laterThanBeginTimeMap.size() );
-//      Assert.assertEquals( 3, laterThanBeginTimeMap.get( abc ).size() );
-//      Assert.assertEquals( 2, laterThanBeginTimeMap.get( def ).size() );
-//      Assert.assertEquals( 1, laterThanBeginTimeMap.get( ghi ).size() );
-//
-//      final Map<WicaChannelName, List<WicaChannelValue>> laterThanMiddleTimeMap = serviceUnderTest.getLaterThan( stream.getWicaChannels(), middleTime );
-//      Assert.assertEquals( 2, laterThanMiddleTimeMap.size() );
-//      Assert.assertEquals( 2, laterThanMiddleTimeMap.get( def ).size() );
-//      Assert.assertEquals( 1, laterThanMiddleTimeMap.get( ghi ).size() );
-//
-//      final Map<WicaChannelName, List<WicaChannelValue>> laterThanEndTimeMap = serviceUnderTest.getLaterThan( stream.getWicaChannels(), endTime );
-//      Assert.assertEquals( 1, laterThanEndTimeMap.size() );
-//      Assert.assertEquals( 1, laterThanEndTimeMap.get( ghi ).size() );
-//   }
+   @Test
+   void testHandleValueUpdate_GetLaterThanStream()
+   {
+      // Create 5 channel values after the begin time and assign them to channel abc
+      // Since the serviceUnderTest is only 3 values in size only 3 of them should be accepted
+      final LocalDateTime beginTime = LocalDateTime.now();
+      final WicaChannel abc = WicaChannel.createFromName( "abc" );
+      serviceUnderTest.handleValueUpdate( new WicaChannelValueUpdateEvent( abc.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() ) );
+      serviceUnderTest.handleValueUpdate( new WicaChannelValueUpdateEvent( abc.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() ) );
+      serviceUnderTest.handleValueUpdate( new WicaChannelValueUpdateEvent( abc.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() ) );
+      serviceUnderTest.handleValueUpdate( new WicaChannelValueUpdateEvent( abc.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() ) );
+      serviceUnderTest.handleValueUpdate( new WicaChannelValueUpdateEvent( abc.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() ) );
+
+      // Create 2 channel values after the middle time and assign them to channel def
+      final LocalDateTime middleTime = LocalDateTime.now();
+      final WicaChannel def = WicaChannel.createFromName( "def" );
+      serviceUnderTest.handleValueUpdate( new WicaChannelValueUpdateEvent( def.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() ) );
+      serviceUnderTest.handleValueUpdate( new WicaChannelValueUpdateEvent( def.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() ) );
+
+      // Create 1 channel value after the end time and assign them to channel ghi
+      final LocalDateTime endTime = LocalDateTime.now();
+      final WicaChannel ghi = WicaChannel.createFromName( "ghi" );
+      serviceUnderTest.handleValueUpdate( new WicaChannelValueUpdateEvent( ghi.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() ) );
+
+      final var laterThanBeginTimeMap = serviceUnderTest.getLaterThan( stream.getWicaChannels(), beginTime );
+      assertThat( laterThanBeginTimeMap.size(), is( 3 )  );
+      assertThat( laterThanBeginTimeMap.get( abc ).size(), is( 3 )  );
+      assertThat( laterThanBeginTimeMap.get( def ).size(), is( 2 )  );
+      assertThat( laterThanBeginTimeMap.get( ghi ).size(), is( 1 )  );
+
+      final var laterThanMiddleTimeMap = serviceUnderTest.getLaterThan( stream.getWicaChannels(), middleTime );
+      assertThat( laterThanMiddleTimeMap.size(), is( 2) );
+      assertThat( laterThanMiddleTimeMap.get( def ).size(), is( 2 ) );
+      assertThat( laterThanMiddleTimeMap.get( ghi ).size(), is( 1 ) );
+
+      final var laterThanEndTimeMap = serviceUnderTest.getLaterThan( stream.getWicaChannels(), endTime );
+      assertThat( laterThanEndTimeMap.size(), is( 1) );
+      assertThat( laterThanEndTimeMap.get( ghi ).size(), is( 1) );
+   }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
