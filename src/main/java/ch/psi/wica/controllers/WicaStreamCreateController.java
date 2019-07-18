@@ -36,6 +36,7 @@ class WicaStreamCreateController implements StatisticsCollectable
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
+   private final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
    private final Logger logger = LoggerFactory.getLogger( WicaStreamCreateController.class );
    private final WicaStreamLifecycleService wicaStreamLifecycleService;
    private final StatisticsCollector statisticsCollector = new StatisticsCollector();
@@ -126,12 +127,23 @@ class WicaStreamCreateController implements StatisticsCollectable
       }
       catch( Exception ex )
       {
-         final String errorMessage = "WICA SERVER: " + ex.getMessage();
+         final String errorMessage;
+         if ( ex.getMessage() == null )
+         {
+            final String exceptionClass = ex.getClass().toString();
+            errorMessage = "WICA SERVER: An exception occurred of class: '" + exceptionClass + "'.";
+         }
+         else
+         {
+            errorMessage = "WICA SERVER: " + ex.getMessage();
+         }
          logger.warn( "POST: Rejected request because '{}'.", errorMessage  );
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
-      logger.trace("POST: allocated stream with id: '{}'" , wicaStream.getWicaStreamId() );
+      appLogger.info( "POST: allocated stream with id: '{}' following request from client with IP: '{}'", wicaStream.getWicaStreamId(), httpServletRequest.getRemoteHost() );
+      logger.trace( "POST: allocated stream with id: '{}'" , wicaStream.getWicaStreamId() );
+
       return new ResponseEntity<>( wicaStream.getWicaStreamId().asString(), HttpStatus.OK );
    }
 
@@ -157,7 +169,7 @@ class WicaStreamCreateController implements StatisticsCollectable
    }
 
 
-   /*- Private methods ----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
