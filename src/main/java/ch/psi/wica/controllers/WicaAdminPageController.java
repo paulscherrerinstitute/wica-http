@@ -80,7 +80,7 @@ class WicaAdminPageController
    @GetMapping( value="/admin", produces = MediaType.TEXT_HTML_VALUE )
    public String getServiceConfigurationListAsHtml( Model viewModel )
    {
-      logger.info("Received status GET /admin request" );
+      logger.trace("Received status GET /admin request" );
 
       // Add some server statistics
       final Map<String,String> serverStatisticsMap = new LinkedHashMap<>();
@@ -142,7 +142,7 @@ class WicaAdminPageController
 
       // Return reference to the template. Spring Boot will do the rest !
       final String templateFileName = "AdminPage";
-      logger.info( "Returning reference to thymeleaf template: '{}'", templateFileName );
+      logger.trace( "Returning reference to thymeleaf template: '{}'", templateFileName );
       return templateFileName;
    }
 
