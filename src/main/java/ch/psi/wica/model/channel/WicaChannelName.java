@@ -4,6 +4,9 @@ package ch.psi.wica.model.channel;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.app.ControlSystemName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Collections;
@@ -17,6 +20,7 @@ import java.util.regex.Pattern;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+@Immutable
 public class WicaChannelName
 {
 
@@ -78,16 +82,19 @@ public class WicaChannelName
 
 /*- Public methods -----------------------------------------------------------*/
 
+   @JsonIgnore
    public Optional<Protocol> getProtocol()
    {
       return Optional.ofNullable( protocol );
    }
 
+   @JsonIgnore
    public ControlSystemName getControlSystemName()
    {
       return controlSystemName;
    }
 
+   @JsonIgnore
    public Optional<Integer> getInstance()
    {
       return Optional.ofNullable( instance );
@@ -98,6 +105,7 @@ public class WicaChannelName
     *
     * @return the representation.
     */
+   @JsonProperty( "name")
    public String asString()
    {
       return stringRepresentation;

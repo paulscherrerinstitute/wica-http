@@ -4,6 +4,8 @@ package ch.psi.wica.model.channel;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.app.ControlSystemName;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +105,7 @@ class WicaChannelNameTest
    @Test
    void test6()
    {
-      WicaChannelName wicaChannelName = WicaChannelName.of( "abc##1" );
+      final WicaChannelName wicaChannelName = WicaChannelName.of( "abc##1" );
       assertEquals( ControlSystemName.of( "abc" ), wicaChannelName.getControlSystemName() );
       assertFalse( wicaChannelName.getProtocol().isPresent() );
       assertTrue( wicaChannelName.getInstance().isPresent() );
@@ -127,6 +129,16 @@ class WicaChannelNameTest
    void testCsNameDisallowedCharacters()
    {
       assertThrows( IllegalArgumentException.class, () -> WicaChannelName.of( "#" ) );
+   }
+
+   @Test
+   void testJsonSerialization() throws JsonProcessingException
+   {
+      final WicaChannelName wicaChannelName = WicaChannelName.of( "abc##1" );
+      final ObjectMapper objectMapper = new ObjectMapper();
+      final String serializedValue = objectMapper.writeValueAsString( wicaChannelName );
+
+      logger.info( "Serialized form of WicaChannelName looks like this '{}' ", serializedValue );
    }
 
 
