@@ -35,6 +35,7 @@ class WicaStreamDeleteController  implements StatisticsCollectable
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
+   private final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
    private final Logger logger = LoggerFactory.getLogger(WicaStreamDeleteController.class );
    private final WicaStreamLifecycleService wicaStreamLifecycleService;
    private final StatisticsCollector statisticsCollector = new StatisticsCollector();
@@ -126,12 +127,22 @@ class WicaStreamDeleteController  implements StatisticsCollectable
       }
       catch( Exception ex )
       {
-         final String errorMessage = "WICA SERVER: " + ex.getMessage();
+         final String errorMessage;
+         if ( ex.getMessage() == null )
+         {
+            final String exceptionClass = ex.getClass().toString();
+            errorMessage = "WICA SERVER: An exception occurred of class: '" + exceptionClass + "'.";
+         }
+         else
+         {
+            errorMessage = "WICA SERVER: " + ex.getMessage();
+         }
          logger.warn( "DELETE: Rejected request because '{}'.", errorMessage  );
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
-      logger.trace("DELETE: deleted stream with id: '{}'" , optStreamId.get()  );
+      logger.trace( "DELETE: deleted stream with id: '{}'" , optStreamId.get()  );
+      appLogger.info( "DELETE: deleted stream with id: '{}' following request from client with IP: '{}'", wicaStreamId, httpServletRequest.getRemoteHost() );
       return new ResponseEntity<>(  optStreamId.get() , HttpStatus.OK );
    }
 
