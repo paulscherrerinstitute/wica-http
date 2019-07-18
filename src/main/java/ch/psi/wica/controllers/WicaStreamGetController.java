@@ -37,6 +37,7 @@ class WicaStreamGetController implements StatisticsCollectable
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
+   private final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
    private final Logger logger = LoggerFactory.getLogger(WicaStreamGetController.class );
    private final WicaStreamLifecycleService wicaStreamLifecycleService;
    private final StatisticsCollector statisticsCollector = new StatisticsCollector();
@@ -127,15 +128,25 @@ class WicaStreamGetController implements StatisticsCollectable
       final Flux<ServerSentEvent<String>> wicaStreamFlux;
       try
       {
-         wicaStreamFlux = wicaStreamLifecycleService.getFlux(wicaStreamId );
+         wicaStreamFlux = wicaStreamLifecycleService.getFlux( wicaStreamId );
       }
       catch( Exception ex )
       {
-         final String errorMessage = "WICA SERVER: " + ex.getMessage();
+         final String errorMessage;
+         if ( ex.getMessage() == null )
+         {
+            final String exceptionClass = ex.getClass().toString();
+            errorMessage = "WICA SERVER: An exception occurred of class: '" + exceptionClass + "'.";
+         }
+         else
+         {
+            errorMessage = "WICA SERVER: " + ex.getMessage();
+         }
          logger.warn( "GET: Rejected request because '{}'.", errorMessage  );
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
+      appLogger.info( "GET: subscribing to stream with id: '{}' following request from client with IP: '{}'", wicaStreamId, httpServletRequest.getRemoteHost() );
       logger.trace( "Returning stream with id: '{}'", optStreamId );
       return new ResponseEntity<>( wicaStreamFlux, HttpStatus.OK );
    }
