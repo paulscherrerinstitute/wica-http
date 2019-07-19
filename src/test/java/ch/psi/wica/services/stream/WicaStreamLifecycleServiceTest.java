@@ -4,6 +4,7 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.channel.WicaChannel;
+import ch.psi.wica.model.channel.WicaChannelProperties;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamId;
 import ch.psi.wica.model.stream.WicaStreamProperties;
@@ -16,7 +17,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Set;
 
-import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -44,23 +46,21 @@ class WicaStreamLifecycleServiceTest
       WicaStreamId.resetAllocationSequencer();
    }
 
-   // TODO FIX THIS
    @Test
    void testCreateStreamWithEmptyPropsObject()
    {
-
       final String testString = "{ \"props\" : {}, \"channels\":  [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
       final WicaStream stream = service.create( testString );
       final Set<WicaChannel> channels = stream.getWicaChannels();
-      assertEquals( 2, channels.size() );
-      assertTrue( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC1:IST:2" ) ) );
-      assertTrue( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ) );
-//
-//      final WicaStreamProperties streamProperties = stream.getWicaStreamProperties();
-//      assertEquals( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS, streamProperties.getHeartbeatFluxIntervalInMillis() );
+      assertThat( channels.size(), is( 2) );
+      assertThat( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC1:IST:2" ) ), is( true) );
+      assertThat( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ), is (true) );
 
-      final WicaStreamId wicaStreamId = stream.getWicaStreamId();
-      assertEquals( "0", wicaStreamId.asString() );
+      final var streamProperties = stream.getWicaStreamProperties();
+      assertThat( streamProperties.getHeartbeatFluxIntervalInMillis(), is( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS ) );
+
+      final var wicaStreamId = stream.getWicaStreamId();
+      assertThat( wicaStreamId.asString(), is("0") );
    }
 
    @Test
@@ -69,15 +69,15 @@ class WicaStreamLifecycleServiceTest
       final String testString = "{ \"channels\":  [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
       final WicaStream stream = service.create(testString );
       final Set<WicaChannel> channels = stream.getWicaChannels();
-      assertEquals( 2, channels.size() );
-      assertTrue( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC1:IST:2" ) ) );
-      assertTrue( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ) );
+      assertThat( channels.size(), is( 2) );
+      assertThat( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC1:IST:2" ) ), is( true) );
+      assertThat( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ), is (true) );
 
-//      final WicaStreamProperties streamProperties = stream.getWicaStreamProperties();
-//      assertEquals(WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS, streamProperties.getHeartbeatFluxIntervalInMillis() );
+      final var streamProperties = stream.getWicaStreamProperties();
+      assertThat( streamProperties.getHeartbeatFluxIntervalInMillis(), is( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS ) );
 
-      final WicaStreamId wicaStreamId = stream.getWicaStreamId();
-      assertEquals( "0", wicaStreamId.asString() );
+      final var wicaStreamId = stream.getWicaStreamId();
+      assertThat( wicaStreamId.asString(), is("0") );
    }
 
    @Test
@@ -88,16 +88,16 @@ class WicaStreamLifecycleServiceTest
 
       final Set<WicaChannel> channels = stream.getWicaChannels();
       assertEquals( 2, channels.size() );
-      assertTrue( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC1:IST:2" ) ) );
-      assertTrue( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ) );
+      assertThat( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC1:IST:2" ) ), is( true) );
+      assertThat( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ), is (true) );
 
-      final WicaStreamProperties streamProperties = stream.getWicaStreamProperties();
-//      assertEquals(WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS, streamProperties.getHeartbeatFluxIntervalInMillis() );
-//      assertEquals( WicaStreamProperties.DEFAULT_NUMERIC_PRECISION, streamProperties.getNumericPrecision() );
-//      assertEquals( Set.of( "abc", "def" ), streamProperties.getFieldsOfInterest() );
-//
-      final WicaStreamId wicaStreamId = stream.getWicaStreamId();
-      assertEquals( "0", wicaStreamId.asString() );
+      final var streamProperties = stream.getWicaStreamProperties();
+      assertThat( streamProperties.getHeartbeatFluxIntervalInMillis(), is( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS ) );
+      assertThat( streamProperties.getNumericPrecision(), is(WicaChannelProperties.DEFAULT_NUMERIC_PRECISION ) );
+      assertThat( streamProperties.getFieldsOfInterest(), is( Set.of( "abc", "def" ) ) );
+
+      final var wicaStreamId = stream.getWicaStreamId();
+      assertThat( wicaStreamId.asString(), is("0") );
    }
 
 /*- Private methods ----------------------------------------------------------*/
