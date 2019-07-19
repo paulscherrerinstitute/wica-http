@@ -6,7 +6,6 @@ package ch.psi.wica.infrastructure.channel;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Set;
 
@@ -18,16 +17,8 @@ import java.util.Set;
 public class WicaChannelValueSerializer
 {
 
-   /*- Public attributes --------------------------------------------------------*/
-   /*- Private attributes -------------------------------------------------------*/
-
-   /**
-    * Controls the serialized representation of double Nan and Infinity values.
-    * Set to TRUE for strict JSON compliance. Set to FALSE for "relaxed" JSON5
-    * format.
-    */
-   @Value( "${wica.serialize-nan-as-string}" )
-   private static final boolean quoteNumericStrings = false;
+/*- Public attributes --------------------------------------------------------*/
+/*- Private attributes -------------------------------------------------------*/
 
    private final WicaChannelDataSerializer wicaChannelDataSerializer;
 
@@ -66,6 +57,7 @@ public class WicaChannelValueSerializer
     * @param quoteNumericStrings determines whether the special double
     *     values NaN and Infinity will be serialised as numbers or strings.
     */
+   @SuppressWarnings( "WeakerAccess" )
    public WicaChannelValueSerializer( Set<String> fieldsOfInterest, int numericScale, boolean quoteNumericStrings )
    {
       this.wicaChannelDataSerializer = new WicaChannelDataSerializer( fieldsOfInterest, numericScale, quoteNumericStrings );

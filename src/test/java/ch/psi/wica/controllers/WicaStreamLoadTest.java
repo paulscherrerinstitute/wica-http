@@ -3,8 +3,11 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.channel.WicaChannelProperties;
+import ch.psi.wica.model.stream.WicaStream;
+import ch.psi.wica.model.stream.WicaStreamProperties;
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.jupiter.api.Disabled;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -44,115 +47,9 @@ class WicaStreamLoadTest
 
    private final String wicaStreamUri = "https://gfa-wica.psi.ch";
 
-   private static final String lightConsumerConfig = "{ \"channels\": [ { \"name\" : \"MMAC3:STR:2\" } ] }";
-
-   // The PROSCAN Status Display may be typical of the type of consumer that will
-   // use the wica service. This consumer has 94 channels-of-interest.
-   private static final String typicalConsumerConfig =
-      "{\"channels\":[" +
-         "{\"name\":\"XPROSCAN:TIME:2\"}," +
-         "{\"name\":\"XPROREG:STAB:1\"}," +
-         "{\"name\":\"EMJCYV:STA3:2\"}," +
-         "{\"name\":\"EMJCYV:CTRL:1\"}," +
-         "{\"name\":\"MMAV6:IST:2\"}," +
-         "{\"name\":\"MMAC3:STR:2\"}," +
-         "{\"name\":\"EMJCYV:STAW:1\",\"props\":{\"fields\":\"val\"}}," +
-         "{\"name\":\"EMJCYV:IST:2\",\"props\":{\"fields\":\"val\"}}," +
-         "{\"name\":\"MMAC:SOL:2\"}," +
-         "{\"name\":\"DMAD1:IST:2\"}," +
-         "{\"name\":\"PRO:REG2D:Y:2\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-         "{\"name\":\"PRO:REG2D:X:2\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-         "{\"name\":\"PRO:REG2D:X\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-         "{\"name\":\"PRO:REG2D:Y\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-         "{\"name\":\"AMAKI1:IST:2\"}," +
-         "{\"name\":\"CMJSEV:PWRF:2\"}," +
-         "{\"name\":\"CMJLL:SOLA:2\"},{\"name\":\"EMJEC1V:IST:2\"}," +
-         "{\"name\":\"EMJEC2V:IST:2\"}," +
-         "{\"name\":\"AMJHS-I:IADC:2\"}," +
-         "{\"name\":\"MMJF:IST:2\"}," +
-         "{\"name\":\"IMJV:IST:2\"}," +
-         "{\"name\":\"IMJI:IST:2\"}," +
-         "{\"name\":\"IMJGF:IST:2\"}," +
-         "{\"name\":\"XPROIONS:IST1:2\"}," +
-         "{\"name\":\"QMA1:IST:2\"}," +
-         "{\"name\":\"QMA2:IST:2\"}," +
-         "{\"name\":\"QMA3:IST:2\"}," +
-         "{\"name\":\"SMJ1X:IST:2\"}," +
-         "{\"name\":\"SMJ2Y:IST:2\"}," +
-         "{\"name\":\"SMA1X:IST:2\"}," +
-         "{\"name\":\"SMA1Y:IST:2\"}," +
-         "{\"name\":\"FMJEP:IST:2\"}," +
-         "{\"name\":\"MMJP2:IST1:2\"}," +
-         "{\"name\":\"FMJEPI:POS:2\"}," +
-         "{\"name\":\"FMJEPI:BREI:2\"}," +
-         "{\"name\":\"FMJIP:IST:2\"}," +
-         "{\"name\":\"MMJP2:IST2:2\"}," +
-         "{\"name\":\"FMJIPI:POS:2\"}," +
-         "{\"name\":\"FMJIPI:BREI:2\"}," +
-         "{\"name\":\"PRO:CURRENTALARM:1\"}," +
-         "{\"name\":\"MMAC3:STR:2##2\",\"props\":{\"daqmode\":\"poll-and-monitor\",\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":5}}," +
-         "{\"name\":\"EMJCYV:IST:2##2\",\"props\":{\"daqmode\":\"poll-and-monitor\",\"fields\":\"val;ts\",\"filter\":\"one-in-m\",\"m\":5}}," +
-         "{\"name\":\"CMJSEV:PWRF:2##2\",\"props\":{\"daqmode\":\"poll-and-monitor\",\"fields\":\"val;ts\",\"filter\":\"one-in-m\",\"m\":5}}," +
-         "{\"name\":\"BMA1:STA:2\"}," +
-         "{\"name\":\"BMA1:STAR:2##1\"}," +
-         "{\"name\":\"BMA1:STAR:2##2\"}," +
-         "{\"name\":\"BMA1:STAP:2##1\"}," +
-         "{\"name\":\"BMA1:STAP:2##2\"}," +
-         "{\"name\":\"BME1:STA:2\"}," +
-         "{\"name\":\"BME1:STAR:2##1\"}," +
-         "{\"name\":\"BME1:STAR:2##2\"}," +
-         "{\"name\":\"BME1:STAP:2##1\"}," +
-         "{\"name\":\"BME1:STAP:2##2\"}," +
-         "{\"name\":\"BMB1:STA:2\"}," +
-         "{\"name\":\"BMB1:STAR:2##1\"}," +
-         "{\"name\":\"BMB1:STAR:2##2\"}," +
-         "{\"name\":\"BMB1:STAP:2##1\"}," +
-         "{\"name\":\"BMB1:STAP:2##2\"}," +
-         "{\"name\":\"BMC1:STA:2\"}," +
-         "{\"name\":\"BMC1:STAR:2##1\"}," +
-         "{\"name\":\"BMC1:STAR:2##2\"}," +
-         "{\"name\":\"BMC1:STAP:2##1\"}," +
-         "{\"name\":\"BMC1:STAP:2##2\"}," +
-         "{\"name\":\"BMD1:STA:2\"}," +
-         "{\"name\":\"BMD1:STAR:2##1\"}," +
-         "{\"name\":\"BMD1:STAR:2##2\"}," +
-         "{\"name\":\"BMD2:STA:2\"}," +
-         "{\"name\":\"BMD2:STAR:2##1\"}," +
-         "{\"name\":\"BMD2:STAR:2##2\"}," +
-         "{\"name\":\"BMD2:STAP:2##1\"}," +
-         "{\"name\":\"BMD2:STAP:2##2\"}," +
-         "{\"name\":\"MMAP5X:PROF:2:P\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-         "{\"name\":\"MMAP5X:PROF:2\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-         "{\"name\":\"MMAP5X:SPB:2\"}," +
-         "{\"name\":\"MMAP6Y:PROF:2:P\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-         "{\"name\":\"MMAP6Y:PROF:2\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-         "{\"name\":\"MMAP6Y:SPB:2\"}," +
-         "{\"name\":\"YMJCS1K:IST:2\"}," +
-         "{\"name\":\"YMJCS2K:IST:2\"}," +
-         "{\"name\":\"YMJHH:SPARB:2\"}," +
-         "{\"name\":\"YMJHH:STR:2\"}," +
-         "{\"name\":\"YMJHL:IST:2\"}," +
-         "{\"name\":\"YMJHG:IST:2\"}," +
-         "{\"name\":\"YMJKKRT:IST:2\"}," +
-         "{\"name\":\"RPS-IQ:STA:1\"}," +
-         "{\"name\":\"UMJSSB:BIQX:1\"}," +
-         "{\"name\":\"RPS-HFRD:STA:1\"}," +
-         "{\"name\":\"UMJSSB:BHRX:1\"}," +
-         "{\"name\":\"RPS-HF:STA:1\"}," +
-         "{\"name\":\"UMJSSB:BHFX:1\"}," +
-         "{\"name\":\"UMJSSB:BDEX:1\"}," +
-         "{\"name\":\"XPROSCAN:STAB:2\"}" +
-      "],\"props\":{" +
-         "\"heartbeat\":15000," +
-         "\"changeint\":100," +
-         "\"pollint\":1000," +
-         "\"daqmode\":" +
-         "\"monitor\"," +
-         "\"pollratio\":1," +
-         "\"prec\":6," +
-         "\"fields\":" +
-         "\"val;sevr\"}" +
-   "}";
+   private static WicaStream lightStream = makeWicaStream( 1 );
+   private static WicaStream heavyStream = makeWicaStream( 1000 );
+   private static WicaStream proscanStream = makeProscanStream();
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -161,34 +58,65 @@ class WicaStreamLoadTest
 
    private static Stream<Arguments> getArgsForTestStreamCreateAndDeleteSingleThreadedThroughput()
    {
-      return Stream.of( Arguments.of(   1, lightConsumerConfig   ),
-                        Arguments.of(   2, lightConsumerConfig   ),
-                        Arguments.of(   5, lightConsumerConfig   ),
-                        Arguments.of(  10, lightConsumerConfig   ),
-                        Arguments.of(  20, lightConsumerConfig   ),
-                        Arguments.of(  50, lightConsumerConfig   ),
-                        Arguments.of( 100, lightConsumerConfig   ),
-                        Arguments.of(   1, typicalConsumerConfig ),
-                        Arguments.of(   2, typicalConsumerConfig ),
-                        Arguments.of(   5, typicalConsumerConfig ),
-                        Arguments.of(  10, typicalConsumerConfig ),
-                        Arguments.of(  20, typicalConsumerConfig ),
-                        Arguments.of(  50, typicalConsumerConfig ),
-                        Arguments.of( 100, typicalConsumerConfig ) );
+      return Stream.of( Arguments.of(   1, lightStream ),
+                        Arguments.of(   1, lightStream ),
+                        Arguments.of(   1, lightStream ),
+                        Arguments.of(   2, lightStream ),
+                        Arguments.of(   2, lightStream ),
+                        Arguments.of(   2, lightStream ),
+                        Arguments.of(   5, lightStream ),
+                        Arguments.of(   5, lightStream ),
+                        Arguments.of(   5, lightStream ),
+                        Arguments.of(  10, lightStream ),
+                        Arguments.of(  10, lightStream ),
+                        Arguments.of(  10, lightStream ),
+                        Arguments.of(  20, lightStream ),
+                        Arguments.of(  20, lightStream ),
+                        Arguments.of(  50, lightStream ),
+                        Arguments.of(  50, lightStream ),
+                        Arguments.of(  50, lightStream ),
+                        Arguments.of( 100, lightStream ),
+                        Arguments.of( 100, lightStream ),
+                        Arguments.of( 100, lightStream ),
+                        Arguments.of(   1, heavyStream ),
+                        Arguments.of(   1, heavyStream ),
+                        Arguments.of(   1, heavyStream ),
+                        Arguments.of(   2, heavyStream ),
+                        Arguments.of(   2, heavyStream ),
+                        Arguments.of(   2, heavyStream ),
+                        Arguments.of(   5, heavyStream ),
+                        Arguments.of(   5, heavyStream ),
+                        Arguments.of(   5, heavyStream ),
+                        Arguments.of(  10, heavyStream ),
+                        Arguments.of(  10, heavyStream ),
+                        Arguments.of(  10, heavyStream ),
+                        Arguments.of(  20, heavyStream ),
+                        Arguments.of(  20, heavyStream ),
+                        Arguments.of(  20, heavyStream ),
+                        Arguments.of(  50, heavyStream ),
+                        Arguments.of(  50, heavyStream ),
+                        Arguments.of(  50, heavyStream ),
+                        Arguments.of( 100, heavyStream ),
+                        Arguments.of( 100, heavyStream ),
+                        Arguments.of( 100, heavyStream ),
+                        Arguments.of( 10, proscanStream ),
+                        Arguments.of( 20, proscanStream ),
+                        Arguments.of( 50, proscanStream ) );
    }
 
    @MethodSource( "getArgsForTestStreamCreateAndDeleteSingleThreadedThroughput" )
    @ParameterizedTest
-   void testStreamCreateAndDeleteSingleThreadedThroughput( int iterations, String jsonStreamConfig )
+   void testStreamCreateAndDeleteSingleThreadedThroughput( int iterations, WicaStream wicaStream )
    {
       logger.info( "Starting Single-Threaded Stream Create test..." );
       final StopWatch stopWatch = StopWatch.createStarted();
-      final String firstResult = createStream( jsonStreamConfig );
+      final String firstResult = sendStreamCreateRequest( wicaStream );
       assertNotNull( firstResult );
+
       // Sequentially execute all the CREATE tasks.
       for ( int i = 1; i < iterations; i++ )
       {
-         assertNotNull( createStream( jsonStreamConfig ) );
+         assertNotNull(sendStreamCreateRequest(wicaStream ) );
       }
       final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
       logger.info( "Stream Create test completed {} iterations in {} ms. Throughput = {} requests/second.", iterations, createStreamCycleTime, (1000 * iterations ) / createStreamCycleTime );
@@ -197,47 +125,49 @@ class WicaStreamLoadTest
       int firstId = Integer.parseInt( firstResult );
       stopWatch.reset();
       stopWatch.start();
+
       // Sequentially execute all the DELETE tasks.
       for ( int i = 0; i < iterations; i++ )
       {
-         assertNotNull( deleteStream( String.valueOf( firstId + i ) ) );
+         assertNotNull(sendStreamDeleteRequest(String.valueOf(firstId + i ) ) );
       }
       final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
       logger.info( "Stream Delete Test completed {} iterations in {} ms. Throughput = {} requests/second.", iterations, deleteStreamCycleTime, (1000 * iterations ) / deleteStreamCycleTime );
    }
 
+
    private static Stream<Arguments> getArgsForTestStreamCreateAndDeleteMultiThreadedThroughput()
    {
-      return Stream.of( Arguments.of(   1, lightConsumerConfig   ),
-                        Arguments.of(   2, lightConsumerConfig   ),
-                        Arguments.of(   5, lightConsumerConfig   ),
-                        Arguments.of(  10, lightConsumerConfig   ),
-                        Arguments.of(  20, lightConsumerConfig   ),
-                        Arguments.of(  50, lightConsumerConfig   ),
-                        Arguments.of( 100, lightConsumerConfig   ),
-                        Arguments.of(   1, typicalConsumerConfig ),
-                        Arguments.of(   2, typicalConsumerConfig ),
-                        Arguments.of(   5, typicalConsumerConfig ),
-                        Arguments.of(  10, typicalConsumerConfig ),
-                        Arguments.of(  20, typicalConsumerConfig ),
-                        Arguments.of(  50, typicalConsumerConfig ),
-                        Arguments.of( 100, typicalConsumerConfig ) );
+      return Stream.of( Arguments.of(   1, lightStream  ),
+                        Arguments.of(   2, lightStream  ),
+                        Arguments.of(   5, lightStream  ),
+                        Arguments.of(  10, lightStream  ),
+                        Arguments.of(  20, lightStream  ),
+                        Arguments.of(  50, lightStream  ),
+                        Arguments.of( 100, lightStream  ),
+                        Arguments.of(   1, heavyStream  ),
+                        Arguments.of(   2, heavyStream  ),
+                        Arguments.of(   5, heavyStream  ),
+                        Arguments.of(  10, heavyStream  ),
+                        Arguments.of(  20, heavyStream  ),
+                        Arguments.of(  50, heavyStream  ),
+                        Arguments.of( 100, heavyStream  ) );
    }
 
    @MethodSource( "getArgsForTestStreamCreateAndDeleteMultiThreadedThroughput" )
    @ParameterizedTest
-   void testStreamCreateAndDeleteMultiThreadedThroughput( int iterations, String jsonStreamConfig ) throws InterruptedException, ExecutionException
+   void testStreamCreateAndDeleteMultiThreadedThroughput( int iterations, WicaStream wicaStream ) throws InterruptedException, ExecutionException
    {
       logger.info( "Starting Multi-Threaded Stream Create test..." );
       final CompletionService<String> executor = new ExecutorCompletionService<>( Executors.newFixedThreadPool( 100 ) );
       final StopWatch stopWatch = StopWatch.createStarted();
-      final String firstResult = createStream( jsonStreamConfig );
+      final String firstResult = sendStreamCreateRequest(wicaStream );
       assertNotNull( firstResult );
 
       // Submit all the CREATE tasks.
       for ( int i = 1; i < iterations; i++ )
       {
-         executor.submit(() -> createStream( jsonStreamConfig ));
+         executor.submit(() -> sendStreamCreateRequest(wicaStream ));
       }
 
       // Get all the results and check that each CREATE operation succeeded.
@@ -260,7 +190,7 @@ class WicaStreamLoadTest
       for ( int i = 0; i < iterations; i++ )
       {
          final String id = String.valueOf( firstId + i );
-         executor.submit( () -> deleteStream( id ) );
+         executor.submit( () -> sendStreamDeleteRequest(id ) );
       }
 
       // Get all the results and check that each DELETE operation succeeded.
@@ -275,22 +205,22 @@ class WicaStreamLoadTest
 
    private static Stream<Arguments> getArgsForTestGetSingleThreadedThroughput()
    {
-      return Stream.of( Arguments.of( 30, 5000, lightConsumerConfig ) );
+      return Stream.of( Arguments.of( 30, 5000, lightStream ) );
    }
 
    @MethodSource( "getArgsForTestGetSingleThreadedThroughput" )
    @ParameterizedTest
-   void testGetSingleThreadedThroughput( int numberOfStreams, int applyLoadForDurationInMillis, String jsonStreamConfig ) throws InterruptedException
+   void testGetSingleThreadedThroughput( int numberOfStreams, int applyLoadForDurationInMillis, WicaStream wicaStream ) throws InterruptedException
    {
       logger.info( "Starting Single-Threaded Stream Create test..." );
       final StopWatch stopWatch = StopWatch.createStarted();
-      final String firstResult = createStream( jsonStreamConfig );
+      final String firstResult = sendStreamCreateRequest( wicaStream );
       assertNotNull( firstResult );
 
       // Sequentially execute all the CREATE tasks.
       for ( int i = 1; i < numberOfStreams; i++ )
       {
-         assertNotNull( createStream( jsonStreamConfig ) );
+         assertNotNull( sendStreamCreateRequest(wicaStream ) );
       }
       final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
       logger.info( "Stream Create test completed {} iterations in {} ms. Throughput = {} requests/second.", numberOfStreams, createStreamCycleTime, (1000 * numberOfStreams ) / createStreamCycleTime );
@@ -305,7 +235,7 @@ class WicaStreamLoadTest
       // Sequentially execute all the GET tasks.
       for ( int i = 0; i < numberOfStreams; i++ )
       {
-         var f = getStreamFlux( String.valueOf( firstId + i ) )
+         var f = sendStreamSubscribeRequest(String.valueOf(firstId + i ) )
                  .doOnCancel(() -> logger.info( "FLUX CANCELLED !!" ) )
                  .subscribe( (sse) -> logger.trace( "Received SSE from stream with id: {}, event: {}",sse.id(), sse.event()  ),
                                (e) -> logger.error( "FLUX ERROR: {} ", e.toString() ) );
@@ -333,7 +263,7 @@ class WicaStreamLoadTest
       // Sequentially execute all the DELETE tasks.
       for ( int i = 0; i < numberOfStreams; i++ )
       {
-         assertNotNull( deleteStream( String.valueOf( firstId + i ) ) );
+         assertNotNull(sendStreamDeleteRequest(String.valueOf(firstId + i ) ) );
       }
       final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
       logger.info( "Stream Delete Test completed {} iterations in {} ms. Throughput = {} requests/second.", numberOfStreams, deleteStreamCycleTime, (1000 * numberOfStreams ) / deleteStreamCycleTime );
@@ -342,9 +272,154 @@ class WicaStreamLoadTest
 
 /*- Private methods ----------------------------------------------------------*/
 
-   private String createStream( String jsonStreamConfiguration )
+   private static WicaStream makeProscanStream()
+   {
+      WicaStreamProperties wicaStreamProperties = WicaStreamProperties.createBuilder()
+            .withHeartbeatFluxInterval( 15000 )
+            .withChangedValueFluxInterval( 100 )
+            .withPolledValueFluxInterval( 1000 )
+            .withDataAcquisitionMode( WicaChannelProperties.DataAcquisitionMode.MONITOR )
+            .withPolledValueSamplingRatio( 1 )
+            .withNumericPrecision(6)
+            .withFieldsOfInterest("val;sevr").build();
+
+      return WicaStream.createBuilder()
+            .withStreamProperties( wicaStreamProperties )
+            .withChannelName("XPROSCAN:TIME:2" )
+            .withChannelName("XPROREG:STAB:1" )
+            .withChannelName("EMJCYV:STA3:2" )
+            .withChannelName("EMJCYV:CTRL:1" )
+            .withChannelName("MMAV6:IST:2" )
+            .withChannelName("MMAC3:STR:2" )
+            .withChannelNameAndProperties("EMJCYV:STAW:1", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).build() )
+            .withChannelNameAndProperties("EMJCYV:IST:2", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).build() )
+            .withChannelName("MMAC:SOL:2" )
+            .withChannelName("DMAD1:IST:2" )
+            .withChannelNameAndProperties("PRO:REG2D:Y:2", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2 ).build() )
+            .withChannelNameAndProperties("PRO:REG2D:X:2", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2 ).build() )
+            .withChannelNameAndProperties("PRO:REG2D:X", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2 ).build() )
+            .withChannelNameAndProperties("PRO:REG2D:Y", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2 ).build() )
+            .withChannelName("AMAKI1:IST:2" )
+            .withChannelName("CMJSEV:PWRF:2" )
+            .withChannelName("CMJLL:SOLA:2" )
+            .withChannelName("EMJEC1V:IST:2" )
+            .withChannelName("EMJEC2V:IST:2" )
+            .withChannelName("AMJHS-I:IADC:2" )
+            .withChannelName("MMJF:IST:2" )
+            .withChannelName("IMJV:IST:2" )
+            .withChannelName("IMJI:IST:2" )
+            .withChannelName("IMJGF:IST:2" )
+            .withChannelName("XPROIONS:IST1:2" )
+            .withChannelName("QMA1:IST:2" )
+            .withChannelName("QMA2:IST:2" )
+            .withChannelName("QMA3:IST:2" )
+            .withChannelName("SMJ1X:IST:2" )
+            .withChannelName("SMJ2Y:IST:2" )
+            .withChannelName("SMA1X:IST:2" )
+            .withChannelName("SMA1Y:IST:2" )
+            .withChannelName("FMJEP:IST:2" )
+            .withChannelName("MMJP2:IST1:2" )
+            .withChannelName("FMJEPI:POS:2" )
+            .withChannelName("FMJIP:IST:2" )
+            .withChannelName("MMJP2:IST2:2" )
+            .withChannelName("FMJIPI:POS:2" )
+            .withChannelName("FMJIPI:BREI:2" )
+            .withChannelName("PRO:CURRENTALARM:1" )
+            .withChannelNameAndProperties("MMAC3:STR:2##2", WicaChannelProperties.createBuilder()
+                  .withDataAcquisitionMode( WicaChannelProperties.DataAcquisitionMode.POLL_AND_MONITOR )
+                  .withFieldsOfInterest( "val;ts" )
+                  .withFilterType(WicaChannelProperties.FilterType.CHANGE_FILTERER )
+                  .withFilterDeadband( 5 ).build() )
+            .withChannelNameAndProperties("EMJCYV:IST:2##2", WicaChannelProperties.createBuilder()
+                                        .withDataAcquisitionMode( WicaChannelProperties.DataAcquisitionMode.POLL_AND_MONITOR )
+                                        .withFieldsOfInterest( "val;ts" )
+                                        .withFilterType(WicaChannelProperties.FilterType.ONE_IN_M )
+                                        .withFilterCycleLength( 5 ).build() )
+            .withChannelNameAndProperties("CMJSEV:PWRF:2##2", WicaChannelProperties.createBuilder()
+                                        .withDataAcquisitionMode( WicaChannelProperties.DataAcquisitionMode.POLL_AND_MONITOR )
+                                        .withFieldsOfInterest( "val;ts" )
+                                        .withFilterType(WicaChannelProperties.FilterType.ONE_IN_M )
+                                        .withFilterCycleLength( 5 ).build() )
+            .withChannelName("BMA1:STA:2" )
+            .withChannelName("BMA1:STAR:2##1" )
+            .withChannelName("BMA1:STAR:2##2" )
+            .withChannelName("BMA1:STAP:2##1" )
+            .withChannelName("BMA1:STAP:2##2" )
+            .withChannelName("BME1:STA:2" )
+            .withChannelName("BME1:STAR:2##1" )
+            .withChannelName("BME1:STAR:2##2" )
+            .withChannelName("BME1:STAP:2##1" )
+            .withChannelName("BME1:STAP:2##2" )
+            .withChannelName("BMB1:STA:2" )
+            .withChannelName("BMB1:STAR:2##1" )
+            .withChannelName("BMB1:STAR:2##2" )
+            .withChannelName("BMB1:STAP:2##1" )
+            .withChannelName("BMB1:STAP:2##2" )
+            .withChannelName("BMC1:STA:2" )
+            .withChannelName("BMC1:STAR:2##1" )
+            .withChannelName("BMC1:STAR:2##2" )
+            .withChannelName("BMC1:STAP:2##1" )
+            .withChannelName("BMC1:STAP:2##2" )
+            .withChannelName("BMD1:STA:2" )
+            .withChannelName("BMD1:STAR:2##1" )
+            .withChannelName("BMD1:STAR:2##2" )
+            .withChannelName("BMD2:STA:2" )
+            .withChannelName("BMD2:STAR:2##1" )
+            .withChannelName("BMD2:STAR:2##2" )
+            .withChannelName("BMD2:STAP:2##1" )
+            .withChannelName("BMD2:STAP:2##2" )
+            .withChannelNameAndProperties("MMAP5X:PROF:2:P", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2).build() )
+            .withChannelNameAndProperties("MMAP5X:PROF:2", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2).build() )
+            .withChannelName("MMAP5X:SPB:2" )
+            .withChannelNameAndProperties("MMAP6Y:PROF:2:P", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2).build() )
+            .withChannelNameAndProperties("MMAP6Y:PROF:2", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2).build() )
+            .withChannelName("MMAP6Y:SPB:2" )
+            .withChannelName("YMJCS1K:IST:2" )
+            .withChannelName("YMJCS2K:IST:2" )
+            .withChannelName("YMJHH:SPARB:2" )
+            .withChannelName("YMJHH:STR:2" )
+            .withChannelName("YMJHL:IST:2" )
+            .withChannelName("YMJHG:IST:2" )
+            .withChannelName("YMJKKRT:IST:2" )
+            .withChannelName("RPS-IQ:STA:1" )
+            .withChannelName("UMJSSB:BIQX:1" )
+            .withChannelName("RPS-HFRD:STA:1" )
+            .withChannelName("UMJSSB:BHRX:1" )
+            .withChannelName("RPS-HF:STA:1" )
+            .withChannelName("UMJSSB:BHFX:1" )
+            .withChannelName("MJSSB:BDEX:1" )
+            .withChannelName("XPROSCAN:STAB:2" )
+            .build();
+   }
+
+
+   private static WicaStream makeWicaStream( int numberOfChannels )
+   {
+      WicaStreamProperties wicaStreamProperties = WicaStreamProperties.createBuilder()
+            .withHeartbeatFluxInterval( 15000 )
+            .withChangedValueFluxInterval( 100 )
+            .withPolledValueFluxInterval( 1000 )
+            .withDataAcquisitionMode(WicaChannelProperties.DataAcquisitionMode.MONITOR)
+            .withPolledValueSamplingRatio(1)
+            .withNumericPrecision(6)
+            .withFieldsOfInterest("val;sevr").build();
+
+      WicaStream.Builder wicaStreamBuilder = WicaStream.createBuilder()
+            .withStreamProperties( wicaStreamProperties );
+
+      for ( int i =0; i < numberOfChannels; i++ )
+      {
+         wicaStreamBuilder = wicaStreamBuilder.withChannelName("CHAN-" + i  );
+      }
+
+      return wicaStreamBuilder.build();
+   }
+
+   private String sendStreamCreateRequest( WicaStream wicaStream )
    {
       logger.trace( "Creating new Stream..." );
+
+      final String jsonStreamConfiguration = wicaStream.toJsonString();
       final ClientResponse postResponse = WebClient.create(wicaStreamUri + "/ca/streams")
             .post()
             .body(BodyInserters.fromObject( jsonStreamConfiguration ) )
@@ -365,7 +440,7 @@ class WicaStreamLoadTest
       }
    }
 
-   private String deleteStream( String streamId  )
+   private String sendStreamDeleteRequest( String streamId  )
    {
       logger.trace( "Deleting Stream with id {} ...", streamId );
       final ClientResponse  deleteResponse = WebClient.create( wicaStreamUri )
@@ -386,7 +461,7 @@ class WicaStreamLoadTest
       }
    }
 
-   private Flux<ServerSentEvent<String>> getStreamFlux( String streamId )
+   private Flux<ServerSentEvent<String>> sendStreamSubscribeRequest( String streamId )
    {
       final var parameterizedTypeRef = new ParameterizedTypeReference<ServerSentEvent<String>>() {};
       return WebClient.create( wicaStreamUri)

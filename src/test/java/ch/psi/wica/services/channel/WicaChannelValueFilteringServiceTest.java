@@ -43,7 +43,7 @@ class WicaChannelValueFilteringServiceTest
       final var dblValue3 = WicaChannelValue.createChannelValueConnected(  15.123456 );
       final var dblValue4 = WicaChannelValue.createChannelValueConnected( 111.123456 );
 
-      final var props =  new WicaChannelProperties.ChannelPropertyBuilder()
+      final var props =  WicaChannelProperties.createBuilder()
             .withFilterType(WicaChannelProperties.FilterType.LAST_N )
             .withNumSamples( 2 )
             .build();
@@ -64,7 +64,7 @@ class WicaChannelValueFilteringServiceTest
       final var intValue3 = WicaChannelValue.createChannelValueConnected( 15 );
       final var intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
 
-      final var props =  new WicaChannelProperties.ChannelPropertyBuilder()
+      final var props =  WicaChannelProperties.createBuilder()
             .withFilterType(WicaChannelProperties.FilterType.ONE_IN_M )
             .withFilterCycleLength( 2 )
             .build();
@@ -85,7 +85,7 @@ class WicaChannelValueFilteringServiceTest
       final var intValue3 = WicaChannelValue.createChannelValueConnected( 15 );
       final var intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
 
-      final var props =  new WicaChannelProperties.ChannelPropertyBuilder()
+      final var props =  WicaChannelProperties.createBuilder()
             .withFilterType(WicaChannelProperties.FilterType.ALL_VALUE )
             .withFilterCycleLength( 2 )
             .build();
@@ -108,7 +108,7 @@ class WicaChannelValueFilteringServiceTest
       final var intValue3 = WicaChannelValue.createChannelValueConnected( 15 );
       final var intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
 
-      final var props =  new WicaChannelProperties.ChannelPropertyBuilder()
+      final var props =  WicaChannelProperties.createBuilder()
             .withPolledValueSamplingRatio( 1 )
             .build();
 
@@ -130,7 +130,7 @@ class WicaChannelValueFilteringServiceTest
       final var intValue3 = WicaChannelValue.createChannelValueConnected( 15 );
       final var intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
 
-      final var props =  new WicaChannelProperties.ChannelPropertyBuilder()
+      final var props =  WicaChannelProperties.createBuilder()
             .withPolledValueSamplingRatio( 2 )
             .build();
 

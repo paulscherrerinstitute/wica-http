@@ -40,7 +40,7 @@ public class WicaChannelProperties
     * Default value for the numeric precision that will be used when
     * serializing real numbers in the wica stream for this channel.
     */
-   public static final int DEFAULT_NUMERIC_PRECISION = 8;
+   public static final int DEFAULT_NUMERIC_PRECISION = 6;
 
    /**
     * Default value for the fields of interest that will be serialized
@@ -82,7 +82,7 @@ public class WicaChannelProperties
 
 /*- Private attributes -------------------------------------------------------*/
 
-   private static WicaChannelProperties DEFAULT_INSTANCE = new ChannelPropertyBuilder().build();
+   private static final WicaChannelProperties DEFAULT_INSTANCE = new Builder().build();
 
    private static final Logger logger = LoggerFactory.getLogger( WicaChannelProperties.class );
    private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -101,7 +101,7 @@ public class WicaChannelProperties
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   protected WicaChannelProperties()
+   public WicaChannelProperties()
    {
       this( DEFAULT_DATA_ACQUISITION_MODE,
             DEFAULT_POLLED_VALUE_SAMPLE_RATIO,
@@ -114,15 +114,15 @@ public class WicaChannelProperties
             DEFAULT_FILTER_DEADBAND );
    }
 
-   protected WicaChannelProperties( @JsonProperty( "daqmode"   ) DataAcquisitionMode dataAcquisitionMode,
-                                    @JsonProperty( "pollratio" ) Integer polledValueSamplingRatio,
-                                    @JsonProperty( "fields"    ) String fieldsOfInterest,
-                                    @JsonProperty( "prec"      ) Integer numericPrecision,
-                                    @JsonProperty( "filter"    ) FilterType filterType,
-                                    @JsonProperty( "n"         ) Integer filterNumSamples,
-                                    @JsonProperty( "m"         ) Integer filterCycleLength,
-                                    @JsonProperty( "interval"  ) Integer filterSamplingIntervalInMillis,
-                                    @JsonProperty( "deadband"  ) Double filterDeadband )
+   public WicaChannelProperties( @JsonProperty( "daqmode"   ) DataAcquisitionMode dataAcquisitionMode,
+                                 @JsonProperty( "pollratio" ) Integer polledValueSamplingRatio,
+                                 @JsonProperty( "fields"    ) String fieldsOfInterest,
+                                 @JsonProperty( "prec"      ) Integer numericPrecision,
+                                 @JsonProperty( "filter"    ) FilterType filterType,
+                                 @JsonProperty( "n"         ) Integer filterNumSamples,
+                                 @JsonProperty( "m"         ) Integer filterCycleLength,
+                                 @JsonProperty( "interval"  ) Integer filterSamplingIntervalInMillis,
+                                 @JsonProperty( "deadband"  ) Double filterDeadband )
    {
       this.dataAcquisitionMode            = captureOrDefault( dataAcquisitionMode, DEFAULT_DATA_ACQUISITION_MODE );
       this.polledValueSamplingRatio       = captureOrDefault( polledValueSamplingRatio, DEFAULT_POLLED_VALUE_SAMPLE_RATIO );
@@ -183,6 +183,15 @@ public class WicaChannelProperties
       return DEFAULT_INSTANCE;
    }
 
+   /**
+    * Returns a builder.
+    *
+    * @return the builder.
+    */
+   public static Builder createBuilder()
+   {
+      return new Builder();
+   }
 
 /*- Public methods -----------------------------------------------------------*/
 
@@ -196,6 +205,10 @@ public class WicaChannelProperties
    public Set<String> getFieldsOfInterest()
    {
       return fieldsOfInterest;
+   }
+   public String getFieldsOfInterestAsString()
+   {
+      return String.join(";", fieldsOfInterest);
    }
 
    @JsonIgnore
@@ -294,10 +307,9 @@ public class WicaChannelProperties
       return Set.of( str.split( ";" ) );
    }
 
-
 /*- Nested Classes -----------------------------------------------------------*/
 
-   public static class ChannelPropertyBuilder
+   public static class Builder
    {
       private DataAcquisitionMode dataAcquisitionMode = DEFAULT_DATA_ACQUISITION_MODE;
       private int polledValueSamplingRatio = DEFAULT_POLLED_VALUE_SAMPLE_RATIO;
@@ -309,55 +321,58 @@ public class WicaChannelProperties
       private double filterDeadband = DEFAULT_FILTER_DEADBAND;
       private String fieldsOfInterest = DEFAULT_FIELDS_OF_INTEREST;
 
-      public ChannelPropertyBuilder withDataAcquisitionMode( DataAcquisitionMode dataAcquisitionMode )
+      // Private to force use of the createBuilder factory method.
+      private Builder() {}
+
+      public Builder withDataAcquisitionMode( DataAcquisitionMode dataAcquisitionMode )
       {
          this.dataAcquisitionMode = dataAcquisitionMode;
          return this;
       }
 
-      public ChannelPropertyBuilder withPolledValueSamplingRatio( int polledValueSamplingRatio )
+      public Builder withPolledValueSamplingRatio( int polledValueSamplingRatio )
       {
          this.polledValueSamplingRatio = polledValueSamplingRatio;
          return this;
       }
 
-      public ChannelPropertyBuilder withFieldsOfInterest( String fieldsOfInterest )
+      public Builder withFieldsOfInterest( String fieldsOfInterest )
       {
          this.fieldsOfInterest = fieldsOfInterest;
          return this;
       }
 
-      public ChannelPropertyBuilder withNumericPrecision( int numericPrecision )
+      public Builder withNumericPrecision( int numericPrecision )
       {
          this.numericPrecision = numericPrecision;
          return this;
       }
 
-      public ChannelPropertyBuilder withFilterType( FilterType filterType )
+      public Builder withFilterType( FilterType filterType )
       {
          this.filterType = filterType;
          return this;
       }
 
-      public ChannelPropertyBuilder withNumSamples( int filterNumSamples )
+      public Builder withNumSamples( int filterNumSamples )
       {
          this.filterNumSamples = filterNumSamples;
          return this;
       }
 
-      public ChannelPropertyBuilder withFilterCycleLength( int filterCycleLength )
+      public Builder withFilterCycleLength( int filterCycleLength )
       {
          this.filterCycleLength = filterCycleLength;
          return this;
       }
 
-      public ChannelPropertyBuilder withFilterSamplingInterval( int filterSamplingInterval )
+      public Builder withFilterSamplingInterval( int filterSamplingInterval )
       {
          this.filterSamplingInterval = filterSamplingInterval;
          return this;
       }
 
-      public ChannelPropertyBuilder withFilterDeadband( double filterDeadband )
+      public Builder withFilterDeadband( double filterDeadband )
       {
          this.filterDeadband = filterDeadband;
          return this;

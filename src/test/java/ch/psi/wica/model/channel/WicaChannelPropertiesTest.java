@@ -3,7 +3,6 @@ package ch.psi.wica.model.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.stream.WicaStreamProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -41,10 +40,7 @@ class WicaChannelPropertiesTest
       assertThat( props.getFilterCycleLength(), is( WicaChannelProperties.DEFAULT_FILTER_CYCLE_LENGTH ) );
       assertThat( props.getFilterSamplingIntervalInMillis(), is( WicaChannelProperties.DEFAULT_FILTER_SAMPLING_INTERVAL ) );
       assertThat( props.getFilterDeadband(), is( WicaChannelProperties.DEFAULT_FILTER_DEADBAND ) );
-
       assertThat( props, is( WicaChannelProperties.createDefaultInstance() ) );
-      assertThat( props, is( new WicaChannelProperties.ChannelPropertyBuilder().build() ) );
-
    }
 
    @Test
@@ -107,7 +103,7 @@ class WicaChannelPropertiesTest
    @Test
    void testBuilder()
    {
-      final WicaChannelProperties props = new WicaChannelProperties.ChannelPropertyBuilder()
+      final WicaChannelProperties props = WicaChannelProperties.createBuilder()
             .withDataAcquisitionMode(WicaChannelProperties.DataAcquisitionMode.POLL)
             .withPolledValueSamplingRatio( 33 )
             .withFieldsOfInterest( "abc;def" )

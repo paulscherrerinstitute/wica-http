@@ -4,8 +4,6 @@ package ch.psi.wica.model.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.channel.WicaChannelProperties;
-import ch.psi.wica.model.stream.WicaStreamProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -83,7 +81,7 @@ class WicaStreamPropertiesTest
       assertThat( props.getFilterDeadband(), is( WicaChannelProperties.DEFAULT_FILTER_DEADBAND ) );
 
       assertThat( props, is( WicaStreamProperties.createDefaultInstance() ) );
-      assertThat( props, is( new WicaStreamProperties.Builder().build() ) );
+      assertThat( props, is( WicaStreamProperties.createBuilder().build() ) );
 
    }
 
