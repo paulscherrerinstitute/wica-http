@@ -81,6 +81,8 @@ public class WicaStreamLifecycleService
    {
       Validate.notEmpty( jsonStreamConfiguration, "The 'jsonStreamConfiguration' argument was null." );
 
+      logger.info( "Creating new stream from config string: '{}'", jsonStreamConfiguration );
+
       // To ensure consistency the following operations are performed as a single atomic operation.
       synchronized( this )
       {
@@ -102,20 +104,26 @@ public class WicaStreamLifecycleService
          }
 
          final long streamDecodeTimeInMillis = streamDecodeTimer.getTime();
-         logger.info("STREAM DECODING TOOK {} ms,", streamDecodeTimeInMillis );
+         logger.info("Stream decoding took: '{}' ms.,", streamDecodeTimeInMillis );
 
          // Allocate a new stream ID.
          final WicaStreamId wicaStreamId = WicaStreamId.createNext();
 
          // Create a stream based on the supplied configuration.
-         final WicaStream wicaStream = new WicaStream ( wicaStreamId, decoder.getWicaStreamProperties(), decoder.getWicaChannels());
+         final WicaStream wicaStream = WicaStream.createBuilder()
+               .withId( wicaStreamId )
+               .withStreamProperties( decoder.getWicaStreamProperties() )
+               .withChannels( decoder.getWicaChannels() )
+               .build();
+
+         logger.info( "Stream created OK from config string: '{}.'", wicaStream );
 
          // Tell the control system monitoring service to start monitoring the
          // control system channels in this stream.
          final StopWatch startMonitoringTimer = StopWatch.createStarted();
          wicaStreamDataRequesterService.startMonitoring(wicaStream );
          final long startMonitoringTimeInMicroseconds = startMonitoringTimer.getTime(TimeUnit.MICROSECONDS );
-         logger.info("START MONITORING TOOK {} us,", startMonitoringTimeInMicroseconds);
+         logger.info("Stream monitoring took: '{}' us.,", startMonitoringTimeInMicroseconds);
 
          // Create a new publisher and add it to the map of recognized publishers.
          final WicaStreamServerSentEventPublisher wicaStreamServerSentEventPublisher = new WicaStreamServerSentEventPublisher(wicaStream, wicaStreamDataCollectorService);
