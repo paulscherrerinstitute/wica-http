@@ -77,7 +77,7 @@ class WicaStreamTest
    void testBuilder5()
    {
       final WicaStream wicaStream = WicaStream.createBuilder()
-            .withChannelNameAndProperties("chan1", WicaChannelProperties.createBuilder().withNumericPrecision(4 ).build()  )
+            .withChannelNameAndProperties("chan1", WicaChannelProperties.createBuilder().withNumericPrecision( 4 ).build()  )
             .withChannelName("chan2" )
             .build();
 
@@ -85,7 +85,7 @@ class WicaStreamTest
       assertThat( wicaStream.getWicaChannel( "chan1" ).isPresent(), is( true ) );
       assertThat( wicaStream.getWicaChannel( "chan1" ).get().getProperties().getNumericPrecision(), is( 4 ) );
       assertThat( wicaStream.getWicaChannel( "chan2" ).isPresent(), is( true ) );
-      assertThat( wicaStream.getWicaChannel( "chan2" ).get().getProperties().getNumericPrecision(), is( 8 ) );
+      assertThat( wicaStream.getWicaChannel( "chan2" ).get().getProperties().getNumericPrecision(), is( WicaChannelProperties.DEFAULT_NUMERIC_PRECISION ) );
    }
 
    @Test

@@ -40,7 +40,7 @@ public class WicaChannelProperties
     * Default value for the numeric precision that will be used when
     * serializing real numbers in the wica stream for this channel.
     */
-   public static final int DEFAULT_NUMERIC_PRECISION = 6;
+   public static final int DEFAULT_NUMERIC_PRECISION = 8;
 
    /**
     * Default value for the fields of interest that will be serialized
