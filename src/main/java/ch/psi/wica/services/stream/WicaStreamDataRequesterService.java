@@ -42,8 +42,6 @@ public class WicaStreamDataRequesterService
    private final Logger logger = LoggerFactory.getLogger(WicaStreamDataRequesterService.class );
    private final ApplicationEventPublisher applicationEventPublisher;
 
-   private final WicaChannelMetadataBufferingService wicaChannelMetadataBufferingService;
-   private final WicaChannelValueBufferingService wicaChannelValueBufferingService;
    private final Map<ControlSystemName,Integer> controlSystemInterestMap;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -55,21 +53,10 @@ public class WicaStreamDataRequesterService
     * @param applicationEventPublisher reference to the application publisher
     *    which will be used to publish the channels that are to be monitored
     *    or which are no longer of interest.
-    *
-    * @param wicaChannelMetadataBufferingService reference to a service which
-    *    can be used to record the initial metadata for the WicaChannel.
-    *
-    * @param wicaChannelValueBufferingService reference to a service which
-    *     *    can be used to record the initial value for the WicaChannel.
     */
-   WicaStreamDataRequesterService( @Autowired ApplicationEventPublisher applicationEventPublisher,
-                                   WicaChannelMetadataBufferingService wicaChannelMetadataBufferingService,
-                                   WicaChannelValueBufferingService wicaChannelValueBufferingService
-   )
+   WicaStreamDataRequesterService( @Autowired ApplicationEventPublisher applicationEventPublisher )
    {
       this.applicationEventPublisher = Validate.notNull( applicationEventPublisher );
-      this.wicaChannelMetadataBufferingService = Validate.notNull(wicaChannelMetadataBufferingService);
-      this.wicaChannelValueBufferingService = Validate.notNull(wicaChannelValueBufferingService);
       this.controlSystemInterestMap = Collections.synchronizedMap( new HashMap<>() );
    }
 
