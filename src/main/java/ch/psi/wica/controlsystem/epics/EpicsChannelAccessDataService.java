@@ -36,6 +36,7 @@ public class EpicsChannelAccessDataService
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
+   private final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
    private final Logger logger = LoggerFactory.getLogger(EpicsChannelAccessDataService.class );
 
    private final ApplicationEventPublisher applicationEventPublisher;
@@ -106,6 +107,7 @@ public class EpicsChannelAccessDataService
    private void startMonitoring( ControlSystemName controlSystemName )
    {
       Validate.notNull( controlSystemName );
+      appLogger.info( "EPICS channel subscribe: '{}'", controlSystemName.asString() );
       logger.trace("Subscribing to new control system channel named: '{}'", controlSystemName.asString() );
 
       // Define the handlers to be informed of interesting changes to the channel
@@ -125,7 +127,8 @@ public class EpicsChannelAccessDataService
    private void stopMonitoring( ControlSystemName controlSystemName  )
    {
       Validate.notNull( controlSystemName );
-      logger.trace( "Unsubscribing to control system channel named: '{}'", controlSystemName.asString() );
+      appLogger.info( "EPICS channel unsubscribe: '{}'", controlSystemName.asString() );
+      logger.trace( "Unsubscribing from control system channel named: '{}'", controlSystemName.asString() );
 
       epicsChannelMonitorService.stopMonitoring( EpicsChannelName.of( controlSystemName ) );
    }
@@ -164,7 +167,6 @@ public class EpicsChannelAccessDataService
       Validate.notNull( wicaChannelValue, "The 'wicaChannelValue' argument was null");
 
       logger.trace("'{}' - value changed to: '{}'", controlSystemName, wicaChannelValue );
-
       applicationEventPublisher.publishEvent( new WicaChannelValueUpdateEvent( controlSystemName, wicaChannelValue ) );
    }
 
@@ -180,8 +182,7 @@ public class EpicsChannelAccessDataService
       Validate.notNull( wicaChannelMetadata, "The 'wicaChannelMetadata' argument was null");
 
       logger.trace("'{}' - metadata changed to: '{}'", controlSystemName, wicaChannelMetadata);
-
-      applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent(controlSystemName, wicaChannelMetadata ) );
+      applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent( controlSystemName, wicaChannelMetadata ) );
    }
 
 
