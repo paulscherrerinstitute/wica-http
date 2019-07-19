@@ -8,7 +8,6 @@ import ch.psi.wica.model.channel.WicaChannelMetadata;
 import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelType;
 import ch.psi.wica.model.stream.WicaStream;
-import ch.psi.wica.model.stream.WicaStreamId;
 import ch.psi.wica.controlsystem.event.WicaChannelMetadataBufferingService;
 import ch.psi.wica.controlsystem.event.WicaChannelValueBufferingService;
 import org.apache.commons.lang3.time.StopWatch;
@@ -62,10 +61,9 @@ class WicaStreamDataRequesterServiceTest
    void testStartMonitoring_IncreasesInterestCount()
    {
       final String testChannelNameAsString ="XXX";
-      final WicaChannel testChannel = WicaChannel.createFromName( testChannelNameAsString );
-      final WicaStream wicaStream = new WicaStream( WicaStreamId.of( "myStream" ), Set.of( testChannel ) );
-
       final WicaChannelName testChannelName = WicaChannelName.of( testChannelNameAsString );
+      final WicaStream wicaStream = WicaStream.createBuilder().withId( "myStream" ).withChannelName(testChannelNameAsString ).build();
+
       assertEquals(0, service.getInterestCountForChannel( testChannelName ) );
 
       service.startMonitoring( wicaStream );
@@ -78,21 +76,21 @@ class WicaStreamDataRequesterServiceTest
    @Test
    void testStopMonitoring_DecreasesInterestCount()
    {
-      final WicaChannelName myWicaChannelName = WicaChannelName.of( "XXX" );
-      final WicaChannel myWicaChannel = WicaChannel.createFromName( myWicaChannelName );
-      final WicaStream wicaStream = new WicaStream( WicaStreamId.of( "myStream" ), Set.of( myWicaChannel ) );
+      final String testChannelNameAsString ="XXX";
+      final WicaChannelName testChannelName = WicaChannelName.of( testChannelNameAsString );
+      final WicaStream wicaStream = WicaStream.createBuilder().withId( "myStream" ).withChannelName(testChannelNameAsString ).build();
 
       service.startMonitoring( wicaStream );
       service.startMonitoring( wicaStream );
       service.startMonitoring( wicaStream );
-      assertEquals(3, service.getInterestCountForChannel(myWicaChannelName ) );
+      assertEquals(3, service.getInterestCountForChannel(testChannelName ) );
 
       service.stopMonitoring( wicaStream );
-      assertEquals(2, service.getInterestCountForChannel( myWicaChannelName ) );
+      assertEquals(2, service.getInterestCountForChannel( testChannelName ) );
       service.stopMonitoring( wicaStream );
-      assertEquals(1, service.getInterestCountForChannel( myWicaChannelName ) );
+      assertEquals(1, service.getInterestCountForChannel( testChannelName ) );
       service.stopMonitoring( wicaStream );
-      assertEquals(0, service.getInterestCountForChannel( myWicaChannelName ) );
+      assertEquals(0, service.getInterestCountForChannel( testChannelName ) );
    }
 
    @Test
@@ -100,7 +98,10 @@ class WicaStreamDataRequesterServiceTest
    {
       final WicaChannelName myWicaChannelName = WicaChannelName.of( "simon:counter:01" );
       final WicaChannel myWicaChannel = WicaChannel.createFromName( myWicaChannelName );
-      final WicaStream wicaStream = new WicaStream( WicaStreamId.of( "myStream" ), Set.of( myWicaChannel ) );
+      final WicaStream wicaStream = WicaStream.createBuilder()
+            .withId( "myStream" )
+            .withChannelName(myWicaChannelName )
+            .build();
 
       service.startMonitoring( wicaStream );
       final Map<WicaChannel, WicaChannelMetadata> initialMetadata = wicaChannelMetadataBufferingService.get( Set.of(myWicaChannel ) );
@@ -111,11 +112,13 @@ class WicaStreamDataRequesterServiceTest
    void testStartMonitoring_wicaChannelValueBufferServiceInitialisedOk()
    {
       final WicaChannelName myWicaChannelName = WicaChannelName.of( "simon:counter:01" );
-      final WicaChannel myWicaChannel = WicaChannel.createFromName( myWicaChannelName );
-      final WicaStream wicaStream = new WicaStream( WicaStreamId.of( "myStream" ), Set.of( myWicaChannel ) );
+      final WicaStream wicaStream = WicaStream.createBuilder()
+            .withId( "myStream" )
+            .withChannelName(myWicaChannelName )
+            .build();
 
       service.startMonitoring( wicaStream );
-      final var initialValue = wicaChannelValueBufferingService.getLatest(myWicaChannelName.getControlSystemName() );
+      final var initialValue = wicaChannelValueBufferingService.getLatest( myWicaChannelName.getControlSystemName() );
       assertThat( initialValue.isConnected(), is( false ) );
    }
 
@@ -131,7 +134,11 @@ class WicaStreamDataRequesterServiceTest
          wicaChannelSet.add( myWicaChannel );
       }
 
-      final WicaStream wicaStream = new WicaStream( WicaStreamId.of( "myStream" ), wicaChannelSet );
+      final WicaStream wicaStream = WicaStream.createBuilder()
+            .withId( "myStream" )
+            .withChannels( wicaChannelSet )
+            .build();
+
       final StopWatch stopWatch = StopWatch.createStarted();
       service.startMonitoring( wicaStream );
       final long elapsedTimeInMicroseconds = stopWatch.getTime(TimeUnit.MICROSECONDS);
