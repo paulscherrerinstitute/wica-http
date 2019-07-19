@@ -3,14 +3,13 @@ package ch.psi.wica.model.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import net.jcip.annotations.Immutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -22,7 +21,10 @@ public class WicaChannel
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
+   @JsonIgnore
    private final WicaChannelName wicaChannelName;
+
+   @JsonIgnore
    private final WicaChannelProperties wicaChannelProperties;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -37,7 +39,7 @@ public class WicaChannel
    private WicaChannel( WicaChannelName wicaChannelName, WicaChannelProperties wicaChannelProperties )
    {
       final Logger logger = LoggerFactory.getLogger(WicaChannel.class );
-      logger.trace( "Creating new WicaChannel with name {} and channel properties {}.", wicaChannelName, wicaChannelProperties );
+      logger.trace( "Creating new WicaChannel with name '{}' and channel properties '{}'.", wicaChannelName, wicaChannelProperties );
       this.wicaChannelName = wicaChannelName;
       this.wicaChannelProperties = wicaChannelProperties;
    }
@@ -94,11 +96,19 @@ public class WicaChannel
 
 /*- Public methods -----------------------------------------------------------*/
 
+   @JsonProperty( "name" )
+   public String getNameAsString()
+   {
+      return wicaChannelName.asString();
+   }
+
+   @JsonIgnore
    public WicaChannelName getName()
    {
       return wicaChannelName;
    }
 
+   @JsonIgnore
    public WicaChannelProperties getProperties()
    {
       return wicaChannelProperties;
@@ -127,7 +137,7 @@ public class WicaChannel
       return Objects.hash(wicaChannelName);
    }
 
-   /*- Private methods ----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
