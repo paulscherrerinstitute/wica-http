@@ -154,7 +154,16 @@ First release which supports new embryonic feature: channel GET and PUT operatio
   for more information.
    - [CTRLIT-7199](https://jira.psi.ch/browse/CTRLIT-7199): Create 1.3.0-RELEASE. 
 
-
+* [1.4.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/1.4.0-RELEASE)
+   - [CTRLIT-7216](https://jira.psi.ch/browse/CTRLIT-7216): Create 1.4.0-RELEASE. 
+   - Big structural refactoring to separate stream and channel into separate packages.
+   - Added support for configuring PSI CA library.
+   - Upgraded to latest SpringBoot release (2.1.6)
+   - Added logging performance improvements (used async loggers) and configurable log test on startup.
+   - Added builders for WicaStream, WicaStreamproperties and WicaChannel.
+   - Communication with the underlying control system is now completely decoupled and uses SpringBoot
+     event system.
+    
 # Project Ideas Completed in Latest Release
   
 1. BUG FIX: delete stream operation now removes id from map so stream cannot be deleted more than once.
