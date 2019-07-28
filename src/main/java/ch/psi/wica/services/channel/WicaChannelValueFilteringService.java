@@ -6,7 +6,6 @@ package ch.psi.wica.services.channel;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelProperties;
 import ch.psi.wica.model.channel.WicaChannelValue;
-import ch.psi.wica.model.stream.WicaStreamProperties;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -42,45 +41,16 @@ public class WicaChannelValueFilteringService
     * @param wicaChannelValues the list of values to filter.
     * @return the filtered output.
     */
-   public List<WicaChannelValue> filterMonitoredValues( WicaChannel wicaChannel, List<WicaChannelValue> wicaChannelValues )
+   public List<WicaChannelValue> filterValues( WicaChannel wicaChannel, List<WicaChannelValue> wicaChannelValues )
    {
-      final var notifiedValuesFilter = this.getMonitoredChannelsFilter(wicaChannel.getProperties() );
-      return notifiedValuesFilter.apply( wicaChannelValues );
-   }
+      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannelValues );
 
-   /**
-    * Filters the supplied list of channel values of according to the properties defined
-    * for channel polling.
-    *
-    * @param wicaChannel  object which provides access to the filtering properties.
-    * @param wicaChannelValues the list of values to filter.
-    * @return the filtered output.
-    */
-   public List<WicaChannelValue> filterPolledValues( WicaChannel wicaChannel, List<WicaChannelValue> wicaChannelValues )
-   {
-      final var polledValuesFilter = WicaChannelValueFilteringService.getPolledChannelsFilter( wicaChannel.getProperties() );
-      return polledValuesFilter.apply( wicaChannelValues );
-
-   }
-
-
-/*- Private methods ----------------------------------------------------------*/
-
-   /**
-    * Returns a filter suitable for channels whose data acquisition mode includes monitoring.
-    *
-    * The filter will be chosen according to the properties configured in the wica channel
-    * properties object.
-    *
-    * @param wicaChannelProperties the channel properties object.
-    * @return the filter.
-    */
-   private WicaChannelValueFilter getMonitoredChannelsFilter( WicaChannelProperties wicaChannelProperties )
-   {
-      Validate.notNull( wicaChannelProperties );
-
+      final WicaChannelProperties wicaChannelProperties = wicaChannel.getProperties();
+      final WicaChannelProperties.FilterType filterType = wicaChannelProperties.getFilterType();
       final WicaChannelValueFilter filter;
-      switch ( wicaChannelProperties.getFilterType() )
+
+      switch ( filterType )
       {
          case ALL_VALUE:
             logger.trace("Creating channel value filter for MONITORED channels with filterType='allValueSampler'");
@@ -89,63 +59,40 @@ public class WicaChannelValueFilteringService
 
          case RATE_LIMITER:
             final int samplingInterval = wicaChannelProperties.getFilterSamplingIntervalInMillis();
-            logger.trace("Creating channel value filter for MONITORED channels with filterType='rate-limiter', samplingInterval='{}'", samplingInterval );
-            filter = new WicaChannelValueRateLimitingFilter(samplingInterval );
+            logger.trace("Creating channel value filter for MONITORED channels with filterType='rate-limiter', samplingInterval='{}'", samplingInterval);
+            filter = new WicaChannelValueRateLimitingFilter(samplingInterval);
             break;
 
          case LAST_N:
             final int numSamples = wicaChannelProperties.getFilterNumSamples();
-            logger.trace("Creating channel value filter for MONITORED channels with filterType='last-n', n='{}'", numSamples );
-            filter = new WicaChannelValueLatestValueFilter(numSamples );
+            logger.trace("Creating channel value filter for MONITORED channels with filterType='last-n', n='{}'", numSamples);
+            filter = new WicaChannelValueLatestValueFilter(numSamples);
             break;
 
          case ONE_IN_M:
             final int cycleLength = wicaChannelProperties.getFilterCycleLength();
-            logger.trace("Creating channel value filter for MONITORED channels with filterType='one-in-m', m='{}'", cycleLength );
-            filter = new WicaChannelValueFixedSamplingCycleFilter( cycleLength );
+            logger.trace("Creating channel value filter for MONITORED channels with filterType='one-in-m', m='{}'", cycleLength);
+            filter = new WicaChannelValueFixedSamplingCycleFilter(cycleLength);
             break;
 
          case CHANGE_FILTERER:
             final double deadband = wicaChannelProperties.getFilterDeadband();
-            logger.trace("Creating channel value filter for MONITORED channels with filterType='changes', deadband='{}'", deadband );
-            filter = new WicaChannelValueNoiseRejectionFilter(deadband );
+            logger.trace("Creating channel value filter for MONITORED channels with filterType='changes', deadband='{}'", deadband);
+            filter = new WicaChannelValueNoiseRejectionFilter(deadband);
             break;
 
          default:
             logger.warn("The filterType parameter was not recognised. Using default (last-n) filter.");
             final int defaultMaxNumberOfSamples = 1;
-            logger.trace("Creating channel value filter for MONITORED channels with filterType='last-n', n='{}'", defaultMaxNumberOfSamples );
-            filter = new WicaChannelValueLatestValueFilter(defaultMaxNumberOfSamples );
+            logger.trace("Creating channel value filter for MONITORED channels with filterType='last-n', n='{}'", defaultMaxNumberOfSamples);
+            filter = new WicaChannelValueLatestValueFilter(defaultMaxNumberOfSamples);
             break;
       }
 
-      return filter;
+      return filter.apply( wicaChannelValues );
    }
 
-
-   /**
-    * Returns a filter suitable for a channels whose data acquisition mode includes polling.
-    *
-    * The filter that will be returned will be a fixed cycle ("one-in-m") sampler
-    * whose cycle length (ie m) will be configured according to the configured
-    * sampling ratio (taken either from the channel properties).
-    *
-    * @param wicaChannelProperties the channel properties object.
-    * @return the filter.
-    */
-   private static WicaChannelValueFilter getPolledChannelsFilter( WicaChannelProperties wicaChannelProperties )
-   {
-      Validate.notNull( wicaChannelProperties );
-
-      // Extract the ratio of number of channel polls per acquired sample
-      final int cycleLength = wicaChannelProperties.getPolledValueSampleRatio();
-
-      // Return the filter
-      logger.trace("Creating channel value filter for POLLED channels with filterType='one-in-m', m='{}'", cycleLength );
-      return new WicaChannelValueFixedSamplingCycleFilter( cycleLength );
-   }
-
-
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

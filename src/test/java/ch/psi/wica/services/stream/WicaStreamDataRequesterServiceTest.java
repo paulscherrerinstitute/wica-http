@@ -3,13 +3,9 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
-import ch.psi.wica.model.channel.WicaChannelName;
-import ch.psi.wica.model.channel.WicaChannelType;
+import ch.psi.wica.model.channel.*;
 import ch.psi.wica.model.stream.WicaStream;
-import ch.psi.wica.controlsystem.event.WicaChannelMetadataBufferingService;
-import ch.psi.wica.controlsystem.event.WicaChannelValueBufferingService;
+import ch.psi.wica.model.stream.WicaStreamProperties;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,6 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -44,10 +41,13 @@ class WicaStreamDataRequesterServiceTest
    private final Logger logger = LoggerFactory.getLogger( WicaStreamDataRequesterServiceTest.class );
 
    @Autowired
-   private WicaChannelMetadataBufferingService wicaChannelMetadataBufferingService;
+   private WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService;
 
    @Autowired
-   private WicaChannelValueBufferingService wicaChannelValueBufferingService;
+   private WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService;
+
+   @Autowired
+   private WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService;
 
    @Autowired
    private WicaStreamDataRequesterService service;
@@ -94,32 +94,72 @@ class WicaStreamDataRequesterServiceTest
    }
 
    @Test
-   void testStartMonitoring_wicaChannelMetadataBufferServiceInitialisedOk()
+   void testStartMonitoring_wicaStreamMetadataCollectorServiceInitialisedOk()
    {
       final WicaChannelName myWicaChannelName = WicaChannelName.of( "simon:counter:01" );
       final WicaChannel myWicaChannel = WicaChannel.createFromName( myWicaChannelName );
       final WicaStream wicaStream = WicaStream.createBuilder()
             .withId( "myStream" )
-            .withChannelName(myWicaChannelName )
+            .withChannelName( myWicaChannelName )
             .build();
 
       service.startMonitoring( wicaStream );
-      final Map<WicaChannel, WicaChannelMetadata> initialMetadata = wicaChannelMetadataBufferingService.get( Set.of(myWicaChannel ) );
-      assertThat( initialMetadata.get( myWicaChannel ).getType(), is( WicaChannelType.UNKNOWN ) );
+      final Map<WicaChannel, WicaChannelMetadata> initialMetadataMap = wicaStreamMetadataCollectorService.get( wicaStream );
+      assertThat( initialMetadataMap.size(), is( 1 ) );
+      assertThat( initialMetadataMap.get( myWicaChannel ).getType(), is( WicaChannelType.UNKNOWN ) );
    }
 
    @Test
-   void testStartMonitoring_wicaChannelValueBufferServiceInitialisedOk()
+   void testStartMonitoring_wicaStreamMonitoredValueCollectorServiceInitialisedOk()
    {
       final WicaChannelName myWicaChannelName = WicaChannelName.of( "simon:counter:01" );
+      final WicaChannel myWicaChannel = WicaChannel.createFromName( myWicaChannelName );
       final WicaStream wicaStream = WicaStream.createBuilder()
             .withId( "myStream" )
-            .withChannelName(myWicaChannelName )
+            .withChannelName( myWicaChannelName )
             .build();
 
+      final Map<WicaChannel, Optional<WicaChannelValue>> preInitialValueMap = wicaStreamMonitoredValueCollectorService.getLatest(wicaStream );
+      assertThat( preInitialValueMap.size(), is( 1 ) );
+      assertThat( preInitialValueMap.containsKey( myWicaChannel ), is( true ) );
+      assertThat( preInitialValueMap.get( myWicaChannel).isPresent(), is( false ) );
+
       service.startMonitoring( wicaStream );
-      final var initialValue = wicaChannelValueBufferingService.getLatest( myWicaChannelName.getControlSystemName() );
-      assertThat( initialValue.isConnected(), is( false ) );
+
+      final Map<WicaChannel, Optional<WicaChannelValue>> initialValueMap = wicaStreamMonitoredValueCollectorService.getLatest(wicaStream );
+      assertThat( initialValueMap.size(), is( 1 ) );
+      assertThat( initialValueMap.containsKey( myWicaChannel ), is( true ) );
+      assertThat( initialValueMap.get( myWicaChannel).isPresent(), is( true ) );
+      assertThat( initialValueMap.get( myWicaChannel ).get().isConnected(), is( false ) );
+   }
+
+   @Test
+   void testStartPolling_wicaStreamPolledValueCollectorServiceInitialisedOk()
+   {
+      final WicaChannelName myWicaChannelName = WicaChannelName.of( "simon:counter:01" );
+      final WicaChannelProperties wicaChannelProperties = WicaChannelProperties.createBuilder()
+            .withDataAcquisitionMode( WicaChannelProperties.DataAcquisitionMode.POLL )
+            .build();
+
+      final WicaChannel myWicaChannel = WicaChannel.createFromNameAndProperties( myWicaChannelName, wicaChannelProperties );
+
+      final WicaStream wicaStream = WicaStream.createBuilder()
+            .withId( "myStream" )
+            .withChannel( myWicaChannel )
+            .build();
+
+      final Map<WicaChannel, Optional<WicaChannelValue>> preFirstValueMap = wicaStreamPolledValueCollectorService.getLatest( wicaStream );
+      assertThat( preFirstValueMap.size(), is( 1 ) );
+      assertThat( preFirstValueMap.containsKey( myWicaChannel ), is( true ) );
+      assertThat( preFirstValueMap.get( myWicaChannel).isPresent(), is( false ) );
+
+      service.startPolling( wicaStream );
+
+      final Map<WicaChannel, Optional<WicaChannelValue>> firstValueMap = wicaStreamPolledValueCollectorService.getLatest( wicaStream );
+      assertThat( firstValueMap.size(), is( 1 ) );
+      assertThat( firstValueMap.containsKey( myWicaChannel ), is( true ) );
+      assertThat( firstValueMap.get( myWicaChannel).isPresent(), is( true ) );
+      assertThat( firstValueMap.get( myWicaChannel ).get().isConnected(), is( false ) );
    }
 
    @CsvSource( { "1", "10", "100", "1000", "10000" })

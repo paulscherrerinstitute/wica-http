@@ -7,7 +7,6 @@ import ch.psi.wica.model.channel.WicaChannelProperties;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamProperties;
 import org.apache.commons.lang3.time.StopWatch;
-
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@SpringBootTest
+@SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT )
 @AutoConfigureMockMvc
 class WicaStreamLoadTest
 {
@@ -45,7 +44,7 @@ class WicaStreamLoadTest
 
    private final Logger logger = LoggerFactory.getLogger( WicaStreamLoadTest.class );
 
-   private final String wicaStreamUri = "https://gfa-wica.psi.ch";
+   private final String wicaStreamUri = "http://localhost:8080";
 
    private static WicaStream lightStream = makeWicaStream( 1 );
    private static WicaStream heavyStream = makeWicaStream( 1000 );
@@ -276,7 +275,7 @@ class WicaStreamLoadTest
    {
       WicaStreamProperties wicaStreamProperties = WicaStreamProperties.createBuilder()
             .withHeartbeatFluxInterval( 15000 )
-            .withChangedValueFluxInterval( 100 )
+            .withMonitoredValueFluxInterval(100 )
             .withPolledValueFluxInterval( 1000 )
             .withDataAcquisitionMode( WicaChannelProperties.DataAcquisitionMode.MONITOR )
             .withPolledValueSamplingRatio( 1 )
@@ -397,7 +396,7 @@ class WicaStreamLoadTest
    {
       WicaStreamProperties wicaStreamProperties = WicaStreamProperties.createBuilder()
             .withHeartbeatFluxInterval( 15000 )
-            .withChangedValueFluxInterval( 100 )
+            .withMonitoredValueFluxInterval(100 )
             .withPolledValueFluxInterval( 1000 )
             .withDataAcquisitionMode(WicaChannelProperties.DataAcquisitionMode.MONITOR)
             .withPolledValueSamplingRatio(1)
@@ -420,7 +419,7 @@ class WicaStreamLoadTest
       logger.trace( "Creating new Stream..." );
 
       final String jsonStreamConfiguration = wicaStream.toJsonString();
-      final ClientResponse postResponse = WebClient.create(wicaStreamUri + "/ca/streams")
+      final ClientResponse postResponse = WebClient.create( wicaStreamUri + "/ca/streams")
             .post()
             .body(BodyInserters.fromObject( jsonStreamConfiguration ) )
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

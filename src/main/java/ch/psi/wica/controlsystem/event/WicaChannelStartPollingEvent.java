@@ -1,47 +1,53 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.model.channel;
+package ch.psi.wica.controlsystem.event;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import ch.psi.wica.model.channel.WicaChannelName;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-class WicaChannelValueTimestampRewriterTest
+public class WicaChannelStartPollingEvent
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private WicaChannelValueTimestampRewriter rewriter;
+   private final WicaChannelName wicaChannelName;
+   private final int pollingIntervalInMillis;
 
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
+
+   public WicaChannelStartPollingEvent( WicaChannelName wicaChannelName, int pollingIntervalInMillis )
+   {
+      final Logger logger = LoggerFactory.getLogger( WicaChannelStartPollingEvent.class);
+      logger.trace("Creating event: WicaChannelStartPollingEvent");
+      Validate.notNull( wicaChannelName );
+
+      this.wicaChannelName = wicaChannelName;
+      this.pollingIntervalInMillis = pollingIntervalInMillis;
+   }
+
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   @BeforeEach
-   void setUp()
+   public WicaChannelName get()
    {
-      rewriter = new WicaChannelValueTimestampRewriter();
+      return wicaChannelName;
    }
 
-   @Test
-   void test()
+   public int getPollingIntervalInMillis()
    {
-      final var strValue = WicaChannelValue.createChannelValueConnected("abc" );
-      final LocalDateTime newTimestamp = LocalDateTime.now();
-      final WicaChannelValue.WicaChannelValueConnectedString newValue = ( WicaChannelValue.WicaChannelValueConnectedString) rewriter.rewrite( strValue, newTimestamp );
-      assertEquals( newTimestamp, newValue.getDataSourceTimestamp() );
+      return pollingIntervalInMillis;
    }
+
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

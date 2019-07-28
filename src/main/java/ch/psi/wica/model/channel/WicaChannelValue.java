@@ -29,7 +29,6 @@ public abstract class WicaChannelValue  extends WicaChannelData
 /*- Private attributes -------------------------------------------------------*/
 
    private final boolean connected;
-   private final LocalDateTime wicaServerTimestamp;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -37,8 +36,8 @@ public abstract class WicaChannelValue  extends WicaChannelData
 
    private WicaChannelValue( boolean connected, LocalDateTime wicaServerTimestamp )
    {
+      super( wicaServerTimestamp );
       this.connected = connected;
-      this.wicaServerTimestamp = Validate.notNull( wicaServerTimestamp, "wicaServerTimestamp cannot be null" );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -125,13 +124,13 @@ public abstract class WicaChannelValue  extends WicaChannelData
    @JsonProperty( "wsts" )
    public LocalDateTime getWicaServerTimestamp()
    {
-      return this.wicaServerTimestamp;
+      return super.getWicaServerTimestamp();
    }
 
    @JsonProperty( "wsts-alt" )
    public long getWicaServerTimestampAlt()
    {
-      return this.wicaServerTimestamp.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli();
+      return super.getWicaServerTimestamp().atOffset(ZoneOffset.UTC).toInstant().toEpochMilli();
    }
 
 /*- Private methods ----------------------------------------------------------*/
@@ -182,12 +181,14 @@ public abstract class WicaChannelValue  extends WicaChannelData
          return wicaChannelAlarmStatus.getStatusCode();
       }
 
+      @SuppressWarnings( "WeakerAccess" )
       @JsonIgnore
       public WicaChannelAlarmSeverity getWicaAlarmSeverity()
       {
          return wicaChannelAlarmSeverity;
       }
 
+      @SuppressWarnings( "WeakerAccess" )
       @JsonIgnore
       public WicaChannelAlarmStatus getWicaChannelAlarmStatus()
       {

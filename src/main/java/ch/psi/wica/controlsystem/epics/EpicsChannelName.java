@@ -8,7 +8,7 @@ import ch.psi.wica.model.app.ControlSystemName;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-class EpicsChannelName extends ControlSystemName
+public class EpicsChannelName extends ControlSystemName
 {
 
 /*- Public attributes --------------------------------------------------------*/

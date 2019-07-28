@@ -251,10 +251,10 @@ const WicaRenderingProperties = Object.freeze ({
  * JS Object that defines the properties and default values supported by a WicaStream.
  *
  * @property {number} [heartbeat=15000] - The interval in milliseconds between heartbeat messages.
- * @property {number} [changeint=100] The interval in milliseconds between channel value
+ * @property {number} [monflux=100] The interval in milliseconds between channel value
  *     messages where the data acquisition mode is monitoring and where the value has changed
  *     since the previous notification message.
- * @property {number} [pollint=100] The interval in milliseconds between channel value messages
+ * @property {number} [pollflux=100] The interval in milliseconds between channel value messages
  *     where the data acquisition mode is polling.
  * @property {number} [daqmode=monitor] - The default data acquisition mode.
  * @property {number} [pollratio=1] - The default number of polling cycles before a sample is taken.
@@ -266,8 +266,8 @@ const WicaRenderingProperties = Object.freeze ({
  */
 const WicaStreamProperties = Object.freeze ({
     heartbeat: 15000,
-    changeint: 100,
-    pollint: 1000,
+    monflux: 100,
+    pollflux: 1000,
     daqmode: "monitor",
     pollratio: 1,
     prec: 6,

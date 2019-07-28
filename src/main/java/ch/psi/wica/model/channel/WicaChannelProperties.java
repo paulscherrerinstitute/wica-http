@@ -34,7 +34,7 @@ public class WicaChannelProperties
     * Default value for the ratio of polling
     * if the property is not explicitly set by configuration on the client.
     */
-   public static final int DEFAULT_POLLED_VALUE_SAMPLE_RATIO = 10;
+   public static final int DEFAULT_POLLING_INTERVAL = 100;
 
    /**
     * Default value for the numeric precision that will be used when
@@ -88,7 +88,7 @@ public class WicaChannelProperties
    private static final ObjectMapper objectMapper = new ObjectMapper();
 
    private final DataAcquisitionMode dataAcquisitionMode;
-   private final Integer polledValueSamplingRatio;
+   private final Integer pollingIntervalInMillis;
    private final Integer numericPrecision;
    private final FilterType filterType ;
    private final Integer filterNumSamples;
@@ -104,7 +104,7 @@ public class WicaChannelProperties
    public WicaChannelProperties()
    {
       this( DEFAULT_DATA_ACQUISITION_MODE,
-            DEFAULT_POLLED_VALUE_SAMPLE_RATIO,
+            DEFAULT_POLLING_INTERVAL,
             DEFAULT_FIELDS_OF_INTEREST,
             DEFAULT_NUMERIC_PRECISION,
             DEFAULT_FILTER_TYPE,
@@ -115,7 +115,7 @@ public class WicaChannelProperties
    }
 
    public WicaChannelProperties( @JsonProperty( "daqmode"   ) DataAcquisitionMode dataAcquisitionMode,
-                                 @JsonProperty( "pollratio" ) Integer polledValueSamplingRatio,
+                                 @JsonProperty( "pollint" ) Integer pollingIntervalInMillis,
                                  @JsonProperty( "fields"    ) String fieldsOfInterest,
                                  @JsonProperty( "prec"      ) Integer numericPrecision,
                                  @JsonProperty( "filter"    ) FilterType filterType,
@@ -125,7 +125,7 @@ public class WicaChannelProperties
                                  @JsonProperty( "deadband"  ) Double filterDeadband )
    {
       this.dataAcquisitionMode            = captureOrDefault( dataAcquisitionMode, DEFAULT_DATA_ACQUISITION_MODE );
-      this.polledValueSamplingRatio       = captureOrDefault( polledValueSamplingRatio, DEFAULT_POLLED_VALUE_SAMPLE_RATIO );
+      this.pollingIntervalInMillis        = captureOrDefault( pollingIntervalInMillis, DEFAULT_POLLING_INTERVAL);
       this.numericPrecision               = captureOrDefault( numericPrecision, DEFAULT_NUMERIC_PRECISION );
       this.filterType                     = captureOrDefault( filterType, DEFAULT_FILTER_TYPE );
       this.filterNumSamples               = captureOrDefault( filterNumSamples, DEFAULT_FILTER_NUM_SAMPLES );
@@ -144,7 +144,7 @@ public class WicaChannelProperties
     * The following keys and values are supported:
     *
     * <code>daqmode</code>
-    * <code>pollratio</code>
+    * <code>pollint</code>
     * <code>fields</code>
     * <code>prec</code>
     * <code>filter</code>
@@ -218,9 +218,9 @@ public class WicaChannelProperties
    }
 
    @JsonIgnore
-   public int getPolledValueSampleRatio()
+   public int getPollingIntervalInMillis()
    {
-      return polledValueSamplingRatio;
+      return pollingIntervalInMillis;
    }
 
    @JsonIgnore
@@ -258,7 +258,7 @@ public class WicaChannelProperties
    {
       return "WicaChannelProperties{" +
             "  dataAcquisitionMode=" + dataAcquisitionMode +
-            ", polledValueSamplingRatio=" + polledValueSamplingRatio +
+            ", pollingIntervalInMillis=" + pollingIntervalInMillis +
             ", numericPrecision=" + numericPrecision +
             ", filterType=" + filterType +
             ", filterNumSamples=" + filterNumSamples +
@@ -277,7 +277,7 @@ public class WicaChannelProperties
       if ( !(o instanceof WicaChannelProperties) ) return false;
       WicaChannelProperties that = (WicaChannelProperties) o;
       return dataAcquisitionMode == that.dataAcquisitionMode &&
-            Objects.equals(polledValueSamplingRatio, that.polledValueSamplingRatio) &&
+            Objects.equals( pollingIntervalInMillis, that.pollingIntervalInMillis) &&
             Objects.equals(numericPrecision, that.numericPrecision) &&
             filterType == that.filterType &&
             Objects.equals(filterNumSamples, that.filterNumSamples) &&
@@ -291,7 +291,7 @@ public class WicaChannelProperties
    @Override
    public int hashCode()
    {
-      return Objects.hash(dataAcquisitionMode, polledValueSamplingRatio, numericPrecision, filterType, filterNumSamples, filterCycleLength, filterSamplingIntervalInMillis, filterDeadband, fieldsOfInterest);
+      return Objects.hash(dataAcquisitionMode, pollingIntervalInMillis, numericPrecision, filterType, filterNumSamples, filterCycleLength, filterSamplingIntervalInMillis, filterDeadband, fieldsOfInterest);
    }
 
 /*- Private methods ----------------------------------------------------------*/
@@ -312,7 +312,7 @@ public class WicaChannelProperties
    public static class Builder
    {
       private DataAcquisitionMode dataAcquisitionMode = DEFAULT_DATA_ACQUISITION_MODE;
-      private int polledValueSamplingRatio = DEFAULT_POLLED_VALUE_SAMPLE_RATIO;
+      private int pollingIntervalInMillis = DEFAULT_POLLING_INTERVAL;
       private int numericPrecision = DEFAULT_NUMERIC_PRECISION;
       private FilterType filterType = DEFAULT_FILTER_TYPE;
       private int filterNumSamples = DEFAULT_FILTER_NUM_SAMPLES;
@@ -330,9 +330,9 @@ public class WicaChannelProperties
          return this;
       }
 
-      public Builder withPolledValueSamplingRatio( int polledValueSamplingRatio )
+      public Builder withPollingInterval( int pollingIntervalInMillis )
       {
-         this.polledValueSamplingRatio = polledValueSamplingRatio;
+         this.pollingIntervalInMillis = pollingIntervalInMillis;
          return this;
       }
 
@@ -381,7 +381,7 @@ public class WicaChannelProperties
       public WicaChannelProperties build()
       {
          return new WicaChannelProperties( dataAcquisitionMode,
-                                           polledValueSamplingRatio,
+                                           pollingIntervalInMillis,
                                            fieldsOfInterest,
                                            numericPrecision,
                                            filterType,

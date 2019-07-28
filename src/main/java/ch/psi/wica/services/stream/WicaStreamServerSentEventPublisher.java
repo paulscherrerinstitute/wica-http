@@ -9,7 +9,6 @@ import ch.psi.wica.infrastructure.channel.WicaChannelValueMapSerializer;
 import ch.psi.wica.infrastructure.stream.WicaServerSentEventBuilder;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
-import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamId;
 import ch.psi.wica.model.stream.WicaStreamProperties;
@@ -22,9 +21,9 @@ import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 @ThreadSafe
 public class WicaStreamServerSentEventPublisher
@@ -33,11 +32,17 @@ public class WicaStreamServerSentEventPublisher
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
+   private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
+
    private final Logger logger = LoggerFactory.getLogger( WicaStreamServerSentEventPublisher.class );
    private final WicaStream wicaStream;
    private final WicaStreamId wicaStreamId;
    private final WicaStreamProperties wicaStreamProperties;
-   private final WicaStreamDataCollectorService wicaStreamDataCollectorService;
+
+   private final WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService;
+   private final WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService;
+   private final WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService;
+
    private final WicaChannelMetadataMapSerializer wicaChannelMetadataMapSerializer;
    private final WicaChannelValueMapSerializer wicaChannelValueMapSerializer;
    private final Flux<ServerSentEvent<String>> combinedFlux;
@@ -47,19 +52,15 @@ public class WicaStreamServerSentEventPublisher
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   /**
-    * Constructs a new instance that will work with the properties of the
-    * specified stream using the data from the specified stream data supplier.
-    *
-    * @param wicaStream the stream ID.
-    *
-    * @param wicaStreamDataCollectorService reference to the service which
-    *     provides the data for this publisher.
-    */
-   WicaStreamServerSentEventPublisher( WicaStream wicaStream, WicaStreamDataCollectorService wicaStreamDataCollectorService )
+   WicaStreamServerSentEventPublisher( WicaStream wicaStream,
+                                       WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService,
+                                       WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService,
+                                       WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService )
    {
       this.wicaStream = Validate.notNull( wicaStream );
-      this.wicaStreamDataCollectorService = Validate.notNull(wicaStreamDataCollectorService);
+      this.wicaStreamMetadataCollectorService = Validate.notNull( wicaStreamMetadataCollectorService );
+      this.wicaStreamMonitoredValueCollectorService = Validate.notNull( wicaStreamMonitoredValueCollectorService );
+      this.wicaStreamPolledValueCollectorService = Validate.notNull( wicaStreamPolledValueCollectorService );
 
       this.wicaStreamId = Validate.notNull( wicaStream.getWicaStreamId() );
       this.wicaStreamProperties = Validate.notNull( wicaStream.getWicaStreamProperties() );
@@ -150,7 +151,7 @@ public class WicaStreamServerSentEventPublisher
     * Creates the CHANNEL METADATA FLUX.
     *
     * The purpose of this flux is to publish additional information about the nature of the
-    * underlying EPICS channel. This may include the channel's type and where relevant the
+    * underlying Wica Channel. This may include the channel's type and where relevant the
     * channel's display, alarm and operator limits.
     *
     * This flux runs just once and delivers its payload on initial connection to the stream.
@@ -162,7 +163,7 @@ public class WicaStreamServerSentEventPublisher
       return Flux.range( 1, 1 )
             .map( l -> {
                logger.trace( "channel-metadata flux with id: '{}' is publishing new SSE...", wicaStreamId  );
-               final Map<WicaChannel, WicaChannelMetadata> channelMetadataMap = wicaStreamDataCollectorService.getMetadataMap(wicaStream );
+               final Map<WicaChannel, WicaChannelMetadata> channelMetadataMap = wicaStreamMetadataCollectorService.get( wicaStream );
                final String jsonMetadataString = wicaChannelMetadataMapSerializer.serialize( channelMetadataMap );
                return WicaServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build ( wicaStreamId, jsonMetadataString );
             } )
@@ -172,60 +173,38 @@ public class WicaStreamServerSentEventPublisher
       //.log();
    }
 
+
    /**
-    * Create the CHANNEL INITIAL VALUE FLUX.
+    * Create the WICA CHANNEL MONITORED VALUES FLUX.
     *
-    * The purpose of this flux is to publish the last received value for ALL channels
+    * The purpose of this flux is to publish the latest polled values for ALL channels
     * in the stream.
     *
     * This flux runs just once and delivers its payload on initial connection to the stream.
     *
     * @return the flux.
     */
-   private Flux<ServerSentEvent<String>> createChannelInitialValueFlux()
+   private Flux<ServerSentEvent<String>> createMonitoredValueFlux()
    {
-      return Flux.range(1, 1)
+      final AtomicReference<LocalDateTime> lastUpdateTime = new AtomicReference<>( LONG_AGO );
+      return Flux.interval( Duration.ofMillis( wicaStreamProperties.getMonitoredValueFluxIntervalInMillis() ) )
             .map(l -> {
-               logger.trace("channel-value flux with id: '{}' is publishing new SSE...", wicaStreamId );
-               final Map<WicaChannel, List<WicaChannelValue>> map = wicaStreamDataCollectorService.getInitialValueMap( wicaStream );
+               logger.trace("channel-value-poll flux with id: '{}' is publishing new SSE...", wicaStreamId );
+               final var map = wicaStreamMonitoredValueCollectorService.get( wicaStream, lastUpdateTime.getAndSet(LocalDateTime.now() ) );
                final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_VALUES_INITIAL.build( wicaStreamId, jsonServerSentEventString );
+               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_MONITORED_VALUES.build( wicaStreamId, jsonServerSentEventString );
             } )
-            .doOnComplete( () -> logger.warn( "channel-initial-values flux with id: '{}' completed.", wicaStreamId ))
-            .doOnCancel( () -> logger.warn("channel-initial-values flux with id: '{}' was cancelled.", wicaStreamId))
-            .doOnError( (e) -> logger.warn( "channel-initial-values flux with id: '{}' had error.", wicaStreamId, e ));
+            .doOnComplete( () -> logger.warn( "channel-value-poll flux with id: '{}' completed.", wicaStreamId ))
+            .doOnCancel( () -> logger.warn("channel-value-poll flux with id: '{}' was cancelled.", wicaStreamId ))
+            .doOnError( (e) -> logger.warn( "channel-value-poll flux with id: '{}' had error.", wicaStreamId, e ));
       //.log();
    }
 
-   /**
-    * Creates the CHANNEL CHANGED VALUE FLUX.
-    *
-    * The purpose of this flux is to publish the last received values of any channels
-    * which have received monitor notifications since the last update.
-    *
-    * This flux runs with a periodicity defined by the channelValueChangeFluxReportingInterval.
-    *
-    * @return the flux.
-    */
-   private Flux<ServerSentEvent<String>> createChangedValueFlux()
-   {
-      return Flux.interval( Duration.ofMillis( wicaStreamProperties.getChangedValueFluxIntervalInMillis() ) )
-            .map( l -> {
-               logger.trace( "channel-value-change flux with id: '{}' is publishing new SSE...", wicaStreamId );
-               final Map<WicaChannel, List<WicaChannelValue>> map = wicaStreamDataCollectorService.getChangedValueMap(wicaStream );
-               final var jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_CHANGED_VALUES.build( wicaStreamId, jsonServerSentEventString );
-            } )
-            .doOnComplete( () -> logger.warn( "channel-value-change flux with id: '{}' completed.", wicaStreamId ))
-            .doOnCancel( () -> logger.warn( "channel-value-change flux with id: '{}' was cancelled.", wicaStreamId ) )
-            .doOnError( (e) -> logger.warn( "channel-value-change flux with id: '{}' had error.", wicaStreamId, e ));
-      //.log();
-   }
 
    /**
-    * Create the CHANNEL POLLED VALUES FLUX.
+    * Create the WICA CHANNEL POLLED VALUES FLUX.
     *
-    * The purpose of this flux is to publish the last received value for ALL channels
+    * The purpose of this flux is to publish the latest polled values for ALL channels
     * in the stream.
     *
     * This flux runs just once and delivers its payload on initial connection to the stream.
@@ -234,12 +213,13 @@ public class WicaStreamServerSentEventPublisher
     */
    private Flux<ServerSentEvent<String>> createPolledValueFlux()
    {
+      final AtomicReference<LocalDateTime> lastUpdateTime = new AtomicReference<>( LONG_AGO );
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getPolledValueFluxIntervalInMillis() ) )
             .map(l -> {
                logger.trace("channel-value-poll flux with id: '{}' is publishing new SSE...", wicaStreamId );
-               var map = wicaStreamDataCollectorService.getPolledValueMap(wicaStream );
+               final var map = wicaStreamPolledValueCollectorService.get( wicaStream, lastUpdateTime.getAndSet( LocalDateTime.now() ) );
                final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_POLLED_VALUES.build(wicaStreamId, jsonServerSentEventString );
+               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_POLLED_VALUES.build( wicaStreamId, jsonServerSentEventString );
             } )
             .doOnComplete( () -> logger.warn( "channel-value-poll flux with id: '{}' completed.", wicaStreamId ))
             .doOnCancel( () -> logger.warn("channel-value-poll flux with id: '{}' was cancelled.", wicaStreamId ))
@@ -258,14 +238,12 @@ public class WicaStreamServerSentEventPublisher
    {
       final Flux<ServerSentEvent<String>> heartbeatFlux = createHeartbeatFlux();
       final Flux<ServerSentEvent<String>> metadataFlux = createMetadataFlux();
-      final Flux<ServerSentEvent<String>> initialValueFlux = createChannelInitialValueFlux();
-      final Flux<ServerSentEvent<String>> changedValueFlux = createChangedValueFlux();
+      final Flux<ServerSentEvent<String>> monitoredValueFlux = createMonitoredValueFlux();
       final Flux<ServerSentEvent<String>> polledValueFlux = createPolledValueFlux();
 
       // Create a single Flux which merges all of the above.
       return heartbeatFlux.mergeWith( metadataFlux )
-            .mergeWith( initialValueFlux )
-            .mergeWith( changedValueFlux )
+            .mergeWith( monitoredValueFlux )
             .mergeWith( polledValueFlux )
             .doOnComplete( () -> logger.warn( "combined with id: '{}' flux completed.", wicaStreamId ))
             .doOnCancel( () -> logger.warn("combined flux with id '{}' was cancelled.", wicaStreamId ))

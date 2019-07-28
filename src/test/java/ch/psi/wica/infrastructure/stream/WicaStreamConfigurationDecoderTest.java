@@ -10,17 +10,15 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -36,7 +34,7 @@ class WicaStreamConfigurationDecoderTest
    private final Logger logger = LoggerFactory.getLogger( WicaStreamConfigurationDecoderTest.class );
 
    private static final String simpleStreamConfiguration =
-         "{ \"props\": { \"prec\": 29, \"heartbeat\": 50, \"changeint\": 40 }," +
+         "{ \"props\": { \"prec\": 29, \"heartbeat\": 50, \"monflux\": 40 }," +
            "\"channels\": [ { \"name\": \"MHC1:IST:2\", \"props\": { \"filter\": \"changes\", \"deadband\": 19 } }," +
                            "{ \"name\": \"MYC2:IST:2\", \"props\": { \"filter\": \"changes\", \"deadband\": 10 } }," +
                            "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filter\": \"rate-limiter\", \"interval\": 17 } } ] }";
@@ -137,11 +135,11 @@ class WicaStreamConfigurationDecoderTest
                "{\"name\":\"XPROSCAN:STAB:2\"}" +
                "],\"props\":{" +
                "\"heartbeat\":15000," +
-               "\"changeint\":100," +
-               "\"pollint\":1000," +
+               "\"monflux\":100," +
+               "\"pollflux\":1000," +
                "\"daqmode\":" +
                "\"monitor\"," +
-               "\"pollratio\":1," +
+               "\"pollint\":100," +
                "\"prec\":6," +
                "\"fields\":" +
                "\"val;sevr\"}" +
@@ -155,7 +153,7 @@ class WicaStreamConfigurationDecoderTest
    @Test
    void testGoodDecodeSequence1()
    {
-      final String testString = "{ \"props\": { \"prec\": 29, \"heartbeat\": 50, \"changeint\": 40 }," +
+      final String testString = "{ \"props\": { \"prec\": 29, \"heartbeat\": 50, \"monflux\": 40 }," +
             "\"channels\": [ { \"name\": \"MHC1:IST:2\", \"props\": { \"filter\": \"changes\", \"deadband\": 19 } }," +
                             "{ \"name\": \"MYC2:IST:2\", \"props\": { \"filter\": \"changes\", \"deadband\": 10 } }," +
                             "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filter\": \"rate-limiter\", \"interval\": 17 } } ] }";
@@ -164,7 +162,7 @@ class WicaStreamConfigurationDecoderTest
       final var streamProps = decoder.getWicaStreamProperties();
 
       assertThat (streamProps.getHeartbeatFluxIntervalInMillis(), is(50 ) );
-      assertThat( streamProps.getChangedValueFluxIntervalInMillis(), is( 40 ) );
+      assertThat(streamProps.getMonitoredValueFluxIntervalInMillis(), is(40 ) );
       assertThat( decoder.getWicaChannels().size(), is( 3 ) );
 
       final Set<WicaChannel> channels = decoder.getWicaChannels();
@@ -193,12 +191,12 @@ class WicaStreamConfigurationDecoderTest
          "{\"name\":\"ca://SLGBV-LENG-BUV2_CS:VAL_GET\"}," +
          "{\"name\":\"ca://SLG-D-MPTEST3:FITCALC.VALN.FTVL\"}" +
       "]," +
-          "\"props\":{\"heartbeat\":15000,\"changeint\":100,\"pollint\":1000,\"daqmode\":\"monitor\",\"pollratio\":1,\"prec\":6,\"fields\":\"val;sevr\"}}";
+          "\"props\":{\"heartbeat\":15000,\"monflux\":100,\"pollflux\":1000,\"daqmode\":\"monitor\",\"pollint\":100,\"prec\":6,\"fields\":\"val;sevr\"}}";
 
       final WicaStreamConfigurationDecoder decoder = new WicaStreamConfigurationDecoder( testString );
       final var streamProps = decoder.getWicaStreamProperties();
       assertThat( streamProps.getHeartbeatFluxIntervalInMillis(), is(15000 ) );
-      assertThat( streamProps.getChangedValueFluxIntervalInMillis(), is( 100 ) );
+      assertThat(streamProps.getMonitoredValueFluxIntervalInMillis(), is(100 ) );
       assertThat( decoder.getWicaChannels().size(),is (4 ) );
       final Set<WicaChannel> channels = decoder.getWicaChannels();
       channels.forEach( c -> {

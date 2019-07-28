@@ -37,7 +37,7 @@ import java.util.function.Consumer;
  */
 @Service
 @ThreadSafe
-public class EpicsChannelMonitorService implements AutoCloseable
+public class EpicsChannelMonitoringService implements AutoCloseable
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -50,7 +50,7 @@ public class EpicsChannelMonitorService implements AutoCloseable
    private final Map<EpicsChannelName,Channel> channels = new HashMap<>();
    private final Map<EpicsChannelName,Monitor> monitors = new HashMap<>();
 
-   private final Logger logger = LoggerFactory.getLogger( EpicsChannelMonitorService.class );
+   private final Logger logger = LoggerFactory.getLogger(EpicsChannelMonitoringService.class );
    private final Context caContext;
    private final EpicsChannelConnectionChangeSubscriber epicsChannelConnectionChangeSubscriber;
    private final EpicsChannelMetadataGetter epicsChannelMetadataGetter;
@@ -70,12 +70,12 @@ public class EpicsChannelMonitorService implements AutoCloseable
     * @param epicsChannelValueGetter the metadata publisher.
     * @param epicsChannelValueChangeSubscriber the value publisher.
     */
-   public EpicsChannelMonitorService( @Value( "${wica.epics-ca-library-monitor-notifier-impl}") String  epicsCaLibraryMonitorNotifierImpl,
-                                      @Value( "${wica.epics-ca-library-debug-level}") int epicsCaLibraryDebugLevel,
-                                      @Autowired EpicsChannelConnectionChangeSubscriber epicsChannelConnectionChangeSubscriber,
-                                      @Autowired EpicsChannelMetadataGetter epicsChannelMetadataGetter,
-                                      @Autowired EpicsChannelValueGetter epicsChannelValueGetter,
-                                      @Autowired EpicsChannelValueChangeSubscriber epicsChannelValueChangeSubscriber )
+   public EpicsChannelMonitoringService( @Value( "${wica.epics-ca-library-monitor-notifier-impl}") String  epicsCaLibraryMonitorNotifierImpl,
+                                         @Value( "${wica.epics-ca-library-debug-level}") int epicsCaLibraryDebugLevel,
+                                         @Autowired EpicsChannelConnectionChangeSubscriber epicsChannelConnectionChangeSubscriber,
+                                         @Autowired EpicsChannelMetadataGetter epicsChannelMetadataGetter,
+                                         @Autowired EpicsChannelValueGetter epicsChannelValueGetter,
+                                         @Autowired EpicsChannelValueChangeSubscriber epicsChannelValueChangeSubscriber )
    {
       logger.debug( "'{}' - constructing new EpicsChannelMonitorService instance...", this );
 

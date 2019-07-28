@@ -3,7 +3,6 @@ package ch.psi.wica;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -38,7 +36,7 @@ class WicaApplicationTest
 /*- Public methods -----------------------------------------------------------*/
 
    @Test
-   void contextLoads() throws Exception
+   void testApplicationContextLoads()
    {
       // checks that the environment starts up correctly !
    }
@@ -69,37 +67,6 @@ class WicaApplicationTest
 
 
 /*- Private methods ----------------------------------------------------------*/
-
-   private void mylog( String logLevel, String format, Object ...args )
-   {
-      switch( logLevel )
-      {
-         case "TRACE":
-            logger.trace( "trace");
-            break;
-
-         case "DEBUG":
-            logger.debug( format, args );
-            break;
-
-         case "INFO":
-            logger.info( format, args );
-            break;
-
-         case "WARN":
-            logger.warn( format, args );
-            break;
-
-         case "ERROR":
-            logger.error( format, args );
-            break;
-
-         default:
-            logger.error( "Unrecognised log level" );
-            break;
-      }
-   }
-
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

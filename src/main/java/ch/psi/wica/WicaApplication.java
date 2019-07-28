@@ -134,13 +134,13 @@ public class WicaApplication
 /*- Public methods -----------------------------------------------------------*/
 /*- Package-level methods ----------------------------------------------------*/
 
-	void testLogging( String logLevel, int durationInMillis )
+	void testLogging( String logLevel, int testDurationInMillis )
 	{
 		log( "INFO", "Starting logging test..." );
 
 		final StopWatch stopWatch = StopWatch.createStarted();
 		long loopCounter = 0;
-		while( stopWatch.getTime(TimeUnit.MILLISECONDS ) < durationInMillis  )
+		while( stopWatch.getTime(TimeUnit.MILLISECONDS ) < testDurationInMillis  )
 		{
 			log( logLevel, "{}: Logging Test Iteration: {}: This is a test.", logLevel, loopCounter++ );
 		}

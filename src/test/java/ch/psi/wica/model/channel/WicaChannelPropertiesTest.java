@@ -8,9 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -32,7 +32,7 @@ class WicaChannelPropertiesTest
    {
       final WicaChannelProperties props = WicaChannelProperties.of("{}" );
       assertThat( props.getDataAcquisitionMode(), is( WicaChannelProperties.DEFAULT_DATA_ACQUISITION_MODE ) );
-      assertThat( props.getPolledValueSampleRatio(), is( WicaChannelProperties.DEFAULT_POLLED_VALUE_SAMPLE_RATIO ) );
+      assertThat( props.getPollingIntervalInMillis(), is( WicaChannelProperties.DEFAULT_POLLING_INTERVAL) );
       assertThat( props.getFieldsOfInterest(), is( Set.of( WicaChannelProperties.DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) ) );
       assertThat( props.getNumericPrecision(), is( WicaChannelProperties.DEFAULT_NUMERIC_PRECISION ) );
       assertThat( props.getFilterType(), is( WicaChannelProperties.DEFAULT_FILTER_TYPE ) );
@@ -48,7 +48,7 @@ class WicaChannelPropertiesTest
    {
       final WicaChannelProperties props = WicaChannelProperties.of( "{}" );
       assertThat( props.getDataAcquisitionMode(), is( WicaChannelProperties.DEFAULT_DATA_ACQUISITION_MODE ) );
-      assertThat( props.getPolledValueSampleRatio(), is( WicaChannelProperties.DEFAULT_POLLED_VALUE_SAMPLE_RATIO ) );
+      assertThat( props.getPollingIntervalInMillis(), is( WicaChannelProperties.DEFAULT_POLLING_INTERVAL) );
       assertThat( props.getFieldsOfInterest(), is( Set.of( WicaChannelProperties.DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) ) );
       assertThat( props.getNumericPrecision(), is( WicaChannelProperties.DEFAULT_NUMERIC_PRECISION ) );
       assertThat( props.getFilterType(), is( WicaChannelProperties.DEFAULT_FILTER_TYPE ) );
@@ -62,7 +62,7 @@ class WicaChannelPropertiesTest
    void testOf_AllFieldsPresent_buildsExpectedObject()
    {
       final String inputString = "{" + "\"daqmode\""   + ":" + "\"poll\"" + "," +
-                                       "\"pollratio\"" + ":" + 33 + "," +
+                                       "\"pollint\""   + ":" + 33 + "," +
                                        "\"fields\""    + ":" + "\"abc;def\"" + "," +
                                        "\"prec\""      + ":" + 9 + "," +
                                        "\"filter\""    + ":" + "\"last-n\"" + "," +
@@ -74,7 +74,7 @@ class WicaChannelPropertiesTest
 
       final WicaChannelProperties props = WicaChannelProperties.of( inputString );
       assertThat( props.getDataAcquisitionMode(), is( WicaChannelProperties.DataAcquisitionMode.POLL) );
-      assertThat( props.getPolledValueSampleRatio(), is( 33 ) );
+      assertThat( props.getPollingIntervalInMillis(), is( 33 ) );
       assertThat( props.getFieldsOfInterest(), is( Set.of( "abc", "def") ) );
       assertThat( props.getNumericPrecision(), is( 9 ) );
       assertThat( props.getFilterType(), is( WicaChannelProperties.FilterType.LAST_N) );
@@ -90,7 +90,7 @@ class WicaChannelPropertiesTest
       final String inputString = "{" + "\"daqmode\""   + ":" + "\"poll\"" + "," + "\"n\"" + ":" + 14 + "}";
       final WicaChannelProperties props = WicaChannelProperties.of( inputString );
       assertThat( props.getDataAcquisitionMode(), is(WicaChannelProperties.DataAcquisitionMode.POLL) );
-      assertThat( props.getPolledValueSampleRatio(), is( WicaChannelProperties.DEFAULT_POLLED_VALUE_SAMPLE_RATIO ) );
+      assertThat( props.getPollingIntervalInMillis(), is( WicaChannelProperties.DEFAULT_POLLING_INTERVAL) );
       assertThat( props.getFieldsOfInterest(), is( Set.of( WicaChannelProperties.DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) ) );
       assertThat( props.getNumericPrecision(), is( WicaChannelProperties.DEFAULT_NUMERIC_PRECISION ) );
       assertThat( props.getFilterType(), is( WicaChannelProperties.DEFAULT_FILTER_TYPE ) );
@@ -105,7 +105,7 @@ class WicaChannelPropertiesTest
    {
       final WicaChannelProperties props = WicaChannelProperties.createBuilder()
             .withDataAcquisitionMode(WicaChannelProperties.DataAcquisitionMode.POLL)
-            .withPolledValueSamplingRatio( 33 )
+            .withPollingInterval(33 )
             .withFieldsOfInterest( "abc;def" )
             .withNumericPrecision( 9 )
             .withFilterType(WicaChannelProperties.FilterType.LAST_N )
@@ -116,7 +116,7 @@ class WicaChannelPropertiesTest
             .build();
 
       assertThat( props.getDataAcquisitionMode(), is(WicaChannelProperties.DataAcquisitionMode.POLL) );
-      assertThat( props.getPolledValueSampleRatio(), is( 33 ) );
+      assertThat( props.getPollingIntervalInMillis(), is( 33 ) );
       assertThat( props.getFieldsOfInterest(), is( Set.of( "abc", "def") ) );
       assertThat( props.getNumericPrecision(), is( 9 ) );
       assertThat( props.getFilterType(), is( WicaChannelProperties.FilterType.LAST_N) );
@@ -129,8 +129,8 @@ class WicaChannelPropertiesTest
    @Test
    void testOf_InvalidValueRealInsteadOfInteger_GetsTruncatedToInteger()
    {
-      final WicaChannelProperties props = WicaChannelProperties.of( "{" + "\"pollratio\"" + ":" + 99.99 + "}" );
-      assertThat( props.getPolledValueSampleRatio(), is( 99 ) );
+      final WicaChannelProperties props = WicaChannelProperties.of( "{" + "\"pollint\"" + ":" + 99.99 + "}" );
+      assertThat( props.getPollingIntervalInMillis(), is( 99 ) );
    }
 
    @Test

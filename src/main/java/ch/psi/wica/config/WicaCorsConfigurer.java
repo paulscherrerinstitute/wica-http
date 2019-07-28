@@ -6,6 +6,7 @@ package ch.psi.wica.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -23,8 +24,18 @@ class WicaCorsConfigurer implements WebMvcConfigurer
 
    private final Logger logger = LoggerFactory.getLogger(WicaCorsConfigurer.class );
 
+   private final String allowedOrigins;
+
+
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
+
+   public WicaCorsConfigurer( @Value( "${wica.allowed-origins}" ) String allowedOrigins )
+   {
+      this.allowedOrigins = allowedOrigins;
+   }
+
+
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
@@ -33,13 +44,7 @@ class WicaCorsConfigurer implements WebMvcConfigurer
    {
       logger.info( "Configuring CORS...");
       registry.addMapping("/**")
-               // The definition below means that when Safari and Chrome load a web
-               // page from ANY webserver they will be able to make XHR and SSE
-               // requests on this server.
-               .allowedOrigins( "*" )
-               // Firefox is pickier: as '*' is not an allowed origin the
-               // origins must be enabled by hand.
-               //.allowedOrigins( "https://mpc2330.psi.ch" )
+               .allowedOrigins( this.allowedOrigins )
                .allowCredentials( true );
       logger.info( "CORS configuration completed.");
    }

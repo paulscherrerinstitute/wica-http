@@ -4,10 +4,10 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.controlsystem.epics.EpicsChannelGetAndPutService;
+import ch.psi.wica.controlsystem.epics.EpicsChannelName;
 import ch.psi.wica.model.app.StatisticsCollectable;
 import ch.psi.wica.model.app.StatisticsCollector;
-import ch.psi.wica.model.channel.WicaChannelName;
-import ch.psi.wica.controlsystem.epics.EpicsChannelGetAndPutService;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +112,7 @@ class WicaChannelPutController implements StatisticsCollectable
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
 
       // Handle failure of the command.
-      if ( ! epicsChannelGetAndPutService.put(WicaChannelName.of(channelName ), channelValue, timeoutInMillis, TimeUnit.MILLISECONDS ) )
+      if ( ! epicsChannelGetAndPutService.put( EpicsChannelName.of( channelName ), channelValue, timeoutInMillis, TimeUnit.MILLISECONDS ) )
       {
          final String errorMessage = "a timeout occurred (channel = '" + channelName + "', value = '" + channelValue + "').";
          logger.warn( "PUT: Rejected request because {}", errorMessage  );

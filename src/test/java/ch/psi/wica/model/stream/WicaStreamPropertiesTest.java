@@ -9,10 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -47,15 +46,15 @@ class WicaStreamPropertiesTest
    void testOf_AllFieldsPresentDecodedOk()
    {
       final String inputString = "{" + "\"heartbeat\"" + ":" + 12345 + "," +
-                                       "\"changeint\"" + ":" + 99 + "," +
-                                       "\"pollint\""   + ":" + 101 + "," +
+                                       "\"monflux\"" + ":" + 99 + "," +
+                                       "\"pollflux\""   + ":" + 101 + "," +
                                        "\"daqmode\""   + ":" + "\"poll-and-monitor\"" + "," +
                                        "\"fields\""    + ":" + "\"abc;def\"" + "," +
                                        "\"prec\""      + ":" + 9 + "}";
 
       final WicaStreamProperties props = WicaStreamProperties.of( inputString );
       assertThat( props.getHeartbeatFluxIntervalInMillis(), is( 12345 ) );
-      assertThat( props.getChangedValueFluxIntervalInMillis(), is( 99 ) );
+      assertThat(props.getMonitoredValueFluxIntervalInMillis(), is(99 ) );
       assertThat( props.getPolledValueFluxIntervalInMillis(), is( 101 ) );
       assertThat( props.getDataAcquisitionMode(), is ( WicaChannelProperties.DataAcquisitionMode.POLL_AND_MONITOR) );
       assertThat( props.getNumericPrecision(), is( 9 ) );
@@ -67,11 +66,11 @@ class WicaStreamPropertiesTest
    {
       final WicaStreamProperties props = WicaStreamProperties.of( "{}" );
       assertThat( props.getHeartbeatFluxIntervalInMillis(), is ( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS ) );
-      assertThat( props.getChangedValueFluxIntervalInMillis(), is ( WicaStreamProperties.DEFAULT_CHANGED_VALUE_FLUX_INTERVAL_IN_MILLIS ) );
+      assertThat(props.getMonitoredValueFluxIntervalInMillis(), is (WicaStreamProperties.DEFAULT_MONITORED_VALUE_FLUX_INTERVAL_IN_MILLIS) );
       assertThat( props.getPolledValueFluxIntervalInMillis(), is ( WicaStreamProperties.DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS ) );
 
       assertThat( props.getDataAcquisitionMode(), is( WicaChannelProperties.DEFAULT_DATA_ACQUISITION_MODE ) );
-      assertThat( props.getPolledValueSampleRatio(), is( WicaChannelProperties.DEFAULT_POLLED_VALUE_SAMPLE_RATIO ) );
+      assertThat( props.getPolledValueSampleRatio(), is( WicaChannelProperties.DEFAULT_POLLING_INTERVAL) );
       assertThat( props.getFieldsOfInterest(), is( Set.of( WicaChannelProperties.DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) ) );
       assertThat( props.getNumericPrecision(), is( WicaChannelProperties.DEFAULT_NUMERIC_PRECISION ) );
       assertThat( props.getFilterType(), is( WicaChannelProperties.DEFAULT_FILTER_TYPE ) );

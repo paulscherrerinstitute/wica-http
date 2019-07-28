@@ -36,7 +36,7 @@ class WicaChannelValueFilteringServiceTest
 /*- Public methods -----------------------------------------------------------*/
 
    @Test
-   void testFilterMonitoredValues_LatestValueFilter()
+   void testFilterValues_LatestValueFilter()
    {
       final var dblValue1 = WicaChannelValue.createChannelValueConnected( 129.123456 );
       final var dblValue2 = WicaChannelValue.createChannelValueConnected(  14.123456 );
@@ -49,7 +49,7 @@ class WicaChannelValueFilteringServiceTest
             .build();
 
       final List<WicaChannelValue> inputList = List.of( dblValue1, dblValue2, dblValue3, dblValue4 );
-      final List<WicaChannelValue> outputList = serviceUnderTest.filterMonitoredValues( WicaChannel.createFromNameAndProperties( "abc", props ) , inputList );
+      final List<WicaChannelValue> outputList = serviceUnderTest.filterValues(WicaChannel.createFromNameAndProperties("abc", props ) , inputList );
 
       assertEquals(2, outputList.size() );
       assertEquals( 15.123456, ( (WicaChannelValue.WicaChannelValueConnectedReal) outputList.get( 0 ) ).getValue() );
@@ -57,7 +57,7 @@ class WicaChannelValueFilteringServiceTest
    }
 
    @Test
-   void testFilterMonitoredValues_FixedSamplingCycleFilter()
+   void testFilterValues_FixedSamplingCycleFilter()
    {
       final var intValue1 = WicaChannelValue.createChannelValueConnected( 129 );
       final var intValue2 = WicaChannelValue.createChannelValueConnected( 14 );
@@ -70,7 +70,7 @@ class WicaChannelValueFilteringServiceTest
             .build();
 
       final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
-      final List<WicaChannelValue> outputList = serviceUnderTest.filterMonitoredValues( WicaChannel.createFromNameAndProperties( "abc", props ) , inputList );
+      final List<WicaChannelValue> outputList = serviceUnderTest.filterValues(WicaChannel.createFromNameAndProperties("abc", props ) , inputList );
 
       assertEquals( 2, outputList.size() );
       assertEquals( 129, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue() );
@@ -78,7 +78,7 @@ class WicaChannelValueFilteringServiceTest
    }
 
    @Test
-   void testFilterMonitoredValues_PassEverythingFilter()
+   void testFilterValues_PassEverythingFilter()
    {
       final var intValue1 = WicaChannelValue.createChannelValueConnected( 129 );
       final var intValue2 = WicaChannelValue.createChannelValueConnected( 14 );
@@ -91,7 +91,7 @@ class WicaChannelValueFilteringServiceTest
             .build();
 
       final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
-      final List<WicaChannelValue> outputList = serviceUnderTest.filterMonitoredValues( WicaChannel.createFromNameAndProperties( "abc", props ) , inputList );
+      final List<WicaChannelValue> outputList = serviceUnderTest.filterValues(WicaChannel.createFromNameAndProperties("abc", props ) , inputList );
 
       assertEquals( 4, outputList.size() );
       assertEquals( 129, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue() );
@@ -100,47 +100,6 @@ class WicaChannelValueFilteringServiceTest
       assertEquals( 111, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 3 ) ).getValue() );
    }
 
-   @Test
-   void testFilterPolledValues_FixedSamplingCycleFilterWithSamplingRatio1()
-   {
-      final var intValue1 = WicaChannelValue.createChannelValueConnected( 129 );
-      final var intValue2 = WicaChannelValue.createChannelValueConnected( 14 );
-      final var intValue3 = WicaChannelValue.createChannelValueConnected( 15 );
-      final var intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
-
-      final var props =  WicaChannelProperties.createBuilder()
-            .withPolledValueSamplingRatio( 1 )
-            .build();
-
-      final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
-      final List<WicaChannelValue> outputList = serviceUnderTest.filterPolledValues( WicaChannel.createFromNameAndProperties( "abc", props ) , inputList );
-
-      assertEquals( 4, outputList.size() );
-      assertEquals( 129, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue() );
-      assertEquals( 14,  ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue() );
-      assertEquals( 15,  ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 2 ) ).getValue() );
-      assertEquals( 111, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 3 ) ).getValue() );
-   }
-
-   @Test
-   void testFilterPolledValues_FixedSamplingCycleFilterWithSamplingRatio3()
-   {
-      final var intValue1 = WicaChannelValue.createChannelValueConnected( 129 );
-      final var intValue2 = WicaChannelValue.createChannelValueConnected( 14 );
-      final var intValue3 = WicaChannelValue.createChannelValueConnected( 15 );
-      final var intValue4 = WicaChannelValue.createChannelValueConnected( 111 );
-
-      final var props =  WicaChannelProperties.createBuilder()
-            .withPolledValueSamplingRatio( 2 )
-            .build();
-
-      final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
-      final List<WicaChannelValue> outputList = serviceUnderTest.filterPolledValues( WicaChannel.createFromNameAndProperties( "abc", props ) , inputList );
-
-      assertEquals( 2, outputList.size() );
-      assertEquals( 129, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue() );
-      assertEquals( 15,  ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue() );
-   }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

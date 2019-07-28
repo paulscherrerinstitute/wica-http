@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
+import java.time.LocalDateTime;
+
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
@@ -29,6 +31,7 @@ public abstract class WicaChannelMetadata extends WicaChannelData
 
    private WicaChannelMetadata( WicaChannelType type )
    {
+      super( LocalDateTime.now() );
       this.type = type;
    }
 

@@ -3,15 +3,13 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.WicaChannelMetadataUpdateEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelStartMonitoringEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelStopMonitoringEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelValueUpdateEvent;
-import ch.psi.wica.model.app.*;
-import ch.psi.wica.model.channel.*;
+import ch.psi.wica.controlsystem.event.*;
+import ch.psi.wica.model.app.ControlSystemName;
+import ch.psi.wica.model.channel.WicaChannel;
+import ch.psi.wica.model.channel.WicaChannelMetadata;
+import ch.psi.wica.model.channel.WicaChannelName;
+import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
-import ch.psi.wica.controlsystem.event.WicaChannelMetadataBufferingService;
-import ch.psi.wica.controlsystem.event.WicaChannelValueBufferingService;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -72,7 +70,10 @@ public class WicaStreamDataRequesterService
    void startMonitoring( WicaStream wicaStream )
    {
       Validate.notNull( wicaStream );
-      wicaStream.getWicaChannels().stream().map(WicaChannel::getName ).forEach(this::startMonitoringChannel );
+      wicaStream.getWicaChannels()
+         .stream()
+         .filter( c -> c.getProperties().getDataAcquisitionMode().doesMonitoring() )
+         .forEach( c -> startMonitoringChannel( c.getName() ) );
    }
 
    /**
@@ -84,6 +85,34 @@ public class WicaStreamDataRequesterService
    {
       Validate.notNull( wicaStream );
       wicaStream.getWicaChannels().stream().map( WicaChannel::getName ).forEach( this::stopMonitoringChannel);
+   }
+
+   /**
+    * Starts polling the specified stream.
+    *
+    * @param wicaStream the stream to monitor.
+    */
+   void startPolling( WicaStream wicaStream )
+   {
+      Validate.notNull( wicaStream );
+      wicaStream.getWicaChannels()
+         .stream()
+         .filter( c -> c.getProperties().getDataAcquisitionMode().doesPolling() )
+         .forEach( c -> startPollingChannel( c.getName(), c.getProperties().getPollingIntervalInMillis() ) );
+   }
+
+   /**
+    * Stops polling the specified stream.
+    *
+    * @param wicaStream the stream that is no longer of interest.
+    */
+   void stopPolling( WicaStream wicaStream )
+   {
+      Validate.notNull( wicaStream );
+      wicaStream.getWicaChannels()
+         .stream()
+            .filter( c -> c.getProperties().getDataAcquisitionMode().doesPolling() )
+         .map( WicaChannel::getName ).forEach( this::stopPollingChannel);
    }
 
    /**
@@ -137,11 +166,11 @@ public class WicaStreamDataRequesterService
          logger.trace( "Subscribing to new control system channel named: '{}'", controlSystemName.asString() );
 
          // Set the initial state for the value and metadata stashes.
-         applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent(wicaChannelName.getControlSystemName(), WicaChannelMetadata.createUnknownInstance()  ));
-         applicationEventPublisher.publishEvent( new WicaChannelValueUpdateEvent(wicaChannelName.getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() ));
+         applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent( wicaChannelName.getControlSystemName(), WicaChannelMetadata.createUnknownInstance()  ));
+         applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( wicaChannelName.getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() ));
 
          // Now start monitoring
-         applicationEventPublisher.publishEvent( new WicaChannelStartMonitoringEvent(wicaChannelName ) );
+         applicationEventPublisher.publishEvent( new WicaChannelStartMonitoringEvent( wicaChannelName ) );
          controlSystemInterestMap.put( controlSystemName, 1 );
       }
    }
@@ -183,6 +212,35 @@ public class WicaStreamDataRequesterService
          controlSystemInterestMap.remove( controlSystemName );
          applicationEventPublisher.publishEvent( new WicaChannelStopMonitoringEvent(wicaChannelName ) );
       }
+   }
+
+
+   private void startPollingChannel( WicaChannelName wicaChannelName, int pollingIntervalInMillis )
+   {
+      logger.trace( "Request to start polling wica channel named: '{}'", wicaChannelName.asString() );
+
+      Validate.notNull( wicaChannelName );
+      final var controlSystemName = wicaChannelName.getControlSystemName();
+
+      logger.trace( "Starting polling on control system channel named: '{}'", controlSystemName.asString() );
+
+      // Set the initial state for the value stash.
+      applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannelName.getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() ));
+
+      // Now start polling
+      applicationEventPublisher.publishEvent( new WicaChannelStartPollingEvent( wicaChannelName, pollingIntervalInMillis ) );
+   }
+
+   private void stopPollingChannel( WicaChannelName wicaChannelName )
+   {
+      logger.trace( "Request to stop polling wica channel named: '{}'", wicaChannelName.asString() );
+
+      Validate.notNull( wicaChannelName );
+      final var controlSystemName = wicaChannelName.getControlSystemName();
+
+      logger.trace( "Stopping polling on control system channel named: '{}'", controlSystemName.asString() );
+      applicationEventPublisher.publishEvent( new WicaChannelStopPollingEvent( wicaChannelName ) );
+
    }
 
 /*- Nested Classes -----------------------------------------------------------*/

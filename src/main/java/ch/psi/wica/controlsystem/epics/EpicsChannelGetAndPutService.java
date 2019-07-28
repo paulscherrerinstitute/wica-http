@@ -5,7 +5,6 @@ package ch.psi.wica.controlsystem.epics;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import org.epics.ca.Channel;
 import org.epics.ca.Context;
@@ -25,7 +24,7 @@ public class EpicsChannelGetAndPutService
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(EpicsChannelMonitorService.class );
+   private final Logger logger = LoggerFactory.getLogger(EpicsChannelMonitoringService.class );
    private final Context context;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -62,17 +61,18 @@ public class EpicsChannelGetAndPutService
     * This method incurs the network cost of establishing a channel to the remote
     * data source and performing a synchronous (=confirmed) GET operation.
     *
-    * @param wicaChannelName the name of the channel.
+    * @param epicsChannelName the name of the channel.
+    *
     * @param timeout the timeout to be applied when attempting to get the channel
     *     value from the underlying data source. If a timeout occurs the returned
     *     value will be WicaChannelValueDisconnected.
     * @param timeUnit the time units to be used.
     * @return the value.
     */
-   public WicaChannelValue get( WicaChannelName wicaChannelName, long timeout, TimeUnit timeUnit )
+   public WicaChannelValue get( EpicsChannelName epicsChannelName, long timeout, TimeUnit timeUnit )
    {
       // Create a new channel
-      final String channelName = wicaChannelName.getControlSystemName().asString();
+      final String channelName = epicsChannelName.asString();
       final Channel<String> caChannel;
       try
       {
@@ -124,7 +124,7 @@ public class EpicsChannelGetAndPutService
     * This method incurs the network cost of establishing a channel to the remote
     * data source and performing a synchronous (= confirmed) PUT operation.
     *
-    * @param wicaChannelName the channel name.
+    * @param epicsChannelName the channel name.
     * @param channelValue the channel value.
     * @param timeout the timeout to be applied when attempting to put the channel
     *     value to the underlying data source. If a timeout occurs the returned
@@ -132,10 +132,10 @@ public class EpicsChannelGetAndPutService
     * @param timeUnit the time units to be used.
     * @return boolean set true when the put completed successfully.
     */
-   public boolean put( WicaChannelName wicaChannelName, String channelValue, long timeout, TimeUnit timeUnit )
+   public boolean put( EpicsChannelName epicsChannelName, String channelValue, long timeout, TimeUnit timeUnit )
    {
       // Create a new channel
-      final String channelName = wicaChannelName.getControlSystemName().asString();
+      final String channelName = epicsChannelName.asString();
       final Channel<String> caChannel;
       try
       {

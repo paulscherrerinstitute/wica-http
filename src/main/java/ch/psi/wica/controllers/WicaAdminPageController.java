@@ -5,7 +5,7 @@ package ch.psi.wica.controllers;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.WicaApplication;
-import ch.psi.wica.controlsystem.epics.EpicsChannelMonitorService;
+import ch.psi.wica.controlsystem.epics.EpicsChannelMonitoringService;
 import ch.psi.wica.services.stream.WicaStreamLifecycleService;
 import net.jcip.annotations.ThreadSafe;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ class WicaAdminPageController
    private final WicaStreamCreateController wicaStreamCreateController;
    private final WicaStreamDeleteController wicaStreamDeleteController;
    private final WicaStreamGetController wicaStreamGetController;
-   private final EpicsChannelMonitorService epicsChannelMonitorService;
+   private final EpicsChannelMonitoringService epicsChannelMonitoringService;
    private final WicaStreamLifecycleService wicaStreamLifecycleService;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -60,7 +60,8 @@ class WicaAdminPageController
                                    @Autowired WicaStreamDeleteController wicaStreamDeleteController,
                                    @Autowired WicaStreamGetController wicaStreamGetController,
                                    @Autowired WicaStreamLifecycleService wicaStreamLifecycleService,
-                                   @Autowired EpicsChannelMonitorService epicsChannelMonitorService )
+                                   @Autowired EpicsChannelMonitoringService epicsChannelMonitoringService
+   )
    {
       this.wicaChannelGetController = wicaChannelGetController;
       this.wicaChannelPutController = wicaChannelPutController;
@@ -68,7 +69,7 @@ class WicaAdminPageController
       this.wicaStreamGetController = wicaStreamGetController;
       this.wicaStreamDeleteController = wicaStreamDeleteController;
       this.wicaStreamLifecycleService = wicaStreamLifecycleService;
-      this.epicsChannelMonitorService = epicsChannelMonitorService;
+      this.epicsChannelMonitoringService = epicsChannelMonitoringService;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -131,11 +132,11 @@ class WicaAdminPageController
       serverStatisticsMap.put( ".    ", "" );
 
       serverStatisticsMap.put( "EPICS:", " " );
-      serverStatisticsMap.put( "- EPICS Channels Created",   String.valueOf( epicsChannelMonitorService.getChannelsCreatedCount()   ) );
-      serverStatisticsMap.put( "- EPICS Channels Deleted",   String.valueOf( epicsChannelMonitorService.getChannelsDeletedCount()   ) );
-      serverStatisticsMap.put( "- EPICS Channels Active",    String.valueOf( epicsChannelMonitorService.getChannelsActiveCount()    ) );
-      serverStatisticsMap.put( "- EPICS Channels Connected", String.valueOf( epicsChannelMonitorService.getChannelsConnectedCount() ) );
-      serverStatisticsMap.put( "- EPICS Monitors Active",    String.valueOf( epicsChannelMonitorService.getMonitorsConnectedCount() ) );
+      serverStatisticsMap.put( "- EPICS Channels Created",   String.valueOf(epicsChannelMonitoringService.getChannelsCreatedCount()   ) );
+      serverStatisticsMap.put( "- EPICS Channels Deleted",   String.valueOf(epicsChannelMonitoringService.getChannelsDeletedCount()   ) );
+      serverStatisticsMap.put( "- EPICS Channels Active",    String.valueOf(epicsChannelMonitoringService.getChannelsActiveCount()    ) );
+      serverStatisticsMap.put( "- EPICS Channels Connected", String.valueOf(epicsChannelMonitoringService.getChannelsConnectedCount() ) );
+      serverStatisticsMap.put( "- EPICS Monitors Active",    String.valueOf(epicsChannelMonitoringService.getMonitorsConnectedCount() ) );
       serverStatisticsMap.put( ".     ", "" );
 
       viewModel.addAttribute("serverStatisticsMap", serverStatisticsMap );

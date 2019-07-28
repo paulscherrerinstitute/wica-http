@@ -4,12 +4,12 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.controlsystem.epics.EpicsChannelGetAndPutService;
+import ch.psi.wica.controlsystem.epics.EpicsChannelName;
 import ch.psi.wica.infrastructure.channel.WicaChannelValueSerializer;
 import ch.psi.wica.model.app.StatisticsCollectable;
 import ch.psi.wica.model.app.StatisticsCollector;
-import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
-import ch.psi.wica.controlsystem.epics.EpicsChannelGetAndPutService;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,7 +122,7 @@ class WicaChannelGetController implements StatisticsCollectable
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
       numericScale = numericScale == null ? defaultNumericScale : numericScale;
 
-      final WicaChannelValue wicaChannelValue = epicsChannelGetAndPutService.get(WicaChannelName.of(channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
+      final WicaChannelValue wicaChannelValue = epicsChannelGetAndPutService.get( EpicsChannelName.of(channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
       final WicaChannelValueSerializer wicaChannelValueSerializer = new WicaChannelValueSerializer( numericScale, false );
 
       logger.info( "'{}' - OK: Returning wica channel value.", channelName );

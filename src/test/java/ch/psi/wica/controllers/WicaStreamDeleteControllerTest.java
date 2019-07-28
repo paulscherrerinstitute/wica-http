@@ -3,8 +3,8 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.controlsystem.epics.EpicsChannelMonitoringService;
 import ch.psi.wica.model.stream.WicaStreamId;
-import ch.psi.wica.controlsystem.epics.EpicsChannelMonitorService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ class WicaStreamDeleteControllerTest
 	private MockMvc mockMvc;
 
 	@Autowired
-	private EpicsChannelMonitorService epicsChannelMonitorService;
+	private EpicsChannelMonitoringService epicsChannelMonitoringService;
 
    private String epicsChannelListOk;
 
@@ -80,14 +80,14 @@ class WicaStreamDeleteControllerTest
 
       final MvcResult postRequestResult = mockMvc.perform( postRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
       logger.info( "Returned data was: '{}'", postRequestResult.getResponse().getContentAsString() );
-      assertEquals( 2, epicsChannelMonitorService.getChannelsActiveCount() );
+      assertEquals(2, epicsChannelMonitoringService.getChannelsActiveCount() );
 
       // Send a DELETE request to delete the stream we just created.
       final RequestBuilder deleteRequest1 = MockMvcRequestBuilders.delete( "/ca/streams/0" );
       mockMvc.perform( deleteRequest1 ).andDo( print() ).andExpect( status().isOk() ).andReturn();
-      assertEquals( 0, epicsChannelMonitorService.getChannelsActiveCount() );
-      assertEquals( 2, epicsChannelMonitorService.getChannelsCreatedCount() );
-      assertEquals( 2, epicsChannelMonitorService.getChannelsDeletedCount() );
+      assertEquals(0, epicsChannelMonitoringService.getChannelsActiveCount() );
+      assertEquals(2, epicsChannelMonitoringService.getChannelsCreatedCount() );
+      assertEquals(2, epicsChannelMonitoringService.getChannelsDeletedCount() );
 
       // Send a further DELETE request to delete the stream we created before. This time it should be rejected.
       final RequestBuilder deleteRequest2 = MockMvcRequestBuilders.delete( "/ca/streams/0" );

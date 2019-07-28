@@ -142,13 +142,12 @@ class WicaStreamGetControllerTest
       given( httpServletRequestMock.getRemoteHost()).willReturn( "localhost");
       StepVerifier.create( flux )
             .expectSubscription()
-            .expectNextMatches( sse -> sseCommentContains( sse, "initial channel metadata" ) )
-            .expectNextMatches( sse -> sseCommentContains( sse, "initial channel values" ) )
-            .expectNextMatches( sse -> sseCommentContains( sse, "channel value changes" ) )
-            .expectNextMatches( sse -> sseCommentContains( sse, "polled channel values" ) )
+            .expectNextMatches( sse -> sseCommentContains( sse, "channel metadata" ) )
+            .expectNextMatches( sse -> sseCommentContains( sse, "channel monitored values" ) )
+            .expectNextMatches( sse -> sseCommentContains( sse, "channel polled values" ) )
             .expectNextMatches( sse -> sseCommentContains( sse, "heartbeat" ) )
-            .expectNextMatches( sse -> sseCommentContains( sse, "channel value changes" ) )
-            .expectNextMatches( sse -> sseCommentContains( sse, "polled channel values" ) )
+            .expectNextMatches( sse -> sseCommentContains( sse, "channel monitored values" ) )
+            .expectNextMatches( sse -> sseCommentContains( sse, "channel polled values" ) )
             .consumeNextWith( (x) -> deleteStream( id ) )
             .thenConsumeWhile( t -> sseCommentContains( t, "-") )
             .verifyComplete();
