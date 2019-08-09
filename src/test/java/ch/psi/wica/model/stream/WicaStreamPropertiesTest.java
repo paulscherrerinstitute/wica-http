@@ -3,9 +3,11 @@ package ch.psi.wica.model.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.infrastructure.stream.WicaStreamPropertiesBuilder;
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.app.WicaFilterType;
 import org.junit.jupiter.api.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -140,6 +142,14 @@ class WicaStreamPropertiesTest
       assertThat( ex11.getMessage(), is("The cycle length for this stream's ONE_IN_M filter was not specified." ) );
       assertThat( ex12.getMessage(), is("The sampling interval for this stream's RATE_LIMITER filter was not specified." ) );
       assertThat( ex13.getMessage(), is("The deadband for this stream's CHANGE_FILTERER was not specified." ) );
+   }
+
+   @Test
+   void testIsValueObject()
+   {
+      WicaStreamProperties props1 = WicaStreamPropertiesBuilder.create().withDefaultProperties().build();
+      WicaStreamProperties props2 = WicaStreamPropertiesBuilder.create().withDefaultProperties().build();
+      assertThat( props1, is( props2 ) );
    }
 
 /*- Private methods ----------------------------------------------------------*/
