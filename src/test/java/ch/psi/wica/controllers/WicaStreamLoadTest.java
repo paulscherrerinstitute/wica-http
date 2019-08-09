@@ -6,7 +6,6 @@ package ch.psi.wica.controllers;
 import ch.psi.wica.infrastructure.stream.WicaStreamSerializer;
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.app.WicaFilterType;
-import ch.psi.wica.model.channel.WicaChannelProperties;
 import ch.psi.wica.infrastructure.channel.WicaChannelPropertiesBuilder;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
@@ -32,7 +31,10 @@ import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,6 +53,7 @@ class WicaStreamLoadTest
    private final Logger logger = LoggerFactory.getLogger( WicaStreamLoadTest.class );
 
    private final String wicaStreamUri = "http://localhost:8080";
+   //private final String wicaStreamUri = "https://gfa-wica.psi.ch";
 
    private static WicaStream lightStream = makeWicaStream( 1 );
    private static WicaStream heavyStream = makeWicaStream( 1000 );
@@ -210,7 +213,12 @@ class WicaStreamLoadTest
 
    private static Stream<Arguments> getArgsForTestGetSingleThreadedThroughput()
    {
-      return Stream.of( Arguments.of( 30, 5000, lightStream ) );
+      return Stream.of( Arguments.of( 1, 10_000, proscanStream ),
+                        Arguments.of( 1, 10_000, proscanStream ),
+                        Arguments.of( 1, 10_000, proscanStream ),
+                        Arguments.of( 10, 10_000, proscanStream ),
+                        Arguments.of( 10, 10_000, proscanStream ),
+                        Arguments.of( 10, 10_000, proscanStream ) );
    }
 
    @MethodSource( "getArgsForTestGetSingleThreadedThroughput" )
@@ -228,7 +236,7 @@ class WicaStreamLoadTest
          assertNotNull( sendStreamCreateRequest( wicaStream ) );
       }
       final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
-      logger.info( "Stream Create test completed {} iterations in {} ms. Throughput = {} requests/second.", numberOfStreams, createStreamCycleTime, (1000 * numberOfStreams ) / createStreamCycleTime );
+      logger.info( "Stream Create test peformed POST operate on {} streams in {} ms. Throughput = {} requests/second.", numberOfStreams, createStreamCycleTime, (1000 * numberOfStreams ) / createStreamCycleTime );
 
       logger.info( "Starting Single-Threaded Stream Get test..." );
       int firstId = Integer.parseInt( firstResult );
@@ -238,20 +246,29 @@ class WicaStreamLoadTest
       List<Disposable> disposables = new ArrayList<>();
 
       // Sequentially execute all the GET tasks.
+      final AtomicInteger eventCounter = new AtomicInteger();
+      final AtomicInteger byteCounter = new AtomicInteger();
       for ( int i = 0; i < numberOfStreams; i++ )
       {
          var f = sendStreamSubscribeRequest(String.valueOf(firstId + i ) )
                  .doOnCancel(() -> logger.info( "FLUX CANCELLED !!" ) )
-                 .subscribe( (sse) -> logger.trace( "Received SSE from stream with id: {}, event: {}",sse.id(), sse.event()  ),
-                               (e) -> logger.error( "FLUX ERROR: {} ", e.toString() ) );
+                 .subscribe( (sse) -> {
+                    logger.trace( "Received SSE from stream with id: {}, event: {}",sse.id(), sse.event() );
+                    eventCounter.incrementAndGet();
+                    Optional.ofNullable( sse.data() ).ifPresent( (x) -> byteCounter.accumulateAndGet( x.length(), Integer::sum ) );
+                 },
+                   (e) -> logger.error( "FLUX ERROR: {} ", e.toString() ) );
          disposables.add( f );
       }
 
       final long getStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
-      logger.info( "Stream Get Test completed {} iterations in {} ms. Throughput = {} requests/second. ", numberOfStreams, getStreamCycleTime, (1000 * numberOfStreams ) / getStreamCycleTime );
+      logger.info( "Stream Get Test performed GET operation on {} streams in {} ms. Throughput = {} requests/second. ", numberOfStreams, getStreamCycleTime, (1000 * numberOfStreams ) / getStreamCycleTime );
 
       logger.info( "Pausing for {} ms.", applyLoadForDurationInMillis );
       Thread.sleep( applyLoadForDurationInMillis );
+
+      logger.info( "Event counter received {} events on all channels", eventCounter.get() );
+      logger.info( "Event data payload was {} unicode characters on all channels", byteCounter.get() );
 
       logger.info( "Disposing subscribers..." );
       // Sequentially execute all the DISPOSE tasks.
@@ -271,7 +288,7 @@ class WicaStreamLoadTest
          assertNotNull(sendStreamDeleteRequest(String.valueOf(firstId + i ) ) );
       }
       final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
-      logger.info( "Stream Delete Test completed {} iterations in {} ms. Throughput = {} requests/second.", numberOfStreams, deleteStreamCycleTime, (1000 * numberOfStreams ) / deleteStreamCycleTime );
+      logger.info( "Stream Delete Test performed DELETE operation on {} streams in {} ms. Throughput = {} requests/second.", numberOfStreams, deleteStreamCycleTime, (1000 * numberOfStreams ) / deleteStreamCycleTime );
    }
 
 
@@ -335,19 +352,19 @@ class WicaStreamLoadTest
             .withChannelNameAndStreamProperties("FMJIPI:BREI:2" )
             .withChannelNameAndStreamProperties("PRO:CURRENTALARM:1" )
             .withChannelNameAndCombinedProperties("MMAC3:STR:2##2", WicaChannelPropertiesBuilder.create()
-               .withDataAcquisitionMode(WicaDataAcquisitionMode.POLL_AND_MONITOR )
+               .withDataAcquisitionMode(WicaDataAcquisitionMode.POLL_MONITOR)
                .withFieldsOfInterest( "val;ts" )
                .withFilterType( WicaFilterType.CHANGE_FILTERER )
                .withFilterDeadband( 5 )
                .build() )
             .withChannelNameAndCombinedProperties("EMJCYV:IST:2##2", WicaChannelPropertiesBuilder.create()
-               .withDataAcquisitionMode( WicaDataAcquisitionMode.POLL_AND_MONITOR )
+               .withDataAcquisitionMode( WicaDataAcquisitionMode.POLL_MONITOR)
                .withFieldsOfInterest( "val;ts" )
                .withFilterType( WicaFilterType.ONE_IN_M )
                .withFilterCycleLength( 1 )
                .build() )
             .withChannelNameAndCombinedProperties("CMJSEV:PWRF:2##2", WicaChannelPropertiesBuilder.create()
-               .withDataAcquisitionMode( WicaDataAcquisitionMode.POLL_AND_MONITOR )
+               .withDataAcquisitionMode( WicaDataAcquisitionMode.POLL_MONITOR)
                .withFieldsOfInterest( "val;ts" )
                .withFilterType( WicaFilterType.ONE_IN_M )
                .withFilterCycleLength( 1 )
