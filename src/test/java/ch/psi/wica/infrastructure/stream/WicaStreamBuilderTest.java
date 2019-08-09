@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 
@@ -90,7 +91,7 @@ class WicaStreamBuilderTest
       assertThat( wicaStream.getWicaStreamProperties(), is ( WicaStreamPropertiesBuilder.create().build() ) );
       assertThat( wicaStream.getWicaStreamId(), is(  WicaStreamId.of( "streamDEF" ) ) );
       assertThat( wicaStream.getWicaChannels().size(), is( 1 ) );
-      assertThat( wicaStream.getWicaChannels(), is( Set.of( WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "channel123" ).build() ) ) );
+      assertThat( wicaStream.getWicaChannels(), containsInAnyOrder( channel123) );
    }
 
    @Test
@@ -108,7 +109,7 @@ class WicaStreamBuilderTest
       assertThat( wicaStream.getWicaStreamProperties(), is ( WicaStreamPropertiesBuilder.create().build() ) );
       assertThat( wicaStream.getWicaStreamId(), is(  WicaStreamId.of( "streamDEF" ) ) );
       assertThat( wicaStream.getWicaChannels().size(), is( 2 ) );
-      assertThat( wicaStream.getWicaChannels(), is( Set.of( channel123, channel456 ) ) );
+      assertThat( wicaStream.getWicaChannels(), containsInAnyOrder( channel123, channel456 ) );
    }
 
    @Test
