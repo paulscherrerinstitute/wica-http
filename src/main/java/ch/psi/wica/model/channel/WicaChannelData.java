@@ -33,8 +33,6 @@ public abstract class WicaChannelData
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-
-@JsonProperty( "wsts" )
 public LocalDateTime getWicaServerTimestamp()
 {
    return this.wicaServerTimestamp;
