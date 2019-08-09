@@ -163,22 +163,20 @@ First release which supports new embryonic feature: channel GET and PUT operatio
    - Added builders for WicaStream, WicaStreamproperties and WicaChannel.
    - Communication with the underlying control system is now completely decoupled and uses SpringBoot
      event system.
-    
-# Project Ideas Completed in Latest Release
-  
-1. BUG FIX: delete stream operation now removes id from map so stream cannot be deleted more than once.
-1. BUG FIX: Shutdown method now correctly signals subscribers that the stream has been disposed of.
-1. ENHANCEMENT: Improved Javadoc.
-1. ENHANCEMENT: Now supports X-WICA-ERROR header to consistently describe the cause of any failures.
-1. ENHANCEMENT: improved Spring documentation on configurable parameters.
-1. ENHANCEMENT: Added support for more thorough reactive flux testing using StepVerifier.
-1. ENHANCEMENT: added support for configuring default timeouts for GET and PUT operations and for setting default 
-   numeric precision of GET operations.
-1. REMOVED: Make status panels available in PSI's demilitarised zone. WILL BE COMPLETED IN WICA RELAY PROJECT.
-1. REMOVED: Work out how best to integrate with K8ie's work on SVG. WILL BE COMPLETED IN WICA PANELS PROJECT.
-
-
-# Project Ideas Completed in Earlier Releases
+* [1.5.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/1.5.0-RELEASE)
+    - [CTRLIT-7232](https://jira.psi.ch/browse/CTRLIT-7232): Create 1.5.0-RELEASE. 
+    - Continuation of the big refactoring cleanup. This release now supports poll of monitor channel
+      and direct poll of remote IOC. At rate configured on a per channel basis by new pollint parameter.
+    - Fixed a regression problem with the filtering service which meant that the deadband and fixed
+      cycle length filters were not working properly.
+    - Cleaned up stream configuration seralisation and deserialisation using the newer Jackson library
+      mixin strategy. Probably the WicaChannelData should also be cleaned up. 
+    - Fixed a problem with polling whereby different streams could not use different poll rates for
+      the same underlying control varaiable.
+    - Fixed bug whereby polling operation was setting metadata to UNKNOWN.    
+    - Added JDWP support so that the live application can be debugged inside a Docker container. 
+     
+# Project Ideas Completed in Latest and Earlier Releases
 
 1. Consider refactoring so that the app only uses one context (channels can then be cached and shared between 
 different streams). DONE.
@@ -204,29 +202,39 @@ a desktop monitor). DONE.
      - value-snapshot-stream: Sends all values with SLOW periodicity. DONE (VIA POLLING MECHANISM)
      - value-change-stream: Sends only changed values but with fast periodicity.  DONE.
 1. Add support to the REST service to support channel access GET and PUT. COMPLETED (BUT PERFORMANCE COULD BE IMPROVED).
-
+1. BUG FIX: delete stream operation now removes id from map so stream cannot be deleted more than once.
+1. BUG FIX: Shutdown method now correctly signals subscribers that the stream has been disposed of.
+1. ENHANCEMENT: Improved Javadoc.
+1. ENHANCEMENT: Now supports X-WICA-ERROR header to consistently describe the cause of any failures.
+1. ENHANCEMENT: improved Spring documentation on configurable parameters.
+1. ENHANCEMENT: Added support for more thorough reactive flux testing using StepVerifier.
+1. ENHANCEMENT: added support for configuring default timeouts for GET and PUT operations and for setting default 
+   numeric precision of GET operations.
+1. REMOVED: Make status panels available in PSI's demilitarised zone. WILL BE COMPLETED IN WICA RELAY PROJECT.
+1. REMOVED: Work out how best to integrate with K8ie's work on SVG. WILL BE COMPLETED IN WICA PANELS PROJECT.
+1. Improve the admin page by reporting on the active clients and their IP's. DONE.
+1. Improve behaviour when navigating away from Wica Pages. MOSTLY DONE.
+1. Run units tests on GitLab server on check in. DONE.
+1. Provide automanagement for channel names which share the same epics channel. DONE.
+1. Fix bug whereby whereby metadata says type UNKNOWN (causes occasional problem with formatting). FIXED.
 
 # Project Ideas Backlog
 
 When an idea is under serious consideration and a candidate for
 implementation it will be placed on the project's [Jira Kanban Board](https://jira.psi.ch/secure/RapidBoard.jspa?rapidView=1631)
 1. Create end-to-end tests to measure performance.
-1. Improve behaviour when navigating away from Wica Pages. 
+
 1. Consider switching to http2. Need to resolve bug exposed when client navigates away.
 1. Improve page load times by minifying loadable artifacts.
 1. Review existing state of Javadoc and Jsdoc and make improvements.
-1. Improve the admin page by reporting on the active clients and their IP's.
 1. Consider a better name.
 1. Consider splitting up backend and frontend server into separate Git repositories.
 1. Refactor stream-manager to use promises and/or new JS async semantics.
 1. Go through all code TODO's and try to resolve them.   
 1. Add reporting on test coverage.
-1. Run units tests on GitLab server on check in.
 1. Organise design review with Simon and/or others.
 1. Automate units tests so that we dont have to start an EPICS IOC manually before running the tests.
 1. Check validity of all JCIP thread safety annotations.
-1. Provide automanagement for channel names which share the same epics channel.
 1. Ability to set stream properties on html page rather than just accept defaults. 
 1. Improve diagnostic messages when HTML page contains json content that is not valid.
-1. Fix bug whereby whereby metadata says type UNKNOWN (causes occasional problem with formatting).
 1. Improve performance of channel GET and PUT.

@@ -250,26 +250,27 @@ const WicaRenderingProperties = Object.freeze ({
 /**
  * JS Object that defines the properties and default values supported by a WicaStream.
  *
- * @property {number} [heartbeat=15000] - The interval in milliseconds between heartbeat messages.
- * @property {number} [monflux=100] The interval in milliseconds between channel value
- *     messages where the data acquisition mode is monitoring and where the value has changed
- *     since the previous notification message.
- * @property {number} [pollflux=100] The interval in milliseconds between channel value messages
- *     where the data acquisition mode is polling.
+ * @property {number} [hbflux=15000] - The interval in milliseconds between heartbeat messages.
+ * @property {number} [monflux=100] The interval in milliseconds between transmitting successive
+ *    Server-Sent-Event (SSE) messages with the latest wica channel metadata.
+ * @property {number} [monflux=100] The interval in milliseconds between transmitting successive
+ *    Server-Sent-Event (SSE) messages with the latest wica channel monitored values.
+ * @property {number} [pollflux=1000] The interval in milliseconds between transmitting successive
+ *    Server-Sent-Event (SSE) messages with the latest wica channel polled values.
  * @property {number} [daqmode=monitor] - The default data acquisition mode.
  * @property {number} [pollratio=1] - The default number of polling cycles before a sample is taken.
  * @property {number} [prec=6] - The precision (= number of digits after the decimal point) to be used when
  *     sending numeric information.
  * @property {string} [fields=val;sevr] - A semicolon delimited list defining the data fields that
- *    should be included by default in the stream of WicaChannelValues. Can be overridden by individual
- *    settings in the WicaChannelProperties object.
+ *    should be included by default in the stream of WicaChannelValues.
  */
 const WicaStreamProperties = Object.freeze ({
-    heartbeat: 15000,
+    hbflux: 15000,
+    metaflux: 100,
     monflux: 100,
     pollflux: 1000,
     daqmode: "monitor",
-    pollratio: 1,
+    pollint: 1000,
     prec: 6,
     fields: "val;sevr"
 } );
