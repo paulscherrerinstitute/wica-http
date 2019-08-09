@@ -10,7 +10,6 @@ import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelProperties;
 import ch.psi.wica.model.channel.WicaChannelPropertiesDefaults;
 import ch.psi.wica.model.stream.WicaStream;
-import ch.psi.wica.model.stream.WicaStreamId;
 import ch.psi.wica.model.stream.WicaStreamProperties;
 import ch.psi.wica.model.stream.WicaStreamPropertiesDefaults;
 import com.fasterxml.jackson.annotation.*;
