@@ -37,7 +37,8 @@ public class WicaStreamLifecycleService
    private final Map<WicaStreamId, WicaStreamServerSentEventPublisher> wicaStreamPublisherMap = Collections.synchronizedMap( new HashMap<>() );
 
    private final WicaStreamConfigurationDecoder wicaStreamConfigurationDecoder;
-   private final WicaStreamDataRequesterService wicaStreamDataRequesterService;
+   private final WicaStreamMonitoredValueRequesterService wicaStreamMonitoredValueRequesterService;
+   private final WicaStreamPolledValueRequesterService wicaStreamPolledValueRequesterService;
    private final WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService;
    private final WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService;
    private final WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService;
@@ -53,7 +54,7 @@ public class WicaStreamLifecycleService
     * Creates a new instance that may be accessed concurrently by multiple
     * threads.
     *
-    * @param wicaStreamDataRequesterService reference to the service which
+    * @param wicaStreamPolledValueRequesterService reference to the service which
     *     configures the underlying control system to start monitoring
     *     the channels in this stream.
     *
@@ -65,13 +66,15 @@ public class WicaStreamLifecycleService
 
     */
    public WicaStreamLifecycleService( @Autowired WicaStreamConfigurationDecoder wicaStreamConfigurationDecoder,
-                                      @Autowired WicaStreamDataRequesterService wicaStreamDataRequesterService,
+                                      @Autowired WicaStreamMonitoredValueRequesterService wicaStreamMonitoredValueRequesterService,
+                                      @Autowired WicaStreamPolledValueRequesterService wicaStreamPolledValueRequesterService,
                                       @Autowired WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService,
                                       @Autowired WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService,
                                       @Autowired WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService )
    {
       this.wicaStreamConfigurationDecoder = wicaStreamConfigurationDecoder;
-      this.wicaStreamDataRequesterService = Validate.notNull( wicaStreamDataRequesterService);
+      this.wicaStreamMonitoredValueRequesterService = Validate.notNull( wicaStreamMonitoredValueRequesterService);
+      this.wicaStreamPolledValueRequesterService = Validate.notNull(wicaStreamPolledValueRequesterService);
       this.wicaStreamMetadataCollectorService = wicaStreamMetadataCollectorService;
       this.wicaStreamMonitoredValueCollectorService = wicaStreamMonitoredValueCollectorService;
       this.wicaStreamPolledValueCollectorService = wicaStreamPolledValueCollectorService;
@@ -120,24 +123,13 @@ public class WicaStreamLifecycleService
          final long streamDecodeTimeInMillis = streamDecodeTimer.getTime();
          logger.info("Stream decoding took: '{}' ms.,", streamDecodeTimeInMillis );
 
-//         // Allocate a new stream ID.
-//         final WicaStreamId wicaStreamId = WicaStreamId.createNext();
-//
-//         // Create a stream based on the supplied configuration
-//
-//         final WicaStream wicaStream = WicaStreamBuilder.create()
-//               .withId( wicaStreamId )
-//               .withStreamProperties( decodedStream.getWicaStreamProperties() )
-//               .withChannels( decodedStream.getWicaChannels() )
-//               .build();
-
          logger.info( "Stream created OK from config string: '{}.'", wicaStream );
 
-         // Tell the control system monitoring service to start monitoring the
-         // control system channels in this stream.
+         // Tell the control system monitoring service to start monitoring
+         // and/or polling the  control system channels in this stream.
          final StopWatch startMonitoringTimer = StopWatch.createStarted();
-         wicaStreamDataRequesterService.startMonitoring( wicaStream );
-         wicaStreamDataRequesterService.startPolling( wicaStream );
+         wicaStreamMonitoredValueRequesterService.startMonitoring( wicaStream );
+         wicaStreamPolledValueRequesterService.startPolling( wicaStream );
          final long startMonitoringTimeInMicroseconds = startMonitoringTimer.getTime(TimeUnit.MICROSECONDS );
          logger.info("Stream monitoring took: '{}' us.,", startMonitoringTimeInMicroseconds);
 
@@ -181,8 +173,8 @@ public class WicaStreamLifecycleService
          // Tell the control system monitoring service that we are no longer
          // interested in this stream.
          final WicaStream wicaStream = wicaStreamServerSentEventPublisher.getStream();
-         wicaStreamDataRequesterService.stopMonitoring( wicaStream ) ;
-         wicaStreamDataRequesterService.stopPolling( wicaStream ) ;
+         wicaStreamMonitoredValueRequesterService.stopMonitoring(wicaStream ) ;
+         wicaStreamPolledValueRequesterService.stopPolling(wicaStream ) ;
 
          // Remove the stream's ID from the list of recognised publishers.
          wicaStreamPublisherMap.remove( wicaStreamId );
