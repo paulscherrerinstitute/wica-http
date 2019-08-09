@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -141,8 +143,24 @@ class WicaChannelNameTest
       logger.info( "Serialized form of WicaChannelName looks like this '{}' ", serializedValue );
    }
 
+   @Test
+   void testIsValueObject()
+   {
+      WicaChannelName name1 = WicaChannelName.of( "N");
+      WicaChannelName name2 = WicaChannelName.of( "N");
+      WicaChannelName name3 = WicaChannelName.of( "N##1");
+      WicaChannelName name4 = WicaChannelName.of( "N##1");
+      WicaChannelName name5 = WicaChannelName.of( "ca://N");
+      WicaChannelName name6 = WicaChannelName.of( "ca://N");
+      WicaChannelName name7 = WicaChannelName.of( "ca://N");
+      assertThat( name1, is( name2 ) );
+      assertThat( name3, is( name4 ) );
+      assertThat( name5, is( name6 ) );
+      assertThat( name1.equals( name7 ), is( false ) );
+   }
 
-/*- Private methods ----------------------------------------------------------*/
+
+   /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
