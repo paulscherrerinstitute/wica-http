@@ -201,6 +201,7 @@ public class WicaChannelProperties
       return getOptionalFilterSamplingIntervalInMillis().orElseThrow( () -> new IllegalArgumentException( "The sampling interval for this channel's RATE_LIMITER filter was not specified." ) );
    }
 
+   // Note: The WicaChannelProperties class generates VALUE objects which are considered equal if the fields match.
    @Override
    public boolean equals( Object o )
    {
