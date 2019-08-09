@@ -317,8 +317,9 @@ class WicaStreamSerializerTest
    @Test
    void testDeserializeWicaStream_Simple_Example()
    {
-      final String inputString = "{\"channels\":[{\"name\":\"XHIPA:TIME\"}],\"props\":{\"heartbeat\":15000,\"monflux\":100,\"pollflux\":1000,\"daqmode\":\"monitor\",\"pollratio\":1,\"prec\":6,\"fields\":\"val;sevr\"}}";
+      final String inputString = "{\"props\":{\"pollflux\":251,\"daqmode\":\"poll\"},\"channels\":[{\"name\":\"CHAN-Y\",\"props\":{\"daqmode\":\"poll\",\"prec\":4}},{\"name\":\"CHAN-X\",\"props\":{\"prec\":4}}]}";
       final WicaStream stream = WicaStreamSerializer.readFromJson( inputString, WicaStream.class );
+      assertThat( stream.getWicaStreamProperties().getPolledValueFluxIntervalInMillis(), is( 251 ) );
    }
 
    @Test
@@ -326,6 +327,7 @@ class WicaStreamSerializerTest
    {
       final String inputString = "   {\"channels\":[{\"name\":\"XHIPA:TIME\"},{\"name\":\"EVEX:STR:2\"},{\"name\":\"EWBRI:IST:2\"},{\"name\":\"MXC1:IST:2\"},{\"name\":\"MYC2:IST:2\"},{\"name\":\"MHC4:IST:2\"},{\"name\":\"MHC6:IST:2\"},{\"name\":\"MHC1:IST:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":10}},{\"name\":\"MYC2:IST:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":10}},{\"name\":\"MBC1:IST:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":10}},{\"name\":\"MRI12:ILOG:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":0.3}},{\"name\":\"MII7:ILOG:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":0.3}},{\"name\":\"MRI13:ILOG:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":8}},{\"name\":\"MRI14:ILOG:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":8}},{\"name\":\"CIPHMO:SOL:1\"},{\"name\":\"CRPHFT:SOL:1\"},{\"name\":\"MXF1:IST:2\"},{\"name\":\"MRFEIN:IST:2\"},{\"name\":\"MRFAUS:IST:2\"},{\"name\":\"MII7:ILOG:2\"},{\"name\":\"MRI2:ILOG:2\"},{\"name\":\"MRI13:ILOG:2\"},{\"name\":\"MRI14:ILOG:2\"},{\"name\":\"CI1V:IST:2\"},{\"name\":\"CI3V:IST:2\"},{\"name\":\"CI2V:IST:2\"},{\"name\":\"CI4V:IST:2\"},{\"name\":\"CR1V:IST:2\"},{\"name\":\"CR2V:IST:2\"},{\"name\":\"CR3V:IST:2\"},{\"name\":\"CR4V:IST:2\"},{\"name\":\"CR5V:IST:2\"},{\"name\":\"UCNQ:BEAMREQ:STATUS\"},{\"name\":\"UCNQ:BEAMREQ:COUNTDOWN\"},{\"name\":\"EICV:IST:2\"},{\"name\":\"EICI:IST:2\"},{\"name\":\"EECV:IST:2\"},{\"name\":\"EECI:IST:2\"},{\"name\":\"CIREV:FIST:2\"},{\"name\":\"CRREV:FIST:2\"},{\"name\":\"AIHS:IST:2\"},{\"name\":\"HS:IST:2\"},{\"name\":\"M3ALT:IST:2\"},{\"name\":\"GLS:LEISTUNG_AKTUELL\"},{\"name\":\"ZSLP:TOTSAVEFAST\"}],\"props\":{\"heartbeat\":15000,\"monflux\":100,\"pollflux\":1000,\"daqmode\":\"monitor\",\"pollratio\":1,\"prec\":6,\"fields\":\"val;sevr\"}}";
       final WicaStream stream = WicaStreamSerializer.readFromJson( inputString, WicaStream.class );
+      assertThat( stream.getWicaStreamProperties().getFieldsOfInterest(), is( "val;sevr") );
    }
 
    /****************************************************************************************
@@ -353,6 +355,7 @@ class WicaStreamSerializerTest
    {
       final String inputString = "{\"name\":\"XHIPA:TIME\",\"props\":{\"prec\":77 }}";
       final WicaChannel channel = WicaStreamSerializer.readFromJson( inputString, WicaChannel.class );
+      assertThat( channel.getName().asString(), is( "XHIPA:TIME" ) );
    }
 
 /*- Private methods ----------------------------------------------------------*/
