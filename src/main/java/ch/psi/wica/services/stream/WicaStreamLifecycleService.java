@@ -36,6 +36,7 @@ public class WicaStreamLifecycleService
 
    private final Map<WicaStreamId, WicaStreamServerSentEventPublisher> wicaStreamPublisherMap = Collections.synchronizedMap( new HashMap<>() );
 
+   private final WicaStreamConfigurationDecoder wicaStreamConfigurationDecoder;
    private final WicaStreamDataRequesterService wicaStreamDataRequesterService;
    private final WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService;
    private final WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService;
@@ -63,11 +64,13 @@ public class WicaStreamLifecycleService
     *     which collects the monitored values for the stream.
 
     */
-   public WicaStreamLifecycleService( @Autowired WicaStreamDataRequesterService wicaStreamDataRequesterService,
+   public WicaStreamLifecycleService( @Autowired WicaStreamConfigurationDecoder wicaStreamConfigurationDecoder,
+                                      @Autowired WicaStreamDataRequesterService wicaStreamDataRequesterService,
                                       @Autowired WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService,
                                       @Autowired WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService,
                                       @Autowired WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService )
    {
+      this.wicaStreamConfigurationDecoder = wicaStreamConfigurationDecoder;
       this.wicaStreamDataRequesterService = Validate.notNull( wicaStreamDataRequesterService);
       this.wicaStreamMetadataCollectorService = wicaStreamMetadataCollectorService;
       this.wicaStreamMonitoredValueCollectorService = wicaStreamMonitoredValueCollectorService;
@@ -98,17 +101,18 @@ public class WicaStreamLifecycleService
       {
          // Attempt to decode the stream configuration.
          final StopWatch streamDecodeTimer = StopWatch.createStarted();
-         final WicaStreamConfigurationDecoder decoder;
+
+         final WicaStream wicaStream;
          try
          {
-            decoder = new WicaStreamConfigurationDecoder( jsonStreamConfiguration);
+            wicaStream = wicaStreamConfigurationDecoder.decode( jsonStreamConfiguration);
          }
          catch ( Exception ex )
          {
             throw new IllegalArgumentException("The JSON configuration string '" + jsonStreamConfiguration + "' was invalid.", ex);
          }
 
-         if ( decoder.getWicaChannels().size() == 0 )
+         if ( wicaStream.getWicaChannels().size() == 0 )
          {
             throw new IllegalArgumentException("The JSON configuration string did not define any channels.");
          }
@@ -116,15 +120,16 @@ public class WicaStreamLifecycleService
          final long streamDecodeTimeInMillis = streamDecodeTimer.getTime();
          logger.info("Stream decoding took: '{}' ms.,", streamDecodeTimeInMillis );
 
-         // Allocate a new stream ID.
-         final WicaStreamId wicaStreamId = WicaStreamId.createNext();
-
-         // Create a stream based on the supplied configuration.
-         final WicaStream wicaStream = WicaStream.createBuilder()
-               .withId( wicaStreamId )
-               .withStreamProperties( decoder.getWicaStreamProperties() )
-               .withChannels( decoder.getWicaChannels() )
-               .build();
+//         // Allocate a new stream ID.
+//         final WicaStreamId wicaStreamId = WicaStreamId.createNext();
+//
+//         // Create a stream based on the supplied configuration
+//
+//         final WicaStream wicaStream = WicaStreamBuilder.create()
+//               .withId( wicaStreamId )
+//               .withStreamProperties( decodedStream.getWicaStreamProperties() )
+//               .withChannels( decodedStream.getWicaChannels() )
+//               .build();
 
          logger.info( "Stream created OK from config string: '{}.'", wicaStream );
 
@@ -142,7 +147,8 @@ public class WicaStreamLifecycleService
                                                                                                 wicaStreamMetadataCollectorService,
                                                                                                 wicaStreamMonitoredValueCollectorService,
                                                                                                 wicaStreamPolledValueCollectorService );
-         wicaStreamPublisherMap.put( wicaStreamId, wicaStreamServerSentEventPublisher );
+
+         wicaStreamPublisherMap.put( wicaStream.getWicaStreamId(), wicaStreamServerSentEventPublisher );
 
          // Lastly increase the count of created streams.
          streamsCreated.incrementAndGet();

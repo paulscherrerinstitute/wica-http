@@ -28,11 +28,12 @@ public class WicaChannelStartPollingEvent
    public WicaChannelStartPollingEvent( WicaChannelName wicaChannelName, int pollingIntervalInMillis )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelStartPollingEvent.class);
-      logger.trace("Creating event: WicaChannelStartPollingEvent");
       Validate.notNull( wicaChannelName );
+      Validate.isTrue( pollingIntervalInMillis > 0 );
 
       this.wicaChannelName = wicaChannelName;
       this.pollingIntervalInMillis = pollingIntervalInMillis;
+      logger.trace("Event created: '{}'.", this );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -48,8 +49,16 @@ public class WicaChannelStartPollingEvent
       return pollingIntervalInMillis;
    }
 
+   @Override
+   public String toString()
+   {
+      return "WicaChannelStartPollingEvent{" +
+         "wicaChannelName=" + wicaChannelName +
+         ", pollingIntervalInMillis=" + pollingIntervalInMillis +
+      '}';
+   }
 
-/*- Private methods ----------------------------------------------------------*/
+   /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

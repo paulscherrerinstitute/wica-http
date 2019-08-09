@@ -3,10 +3,10 @@ package ch.psi.wica.model.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.app.WicaDataAcquisitionMode;
+import ch.psi.wica.model.app.WicaFilterType;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -28,146 +28,82 @@ class WicaChannelPropertiesTest
 /*- Public methods -----------------------------------------------------------*/
 
    @Test
-   void testDefaultFieldValues()
+   void testEmptyConstructorReturnsDefaultPropertyValues()
    {
-      final WicaChannelProperties props = WicaChannelProperties.of("{}" );
-      assertThat( props.getDataAcquisitionMode(), is( WicaChannelProperties.DEFAULT_DATA_ACQUISITION_MODE ) );
-      assertThat( props.getPollingIntervalInMillis(), is( WicaChannelProperties.DEFAULT_POLLING_INTERVAL) );
-      assertThat( props.getFieldsOfInterest(), is( Set.of( WicaChannelProperties.DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) ) );
-      assertThat( props.getNumericPrecision(), is( WicaChannelProperties.DEFAULT_NUMERIC_PRECISION ) );
-      assertThat( props.getFilterType(), is( WicaChannelProperties.DEFAULT_FILTER_TYPE ) );
-      assertThat( props.getFilterNumSamples(), is( WicaChannelProperties.DEFAULT_FILTER_NUM_SAMPLES ) );
-      assertThat( props.getFilterCycleLength(), is( WicaChannelProperties.DEFAULT_FILTER_CYCLE_LENGTH ) );
-      assertThat( props.getFilterSamplingIntervalInMillis(), is( WicaChannelProperties.DEFAULT_FILTER_SAMPLING_INTERVAL ) );
-      assertThat( props.getFilterDeadband(), is( WicaChannelProperties.DEFAULT_FILTER_DEADBAND ) );
-      assertThat( props, is( WicaChannelProperties.createDefaultInstance() ) );
+      final var objectUnderTest = new WicaChannelProperties();
+
+      assertThat( objectUnderTest.getDataAcquisitionMode(),                is( WicaChannelPropertiesDefaults.DEFAULT_DATA_ACQUISITION_MODE ) );
+      assertThat( objectUnderTest.getPollingIntervalInMillis(),            is( WicaChannelPropertiesDefaults.DEFAULT_POLLING_INTERVAL_IN_MILLIS) );
+      assertThat( objectUnderTest.getFieldsOfInterest(),                   is( WicaChannelPropertiesDefaults.DEFAULT_FIELDS_OF_INTEREST ) );
+      assertThat( objectUnderTest.getNumericPrecision(),                   is( WicaChannelPropertiesDefaults.DEFAULT_NUMERIC_PRECISION ) );
+      assertThat( objectUnderTest.getFilterType(),                         is( WicaChannelPropertiesDefaults.DEFAULT_FILTER_TYPE ) );
+      assertThat( objectUnderTest.getFilterNumSamples(),                   is( WicaChannelPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES ) );
+      assertThat( objectUnderTest.getFilterCycleLength(),                  is( WicaChannelPropertiesDefaults.DEFAULT_FILTER_CYCLE_LENGTH ) );
+      assertThat( objectUnderTest.getFilterSamplingIntervalInMillis(),     is( WicaChannelPropertiesDefaults.DEFAULT_FILTER_SAMPLING_INTERVAL_IN_MILLIS) );
+      assertThat( objectUnderTest.getFilterDeadband(),                     is( WicaChannelPropertiesDefaults.DEFAULT_FILTER_DEADBAND ) );
    }
 
    @Test
-   void testOf_EmptyStringSpecifier_buildsExpectedObject()
+   void testFullConstructorReturnsAssignedValues()
    {
-      final WicaChannelProperties props = WicaChannelProperties.of( "{}" );
-      assertThat( props.getDataAcquisitionMode(), is( WicaChannelProperties.DEFAULT_DATA_ACQUISITION_MODE ) );
-      assertThat( props.getPollingIntervalInMillis(), is( WicaChannelProperties.DEFAULT_POLLING_INTERVAL) );
-      assertThat( props.getFieldsOfInterest(), is( Set.of( WicaChannelProperties.DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) ) );
-      assertThat( props.getNumericPrecision(), is( WicaChannelProperties.DEFAULT_NUMERIC_PRECISION ) );
-      assertThat( props.getFilterType(), is( WicaChannelProperties.DEFAULT_FILTER_TYPE ) );
-      assertThat( props.getFilterNumSamples(), is( WicaChannelProperties.DEFAULT_FILTER_NUM_SAMPLES ) );
-      assertThat( props.getFilterCycleLength(), is( WicaChannelProperties.DEFAULT_FILTER_CYCLE_LENGTH ) );
-      assertThat( props.getFilterSamplingIntervalInMillis(), is( WicaChannelProperties.DEFAULT_FILTER_SAMPLING_INTERVAL ) );
-      assertThat( props.getFilterDeadband(), is( WicaChannelProperties.DEFAULT_FILTER_DEADBAND ) );
+      final var objectUnderTest = new WicaChannelProperties( WicaDataAcquisitionMode.MONITOR, 11,"fields", 12, WicaFilterType.LAST_N, 13, 14, 15, 16.0 );
+
+      assertThat( objectUnderTest.getDataAcquisitionMode(),                                is( WicaDataAcquisitionMode.MONITOR ) );
+      assertThat( objectUnderTest.getPollingIntervalInMillis(),                            is(11 ) );
+      assertThat( objectUnderTest.getFieldsOfInterest(),                                   is("fields" ));
+      assertThat( objectUnderTest.getNumericPrecision(),                                   is(12 ) );
+      assertThat( objectUnderTest.getFilterType(),                                         is( WicaFilterType.LAST_N) );
+      assertThat( objectUnderTest.getFilterNumSamples(),                                   is(13 ) );
+      assertThat( objectUnderTest.getFilterCycleLength(),                                  is(14 ) );
+      assertThat( objectUnderTest.getFilterSamplingIntervalInMillis(),                     is(15 ) );
+      assertThat( objectUnderTest.getFilterDeadband(),                                     is(16.0 ) );
+
+      assertThat( objectUnderTest.getOptionalDataAcquisitionMode().isPresent(),            is(true ) );
+      assertThat( objectUnderTest.getOptionalPollingIntervalInMillis().isPresent(),        is(true ) );
+      assertThat( objectUnderTest.getOptionalFieldsOfInterest().isPresent(),               is(true ) );
+      assertThat( objectUnderTest.getOptionalNumericPrecision().isPresent(),               is(true ) );
+      assertThat( objectUnderTest.getOptionalFilterType().isPresent(),                     is(true ) );
+      assertThat( objectUnderTest.getOptionalFilterNumSamples().isPresent(),               is(true ) );
+      assertThat( objectUnderTest.getOptionalFilterCycleLength().isPresent(),              is(true ) );
+      assertThat( objectUnderTest.getOptionalFilterSamplingIntervalInMillis().isPresent(), is(true ) );
+      assertThat( objectUnderTest.getOptionalFilterDeadband().isPresent(),                 is(true ) );
+
+      assertThat( objectUnderTest.getOptionalDataAcquisitionMode().get(),                  is( WicaDataAcquisitionMode.MONITOR ) );
+      assertThat( objectUnderTest.getOptionalPollingIntervalInMillis().get(),              is(11 ) );
+      assertThat( objectUnderTest.getOptionalFieldsOfInterest().get(),                     is("fields" ));
+      assertThat( objectUnderTest.getOptionalNumericPrecision().get(),                     is(12 ) );
+      assertThat( objectUnderTest.getOptionalFilterType().get(),                           is( WicaFilterType.LAST_N) );
+      assertThat( objectUnderTest.getOptionalFilterNumSamples().get(),                     is(13 ) );
+      assertThat( objectUnderTest.getOptionalFilterCycleLength().get(),                    is(14 ) );
+      assertThat( objectUnderTest.getOptionalFilterSamplingIntervalInMillis().get(),       is(15 ) );
+      assertThat( objectUnderTest.getOptionalFilterDeadband().get(),                       is(16.0 ) );
    }
 
    @Test
-   void testOf_AllFieldsPresent_buildsExpectedObject()
+   void testConstructorWithNullValues()
    {
-      final String inputString = "{" + "\"daqmode\""   + ":" + "\"poll\"" + "," +
-                                       "\"pollint\""   + ":" + 33 + "," +
-                                       "\"fields\""    + ":" + "\"abc;def\"" + "," +
-                                       "\"prec\""      + ":" + 9 + "," +
-                                       "\"filter\""    + ":" + "\"last-n\"" + "," +
-                                       "\"n\""         + ":" + 5 + "," +
-                                       "\"m\""         + ":" + 77 + "," +
-                                       "\"interval\""  + ":" + 4321 + "," +
-                                       "\"deadband\""  + ":" + 15.8 +
-                                 "}";
+      final var objectUnderTest = new WicaChannelProperties( null,null,null,null, null, null, null,null, null );
 
-      final WicaChannelProperties props = WicaChannelProperties.of( inputString );
-      assertThat( props.getDataAcquisitionMode(), is( WicaChannelProperties.DataAcquisitionMode.POLL) );
-      assertThat( props.getPollingIntervalInMillis(), is( 33 ) );
-      assertThat( props.getFieldsOfInterest(), is( Set.of( "abc", "def") ) );
-      assertThat( props.getNumericPrecision(), is( 9 ) );
-      assertThat( props.getFilterType(), is( WicaChannelProperties.FilterType.LAST_N) );
-      assertThat( props.getFilterNumSamples(), is(5 ) );
-      assertThat( props.getFilterCycleLength(), is( 77 ) );
-      assertThat( props.getFilterSamplingIntervalInMillis(), is( 4321 ) );
-      assertThat( props.getFilterDeadband(), is(15.8 ) );
+      var ex01 = assertThrows( IllegalArgumentException.class, objectUnderTest::getDataAcquisitionMode );
+      var ex02 = assertThrows( IllegalArgumentException.class, objectUnderTest::getPollingIntervalInMillis );
+      var ex03 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFieldsOfInterest );
+      var ex04 = assertThrows( IllegalArgumentException.class, objectUnderTest::getNumericPrecision );
+      var ex05 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterType );
+      var ex06 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterNumSamples );
+      var ex07 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterCycleLength );
+      var ex08 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterSamplingIntervalInMillis );
+      var ex09 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterDeadband );
+
+      assertThat( ex01.getMessage(), is("The data acquisition mode for this channel was not specified." ) );
+      assertThat( ex02.getMessage(), is("The polling interval for this channel was not specified." ) );
+      assertThat( ex03.getMessage(), is("The fields of interest for this channel were not specified." ) );
+      assertThat( ex04.getMessage(), is("The numeric precision for this channel was not specified." ) );
+      assertThat( ex05.getMessage(), is("The filter type for this channel was not specified." ) );
+      assertThat( ex06.getMessage(), is("The number of samples for this channel's LAST_N filter was not specified." ) );
+      assertThat( ex07.getMessage(), is("The cycle length for this channel's ONE_IN_M filter was not specified." ) );
+      assertThat( ex08.getMessage(), is("The sampling interval for this channel's RATE_LIMITER filter was not specified." ) );
+      assertThat( ex09.getMessage(), is("The deadband for this channel's CHANGE_FILTERER was not specified." ) );
    }
-
-   @Test
-   void testOf_withPartialStringSpecifier_buildsExpectedObject()
-   {
-      final String inputString = "{" + "\"daqmode\""   + ":" + "\"poll\"" + "," + "\"n\"" + ":" + 14 + "}";
-      final WicaChannelProperties props = WicaChannelProperties.of( inputString );
-      assertThat( props.getDataAcquisitionMode(), is(WicaChannelProperties.DataAcquisitionMode.POLL) );
-      assertThat( props.getPollingIntervalInMillis(), is( WicaChannelProperties.DEFAULT_POLLING_INTERVAL) );
-      assertThat( props.getFieldsOfInterest(), is( Set.of( WicaChannelProperties.DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) ) );
-      assertThat( props.getNumericPrecision(), is( WicaChannelProperties.DEFAULT_NUMERIC_PRECISION ) );
-      assertThat( props.getFilterType(), is( WicaChannelProperties.DEFAULT_FILTER_TYPE ) );
-      assertThat( props.getFilterNumSamples(), is( 14 ) );
-      assertThat( props.getFilterCycleLength(), is( WicaChannelProperties.DEFAULT_FILTER_CYCLE_LENGTH ) );
-      assertThat( props.getFilterSamplingIntervalInMillis(), is( WicaChannelProperties.DEFAULT_FILTER_SAMPLING_INTERVAL ) );
-      assertThat( props.getFilterDeadband(), is( WicaChannelProperties.DEFAULT_FILTER_DEADBAND ) );
-   }
-
-   @Test
-   void testBuilder()
-   {
-      final WicaChannelProperties props = WicaChannelProperties.createBuilder()
-            .withDataAcquisitionMode(WicaChannelProperties.DataAcquisitionMode.POLL)
-            .withPollingInterval(33 )
-            .withFieldsOfInterest( "abc;def" )
-            .withNumericPrecision( 9 )
-            .withFilterType(WicaChannelProperties.FilterType.LAST_N )
-            .withNumSamples( 5 )
-            .withFilterCycleLength( 77)
-            .withFilterSamplingInterval( 4321 )
-            .withFilterDeadband( 15.8 )
-            .build();
-
-      assertThat( props.getDataAcquisitionMode(), is(WicaChannelProperties.DataAcquisitionMode.POLL) );
-      assertThat( props.getPollingIntervalInMillis(), is( 33 ) );
-      assertThat( props.getFieldsOfInterest(), is( Set.of( "abc", "def") ) );
-      assertThat( props.getNumericPrecision(), is( 9 ) );
-      assertThat( props.getFilterType(), is( WicaChannelProperties.FilterType.LAST_N) );
-      assertThat( props.getFilterNumSamples(), is(5 ) );
-      assertThat( props.getFilterCycleLength(), is( 77 ) );
-      assertThat( props.getFilterSamplingIntervalInMillis(), is( 4321 ) );
-      assertThat( props.getFilterDeadband(), is(15.8 ) );
-   }
-
-   @Test
-   void testOf_InvalidValueRealInsteadOfInteger_GetsTruncatedToInteger()
-   {
-      final WicaChannelProperties props = WicaChannelProperties.of( "{" + "\"pollint\"" + ":" + 99.99 + "}" );
-      assertThat( props.getPollingIntervalInMillis(), is( 99 ) );
-   }
-
-   @Test
-   void testOf_UnrecognisedKey_ThrowsIllegalArgumentException()
-   {
-      final Exception ex = assertThrows( IllegalArgumentException.class, () -> WicaChannelProperties.of("{" + "\"XXX\"" + ":" + 12345 + "}" ) );
-      assertThat( ex.getMessage(), is("The input string: '{\"XXX\":12345}' was not a valid descriptor for the properties of a wica channel." ) );
-   }
-
-   @Test
-   void testOf_InvalidValue_ThrowsIllegalArgumentException()
-   {
-      final Exception ex = assertThrows( IllegalArgumentException.class, () -> WicaChannelProperties.of("{" + "\"daqmode\"" + ":" + 99 + "}" ) );
-      assertThat( ex.getMessage(), is("The input string: '{\"daqmode\":99}' was not a valid descriptor for the properties of a wica channel." ) );
-   }
-
-   @Test
-   void testOf_InvalidValue_NaN_ThrowsIllegalArgumentException()
-   {
-      final Exception ex = assertThrows( IllegalArgumentException.class, () -> WicaChannelProperties.of("{" + "\"deadband\"" + ":" + "NaN" + "}" ) );
-      assertThat( ex.getMessage(), is("The input string: '{\"deadband\":NaN}' was not a valid descriptor for the properties of a wica channel." ) );
-   }
-
-   @Test
-   void testOf_InvalidValue_Inf_ThrowsIllegalArgumentException()
-   {
-      final Exception ex = assertThrows( IllegalArgumentException.class, () -> WicaChannelProperties.of("{" + "\"deadband\"" + ":" + "Inf" + "}" ) );
-      assertThat( ex.getMessage(), is("The input string: '{\"deadband\":Inf}' was not a valid descriptor for the properties of a wica channel." ) );
-   }
-
-   @Test
-   void testOf_InvalidValue_StringInNumberField_ThrowsIllegalArgumentException()
-   {
-      final Exception ex = assertThrows( IllegalArgumentException.class, () -> WicaChannelProperties.of("{" + "\"pollratio\"" + ":" + "IllegalString" + "}" ) );
-      assertThat( ex.getMessage(), is("The input string: '{\"pollratio\":IllegalString}' was not a valid descriptor for the properties of a wica channel." ) );
-   }
-
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

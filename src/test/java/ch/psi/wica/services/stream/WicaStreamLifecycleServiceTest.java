@@ -4,10 +4,10 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelProperties;
+import ch.psi.wica.model.channel.WicaChannelPropertiesDefaults;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamId;
-import ch.psi.wica.model.stream.WicaStreamProperties;
+import ch.psi.wica.model.stream.WicaStreamPropertiesDefaults;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +57,7 @@ class WicaStreamLifecycleServiceTest
       assertThat( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ), is (true) );
 
       final var streamProperties = stream.getWicaStreamProperties();
-      assertThat( streamProperties.getHeartbeatFluxIntervalInMillis(), is( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS ) );
+      assertThat( streamProperties.getHeartbeatFluxIntervalInMillis(), is(WicaStreamPropertiesDefaults.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS ) );
 
       final var wicaStreamId = stream.getWicaStreamId();
       assertThat( wicaStreamId.asString(), is("0") );
@@ -74,7 +74,7 @@ class WicaStreamLifecycleServiceTest
       assertThat( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ), is (true) );
 
       final var streamProperties = stream.getWicaStreamProperties();
-      assertThat( streamProperties.getHeartbeatFluxIntervalInMillis(), is( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS ) );
+      assertThat( streamProperties.getHeartbeatFluxIntervalInMillis(), is( WicaStreamPropertiesDefaults.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS ) );
 
       final var wicaStreamId = stream.getWicaStreamId();
       assertThat( wicaStreamId.asString(), is("0") );
@@ -92,9 +92,9 @@ class WicaStreamLifecycleServiceTest
       assertThat( channels.stream().map( c -> c.getName().getControlSystemName().asString() ).anyMatch( s -> s.equals( "MHC2:IST:2" ) ), is (true) );
 
       final var streamProperties = stream.getWicaStreamProperties();
-      assertThat( streamProperties.getHeartbeatFluxIntervalInMillis(), is( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS ) );
-      assertThat( streamProperties.getNumericPrecision(), is(WicaChannelProperties.DEFAULT_NUMERIC_PRECISION ) );
-      assertThat( streamProperties.getFieldsOfInterest(), is( Set.of( "abc", "def" ) ) );
+      assertThat( streamProperties.getHeartbeatFluxIntervalInMillis(), is( WicaStreamPropertiesDefaults.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS ) );
+      assertThat( streamProperties.getNumericPrecision(), is(WicaChannelPropertiesDefaults.DEFAULT_NUMERIC_PRECISION ) );
+      assertThat( streamProperties.getFieldsOfInterest(), is( "abc;def" ) );
 
       final var wicaStreamId = stream.getWicaStreamId();
       assertThat( wicaStreamId.asString(), is("0") );

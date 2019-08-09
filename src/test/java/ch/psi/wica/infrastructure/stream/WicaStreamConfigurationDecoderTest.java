@@ -3,23 +3,22 @@ package ch.psi.wica.infrastructure.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.app.WicaFilterType;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelProperties;
-import org.apache.commons.lang3.time.StopWatch;
+import ch.psi.wica.model.stream.WicaStream;
+import ch.psi.wica.model.stream.WicaStreamProperties;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Set;
-import java.util.stream.Stream;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -31,174 +30,72 @@ class WicaStreamConfigurationDecoderTest
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaStreamConfigurationDecoderTest.class );
+   private WicaStreamConfigurationDecoder decoder;
 
-   private static final String simpleStreamConfiguration =
-         "{ \"props\": { \"prec\": 29, \"heartbeat\": 50, \"monflux\": 40 }," +
-           "\"channels\": [ { \"name\": \"MHC1:IST:2\", \"props\": { \"filter\": \"changes\", \"deadband\": 19 } }," +
-                           "{ \"name\": \"MYC2:IST:2\", \"props\": { \"filter\": \"changes\", \"deadband\": 10 } }," +
-                           "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filter\": \"rate-limiter\", \"interval\": 17 } } ] }";
-
-   private static final String typicalStreamConfiguration =
-         "{\"channels\":[" +
-               "{\"name\":\"XPROSCAN:TIME:2\"}," +
-               "{\"name\":\"XPROREG:STAB:1\"}," +
-               "{\"name\":\"EMJCYV:STA3:2\"}," +
-               "{\"name\":\"EMJCYV:CTRL:1\"}," +
-               "{\"name\":\"MMAV6:IST:2\"}," +
-               "{\"name\":\"MMAC3:STR:2\"}," +
-               "{\"name\":\"EMJCYV:STAW:1\",\"props\":{\"fields\":\"val\"}}," +
-               "{\"name\":\"EMJCYV:IST:2\",\"props\":{\"fields\":\"val\"}}," +
-               "{\"name\":\"MMAC:SOL:2\"}," +
-               "{\"name\":\"DMAD1:IST:2\"}," +
-               "{\"name\":\"PRO:REG2D:Y:2\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-               "{\"name\":\"PRO:REG2D:X:2\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-               "{\"name\":\"PRO:REG2D:X\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-               "{\"name\":\"PRO:REG2D:Y\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-               "{\"name\":\"AMAKI1:IST:2\"}," +
-               "{\"name\":\"CMJSEV:PWRF:2\"}," +
-               "{\"name\":\"CMJLL:SOLA:2\"},{\"name\":\"EMJEC1V:IST:2\"}," +
-               "{\"name\":\"EMJEC2V:IST:2\"}," +
-               "{\"name\":\"AMJHS-I:IADC:2\"}," +
-               "{\"name\":\"MMJF:IST:2\"}," +
-               "{\"name\":\"IMJV:IST:2\"}," +
-               "{\"name\":\"IMJI:IST:2\"}," +
-               "{\"name\":\"IMJGF:IST:2\"}," +
-               "{\"name\":\"XPROIONS:IST1:2\"}," +
-               "{\"name\":\"QMA1:IST:2\"}," +
-               "{\"name\":\"QMA2:IST:2\"}," +
-               "{\"name\":\"QMA3:IST:2\"}," +
-               "{\"name\":\"SMJ1X:IST:2\"}," +
-               "{\"name\":\"SMJ2Y:IST:2\"}," +
-               "{\"name\":\"SMA1X:IST:2\"}," +
-               "{\"name\":\"SMA1Y:IST:2\"}," +
-               "{\"name\":\"FMJEP:IST:2\"}," +
-               "{\"name\":\"MMJP2:IST1:2\"}," +
-               "{\"name\":\"FMJEPI:POS:2\"}," +
-               "{\"name\":\"FMJEPI:BREI:2\"}," +
-               "{\"name\":\"FMJIP:IST:2\"}," +
-               "{\"name\":\"MMJP2:IST2:2\"}," +
-               "{\"name\":\"FMJIPI:POS:2\"}," +
-               "{\"name\":\"FMJIPI:BREI:2\"}," +
-               "{\"name\":\"PRO:CURRENTALARM:1\"}," +
-               "{\"name\":\"MMAC3:STR:2##2\",\"props\":{\"daqmode\":\"poll-and-monitor\",\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":5}}," +
-               "{\"name\":\"EMJCYV:IST:2##2\",\"props\":{\"daqmode\":\"poll-and-monitor\",\"fields\":\"val;ts\",\"filter\":\"one-in-m\",\"m\":5}}," +
-               "{\"name\":\"CMJSEV:PWRF:2##2\",\"props\":{\"daqmode\":\"poll-and-monitor\",\"fields\":\"val;ts\",\"filter\":\"one-in-m\",\"m\":5}}," +
-               "{\"name\":\"BMA1:STA:2\"}," +
-               "{\"name\":\"BMA1:STAR:2##1\"}," +
-               "{\"name\":\"BMA1:STAR:2##2\"}," +
-               "{\"name\":\"BMA1:STAP:2##1\"}," +
-               "{\"name\":\"BMA1:STAP:2##2\"}," +
-               "{\"name\":\"BME1:STA:2\"}," +
-               "{\"name\":\"BME1:STAR:2##1\"}," +
-               "{\"name\":\"BME1:STAR:2##2\"}," +
-               "{\"name\":\"BME1:STAP:2##1\"}," +
-               "{\"name\":\"BME1:STAP:2##2\"}," +
-               "{\"name\":\"BMB1:STA:2\"}," +
-               "{\"name\":\"BMB1:STAR:2##1\"}," +
-               "{\"name\":\"BMB1:STAR:2##2\"}," +
-               "{\"name\":\"BMB1:STAP:2##1\"}," +
-               "{\"name\":\"BMB1:STAP:2##2\"}," +
-               "{\"name\":\"BMC1:STA:2\"}," +
-               "{\"name\":\"BMC1:STAR:2##1\"}," +
-               "{\"name\":\"BMC1:STAR:2##2\"}," +
-               "{\"name\":\"BMC1:STAP:2##1\"}," +
-               "{\"name\":\"BMC1:STAP:2##2\"}," +
-               "{\"name\":\"BMD1:STA:2\"}," +
-               "{\"name\":\"BMD1:STAR:2##1\"}," +
-               "{\"name\":\"BMD1:STAR:2##2\"}," +
-               "{\"name\":\"BMD2:STA:2\"}," +
-               "{\"name\":\"BMD2:STAR:2##1\"}," +
-               "{\"name\":\"BMD2:STAR:2##2\"}," +
-               "{\"name\":\"BMD2:STAP:2##1\"}," +
-               "{\"name\":\"BMD2:STAP:2##2\"}," +
-               "{\"name\":\"MMAP5X:PROF:2:P\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-               "{\"name\":\"MMAP5X:PROF:2\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-               "{\"name\":\"MMAP5X:SPB:2\"}," +
-               "{\"name\":\"MMAP6Y:PROF:2:P\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-               "{\"name\":\"MMAP6Y:PROF:2\",\"props\":{\"fields\":\"val\",\"prec\":2}}," +
-               "{\"name\":\"MMAP6Y:SPB:2\"}," +
-               "{\"name\":\"YMJCS1K:IST:2\"}," +
-               "{\"name\":\"YMJCS2K:IST:2\"}," +
-               "{\"name\":\"YMJHH:SPARB:2\"}," +
-               "{\"name\":\"YMJHH:STR:2\"}," +
-               "{\"name\":\"YMJHL:IST:2\"}," +
-               "{\"name\":\"YMJHG:IST:2\"}," +
-               "{\"name\":\"YMJKKRT:IST:2\"}," +
-               "{\"name\":\"RPS-IQ:STA:1\"}," +
-               "{\"name\":\"UMJSSB:BIQX:1\"}," +
-               "{\"name\":\"RPS-HFRD:STA:1\"}," +
-               "{\"name\":\"UMJSSB:BHRX:1\"}," +
-               "{\"name\":\"RPS-HF:STA:1\"}," +
-               "{\"name\":\"UMJSSB:BHFX:1\"}," +
-               "{\"name\":\"UMJSSB:BDEX:1\"}," +
-               "{\"name\":\"XPROSCAN:STAB:2\"}" +
-               "],\"props\":{" +
-               "\"heartbeat\":15000," +
-               "\"monflux\":100," +
-               "\"pollflux\":1000," +
-               "\"daqmode\":" +
-               "\"monitor\"," +
-               "\"pollint\":100," +
-               "\"prec\":6," +
-               "\"fields\":" +
-               "\"val;sevr\"}" +
-               "}";
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   @Test
-   void testGoodDecodeSequence1()
+   @BeforeEach
+   void beforeEach()
    {
-      final String testString = "{ \"props\": { \"prec\": 29, \"heartbeat\": 50, \"monflux\": 40 }," +
-            "\"channels\": [ { \"name\": \"MHC1:IST:2\", \"props\": { \"filter\": \"changes\", \"deadband\": 19 } }," +
-                            "{ \"name\": \"MYC2:IST:2\", \"props\": { \"filter\": \"changes\", \"deadband\": 10 } }," +
-                            "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filter\": \"rate-limiter\", \"interval\": 17 } } ] }";
+      decoder = new WicaStreamConfigurationDecoder();
+   }
 
-      final WicaStreamConfigurationDecoder decoder = new WicaStreamConfigurationDecoder( testString );
-      final var streamProps = decoder.getWicaStreamProperties();
 
-      assertThat (streamProps.getHeartbeatFluxIntervalInMillis(), is(50 ) );
-      assertThat(streamProps.getMonitoredValueFluxIntervalInMillis(), is(40 ) );
-      assertThat( decoder.getWicaChannels().size(), is( 3 ) );
+   @Test
+   void testGoodDecodeSequence_hipaExample()
+   {
+      final String testString = "{ \"props\"   : { \"prec\": 29, \"hbflux\": 50, \"monflux\": 40 }," +
+                                  "\"channels\": [ { \"name\": \"MHC1:IST:2\", \"props\": { \"filter\": \"changes\", \"deadband\": 19 } }," +
+                                                  "{ \"name\": \"MYC2:IST:2\", \"props\": { \"filter\": \"changes\", \"deadband\": 10 } }," +
+                                                  "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filter\": \"rate-limiter\", \"interval\": 17 } } ] }";
 
-      final Set<WicaChannel> channels = decoder.getWicaChannels();
+      final WicaStream wicaStream = decoder.decode(testString );
+      final WicaStreamProperties wicaStreamProperties = wicaStream.getWicaStreamProperties();
+      final Set<WicaChannel> channels = wicaStream.getWicaChannels();
+
+      assertThat(wicaStreamProperties.getHeartbeatFluxIntervalInMillis(), is(50 ) );
+      assertThat( wicaStreamProperties.getMonitoredValueFluxIntervalInMillis(), is(40 ) );
+      assertThat( channels.size(), is( 3 ) );
+
       channels.forEach( c -> {
          if ( c.getName().equals(WicaChannelName.of("MHC1:IST:2" ) ) ) {
-            assertThat( c.getProperties().getFilterType(), is( WicaChannelProperties.FilterType.CHANGE_FILTERER ) );
+            assertThat( c.getProperties().getFilterType(), is(WicaFilterType.CHANGE_FILTERER ) );
             assertThat( c.getProperties().getFilterDeadband(), is( 19.0) );
          }
          if ( c.getName().equals(WicaChannelName.of("MYC2:IST:2" ) ) ) {
-            assertThat( c.getProperties().getFilterType(), is( WicaChannelProperties.FilterType.CHANGE_FILTERER ) );
+            assertThat( c.getProperties().getFilterType(), is( WicaFilterType.CHANGE_FILTERER ) );
             assertThat( c.getProperties().getFilterDeadband(), is(10.0 ) );
          }
          if ( c.getName().equals(WicaChannelName.of("MBC1:IST:2" ) ) ) {
-            assertThat( c.getProperties().getFilterType(), is( WicaChannelProperties.FilterType.RATE_LIMITER ) );
+            assertThat( c.getProperties().getFilterType(), is( WicaFilterType.RATE_LIMITER ) );
             assertThat( c.getProperties().getFilterSamplingIntervalInMillis(), is(17) );
          }
       } );
    }
 
    @Test
-   void testGoodDecodeSequence2()
+   void testGoodDecodeSequence_edwinStyleChannelNameExample()
    {
       String testString = "{\"channels\":[" +
          "{\"name\":\"ca://MMAC3A:STR:2##1\"}," +
          "{\"name\":\"ca://SLGJG-LMOT-M025:MOT-ACT-POS##1\"}," +
          "{\"name\":\"ca://SLGBV-LENG-BUV2_CS:VAL_GET\"}," +
-         "{\"name\":\"ca://SLG-D-MPTEST3:FITCALC.VALN.FTVL\"}" +
-      "]," +
-          "\"props\":{\"heartbeat\":15000,\"monflux\":100,\"pollflux\":1000,\"daqmode\":\"monitor\",\"pollint\":100,\"prec\":6,\"fields\":\"val;sevr\"}}";
+         "{\"name\":\"ca://SLG-D-MPTEST3:FITCALC.VALN.FTVL\"}" + "]," +
+          "\"props\":{\"hbflux\":15000,\"monflux\":100,\"pollflux\":1000,\"daqmode\":\"monitor\",\"pollint\":100,\"prec\":6,\"fields\":\"val;sevr\"}}";
 
-      final WicaStreamConfigurationDecoder decoder = new WicaStreamConfigurationDecoder( testString );
-      final var streamProps = decoder.getWicaStreamProperties();
-      assertThat( streamProps.getHeartbeatFluxIntervalInMillis(), is(15000 ) );
-      assertThat(streamProps.getMonitoredValueFluxIntervalInMillis(), is(100 ) );
-      assertThat( decoder.getWicaChannels().size(),is (4 ) );
-      final Set<WicaChannel> channels = decoder.getWicaChannels();
+
+      final WicaStream wicaStream = decoder.decode( testString );
+      final WicaStreamProperties wicaStreamProperties = wicaStream.getWicaStreamProperties();
+      final Set<WicaChannel> channels = wicaStream.getWicaChannels();
+
+      assertThat(wicaStreamProperties.getHeartbeatFluxIntervalInMillis(), is(15000 ) );
+      assertThat( wicaStreamProperties.getMonitoredValueFluxIntervalInMillis(), is(100 ) );
+      assertThat( channels.size(), is( 4) );
+
       channels.forEach( c -> {
          boolean channelRecognised = c.getName().equals( WicaChannelName.of( "ca://MMAC3A:STR:2##1" ) ) ||
                                      c.getName().equals( WicaChannelName.of( "ca://SLGBV-LENG-BUV2_CS:VAL_GET" ) ) ||
@@ -211,95 +108,157 @@ class WicaStreamConfigurationDecoderTest
       } );
    }
 
-   private static Stream<Arguments> getArgsForPerformanceTest()
+   @Test
+   void testGoodDecodeSequence_hipaStyleChannelNameExample()
    {
-      return Stream.of( Arguments.of(    1, simpleStreamConfiguration ),
-                        Arguments.of(    1, simpleStreamConfiguration ),
-                        Arguments.of(    1, simpleStreamConfiguration ),
-                        Arguments.of(   10, simpleStreamConfiguration ),
-                        Arguments.of(   10, simpleStreamConfiguration ),
-                        Arguments.of(   10, simpleStreamConfiguration ),
-                        Arguments.of(  100, simpleStreamConfiguration ),
-                        Arguments.of(  100, simpleStreamConfiguration ),
-                        Arguments.of(  100, simpleStreamConfiguration ),
-                        Arguments.of( 1000, simpleStreamConfiguration ),
-                        Arguments.of( 1000, simpleStreamConfiguration ),
-                        Arguments.of( 1000, simpleStreamConfiguration ),
-                        Arguments.of(    1, typicalStreamConfiguration ),
-                        Arguments.of(    1, typicalStreamConfiguration ),
-                        Arguments.of(    1, typicalStreamConfiguration ),
-                        Arguments.of(   10, typicalStreamConfiguration ),
-                        Arguments.of(   10, typicalStreamConfiguration ),
-                        Arguments.of(   10, typicalStreamConfiguration ),
-                        Arguments.of(  100, typicalStreamConfiguration ),
-                        Arguments.of(  100, typicalStreamConfiguration ),
-                        Arguments.of(  100, typicalStreamConfiguration ),
-                        Arguments.of( 1000, typicalStreamConfiguration ),
-                        Arguments.of( 1000, typicalStreamConfiguration ),
-                        Arguments.of( 1000, typicalStreamConfiguration ) );
-   }
+      String testString = "{\"channels\":" +
+            "[{\"name\":\"XHIPA:TIME\"},{\"name\":\"EVEX:STR:2\"},{\"name\":\"EWBRI:IST:2\"}," +
+            "{\"name\":\"MXC1:IST:2\"},{\"name\":\"MYC2:IST:2\"},{\"name\":\"MHC4:IST:2\"},{\"name\":\"MHC6:IST:2\"}," +
+            "{\"name\":\"MHC1:IST:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":10}}," +
+            "{\"name\":\"MYC2:IST:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":10}}," +
+            "{\"name\":\"MBC1:IST:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":10}}," +
+            "{\"name\":\"MRI12:ILOG:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":0.3}}," +
+            "{\"name\":\"MII7:ILOG:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":0.3}}," +
+            "{\"name\":\"MRI13:ILOG:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":8}}," +
+            "{\"name\":\"MRI14:ILOG:2##2\",\"props\":{\"daqmode\":\"poll\",\"pollratio\":30,\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":8}}," +
+            "{\"name\":\"CIPHMO:SOL:1\"},{\"name\":\"CRPHFT:SOL:1\"},{\"name\":\"MXF1:IST:2\"},{\"name\":\"MRFEIN:IST:2\"},{\"name\":\"MRFAUS:IST:2\"}," +
+            "{\"name\":\"MII7:ILOG:2\"},{\"name\":\"MRI2:ILOG:2\"},{\"name\":\"MRI13:ILOG:2\"},{\"name\":\"MRI14:ILOG:2\"},{\"name\":\"CI1V:IST:2\"}," +
+            "{\"name\":\"CI3V:IST:2\"},{\"name\":\"CI2V:IST:2\"},{\"name\":\"CI4V:IST:2\"},{\"name\":\"CR1V:IST:2\"},{\"name\":\"CR2V:IST:2\"}," +
+            "{\"name\":\"CR3V:IST:2\"},{\"name\":\"CR4V:IST:2\"},{\"name\":\"CR5V:IST:2\"},{\"name\":\"UCNQ:BEAMREQ:STATUS\"}," +
+            "{\"name\":\"UCNQ:BEAMREQ:COUNTDOWN\"},{\"name\":\"EICV:IST:2\"},{\"name\":\"EICI:IST:2\"},{\"name\":\"EECV:IST:2\"}," +
+            "{\"name\":\"EECI:IST:2\"},{\"name\":\"CIREV:FIST:2\"},{\"name\":\"CRREV:FIST:2\"},{\"name\":\"AIHS:IST:2\"}," +
+            "{\"name\":\"HS:IST:2\"},{\"name\":\"M3ALT:IST:2\"},{\"name\":\"GLS:LEISTUNG_AKTUELL\"}," +
+            "{\"name\":\"ZSLP:TOTSAVEFAST\"}]," +
+            "\"props\":{\"heartbeat\":15000,\"monflux\":100,\"pollflux\":1000,\"daqmode\":\"monitor\",\"pollratio\":1,\"prec\":6,\"fields\":\"val;sevr\"}}";
 
-   @MethodSource( "getArgsForPerformanceTest" )
-   @ParameterizedTest
-   void testPerformance( int iterations, String testString )
-   {
-      final StopWatch stopWatch = StopWatch.createStarted();
-      for( int  i= 0; i < iterations; i++)
-      {
-         final WicaStreamConfigurationDecoder decoder = new WicaStreamConfigurationDecoder( testString );
-         assertNotNull( decoder.getWicaStreamProperties() );
-         assertNotNull( decoder.getWicaChannels() );
-      }
-      final long decodeTimeInMillis = stopWatch.getTime();
-      logger.info( "Decode time for {} iterations was {} ms. Throughput = {} requests per second.", iterations, decodeTimeInMillis, ( 1000 * iterations ) / decodeTimeInMillis  );
+      final WicaStream wicaStream = decoder.decode( testString );
+      final WicaStreamProperties wicaStreamProperties = wicaStream.getWicaStreamProperties();
+      final Set<WicaChannel> channels = wicaStream.getWicaChannels();
+
+      assertThat(wicaStreamProperties.getHeartbeatFluxIntervalInMillis(), is(15000 ) );
+      assertThat( wicaStreamProperties.getMonitoredValueFluxIntervalInMillis(), is(100 ) );
+      assertThat( channels.size(), is( 45 ) );
    }
 
    @Test
-   void testBadDecodeSequence1()
+   void testBadDecodeSequence_nullString()
    {
-      assertThrows( IllegalArgumentException.class, () ->
-      {
-         // Note: the following string is bad because the JSON root does not contain a
-         // collection of name/value pairs with an item named "channels" referencing
-         // a value with a list of channels.
-         String testString = "[ { \"name\": \"MHC1:IST:2\" } ]";
-         new WicaStreamConfigurationDecoder( testString );
-      } );
+      final var ex = assertThrows( NullPointerException.class, () -> decoder.decode( null ));
+      assertThat( ex.getMessage(), is( "The JSON input string was null." ) );
    }
 
    @Test
-   void testBadDecodeSequence2()
+   void testBadDecodeSequence_inputStringIsEmpty()
    {
-      assertThrows(IllegalArgumentException.class, () ->
-      {
-         // Note: the following string is bad because the JSON root does not contain a
-         // collection of name/value pairs with an item named "channels" referencing
-         // a value with a list of channels.
-         String testString = "[ { \"name\": \"MHC1:IST:2\", \"props\": { \"filterType\": \"changes\", \"deadband\": 19 } }," +
-               "{ \"name\": \"MYC2:IST:2\", \"props\": { { \"filterType\": \"changes\", \"deadband\": 10 } }," +
-               "{ \"name\": \"MBC1:IST:2\", \"props\": { \"filterType\": \"special\", \"deadband\": 10 } } ]";
-
-         new WicaStreamConfigurationDecoder(testString);
-      });
+      final var ex = assertThrows(IllegalArgumentException.class, () -> decoder.decode( "" ) );
+      assertThat( ex.getMessage(), is( "The JSON input string was empty." ) );
    }
 
    @Test
-   void testBadDecodeSequence3()
+   void testBadDecodeSequence_testBadDecodeSequence_inputStringIsBlank()
    {
-      assertThrows( IllegalArgumentException.class, () ->
-      {
-         // Note: the following string is bad because the JSON root does not contain a
-         // collection of name/value pairs with an item named "channels" referencing
-         // a value with a list of channels.
-         String testString = "[ { \"name\": \"MHC1:IST:2\", \"props\": ]";
+      final var ex = assertThrows( IllegalArgumentException.class, () -> decoder.decode( " " ) );
+      assertThat( ex.getMessage(), is( "The JSON input string was blank." ) );
+   }
 
-         new WicaStreamConfigurationDecoder( testString );
-      } );
+   @Test
+   void testBadDecodeSequence_rootNodeIsNotJsonObject()
+   {
+      final var ex = assertThrows( IllegalArgumentException.class, () -> decoder.decode("[]" ) );
+      assertThat( ex.getMessage(), is( "The root node of the JSON configuration string was not a JSON Object." ) );
+   }
 
+   @Test
+   void testBadDecodeSequence_rootNodeIsEmpty()
+   {
+      final var ex = assertThrows( IllegalArgumentException.class, () -> decoder.decode("{}" ) );
+      assertThat( ex.getMessage(), is( "The root node of the JSON configuration string did not contain a field named 'channels'." ) );
+   }
+
+   @Test
+   void testBadDecodeSequence_rootNodeChannelsFieldIsMissing()
+   {
+      final var ex = assertThrows( IllegalArgumentException.class, () -> decoder.decode("{ \"key\": 1 }" ) );
+      assertThat( ex.getMessage(), is( "The root node of the JSON configuration string did not contain a field named 'channels'." ) );
+   }
+
+   @Test
+   void testBadDecodeSequence_rootNodeChannelsFieldIsNull()
+   {
+      final var ex = assertThrows( IllegalArgumentException.class, () -> decoder.decode("{ \"channels\": null }" ) );
+      assertThat( ex.getMessage(), is( "The root node of the JSON configuration string did not contain a value for field named 'channels'." ) );
+   }
+
+   @Test
+   void testBadDecodeSequence_rootNodeChannelsFieldIsMissingValue()
+   {
+      final String testString = "{ \"channels\": }";
+      final var ex = assertThrows( IllegalArgumentException.class, () -> decoder.decode( testString ) );
+      assertThat( ex.getMessage(), is( "The JSON channel configuration string: '" + testString + "' was invalid." ) );
+      assertThat( ex.getCause().toString(), containsString( "Unexpected character ('}' (code 125))" ) );
+   }
+
+   @Test
+   void testBadDecodeSequence_rootNodeChannelsFieldIsNotAnArray_1()
+   {
+      final var ex = assertThrows( IllegalArgumentException.class, () -> decoder.decode( "{ \"channels\": 1 }" ) );
+      assertThat( ex.getMessage(), is( "The root node of the JSON configuration string contained a field named 'channels', but it wasn't an array." ) );
+   }
+
+   @Test
+   void testBadDecodeSequence_channelsFieldIsNotAnArray_2()
+   {
+      final String testString = "{ \"channels\": {} }";
+      final var ex = assertThrows( IllegalArgumentException.class, () -> decoder.decode( testString ) );
+      assertThat( ex.getMessage(), is( "The root node of the JSON configuration string contained a field named 'channels', but it wasn't an array." ) );
    }
 
 
-   /*- Private methods ----------------------------------------------------------*/
+   @Test
+   void testBadDecodeSequence_channelsFieldIsDuplicated()
+   {
+      final String testString = "{ \"channels\": [], \"channels\": [] }";
+      final var ex = assertThrows( IllegalArgumentException.class, () -> decoder.decode( testString ) );
+      assertThat( ex.getMessage(), is( "The JSON channel configuration string: '" + testString + "' was invalid." ) );
+      assertThat( ex.getCause().toString(), containsString( "Duplicate field 'channels'" ) );
+   }
+
+   @Test
+   void testBadDecodeSequence_channelNameFieldIsDuplicated()
+   {
+      final String testString = "{ \"channels\": [ { \"name\": \"ABC\", \"name\": \"ABC\" } ] }";
+      final var ex = assertThrows( IllegalArgumentException.class, () -> decoder.decode( testString ) );
+      assertThat( ex.getMessage(), is( "The JSON channel configuration string: '" + testString + "' was invalid." ) );
+      assertThat( ex.getCause().toString(), containsString( "Duplicate field 'name'" ) );
+   }
+
+   @Test
+   void testBadDecodeSequence_channelNameFieldIsMissing()
+   {
+      final String testString = "{ \"channels\": [ { \"props\": \"ABC\" } ] }";
+      final var ex = assertThrows( IllegalArgumentException.class, () -> decoder.decode( testString ) );
+      assertThat( ex.getMessage(), is( "The JSON configuration string did not specify the name of one or more channels (missing 'name' field)." ) );
+   }
+
+
+   @Test
+   void testGoodDecodeSequence_streamPropertiesOverrideDefaultChannelProperties()
+   {
+      final String testString =
+            "{  \"props\":    { \"n\" : 8 }," +
+               "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\", \"props\" : { \"n\" : 4} } ] }";
+
+      final var stream = decoder.decode( testString );
+      assertThat( stream.getWicaChannels().size(), is( 2 ) );
+      final var arr = stream.getWicaChannels().toArray(new WicaChannel[] {} );
+      assertThat( arr[ 0 ].getName().asString(), is(  "MHC2:IST:2" ) );
+      assertThat( arr[ 0 ].getProperties().getFilterNumSamples(), is(  4 ) );
+      assertThat( arr[ 1 ].getName().asString(), is(  "MHC1:IST:2" ) );
+      assertThat( arr[ 1 ].getProperties().getFilterNumSamples(), is(  8 ) );
+   }
+
+
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

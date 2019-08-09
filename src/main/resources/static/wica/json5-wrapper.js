@@ -18,6 +18,7 @@
 import JSON5 from './json5-latest.min.js';
 
 import * as log from "./logger.js";
+
 export { load, parse, stringify };
 
 

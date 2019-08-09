@@ -33,7 +33,7 @@ class EpicsChannelValueChangeSubscriber
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(EpicsChannelValueChangeSubscriber.class );
+   private final Logger logger = LoggerFactory.getLogger( EpicsChannelValueChangeSubscriber.class );
    private final WicaChannelValueBuilder wicaChannelValueBuilder;
 
 /*- Main ---------------------------------------------------------------------*/

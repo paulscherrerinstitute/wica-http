@@ -28,9 +28,9 @@ public class WicaChannelMetadataUpdateEvent
    public WicaChannelMetadataUpdateEvent( ControlSystemName controlSystemName, WicaChannelMetadata wicaChannelMetadata )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelMetadataUpdateEvent.class);
-      logger.trace("Creating event: WicaChannelMetadataUpdateEvent");
       this.controlSystemName = Validate.notNull( controlSystemName );
       this.wicaChannelMetadata = Validate.notNull( wicaChannelMetadata );
+      logger.info("Event created: '{}'.", this );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -44,6 +44,15 @@ public class WicaChannelMetadataUpdateEvent
    public WicaChannelMetadata getWicaChannelData()
    {
       return wicaChannelMetadata;
+   }
+
+   @Override
+   public String toString()
+   {
+      return "WicaChannelMetadataUpdateEvent{" +
+         "controlSystemName=" + controlSystemName +
+         ", wicaChannelMetadata=" + wicaChannelMetadata +
+      '}';
    }
 
 /*- Private methods ----------------------------------------------------------*/

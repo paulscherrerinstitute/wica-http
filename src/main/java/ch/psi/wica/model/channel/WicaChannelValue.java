@@ -20,7 +20,7 @@ import java.util.Objects;
 // Note the Filter Id in the annotation here must match the definition in
 // the WicaChannelDataSerializer.
 @JsonFilter( "WicaChannelDataFilter" )
-@JsonPropertyOrder( { "type", "conn", "val", "sevr", "stat", "ts", "wsts", "wsts-alt", "dsts", "dsts-alt" } )
+@JsonPropertyOrder( { "type", "conn", "val", "sevr", "stat", "ts", "wsts", "wsts-alt", "ts-alt" } )
 @Immutable
 public abstract class WicaChannelValue  extends WicaChannelData
 {
@@ -149,7 +149,7 @@ public abstract class WicaChannelValue  extends WicaChannelData
 
       private WicaChannelValueDisconnected( LocalDateTime wicaServerTimestamp )
       {
-         super(false,wicaServerTimestamp );
+         super(false, wicaServerTimestamp );
          this.val = null;
       }
    }
@@ -181,14 +181,12 @@ public abstract class WicaChannelValue  extends WicaChannelData
          return wicaChannelAlarmStatus.getStatusCode();
       }
 
-      @SuppressWarnings( "WeakerAccess" )
       @JsonIgnore
       public WicaChannelAlarmSeverity getWicaAlarmSeverity()
       {
          return wicaChannelAlarmSeverity;
       }
 
-      @SuppressWarnings( "WeakerAccess" )
       @JsonIgnore
       public WicaChannelAlarmStatus getWicaChannelAlarmStatus()
       {
@@ -205,7 +203,7 @@ public abstract class WicaChannelValue  extends WicaChannelData
          return dataSourceTimestamp;
       }
 
-      @JsonProperty( "dsts-alt" )
+      @JsonProperty( "ts-alt" )
       public long getDataSourceTimestampAlt()
       {
          return dataSourceTimestamp.atOffset( ZoneOffset.UTC ).toInstant().toEpochMilli();

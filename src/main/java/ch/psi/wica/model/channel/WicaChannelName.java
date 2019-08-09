@@ -4,8 +4,7 @@ package ch.psi.wica.model.channel;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.app.ControlSystemName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
@@ -59,13 +58,14 @@ public class WicaChannelName
 
 /*- Class methods ------------------------------------------------------------*/
 
+   @JsonCreator
    public static WicaChannelName of( String strSpecifier )
    {
       final Matcher matcher = pattern.matcher( strSpecifier );
 
       Validate.isTrue( matcher.matches(), "The string: '" + strSpecifier + "' was not a valid channel name." );
 
-      // The protocol token may or man not be present. When not present we choose the default.
+      // The protocol token may or may not be present. When not present we choose the default.
       final Protocol protocol = matcher.group("protocol" ) == null ?
             null : Protocol.of( matcher.group ("protocol" ) );
 
@@ -82,19 +82,14 @@ public class WicaChannelName
 
 /*- Public methods -----------------------------------------------------------*/
 
-   @JsonIgnore
    public Optional<Protocol> getProtocol()
    {
       return Optional.ofNullable( protocol );
    }
-
-   @JsonIgnore
    public ControlSystemName getControlSystemName()
    {
       return controlSystemName;
    }
-
-   @JsonIgnore
    public Optional<Integer> getInstance()
    {
       return Optional.ofNullable( instance );
@@ -105,7 +100,6 @@ public class WicaChannelName
     *
     * @return the representation.
     */
-   @JsonProperty( "name")
    public String asString()
    {
       return stringRepresentation;

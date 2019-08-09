@@ -27,10 +27,9 @@ public class WicaChannelStartMonitoringEvent
    public WicaChannelStartMonitoringEvent( WicaChannelName wicaChannelName )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelStartMonitoringEvent.class);
-      logger.trace("Creating event: WicaChannelStartMonitoringEvent");
-      Validate.notNull(wicaChannelName );
-
+      Validate.notNull( wicaChannelName );
       this.wicaChannelName = wicaChannelName;
+      logger.trace("Event created: '{}'.", this );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -39,6 +38,14 @@ public class WicaChannelStartMonitoringEvent
    public WicaChannelName get()
    {
       return wicaChannelName;
+   }
+
+   @Override
+   public String toString()
+   {
+      return "WicaChannelStartMonitoringEvent{" +
+         "wicaChannelName=" + wicaChannelName +
+      '}';
    }
 
 /*- Private methods ----------------------------------------------------------*/

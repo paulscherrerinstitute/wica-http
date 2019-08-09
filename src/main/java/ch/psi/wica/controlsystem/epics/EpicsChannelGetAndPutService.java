@@ -182,6 +182,7 @@ public class EpicsChannelGetAndPutService
 
 /*- Private methods ----------------------------------------------------------*/
 
+   // TODO - detect application close then clean up.
    public void dispose()
    {
       logger.info("Cleaning up context...");

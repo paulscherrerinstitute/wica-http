@@ -1,5 +1,5 @@
 {
-  "props": { "heartbeat" :  2000 },
+  "props": { "hbflux" :  2000 },
   "channels" : [ { "name": "test:counter00" },
                  { "name": "test:counter01" } ]
 }

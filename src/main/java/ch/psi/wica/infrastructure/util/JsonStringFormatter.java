@@ -31,7 +31,7 @@ public class JsonStringFormatter
       try
       {
          final ObjectMapper mapper = new ObjectMapper();
-         mapper.enable(JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS );
+         mapper.enable( JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS );
          mapper.disable( JsonGenerator.Feature.QUOTE_NON_NUMERIC_NUMBERS );
          final JsonNode json = mapper.readTree(jsonInput );
          return mapper.writerWithDefaultPrettyPrinter().writeValueAsString( json );

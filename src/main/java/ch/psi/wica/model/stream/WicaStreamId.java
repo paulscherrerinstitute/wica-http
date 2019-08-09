@@ -34,18 +34,22 @@ public class WicaStreamId
    {
       return new WicaStreamId( String.valueOf( nextAllocationId++ ) );
    }
-
    public static WicaStreamId of( String string )
    {
       return new WicaStreamId( string );
    }
-
    public static void resetAllocationSequencer()
    {
       nextAllocationId = 0;
    }
 
 /*- Public methods -----------------------------------------------------------*/
+
+   public String asString()
+   {
+      return id;
+   }
+
 
    @Override
    public boolean equals( Object o )
@@ -62,18 +66,16 @@ public class WicaStreamId
       return Objects.hash(id);
    }
 
-   public String asString()
-   {
-      return id;
-   }
 
    @Override
    public String toString()
    {
-      return "WicaStreamId<" + id + '>';
+      return "WicaStreamId{" +
+            "id='" + id + '\'' +
+            '}';
    }
 
-/*- Private methods ----------------------------------------------------------*/
+   /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

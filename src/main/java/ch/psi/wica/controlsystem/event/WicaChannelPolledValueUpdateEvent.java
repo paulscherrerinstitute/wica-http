@@ -3,7 +3,7 @@ package ch.psi.wica.controlsystem.event;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.app.ControlSystemName;
+import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -16,29 +16,29 @@ import org.slf4j.LoggerFactory;
 public class WicaChannelPolledValueUpdateEvent
 {
 
-   /*- Public attributes --------------------------------------------------------*/
-   /*- Private attributes -------------------------------------------------------*/
+/*- Public attributes --------------------------------------------------------*/
+/*- Private attributes -------------------------------------------------------*/
 
-   private final ControlSystemName controlSystemName;
+   private final WicaChannelName wicaChannelName;
    private final WicaChannelValue wicaChannelValue;
 
-   /*- Main ---------------------------------------------------------------------*/
-   /*- Constructor --------------------------------------------------------------*/
+/*- Main ---------------------------------------------------------------------*/
+/*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelPolledValueUpdateEvent( ControlSystemName controlSystemName, WicaChannelValue wicaChannelValue )
+   public WicaChannelPolledValueUpdateEvent( WicaChannelName WicaChannelName, WicaChannelValue wicaChannelValue )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelPolledValueUpdateEvent.class);
-      logger.trace("Creating event: WicaChannelPolledValueUpdateEvent");
-      this.controlSystemName = Validate.notNull( controlSystemName );
+      this.wicaChannelName = Validate.notNull( WicaChannelName );
       this.wicaChannelValue = Validate.notNull( wicaChannelValue );
+      logger.trace("Event created: '{}'.", this );
    }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public ControlSystemName getControlSystemName()
+   public WicaChannelName getWicaChannelName()
    {
-      return controlSystemName;
+      return wicaChannelName;
    }
 
    public WicaChannelValue getWicaChannelValue()
@@ -46,6 +46,14 @@ public class WicaChannelPolledValueUpdateEvent
       return wicaChannelValue;
    }
 
+   @Override
+   public String toString()
+   {
+      return "WicaChannelPolledValueUpdateEvent{" +
+         "wicaChannelName=" + wicaChannelName +
+         ", wicaChannelValue=" + wicaChannelValue +
+      '}';
+   }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

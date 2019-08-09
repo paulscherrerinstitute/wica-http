@@ -6,8 +6,12 @@
 /*- Import/Export Declarations -----------------------------------------------*/
 
 import * as log from "./logger.js"
-import { WicaElementConnectionAttributes, WicaElementEventAttributes,
-         WicaElementRenderingAttributes, WicaStreamProperties} from './shared-definitions.js';
+import {
+    WicaElementConnectionAttributes,
+    WicaElementEventAttributes,
+    WicaElementRenderingAttributes,
+    WicaStreamProperties
+} from './shared-definitions.js';
 
 import {DocumentStreamConnector} from "./document-stream-connector.js";
 import {DocumentTextRenderer} from "./document-text-renderer.js";

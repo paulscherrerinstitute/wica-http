@@ -1,18 +1,17 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.controlsystem.event;
+package ch.psi.wica.infrastructure.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.app.ControlSystemName;
 import ch.psi.wica.model.channel.WicaChannel;
+import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,16 +29,13 @@ import static org.junit.Assert.assertThat;
 /*- Class Declaration --------------------------------------------------------*/
 
 @SpringBootTest
-class WicaChannelDataBufferTest
+class WicaStreamMonitoredValueDataBufferTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
-
-   @MockBean
-   private ApplicationEventPublisher applicationEventPublisher;
    
-   private WicaChannelDataBuffer<WicaChannelValue> testObject;
+   private WicaStreamMonitoredValueDataBuffer testObject;
    private WicaStream stream;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -50,11 +46,11 @@ class WicaChannelDataBufferTest
    @BeforeEach
    void setup()
    {
-      testObject = new WicaChannelDataBuffer<>(3 );
-      stream = WicaStream.createBuilder().withId( WicaStreamId.createNext() )
-         .withChannelName( "abc" )
-         .withChannelName( "def" )
-         .withChannelName( "ghi" )
+      testObject = new WicaStreamMonitoredValueDataBuffer(3 );
+      stream = WicaStreamBuilder.create().withId( WicaStreamId.createNext() )
+         .withChannelNameAndDefaultProperties( "abc" )
+         .withChannelNameAndDefaultProperties( "def" )
+         .withChannelNameAndDefaultProperties( "ghi" )
          .build();
    }
 
@@ -67,13 +63,12 @@ class WicaChannelDataBufferTest
    @Test
    void testSimpleUpdate()
    {
-      final WicaChannel abc = WicaChannel.createFromName( "abc" );
+      final WicaChannel abc = WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "abc" ).build();
       injectValueUpdate( abc.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
       final Map<WicaChannel, List<WicaChannelValue>> map = testObject.getLaterThan( Set.of( abc ), LocalDateTime.MIN );
       assertThat( map.size(), is( 1 ) );
       assertThat( map.get( abc ).size(),is( 1 ) );
    }
-
 
    @Test
    void testHandleValueUpdate_GetLaterThanChannel()
@@ -81,7 +76,7 @@ class WicaChannelDataBufferTest
       // Create 5 channel values after the begin time and assign them to channel abc
       // Since the testObject is only 3 values in size only 3 of them should be accepted.
       final LocalDateTime beginTime = LocalDateTime.MIN;
-      final WicaChannel abc = WicaChannel.createFromName( "abc" );
+      final WicaChannel abc = WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "abc" ).build();
       injectValueUpdate( abc.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
       injectValueUpdate( abc.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
       injectValueUpdate( abc.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
@@ -90,13 +85,13 @@ class WicaChannelDataBufferTest
 
       // Create 2 channel values after the middle time and assign them to channel def
       final LocalDateTime middleTime = LocalDateTime.now();
-      final WicaChannel def = WicaChannel.createFromName( "def" );
+      final WicaChannel def = WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "def" ).build();
       injectValueUpdate( def.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
       injectValueUpdate( def.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
 
       // Create 1 channel value after the end time and assign them to channel ghi
       final LocalDateTime endTime = LocalDateTime.now();
-      final WicaChannel ghi = WicaChannel.createFromName( "ghi" );
+      final WicaChannel ghi = WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "ghi" ).build();
       injectValueUpdate( ghi.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
 
       final var beginTimeResultMap = testObject.getLaterThan( Set.of( abc, def, ghi ), beginTime );
@@ -114,7 +109,7 @@ class WicaChannelDataBufferTest
    @Test
    void testHandleValueUpdate_GetLaterThanMultipleValues() throws InterruptedException
    {
-      final WicaChannel abc = WicaChannel.createFromName( "abc" );
+      final WicaChannel abc = WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "abc" ).build();
       final LocalDateTime beginTime = LocalDateTime.MIN;
       final WicaChannelValue testValue1 = WicaChannelValue.createChannelValueDisconnected();
       final ExecutorService executorService = Executors.newFixedThreadPool(100);
@@ -138,7 +133,7 @@ class WicaChannelDataBufferTest
       // Create 5 channel values after the begin time and assign them to channel abc
       // Since the testObject is only 3 values in size only 3 of them should be accepted
       final LocalDateTime beginTime = LocalDateTime.now();
-      final WicaChannel abc = WicaChannel.createFromName( "abc" );
+      final WicaChannel abc = WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "abc" ).build();
       injectValueUpdate( abc.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
       injectValueUpdate( abc.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
       injectValueUpdate( abc.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
@@ -147,13 +142,13 @@ class WicaChannelDataBufferTest
 
       // Create 2 channel values after the middle time and assign them to channel def
       final LocalDateTime middleTime = LocalDateTime.now();
-      final WicaChannel def = WicaChannel.createFromName( "def" );
+      final WicaChannel def = WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "def" ).build();
       injectValueUpdate( def.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
       injectValueUpdate( def.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
 
       // Create 1 channel value after the end time and assign them to channel ghi
       final LocalDateTime endTime = LocalDateTime.now();
-      final WicaChannel ghi = WicaChannel.createFromName( "ghi" );
+      final WicaChannel ghi = WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "ghi" ).build();
       injectValueUpdate( ghi.getName().getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() );
 
       final var laterThanBeginTimeMap = testObject.getLaterThan( stream.getWicaChannels(), beginTime );
@@ -176,7 +171,7 @@ class WicaChannelDataBufferTest
    
    private void injectValueUpdate( ControlSystemName controlSystemName, WicaChannelValue wicaChannelValue )
    {
-      testObject.saveControlSystemDataPoint( controlSystemName, wicaChannelValue );
+      testObject.saveDataPoint(controlSystemName, wicaChannelValue );
    }   
    
 /*- Nested Classes -----------------------------------------------------------*/

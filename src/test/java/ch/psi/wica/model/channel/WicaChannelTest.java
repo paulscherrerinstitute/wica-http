@@ -3,13 +3,12 @@ package ch.psi.wica.model.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import ch.psi.wica.model.app.WicaDataAcquisitionMode;
+import ch.psi.wica.model.app.WicaFilterType;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 
@@ -21,42 +20,42 @@ class WicaChannelTest
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
-
-   private final Logger logger = LoggerFactory.getLogger(WicaChannelNameTest.class );
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
    @Test
-   void testCreateFromWicaChannelNameObject()
+   void testEmptyConstructor()
    {
-      final WicaChannelName wicaChannelName = WicaChannelName.of( "simon" );
-      final WicaChannel objectUnderTest = WicaChannel.createFromName( wicaChannelName );
-      final WicaChannelProperties props = objectUnderTest.getProperties();
-      assertThat( props, is( WicaChannelProperties.createDefaultInstance() ) );
+      final var objectUnderTest = new WicaChannel();
+      assertThat( objectUnderTest.getName(),         nullValue() );
+      assertThat( objectUnderTest.getProperties(),   nullValue() );
+      assertThat( objectUnderTest.getNameAsString(), is ("" ) );
    }
 
    @Test
-   void testCreateFromWicaChannelStringName()
+   void testFullConstructor()
    {
-      final WicaChannel objectUnderTest = WicaChannel.createFromName( "simon" );
-      final WicaChannelProperties props = objectUnderTest.getProperties();
-      assertThat( props, is( WicaChannelProperties.createDefaultInstance() ) );
+      final var testName = WicaChannelName.of( "simon" );
+      final var testProps = new WicaChannelProperties( WicaDataAcquisitionMode.MONITOR,
+                                                      11,
+                                                      "fields",
+                                                      12,
+                                                       WicaFilterType.LAST_N,
+                                                      13,
+                                                      14,
+                                                      15,
+                                                      16.0 );
+
+
+      final WicaChannel objectUnderTest =  new WicaChannel( testName, testProps );
+
+      assertThat( objectUnderTest.getName(), is( testName ) );
+      assertThat( objectUnderTest.getProperties(), is( testProps ) );
    }
 
-   @Test
-   void testJsonSerialization() throws JsonProcessingException
-   {
-      final WicaChannel wicaChannel = WicaChannel.createFromName( "peter" );
-      final ObjectMapper objectMapper = new ObjectMapper();
-      final String serializedValue = objectMapper.writeValueAsString( wicaChannel );
-      logger.info( "Serialized form of WicaChannel looks like this '{}' ", serializedValue );
-   }
-
-
-   /*- Private methods ----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

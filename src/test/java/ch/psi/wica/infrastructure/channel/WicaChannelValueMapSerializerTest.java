@@ -70,15 +70,15 @@ class WicaChannelValueMapSerializerTest
    @Test
    void test_serialize()
    {
-      final Map<WicaChannel,List<WicaChannelValue>> map = Map.of( WicaChannel.createFromName("UnconnChannel"), List.of(unconnValue ),
-                                                                  WicaChannel.createFromName("StringTypeChannel" ), List.of(strValue ),
-                                                                  WicaChannel.createFromName("StringArrayType" ), List.of(strArrValue ),
-                                                                  WicaChannel.createFromName("IntegerTypeChannel" ), List.of(intValue ),
-                                                                  WicaChannel.createFromName("IntegerArrayTypeChannel" ), List.of(intArrValue ),
-                                                                  WicaChannel.createFromName("RealTypeChannel" ), List.of(realValue ),
-                                                                  WicaChannel.createFromName("RealInfTypeChannel" ), List.of(realInfValue ),
-                                                                  WicaChannel.createFromName("RealNanTypeChannel" ), List.of(realNanValue ),
-                                                                  WicaChannel.createFromName("RealArrayTypeChannel" ), List.of(realArrValue  ) );
+      final Map<WicaChannel,List<WicaChannelValue>> map = Map.of( WicaChannelBuilder.create().withChannelNameAndDefaultProperties("UnconnChannel").build(), List.of(unconnValue ),
+                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "StringTypeChannel" ).build(), List.of(strValue ),
+                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties("StringArrayType" ).build(), List.of(strArrValue ),
+                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties("IntegerTypeChannel" ).build(), List.of(intValue ),
+                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties("IntegerArrayTypeChannel" ).build(), List.of(intArrValue ),
+                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties("RealTypeChannel" ).build(), List.of(realValue ),
+                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties("RealInfTypeChannel" ).build(), List.of(realInfValue ),
+                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties("RealNanTypeChannel" ).build(), List.of(realNanValue ),
+                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties("RealArrayTypeChannel" ).build(), List.of(realArrValue  ) );
 
       final var serializer = new WicaChannelValueMapSerializer( false );
       final String jsonStr = serializer.serialize( map );

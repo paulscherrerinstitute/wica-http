@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 /*- Class Declaration --------------------------------------------------------*/
 
 @Immutable
-public enum WicaServerSentEventBuilder
+public enum WicaStreamServerSentEventBuilder
 {
    EV_WICA_SERVER_HEARTBEAT         ("ev-wica-server-heartbeat", "server heartbeat"         ),
    EV_WICA_CHANNEL_METADATA         ("ev-wica-channel-metadata", "channel metadata"         ),
@@ -37,12 +37,11 @@ public enum WicaServerSentEventBuilder
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   WicaServerSentEventBuilder( String event, String comment )
+   WicaStreamServerSentEventBuilder( String event, String comment )
    {
       this.event = Validate.notBlank( event );
       this.comment = Validate.notBlank( comment );
    }
-
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/

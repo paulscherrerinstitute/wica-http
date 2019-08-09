@@ -1,7 +1,11 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.model.channel;
+package ch.psi.wica.infrastructure.channel;
 
 /*- Imported packages --------------------------------------------------------*/
+
+import ch.psi.wica.model.channel.WicaChannelAlarmSeverity;
+import ch.psi.wica.model.channel.WicaChannelAlarmStatus;
+import ch.psi.wica.model.channel.WicaChannelValue;
 
 import java.time.LocalDateTime;
 

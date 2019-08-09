@@ -114,7 +114,7 @@ public class EpicsChannelDataRequesterService
       if ( ( wicaChannelName.getProtocol().isEmpty() ) || ( wicaChannelName.getProtocol().get() == WicaChannelName.Protocol.CA ) )
       {
          logger.trace( "Starting to poll wica channel named: '{}'", wicaChannelName );
-         startPolling( wicaChannelName.getControlSystemName(), pollingIntervalInMillis );
+         startPolling( wicaChannelName, pollingIntervalInMillis );
       }
       else
       {
@@ -157,7 +157,7 @@ public class EpicsChannelDataRequesterService
 
       // Define the handlers to be informed of interesting changes to the channel
       final Consumer<Boolean> stateChangedHandler = b -> handleConnectionStateChanged( controlSystemName, b );
-      final Consumer<WicaChannelValue> valueChangedHandler = v -> handleValueChanged( controlSystemName, v );
+      final Consumer<WicaChannelValue> valueChangedHandler = v -> handleMonitoredValueChanged(controlSystemName, v );
       final Consumer<WicaChannelMetadata> metadataChangedHandler = v -> handleMetadataChanged( controlSystemName, v );
 
       // Now start monitoring
@@ -221,7 +221,7 @@ public class EpicsChannelDataRequesterService
     * @param controlSystemName the name of the channel whose value has changed.
     * @param wicaChannelValue the new value.
     */
-   private void handleValueChanged( ControlSystemName controlSystemName, WicaChannelValue wicaChannelValue )
+   private void handleMonitoredValueChanged( ControlSystemName controlSystemName, WicaChannelValue wicaChannelValue )
    {
       Validate.notNull( controlSystemName, "The 'controlSystemName' argument was null");
       Validate.notNull( wicaChannelValue, "The 'wicaChannelValue' argument was null");
@@ -230,24 +230,23 @@ public class EpicsChannelDataRequesterService
       applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( controlSystemName, wicaChannelValue ) );
    }
 
-
    /**
     * Starts polling the control system channel with the specified name at the specified interval
     *
-    * @param controlSystemName the name of the channel to monitor.
+    * @param wicaChannelName the name of the channel to monitor.
     * @param pollingIntervalInMillis the polling interval.
     */
-   private void startPolling( ControlSystemName controlSystemName, int pollingIntervalInMillis )
+   private void startPolling( WicaChannelName wicaChannelName, int pollingIntervalInMillis )
    {
-      Validate.notNull( controlSystemName );
-      appLogger.info( "EPICS channel subscribe: '{}'", controlSystemName.asString() );
-      logger.trace("Subscribing to new control system channel named: '{}'", controlSystemName.asString() );
+      Validate.notNull( wicaChannelName );
+      appLogger.info( "EPICS channel subscribe: '{}'", wicaChannelName.asString() );
+      logger.trace("Subscribing to new control system channel named: '{}'", wicaChannelName.asString() );
 
       // Define the handlers to be informed of interesting changes to the channel
-      final Consumer<WicaChannelValue> valueUpdateHandler = v -> handlePolledValueUpdate( controlSystemName, v );
+      final Consumer<WicaChannelValue> valueUpdateHandler = v -> handlePolledValueUpdate( wicaChannelName, v );
 
-      // Now start monitoring
-      epicsChannelPollingService.startPolling( EpicsChannelName.of( controlSystemName ), pollingIntervalInMillis, valueUpdateHandler );
+      // Now start polling
+      epicsChannelPollingService.startPolling( EpicsChannelName.of( wicaChannelName.getControlSystemName() ), pollingIntervalInMillis, valueUpdateHandler );
    }
 
    /**
@@ -267,18 +266,17 @@ public class EpicsChannelDataRequesterService
    /**
     * Handles a value update published by the EPICS channel poller.
     *
-    * @param controlSystemName the name of the channel whose value has changed.
+    * @param wicaChannelName the name of the channel whose value has changed.
     * @param wicaChannelValue the new value.
     */
-   private void handlePolledValueUpdate( ControlSystemName controlSystemName, WicaChannelValue wicaChannelValue )
+   private void handlePolledValueUpdate( WicaChannelName wicaChannelName, WicaChannelValue wicaChannelValue )
    {
-      Validate.notNull( controlSystemName, "The 'controlSystemName' argument was null");
+      Validate.notNull( wicaChannelName, "The 'controlSystemName' argument was null");
       Validate.notNull( wicaChannelValue, "The 'wicaChannelValue' argument was null");
 
-      logger.trace("'{}' - value changed to: '{}'", controlSystemName, wicaChannelValue );
-      applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( controlSystemName, wicaChannelValue ) );
+      logger.trace("'{}' - value changed to: '{}'", wicaChannelName, wicaChannelValue );
+      applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannelName, wicaChannelValue ) );
    }
-
 
 /*- Nested Classes -----------------------------------------------------------*/
 

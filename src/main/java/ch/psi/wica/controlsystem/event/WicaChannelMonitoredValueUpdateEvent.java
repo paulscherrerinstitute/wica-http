@@ -28,9 +28,9 @@ public class WicaChannelMonitoredValueUpdateEvent
    public WicaChannelMonitoredValueUpdateEvent( ControlSystemName controlSystemName, WicaChannelValue wicaChannelValue )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelMonitoredValueUpdateEvent.class);
-      logger.trace("Creating event: WicaChannelMonitoredValueUpdateEvent");
       this.controlSystemName = Validate.notNull( controlSystemName );
       this.wicaChannelValue = Validate.notNull( wicaChannelValue );
+      logger.trace("Event created: '{}'.", this );
    }
 
    /*- Class methods ------------------------------------------------------------*/
@@ -46,6 +46,14 @@ public class WicaChannelMonitoredValueUpdateEvent
       return wicaChannelValue;
    }
 
+   @Override
+   public String toString()
+   {
+      return "WicaChannelMonitoredValueUpdateEvent{" +
+         "controlSystemName=" + controlSystemName +
+         ", wicaChannelValue=" + wicaChannelValue +
+         '}';
+   }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

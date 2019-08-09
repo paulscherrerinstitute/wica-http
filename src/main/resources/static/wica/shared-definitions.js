@@ -279,7 +279,7 @@ const WicaStreamProperties = Object.freeze ({
  *
  * @property {number} [daqmode] - The data acquisition mode. Optional parameter which overrides
  *     property set on the stream.
- * @property {number} [pollratio] - The number of polling cycles before a sample is taken.
+ * @property {number} [pollint] - The interval between successive polls of the channel value.
  * @property {string} [fields] - A semicolon delimited list defining the data fields that
  *    should be included when sending value information for this channel.
  * @property {number} [prec] - The precision (= number of digits after the decimal point) to be
@@ -297,7 +297,7 @@ const WicaStreamProperties = Object.freeze ({
  */
 const WicaChannelProperties = Object.freeze ({
     daqmode: null,
-    pollratio: null,
+    pollint: null,
     fields: null,
     prec: null,
     filter: "last-n",

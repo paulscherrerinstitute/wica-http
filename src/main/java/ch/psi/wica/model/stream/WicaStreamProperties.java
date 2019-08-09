@@ -3,261 +3,265 @@ package ch.psi.wica.model.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelProperties;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import ch.psi.wica.model.app.WicaDataAcquisitionMode;
+import ch.psi.wica.model.app.WicaFilterType;
 import net.jcip.annotations.Immutable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.Set;
-
-import static ch.psi.wica.model.channel.WicaChannelProperties.DEFAULT_FIELDS_OF_INTEREST;
+import java.util.Optional;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@SuppressWarnings( { "WeakerAccess", "unused" } )
-@JsonIgnoreProperties()
 @Immutable
 public class WicaStreamProperties
 {
 
 /*- Public attributes --------------------------------------------------------*/
-
-   /**
-    * Default value for the heartbeat flux interval that will be assigned if
-    * the property is not explicitly set by configuration on the client.
-    */
-   public static final int DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS = 10_000;
-
-   /**
-    * Default value for the changed value flux interval that will be assigned if
-    * the property is not explicitly set by configuration on the client.
-    */
-   public static final int DEFAULT_MONITORED_VALUE_FLUX_INTERVAL_IN_MILLIS = 100;
-
-   /**
-    * Default value for the polled value flux interval that will be assigned if
-    * the property is not explicitly set by configuration on the client.
-    */
-   public static final int DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS = 100;
-
-
 /*- Private attributes -------------------------------------------------------*/
 
-   private static final WicaStreamProperties DEFAULT_INSTANCE = new Builder().build();
-
-   private static final Logger logger = LoggerFactory.getLogger(WicaChannelProperties.class);
-   private static final ObjectMapper objectMapper = new ObjectMapper();
+   private final WicaDataAcquisitionMode dataAcquisitionMode;
+   private final WicaFilterType filterType ;
 
    private final Integer heartbeatFluxIntervalInMillis;
+   private final Integer metadataFluxIntervalInMillis;
    private final Integer monitoredValueFluxIntervalInMillis;
    private final Integer polledValueFluxIntervalInMillis;
-
-   private final WicaChannelProperties defaultWicaChannelProperties;
+   private final Integer pollingIntervalInMillis;
+   private final Integer numericPrecision;
+   private final Integer filterNumSamples;
+   private final Integer filterCycleLength;
+   private final Integer filterSamplingIntervalInMillis;
+   private final Double filterDeadband;
+   private final String fieldsOfInterest;
 
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   private WicaStreamProperties( Integer heartbeatFluxIntervalInMillis,
-                                 Integer monitoredValueFluxIntervalInMillis,
-                                 Integer polledValueFluxIntervalInMillis )
+   public WicaStreamProperties()
    {
-      this.defaultWicaChannelProperties = WicaChannelProperties.createDefaultInstance();
-      this.heartbeatFluxIntervalInMillis = (heartbeatFluxIntervalInMillis == null) ? DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS : heartbeatFluxIntervalInMillis;
-      this.monitoredValueFluxIntervalInMillis = (monitoredValueFluxIntervalInMillis == null) ? DEFAULT_MONITORED_VALUE_FLUX_INTERVAL_IN_MILLIS : monitoredValueFluxIntervalInMillis;
-      this.polledValueFluxIntervalInMillis = (polledValueFluxIntervalInMillis == null) ? DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS : polledValueFluxIntervalInMillis;
+      this.heartbeatFluxIntervalInMillis      = WicaStreamPropertiesDefaults.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS;
+      this.metadataFluxIntervalInMillis       = WicaStreamPropertiesDefaults.DEFAULT_METADATA_FLUX_INTERVAL_IN_MILLIS;
+      this.monitoredValueFluxIntervalInMillis = WicaStreamPropertiesDefaults.DEFAULT_MONITORED_VALUE_FLUX_INTERVAL_IN_MILLIS;
+      this.polledValueFluxIntervalInMillis    = WicaStreamPropertiesDefaults.DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS;
+      this.dataAcquisitionMode                = WicaStreamPropertiesDefaults.DEFAULT_DATA_ACQUISITION_MODE;
+      this.pollingIntervalInMillis            = WicaStreamPropertiesDefaults.DEFAULT_POLLING_INTERVAL_IN_MILLIS;
+      this.numericPrecision                   = WicaStreamPropertiesDefaults.DEFAULT_NUMERIC_PRECISION;
+      this.filterType                         = WicaStreamPropertiesDefaults.DEFAULT_FILTER_TYPE;
+      this.filterNumSamples                   = WicaStreamPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES;
+      this.filterCycleLength                  = WicaStreamPropertiesDefaults.DEFAULT_FILTER_CYCLE_LENGTH;
+      this.filterSamplingIntervalInMillis     = WicaStreamPropertiesDefaults.DEFAULT_FILTER_SAMPLING_INTERVAL_IN_MILLIS;
+      this.filterDeadband                     = WicaStreamPropertiesDefaults.DEFAULT_FILTER_DEADBAND;
+      this.fieldsOfInterest                   = WicaStreamPropertiesDefaults.DEFAULT_FIELDS_OF_INTEREST;
    }
 
-   private WicaStreamProperties( @JsonProperty( "heartbeat" ) Integer heartbeatFluxIntervalInMillis,
-                                 @JsonProperty( "monflux" ) Integer monitoredValueFluxIntervalInMillis,
-                                 @JsonProperty( "pollflux" ) Integer polledValueFluxIntervalInMillis,
-                                 @JsonProperty( "daqmode" ) WicaChannelProperties.DataAcquisitionMode channelDataAcquisitionMode,
-                                 @JsonProperty( "pollint" ) Integer channelPollingIntervalInMillis,
-                                 @JsonProperty( "fields" ) String channelFieldsOfInterest,
-                                 @JsonProperty( "prec" ) Integer channelNumericPrecision,
-                                 @JsonProperty( "filter" ) WicaChannelProperties.FilterType channelFilterType,
-                                 @JsonProperty( "n" ) Integer channelFilterNumSamples,
-                                 @JsonProperty( "m" ) Integer channelFilterCycleLength,
-                                 @JsonProperty( "interval" ) Integer channelFilterSamplingIntervalInMillis,
-                                 @JsonProperty( "deadband" ) Double channelFilterDeadband )
+   // Support for deprecated property POLLRATIO. In the future this constructor can go.
+   // WARNING: Signature here must match EXACTLY with that in WicaStreamPropertiesDeserializationMixin.
+   public WicaStreamProperties( Integer pollingRatio, // deprecated
+                                Integer heartbeatFluxIntervalInMillis,
+                                Integer metadataFluxIntervalInMillis,
+                                Integer monitoredValueFluxIntervalInMillis,
+                                Integer polledValueFluxIntervalInMillis,
+                                WicaDataAcquisitionMode dataAcquisitionMode,
+                                Integer pollingIntervalInMillis,
+                                String fieldsOfInterest,
+                                Integer numericPrecision,
+                                WicaFilterType filterType,
+                                Integer filterNumSamples,
+                                Integer filterCycleLength,
+                                Integer filterSamplingIntervalInMillis,
+                                Double filterDeadband )
    {
-      this.defaultWicaChannelProperties = new WicaChannelProperties( channelDataAcquisitionMode,
-                                                                     channelPollingIntervalInMillis,
-                                                                     channelFieldsOfInterest,
-                                                                     channelNumericPrecision,
-                                                                     channelFilterType,
-                                                                     channelFilterNumSamples,
-                                                                     channelFilterCycleLength,
-                                                                     channelFilterSamplingIntervalInMillis,
-                                                                     channelFilterDeadband );
-
-      this.heartbeatFluxIntervalInMillis = captureOrDefault( heartbeatFluxIntervalInMillis, DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS );
-      this.monitoredValueFluxIntervalInMillis = captureOrDefault(monitoredValueFluxIntervalInMillis, DEFAULT_MONITORED_VALUE_FLUX_INTERVAL_IN_MILLIS);
-      this.polledValueFluxIntervalInMillis = captureOrDefault( polledValueFluxIntervalInMillis, DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS );
+      this.heartbeatFluxIntervalInMillis      = heartbeatFluxIntervalInMillis;
+      this.metadataFluxIntervalInMillis       = metadataFluxIntervalInMillis;
+      this.monitoredValueFluxIntervalInMillis = monitoredValueFluxIntervalInMillis;
+      this.polledValueFluxIntervalInMillis    = polledValueFluxIntervalInMillis;
+      this.dataAcquisitionMode                = dataAcquisitionMode;
+      this.pollingIntervalInMillis            = extractPollingInterval( pollingIntervalInMillis, pollingRatio );
+      this.numericPrecision                   = numericPrecision;
+      this.filterType                         = filterType;
+      this.filterNumSamples                   = filterNumSamples;
+      this.filterCycleLength                  = filterCycleLength;
+      this.filterSamplingIntervalInMillis     = filterSamplingIntervalInMillis;
+      this.filterDeadband                     = filterDeadband;
+      this.fieldsOfInterest                   = fieldsOfInterest;
    }
+
+   // Support for deprecated property pollratio. In the future this method can go.
+   private Integer extractPollingInterval( Integer pollingIntervalInMillis, Integer pollingRatio )
+   {
+      if ( (pollingIntervalInMillis == null) && (pollingRatio != null) )
+      {
+         return pollingRatio * polledValueFluxIntervalInMillis;
+      }
+      else
+      {
+         return pollingIntervalInMillis;
+      }
+   }
+
+   public WicaStreamProperties( Integer heartbeatFluxIntervalInMillis,
+                                Integer metadataFluxIntervalInMillis,
+                                Integer monitoredValueFluxIntervalInMillis,
+                                Integer polledValueFluxIntervalInMillis,
+                                WicaDataAcquisitionMode dataAcquisitionMode,
+                                Integer pollingIntervalInMillis,
+                                String fieldsOfInterest,
+                                Integer numericPrecision,
+                                WicaFilterType filterType,
+                                Integer filterNumSamples,
+                                Integer filterCycleLength,
+                                Integer filterSamplingIntervalInMillis,
+                                Double filterDeadband )
+   {
+      this.heartbeatFluxIntervalInMillis      = heartbeatFluxIntervalInMillis;
+      this.metadataFluxIntervalInMillis       = metadataFluxIntervalInMillis;
+      this.monitoredValueFluxIntervalInMillis = monitoredValueFluxIntervalInMillis;
+      this.polledValueFluxIntervalInMillis    = polledValueFluxIntervalInMillis;
+      this.dataAcquisitionMode                = dataAcquisitionMode;
+      this.pollingIntervalInMillis            = pollingIntervalInMillis;
+      this.numericPrecision                   = numericPrecision;
+      this.filterType                         = filterType;
+      this.filterNumSamples                   = filterNumSamples;
+      this.filterCycleLength                  = filterCycleLength;
+      this.filterSamplingIntervalInMillis     = filterSamplingIntervalInMillis;
+      this.filterDeadband                     = filterDeadband;
+      this.fieldsOfInterest                   = fieldsOfInterest;
+   }
+
 
 /*- Class methods ------------------------------------------------------------*/
-
-   /**
-    * Returns an instance constructed from the information provided in the JSON
-    * string descriptor.
-    * <p>
-    * The following keys define the properties that are unique to the stream.
-    *
-    * <code>heartbeat</code>
-    * <code>monflux</code>
-    * <code>pollflux</code>
-    * <p>
-    * The following keys define the default properties for the channels in
-    * the stream when not explicitly specified in the optional channel
-    * properties descriptor:
-    *
-    * <code>daqmode</code>
-    * <code>pollratio</code>
-    * <code>fields</code>
-    * <code>prec</code>
-    * <code>filter</code>
-    * <code>n</code>
-    * <code>m</code>
-    * <code>interval</code>
-    * <code>deadband</code>
-    *
-    * @param jsonStringSpecifier the JSON string representation containing the property
-    *                            keys and values.
-    * @return the instance.
-    * @throws IllegalArgumentException if the string specifier syntax was invalid.
-    */
-   public static WicaStreamProperties of( String jsonStringSpecifier )
-   {
-      try
-      {
-         return objectMapper.readValue(jsonStringSpecifier, WicaStreamProperties.class);
-      }
-      catch ( Exception ex )
-      {
-         final String msg = "The input string: '" + jsonStringSpecifier + "' was not a valid descriptor for the properties of a wica stream.";
-         logger.warn(msg);
-         logger.warn("The underlying exception cause was: '{}'.", ex.getMessage());
-         throw new IllegalArgumentException(msg);
-      }
-   }
-
-   /**
-    * Returns an instance with default properties.
-    *
-    * @return the instance.
-    */
-   public static WicaStreamProperties createDefaultInstance()
-   {
-      return DEFAULT_INSTANCE;
-   }
-
-
-   /**
-    * Returns a builder.
-    *
-    * @return the builder.
-    */
-   public static Builder createBuilder()
-   {
-      return new Builder();
-   }
-
 /*- Public methods -----------------------------------------------------------*/
 
-   @JsonProperty( "heartbeat" )
-   public Integer getHeartbeatFluxIntervalInMillis()
+   public Optional<Integer> getOptionalHeartbeatFluxIntervalInMillis()
    {
-      return heartbeatFluxIntervalInMillis;
+      return Optional.ofNullable( heartbeatFluxIntervalInMillis );
    }
 
-   @JsonProperty( "monflux" )
-   public Integer getMonitoredValueFluxIntervalInMillis()
+   public int getHeartbeatFluxIntervalInMillis()
    {
-      return monitoredValueFluxIntervalInMillis;
+      return getOptionalHeartbeatFluxIntervalInMillis().orElseThrow( () -> new IllegalArgumentException( "The heartbeat flux interval for this stream was not specified." ) );
    }
 
-   @JsonProperty( "pollflux" )
-   public Integer getPolledValueFluxIntervalInMillis()
+   public Optional<Integer> getOptionalMetadataFluxIntervalInMillis()
    {
-      return polledValueFluxIntervalInMillis;
+      return Optional.ofNullable( metadataFluxIntervalInMillis );
    }
 
-   @JsonIgnore
-   public WicaChannelProperties getDefaultWicaChannelProperties()
+   public int getMetadataFluxIntervalInMillis()
    {
-      return this.defaultWicaChannelProperties;
+      return getOptionalMetadataFluxIntervalInMillis().orElseThrow( () -> new IllegalArgumentException( "The metadata flux interval for this stream was not specified." ) );
    }
 
-   @JsonIgnore
-   public WicaChannelProperties.DataAcquisitionMode getDataAcquisitionMode()
+   public Optional<Integer> getOptionalMonitoredValueFluxIntervalInMillis()
    {
-      return defaultWicaChannelProperties.getDataAcquisitionMode();
+      return Optional.ofNullable( monitoredValueFluxIntervalInMillis );
    }
 
-   @JsonIgnore
-   public Set<String> getFieldsOfInterest()
+   public int getMonitoredValueFluxIntervalInMillis()
    {
-      return defaultWicaChannelProperties.getFieldsOfInterest();
+      return getOptionalMonitoredValueFluxIntervalInMillis().orElseThrow( () -> new IllegalArgumentException( "The monitored value flux interval for this stream was not specified." ) );
    }
 
-   @JsonIgnore
+   public Optional<Integer> getOptionalPolledValueFluxIntervalInMillis()
+   {
+      return Optional.ofNullable( polledValueFluxIntervalInMillis );
+   }
+
+   public int getPolledValueFluxIntervalInMillis()
+   {
+      return getOptionalPolledValueFluxIntervalInMillis().orElseThrow( () -> new IllegalArgumentException( "The polled value flux interval for this stream was not specified." ) );
+   }
+
+   public Optional<WicaDataAcquisitionMode> getOptionalDataAcquisitionMode()
+   {
+      return Optional.ofNullable( dataAcquisitionMode );
+   }
+
+   public WicaDataAcquisitionMode getDataAcquisitionMode()
+   {
+      return getOptionalDataAcquisitionMode().orElseThrow( () -> new IllegalArgumentException( "The data acquisition mode for this stream was not specified." ) );
+   }
+
+   public Optional<String> getOptionalFieldsOfInterest()
+   {
+      return Optional.ofNullable( fieldsOfInterest );
+   }
+
+   public String getFieldsOfInterest()
+   {
+      return getOptionalFieldsOfInterest().orElseThrow(() -> new IllegalArgumentException( "The fields of interest for this stream were not specified."));
+   }
+
+   public Optional<WicaFilterType> getOptionalFilterType()
+   {
+      return Optional.ofNullable( filterType );
+   }
+
+   public WicaFilterType getFilterType()
+   {
+      return getOptionalFilterType().orElseThrow( () -> new IllegalArgumentException( "The filter type for this stream was not specified." ) );
+   }
+
+   public Optional<Integer> getOptionalNumericPrecision()
+   {
+      return Optional.ofNullable( numericPrecision );
+   }
+
    public int getNumericPrecision()
    {
-      return defaultWicaChannelProperties.getNumericPrecision();
+      return getOptionalNumericPrecision().orElseThrow( () -> new IllegalArgumentException( "The numeric precision for this stream was not specified." ) );
    }
 
-   @JsonIgnore
-   public int getPolledValueSampleRatio()
+   public Optional<Integer> getOptionalPollingIntervalInMillis()
    {
-      return defaultWicaChannelProperties.getPollingIntervalInMillis();
+      return Optional.ofNullable( pollingIntervalInMillis );
    }
 
-   @JsonIgnore
-   public WicaChannelProperties.FilterType getFilterType()
+   public int getPollingIntervalInMillis()
    {
-      return defaultWicaChannelProperties.getFilterType();
+      return getOptionalPollingIntervalInMillis().orElseThrow( () -> new IllegalArgumentException( "The polling interval for this stream was not specified." ) );
    }
 
-   @JsonIgnore
+   public Optional<Integer> getOptionalFilterCycleLength()
+   {
+      return Optional.ofNullable( filterCycleLength );
+   }
+
    public int getFilterCycleLength()
    {
-      return defaultWicaChannelProperties.getFilterCycleLength();
+      return getOptionalFilterCycleLength().orElseThrow( () -> new IllegalArgumentException( "The cycle length for this stream's ONE_IN_M filter was not specified." ) );
    }
 
-   @JsonIgnore
+   public Optional<Integer> getOptionalFilterNumSamples()
+   {
+      return Optional.ofNullable( filterNumSamples );
+   }
+
    public int getFilterNumSamples()
    {
-      return defaultWicaChannelProperties.getFilterNumSamples();
+      return getOptionalFilterNumSamples().orElseThrow( () -> new IllegalArgumentException( "The number of samples for this stream's LAST_N filter was not specified." ) );
    }
 
-   @JsonIgnore
+   public Optional<Double> getOptionalFilterDeadband()
+   {
+      return Optional.ofNullable( filterDeadband );
+   }
+
    public double getFilterDeadband()
    {
-      return defaultWicaChannelProperties.getFilterDeadband();
+      return getOptionalFilterDeadband().orElseThrow( () -> new IllegalArgumentException( "The deadband for this stream's CHANGE_FILTERER was not specified." ) );
    }
 
-   @JsonIgnore
+   public Optional<Integer> getOptionalFilterSamplingIntervalInMillis()
+   {
+      return Optional.ofNullable( filterSamplingIntervalInMillis );
+   }
+
    public int getFilterSamplingIntervalInMillis()
    {
-      return defaultWicaChannelProperties.getFilterSamplingIntervalInMillis();
-   }
-
-   @Override
-   public String toString()
-   {
-      return "WicaStreamProperties{" +
-            "heartbeatFluxIntervalInMillis=" + heartbeatFluxIntervalInMillis +
-            ", monitoredValueFluxIntervalInMillis=" + monitoredValueFluxIntervalInMillis +
-            ", polledValueFluxIntervalInMillis=" + polledValueFluxIntervalInMillis +
-            ", defaultWicaChannelProperties=" + defaultWicaChannelProperties +
-            '}';
+      return getOptionalFilterSamplingIntervalInMillis().orElseThrow( () -> new IllegalArgumentException( "The sampling interval for this stream's RATE_LIMITER filter was not specified." ) );
    }
 
    @Override
@@ -266,132 +270,28 @@ public class WicaStreamProperties
       if ( this == o ) return true;
       if ( !(o instanceof WicaStreamProperties) ) return false;
       WicaStreamProperties that = (WicaStreamProperties) o;
-      return Objects.equals(heartbeatFluxIntervalInMillis, that.heartbeatFluxIntervalInMillis) &&
-             Objects.equals(monitoredValueFluxIntervalInMillis, that.monitoredValueFluxIntervalInMillis) &&
-             Objects.equals(polledValueFluxIntervalInMillis, that.polledValueFluxIntervalInMillis) &&
-             Objects.equals(defaultWicaChannelProperties, that.defaultWicaChannelProperties);
+      return dataAcquisitionMode == that.dataAcquisitionMode &&
+            filterType == that.filterType &&
+            Objects.equals(heartbeatFluxIntervalInMillis, that.heartbeatFluxIntervalInMillis) &&
+            Objects.equals(metadataFluxIntervalInMillis, that.metadataFluxIntervalInMillis) &&
+            Objects.equals(monitoredValueFluxIntervalInMillis, that.monitoredValueFluxIntervalInMillis) &&
+            Objects.equals(polledValueFluxIntervalInMillis, that.polledValueFluxIntervalInMillis) &&
+            Objects.equals(pollingIntervalInMillis, that.pollingIntervalInMillis) &&
+            Objects.equals(numericPrecision, that.numericPrecision) &&
+            Objects.equals(filterNumSamples, that.filterNumSamples) &&
+            Objects.equals(filterCycleLength, that.filterCycleLength) &&
+            Objects.equals(filterSamplingIntervalInMillis, that.filterSamplingIntervalInMillis) &&
+            Objects.equals(filterDeadband, that.filterDeadband) &&
+            Objects.equals(fieldsOfInterest, that.fieldsOfInterest);
    }
 
    @Override
    public int hashCode()
    {
-      return Objects.hash(heartbeatFluxIntervalInMillis, monitoredValueFluxIntervalInMillis, polledValueFluxIntervalInMillis, defaultWicaChannelProperties);
+      return Objects.hash(dataAcquisitionMode, filterType, heartbeatFluxIntervalInMillis, metadataFluxIntervalInMillis, monitoredValueFluxIntervalInMillis, polledValueFluxIntervalInMillis, pollingIntervalInMillis, numericPrecision, filterNumSamples, filterCycleLength, filterSamplingIntervalInMillis, filterDeadband, fieldsOfInterest);
    }
 
 /*- Private methods ----------------------------------------------------------*/
-
-   protected static <T> T captureOrDefault( T arg, T defaultValue )
-   {
-      return arg == null ? defaultValue: arg;
-   }
-
-   private static Set<String> captureOrDefault( String inputString )
-   {
-      final String str = (inputString == null ) ? DEFAULT_FIELDS_OF_INTEREST : inputString;
-      return Set.of( str.split( ";" ) );
-   }
-
 /*- Nested Classes -----------------------------------------------------------*/
 
-   @SuppressWarnings( "unused" )
-   public static class Builder
-   {
-      private int heartbeatFluxIntervalInMillis = DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS;
-      private int monitoredValueFluxIntervalInMillis = DEFAULT_MONITORED_VALUE_FLUX_INTERVAL_IN_MILLIS;
-      private int polledValueFluxIntervalInMillis = DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS;
-      private WicaChannelProperties.Builder wicaChannelPropertiesBuilder = WicaChannelProperties.createBuilder();
-
-      // Private to force use of the createBuilder factory method.
-      private Builder() {}
-
-      public Builder withHeartbeatFluxInterval( int heartbeatFluxIntervalInMillis )
-      {
-         this.heartbeatFluxIntervalInMillis = heartbeatFluxIntervalInMillis;
-         return this;
-      }
-
-      public Builder withMonitoredValueFluxInterval( int monitoredValueFluxIntervalInMillis )
-      {
-         this.monitoredValueFluxIntervalInMillis = monitoredValueFluxIntervalInMillis;
-         return this;
-      }
-
-      public Builder withPolledValueFluxInterval( int polledValueFluxIntervalInMillis )
-      {
-         this.polledValueFluxIntervalInMillis = polledValueFluxIntervalInMillis;
-         return this;
-      }
-
-      public Builder withDataAcquisitionMode( WicaChannelProperties.DataAcquisitionMode dataAcquisitionMode )
-      {
-         this.wicaChannelPropertiesBuilder = this.wicaChannelPropertiesBuilder.withDataAcquisitionMode( dataAcquisitionMode );
-         return this;
-      }
-
-      public Builder withPolledValueSamplingRatio( int polledValueSamplingRatio )
-      {
-         this.wicaChannelPropertiesBuilder = this.wicaChannelPropertiesBuilder.withPollingInterval(polledValueSamplingRatio );
-         return this;
-      }
-
-      public Builder withFieldsOfInterest( String fieldsOfInterest )
-      {
-         this.wicaChannelPropertiesBuilder = this.wicaChannelPropertiesBuilder.withFieldsOfInterest( fieldsOfInterest );
-         return this;
-      }
-
-      public Builder withNumericPrecision( int numericPrecision )
-      {
-         this.wicaChannelPropertiesBuilder = this.wicaChannelPropertiesBuilder.withNumericPrecision( numericPrecision );
-         return this;
-      }
-
-      public Builder withFilterType( WicaChannelProperties.FilterType filterType )
-      {
-         this.wicaChannelPropertiesBuilder = this.wicaChannelPropertiesBuilder.withFilterType( filterType );
-         return this;
-      }
-
-      public Builder withNumSamples( int filterNumSamples )
-      {
-         this.wicaChannelPropertiesBuilder = this.wicaChannelPropertiesBuilder.withNumSamples( filterNumSamples );
-         return this;
-      }
-
-      public Builder withFilterCycleLength( int filterCycleLength )
-      {
-         this.wicaChannelPropertiesBuilder = this.wicaChannelPropertiesBuilder.withFilterCycleLength( filterCycleLength );
-         return this;
-      }
-
-      public Builder withFilterSamplingInterval( int filterSamplingInterval )
-      {
-         this.wicaChannelPropertiesBuilder = this.wicaChannelPropertiesBuilder.withFilterSamplingInterval( filterSamplingInterval );
-         return this;
-      }
-
-      public Builder withFilterDeadband( double filterDeadband )
-      {
-         this.wicaChannelPropertiesBuilder = this.wicaChannelPropertiesBuilder.withFilterDeadband( filterDeadband );
-         return this;
-      }
-
-      public WicaStreamProperties build()
-      {
-         final WicaChannelProperties defaultWicaChannelProperties = wicaChannelPropertiesBuilder.build();
-         return new WicaStreamProperties( heartbeatFluxIntervalInMillis,
-                                          monitoredValueFluxIntervalInMillis,
-                                          polledValueFluxIntervalInMillis,
-                                          defaultWicaChannelProperties.getDataAcquisitionMode(),
-                                          defaultWicaChannelProperties.getPollingIntervalInMillis(),
-                                          defaultWicaChannelProperties.getFieldsOfInterestAsString(),
-                                          defaultWicaChannelProperties.getNumericPrecision(),
-                                          defaultWicaChannelProperties.getFilterType(),
-                                          defaultWicaChannelProperties.getFilterNumSamples(),
-                                          defaultWicaChannelProperties.getFilterCycleLength(),
-                                          defaultWicaChannelProperties.getFilterSamplingIntervalInMillis(),
-                                          defaultWicaChannelProperties.getFilterDeadband());
-      }
-
-   }
 }

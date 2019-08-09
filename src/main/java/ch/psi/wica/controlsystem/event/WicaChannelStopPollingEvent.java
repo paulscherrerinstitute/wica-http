@@ -27,10 +27,8 @@ public class WicaChannelStopPollingEvent
    public WicaChannelStopPollingEvent( WicaChannelName wicaChannelName )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelStopPollingEvent.class);
-      logger.trace("Creating event: WicaChannelStopPollingEvent");
-      Validate.notNull(wicaChannelName );
-
-      this.wicaChannelName = wicaChannelName;
+      this.wicaChannelName = Validate.notNull( wicaChannelName );
+      logger.trace("Event created: '{}'.", this );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -40,6 +38,14 @@ public class WicaChannelStopPollingEvent
    {
       return wicaChannelName;
    }
+
+   @Override
+   public String toString()
+   {
+      return "WicaChannelStopPollingEvent{" +
+         "wicaChannelName=" + wicaChannelName +
+      '}';
+}
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

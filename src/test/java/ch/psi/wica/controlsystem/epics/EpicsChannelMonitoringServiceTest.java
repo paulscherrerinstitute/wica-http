@@ -160,7 +160,7 @@ class EpicsChannelMonitoringServiceTest
    void testGetChannelConnectionCount() throws InterruptedException
    {
       assertEquals(0, epicsChannelMonitoringService.getChannelsConnectedCount());
-      epicsChannelMonitoringService.startMonitoring(new EpicsChannelName("test:db_ok" ), ( b)->{}, ( m)->{}, ( v)->{} );
+      epicsChannelMonitoringService.startMonitoring( new EpicsChannelName("test:db_ok" ), ( b)->{}, ( m)->{}, ( v)->{} );
       Thread.sleep( 1_000 );
       assertEquals(1, epicsChannelMonitoringService.getChannelsConnectedCount());
       epicsChannelMonitoringService.close();

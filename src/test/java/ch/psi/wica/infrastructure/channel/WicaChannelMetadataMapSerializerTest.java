@@ -64,15 +64,15 @@ class WicaChannelMetadataMapSerializerTest
    @Test
    void test_serialize()
    {
-      final Map<WicaChannel,WicaChannelMetadata> map = Map.of(WicaChannel.createFromName("UnknownTypeChannel" ), unkMetadata,
-                                                              WicaChannel.createFromName("StringTypeChannel" ), strMetadata,
-                                                              WicaChannel.createFromName("StringArrayType" ), strArrMetadata,
-                                                              WicaChannel.createFromName("IntegerTypeChannel" ), intMetadata,
-                                                              WicaChannel.createFromName("IntegerArrayTypeChannel" ), intArrMetadata,
-                                                              WicaChannel.createFromName("RealTypeChannel" ), realMetadata,
-                                                              WicaChannel.createFromName("RealInfTypeChannel" ), realInfMetadata,
-                                                              WicaChannel.createFromName("RealNanTypeChannel" ), realNanMetadata,
-                                                              WicaChannel.createFromName("RealArrayTypeChannel" ), realArrMetadata );
+      final Map<WicaChannel,WicaChannelMetadata> map = Map.of( WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "UnknownTypeChannel" ).build(), unkMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "StringTypeChannel" ).build(), strMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "StringArrayType" ).build(), strArrMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "IntegerTypeChannel" ).build(), intMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "IntegerArrayTypeChannel" ).build(), intArrMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealTypeChannel" ).build(), realMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealInfTypeChannel" ).build(), realInfMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealNanTypeChannel" ).build(), realNanMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealArrayTypeChannel" ).build(), realArrMetadata );
 
       final var serializer = new WicaChannelMetadataMapSerializer( false );
       final String jsonStr = serializer.serialize( map );

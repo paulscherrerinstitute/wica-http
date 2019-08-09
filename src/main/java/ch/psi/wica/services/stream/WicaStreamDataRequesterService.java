@@ -84,7 +84,10 @@ public class WicaStreamDataRequesterService
    void stopMonitoring( WicaStream wicaStream )
    {
       Validate.notNull( wicaStream );
-      wicaStream.getWicaChannels().stream().map( WicaChannel::getName ).forEach( this::stopMonitoringChannel);
+      wicaStream.getWicaChannels()
+            .stream()
+            .filter( c -> c.getProperties().getDataAcquisitionMode().doesMonitoring() )
+            .forEach( c -> stopMonitoringChannel( c.getName() ) );
    }
 
    /**
@@ -98,6 +101,8 @@ public class WicaStreamDataRequesterService
       wicaStream.getWicaChannels()
          .stream()
          .filter( c -> c.getProperties().getDataAcquisitionMode().doesPolling() )
+         .filter( c -> c.getProperties().getOptionalPollingIntervalInMillis().isPresent() )
+         .filter( c -> c.getProperties().getOptionalPollingIntervalInMillis().get() > 0  )
          .forEach( c -> startPollingChannel( c.getName(), c.getProperties().getPollingIntervalInMillis() ) );
    }
 
@@ -111,7 +116,7 @@ public class WicaStreamDataRequesterService
       Validate.notNull( wicaStream );
       wicaStream.getWicaChannels()
          .stream()
-            .filter( c -> c.getProperties().getDataAcquisitionMode().doesPolling() )
+         .filter( c -> c.getProperties().getDataAcquisitionMode().doesPolling() )
          .map( WicaChannel::getName ).forEach( this::stopPollingChannel);
    }
 
@@ -224,8 +229,9 @@ public class WicaStreamDataRequesterService
 
       logger.trace( "Starting polling on control system channel named: '{}'", controlSystemName.asString() );
 
-      // Set the initial state for the value stash.
-      applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannelName.getControlSystemName(), WicaChannelValue.createChannelValueDisconnected() ));
+      // Set the initial state for the value and metadata stashes.
+      applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent( wicaChannelName.getControlSystemName(), WicaChannelMetadata.createUnknownInstance()  ));
+      applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannelName, WicaChannelValue.createChannelValueDisconnected() ));
 
       // Now start polling
       applicationEventPublisher.publishEvent( new WicaChannelStartPollingEvent( wicaChannelName, pollingIntervalInMillis ) );

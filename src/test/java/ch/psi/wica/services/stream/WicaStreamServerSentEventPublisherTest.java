@@ -3,12 +3,13 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
+import ch.psi.wica.infrastructure.stream.WicaStreamPropertiesBuilder;
 import ch.psi.wica.model.channel.WicaChannel;
+import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
 import ch.psi.wica.model.channel.WicaChannelValue;
-import ch.psi.wica.model.stream.WicaStream;
-import ch.psi.wica.model.stream.WicaStreamId;
-import ch.psi.wica.model.stream.WicaStreamProperties;
+import ch.psi.wica.model.stream.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,33 +62,31 @@ class WicaStreamServerSentEventPublisherTest
 
    private final ObjectMapper jsonDecoder = new ObjectMapper();
 
-   private final Map<WicaChannel,WicaChannelMetadata> metadataMap = Map.of( WicaChannel.createFromName( "CHAN_1"),
-                                                                      WicaChannelMetadata.createUnknownInstance(),
-                                                                      WicaChannel.createFromName( "CHAN_2"),
-                                                                      WicaChannelMetadata.createUnknownInstance() );
+   private final WicaChannel wicaTestChannel1 =  WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CHAN_1").build();
+   private final WicaChannel wicaTestChannel2 =  WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CHAN_2").build();
 
-   private final Map<WicaChannel,List<WicaChannelValue>> req1PolledValueMap = Map.of( WicaChannel.createFromName( "CHAN_1"),
-                                                                                List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_1_Request_1_Value" ) ),
-                                                                                WicaChannel.createFromName( "CHAN_2"),
-                                                                                List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_2_Request_1_Value" ) ) );
+   private final Map<WicaChannel,WicaChannelMetadata> req1MetadataMap = Map.of( wicaTestChannel1, WicaChannelMetadata.createUnknownInstance(),
+                                                                                wicaTestChannel2, WicaChannelMetadata.createUnknownInstance() );
 
-   private final Map<WicaChannel,List<WicaChannelValue>> req2PolledValueMap = Map.of( WicaChannel.createFromName( "CHAN_1"),
-                                                                                List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_1_Request_2_Value" ) ),
-                                                                                WicaChannel.createFromName( "CHAN_2"),
-                                                                                List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_2_Request_2_Value" ) ) );
+   private final Map<WicaChannel,WicaChannelMetadata> req2MetadataMap = Map.of();
 
-   private final Map<WicaChannel,List<WicaChannelValue>> req1MonitoredValueMap = Map.of( WicaChannel.createFromName( "CHAN_1"),
-                                                                                 List.of( WicaChannelValue.createChannelValueConnected( "MonitorMap_CHAN_1_Request_1_Value" ) ),
-                                                                                 WicaChannel.createFromName( "CHAN_2"),
-                                                                                 List.of( WicaChannelValue.createChannelValueConnected( "MonitorMap_CHAN_2_Request_1_Value" ) ) );
+   private final Map<WicaChannel,List<WicaChannelValue>> req1PolledValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_1_Request_1_Value" ) ),
+                                                                                      wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_2_Request_1_Value" ) ) );
 
-   private final Map<WicaChannel,List<WicaChannelValue>> req2MonitoredValueMap = Map.of( WicaChannel.createFromName( "CHAN_1"),
-                                                                                 List.of( WicaChannelValue.createChannelValueConnected( "MonitorMap_CHAN_1_Request_2_Value" ) ),
-                                                                                 WicaChannel.createFromName( "CHAN_2"),
-                                                                                 List.of( WicaChannelValue.createChannelValueConnected( "MonitorMap_CHAN_2_Request_2_Value" ) ) );
+   private final Map<WicaChannel,List<WicaChannelValue>> req2PolledValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_1_Request_2_Value" ) ),
+                                                                                      wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_2_Request_2_Value" ) ) );
 
+   private final Map<WicaChannel,List<WicaChannelValue>> req1MonitoredValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnected( "MonitorMap_CHAN_1_Request_1_Value" ) ),
+                                                                                         wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnected( "MonitorMap_CHAN_2_Request_1_Value" ) ) );
+
+   private final Map<WicaChannel,List<WicaChannelValue>> req2MonitoredValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnected( "MonitorMap_CHAN_1_Request_2_Value" ) ),
+                                                                                         wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnected( "MonitorMap_CHAN_2_Request_2_Value" ) ) );
+
+
+   private final AtomicReference<Map<WicaChannel,WicaChannelMetadata>> atomicMetadataMap = new AtomicReference<>();
    private final AtomicReference<Map<WicaChannel,List<WicaChannelValue>>> atomicPolledValueMap = new AtomicReference<>();
    private final AtomicReference<Map<WicaChannel,List<WicaChannelValue>>> atomicMonitoredValueMap = new AtomicReference<>();
+
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -98,19 +97,21 @@ class WicaStreamServerSentEventPublisherTest
    void beforeEach()
    {
       WicaStreamId.resetAllocationSequencer();
+      atomicMetadataMap .set( req1MetadataMap );
       atomicPolledValueMap .set( req1PolledValueMap );
       atomicMonitoredValueMap.set( req1MonitoredValueMap );
 
-      final WicaStreamProperties wicaStreamProperties = WicaStreamProperties.createBuilder()
+      final WicaStreamProperties wicaStreamProperties = WicaStreamPropertiesBuilder.create()
+            .withMetadataFluxInterval( 200 )
             .withHeartbeatFluxInterval( 1400 )
             .withPolledValueFluxInterval( 500 )
-            .withMonitoredValueFluxInterval(640 )
+            .withMonitoredValueFluxInterval( 640 )
             .build();
 
-      final WicaStream wicaStream = WicaStream.createBuilder()
-            .withStreamProperties( wicaStreamProperties)
-            .withChannelName("CHAN_1" )
-            .withChannelName("CHAN_2" )
+      final WicaStream wicaStream = WicaStreamBuilder.create()
+            .withStreamProperties( wicaStreamProperties )
+            .withChannelNameAndDefaultProperties( "CHAN_1" )
+            .withChannelNameAndDefaultProperties( "CHAN_2" )
             .build();
 
       objectUnderTest = new WicaStreamServerSentEventPublisher( wicaStream,
@@ -122,21 +123,28 @@ class WicaStreamServerSentEventPublisherTest
    @Test
    void testShutdown() throws InterruptedException
    {
-      logger.info( "STARTING SHUTDOWN TEST..." );
+      logger.info( "Starting Shutdown Test..." );
+
+      // Set up the mock response.
+      final ArgumentCaptor<WicaStream>captor1 = ArgumentCaptor.forClass( WicaStream.class );
+      final ArgumentCaptor<LocalDateTime>captor2 = ArgumentCaptor.forClass( LocalDateTime.class );
+      given( wicaStreamMetadataCollectorServiceMock.get( captor1.capture(), captor2.capture() ) ).willAnswer( rqst -> getMetadataMap() );
+      given( wicaStreamMonitoredValueCollectorService.get(captor1.capture(), captor2.capture() ) ).willAnswer( rqst -> getMonitoredValueMap() );
+      given( wicaStreamPolledValueCollectorService.get(captor1.capture(), captor2.capture() ) ).willAnswer(rqst -> getPolledValueMap() );
 
       final var flux = objectUnderTest.getFlux();
       flux.subscribe( (c) -> logger.info( "c is: ------> {}", c ) );
-      logger.info( "SUBSCRIBED TO OBJECT-UNDER-TEST." );
+      logger.info( "Subscribed to Object-Under-Test." );
 
       // Let things run for a while.
-      logger.info( "SLEEPING FOR 5S..." );
-      Thread.sleep( 5000 );
-      logger.info( "SLEEP COMPLETED." );
+      logger.info( "Sleeping for 2s..." );
+      Thread.sleep( 2000 );
+      logger.info( "Sleep completed." );
 
       // Now shut down the publisher.
-      logger.info( "SHUTTING DOWN PUBLISHER..." );
+      logger.info( "Shutting down publisher..." );
       objectUnderTest.shutdown();
-      logger.info( "SHUTTING DOWN COMPLETED." );
+      logger.info( "Shutdown completed." );
 
       // Verify that attempts to retrieve the flux following shutdown result
       // in an illegal state exception
@@ -148,13 +156,12 @@ class WicaStreamServerSentEventPublisherTest
       final Exception ex2 = assertThrows( IllegalStateException.class, objectUnderTest::shutdown );
       assertThat( ex2.getMessage(), is("Call to shutdown(), but the publisher has already been shut down." ) );
 
-      logger.info( "TEST COMPLETED." );
+      logger.info( "Test completed." );
    }
 
    @Test
    void testSubscribeStream() throws IOException, InterruptedException
    {
-
       //---------------------------------------------------------------------------------
       // 1.0 Set up test environment and run SSE Publisher for 1400ms
       //---------------------------------------------------------------------------------
@@ -162,9 +169,9 @@ class WicaStreamServerSentEventPublisherTest
       // Set up the mock response.
       final ArgumentCaptor<WicaStream>captor1 = ArgumentCaptor.forClass( WicaStream.class );
       final ArgumentCaptor<LocalDateTime>captor2 = ArgumentCaptor.forClass( LocalDateTime.class );
-      given( wicaStreamMetadataCollectorServiceMock.get( captor1.capture() ) ).willReturn( metadataMap );
-      given( wicaStreamMonitoredValueCollectorService.get(captor1.capture(), captor2.capture() ) ).willAnswer( rqst -> getMonitoredValueMap() );
-      given( wicaStreamPolledValueCollectorService.get(captor1.capture(), captor2.capture() ) ).willAnswer(rqst -> getPolledValueMap() );
+      given( wicaStreamMetadataCollectorServiceMock.get( captor1.capture(), captor2.capture() ) ).willAnswer( rqst -> getMetadataMap() );
+      given( wicaStreamMonitoredValueCollectorService.get( captor1.capture(), captor2.capture() ) ).willAnswer( rqst -> getMonitoredValueMap() );
+      given( wicaStreamPolledValueCollectorService.get( captor1.capture(), captor2.capture() ) ).willAnswer(rqst -> getPolledValueMap() );
 
       // Subscribe to the stream publisher,
       final List<ServerSentEvent<String>> sseList = new ArrayList<>();
@@ -179,13 +186,13 @@ class WicaStreamServerSentEventPublisherTest
       // Let things run for 1400ms. This should be long enough to receive the
       // following SSE's on the event stream:
       //
-      //   1. t =    0ms initial channel metadata
+      //   1. t =  200ms initial channel metadata
       //   2. t =  500ms polled channel values (1)
       //   3. t =  640ms monitored channel values (1)
       //   4. t = 1000ms polled channel values (2)
       //   5. t = 1280ms monitored channel values (2)
       //   6. t = 1400ms server heartbeat
-      Thread.sleep( 1400 );
+      Thread.sleep( 1450 );
       objectUnderTest.shutdown();
 
       // Verify that seven notifications were received in the flux
@@ -289,6 +296,11 @@ class WicaStreamServerSentEventPublisherTest
 
 /*- Private methods ----------------------------------------------------------*/
 
+   private Map<WicaChannel,WicaChannelMetadata> getMetadataMap()
+   {
+      return atomicMetadataMap.getAndSet( req2MetadataMap );
+   }
+
    private Map<WicaChannel,List<WicaChannelValue>> getPolledValueMap()
    {
       return atomicPolledValueMap.getAndSet( req2PolledValueMap );
@@ -298,7 +310,6 @@ class WicaStreamServerSentEventPublisherTest
    {
       return atomicMonitoredValueMap.getAndSet( req2MonitoredValueMap );
    }
-
 
 /*- Nested Classes -----------------------------------------------------------*/
 

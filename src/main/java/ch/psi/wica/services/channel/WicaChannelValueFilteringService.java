@@ -3,6 +3,7 @@ package ch.psi.wica.services.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.app.WicaFilterType;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelProperties;
 import ch.psi.wica.model.channel.WicaChannelValue;
@@ -47,13 +48,13 @@ public class WicaChannelValueFilteringService
       Validate.notNull( wicaChannelValues );
 
       final WicaChannelProperties wicaChannelProperties = wicaChannel.getProperties();
-      final WicaChannelProperties.FilterType filterType = wicaChannelProperties.getFilterType();
+      final WicaFilterType filterType = wicaChannelProperties.getFilterType();
       final WicaChannelValueFilter filter;
 
       switch ( filterType )
       {
          case ALL_VALUE:
-            logger.trace("Creating channel value filter for MONITORED channels with filterType='allValueSampler'");
+            logger.trace("Creating channel value filter for MONITORED channels with filterType='all-value'");
             filter = new WicaChannelValuePassEverythingFilter();
             break;
 

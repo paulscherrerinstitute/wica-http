@@ -176,6 +176,7 @@ class WicaChannelDataSerializer
    public String serialize( WicaChannelData wicaChannelData )
    {
       Validate.notNull( wicaChannelData );
+
       try
       {
          return jsonObjectMapper.writeValueAsString( wicaChannelData );

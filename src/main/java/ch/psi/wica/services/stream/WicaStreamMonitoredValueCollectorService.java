@@ -3,8 +3,8 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.WicaChannelDataBuffer;
 import ch.psi.wica.controlsystem.event.WicaChannelMonitoredValueUpdateEvent;
+import ch.psi.wica.infrastructure.stream.WicaStreamMonitoredValueDataBuffer;
 import ch.psi.wica.model.app.ControlSystemName;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelValue;
@@ -35,7 +35,7 @@ public class WicaStreamMonitoredValueCollectorService
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final WicaChannelDataBuffer<WicaChannelValue> wicaChannelDataBuffer;
+   private final WicaStreamMonitoredValueDataBuffer wicaStreamMonitoredValueDataBuffer;
    private final WicaChannelValueFilteringService wicaChannelValueFilteringService;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -44,7 +44,7 @@ public class WicaStreamMonitoredValueCollectorService
    public WicaStreamMonitoredValueCollectorService( @Value( "${wica.channel-value-stash-buffer-size}") int bufferSize,
                                                     @Autowired WicaChannelValueFilteringService wicaChannelValueFilteringService)
    {
-      this.wicaChannelDataBuffer = new WicaChannelDataBuffer<>( bufferSize );
+      this.wicaStreamMonitoredValueDataBuffer = new WicaStreamMonitoredValueDataBuffer( bufferSize );
       this.wicaChannelValueFilteringService = wicaChannelValueFilteringService;
    }
 
@@ -53,20 +53,19 @@ public class WicaStreamMonitoredValueCollectorService
 
    public Map<WicaChannel,List<WicaChannelValue>> get( WicaStream wicaStream, LocalDateTime since)
    {
-      final var inputMap = wicaChannelDataBuffer.getLaterThan( wicaStream.getWicaChannels(), since );
-
+      final var inputMap = wicaStreamMonitoredValueDataBuffer.getLaterThan( wicaStream.getWicaChannels(), since );
       final Map<WicaChannel,List<WicaChannelValue>> outputMap = new ConcurrentHashMap<>();
       inputMap.forEach( (ch,lst ) -> {
-         var outputList = wicaChannelValueFilteringService.filterValues(ch, lst );
-         outputMap.put( ch, outputList );
+         if ( ch.getProperties().getDataAcquisitionMode().doesMonitoring() )
+         {
+            var outputList = wicaChannelValueFilteringService.filterValues( ch, lst );
+            if ( outputList.size() != 0 )
+            {
+               outputMap.put(ch, outputList);
+            }
+         }
       } );
-
       return Collections.unmodifiableMap( outputMap );
-   }
-
-   Map<WicaChannel,Optional<WicaChannelValue>> getLatest( WicaStream wicaStream )
-   {
-      return Collections.unmodifiableMap( wicaChannelDataBuffer.getLatest( wicaStream.getWicaChannels() ) );
    }
 
 /*- Private methods ----------------------------------------------------------*/
@@ -77,7 +76,7 @@ public class WicaStreamMonitoredValueCollectorService
       Validate.notNull( event );
       final ControlSystemName controlSystemName = event.getControlSystemName();
       final WicaChannelValue wicaChannelValue = event.getWicaChannelValue();
-      wicaChannelDataBuffer.saveControlSystemDataPoint( controlSystemName, wicaChannelValue );
+      wicaStreamMonitoredValueDataBuffer.saveDataPoint(controlSystemName, wicaChannelValue );
    }
 
 /*- Nested Classes -----------------------------------------------------------*/

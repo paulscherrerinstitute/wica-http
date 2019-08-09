@@ -6,7 +6,7 @@ record( calc, "test:slowcounter" ) {
 
 record( calc, "test:fastcounter" ) {
   field( SCAN,".1 second")
-  field( CALC,"(VAL+1) % 100")
+  field( CALC,"(VAL+1) % 1000")
 }
 
 record( calc, "test:fastpulse" ) {

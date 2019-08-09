@@ -3,9 +3,13 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
+import ch.psi.wica.infrastructure.channel.WicaChannelPropertiesBuilder;
+import ch.psi.wica.model.app.WicaDataAcquisitionMode;
+import ch.psi.wica.model.app.WicaFilterType;
 import ch.psi.wica.model.channel.*;
 import ch.psi.wica.model.stream.WicaStream;
-import ch.psi.wica.model.stream.WicaStreamProperties;
+import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,10 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -62,7 +64,7 @@ class WicaStreamDataRequesterServiceTest
    {
       final String testChannelNameAsString ="XXX";
       final WicaChannelName testChannelName = WicaChannelName.of( testChannelNameAsString );
-      final WicaStream wicaStream = WicaStream.createBuilder().withId( "myStream" ).withChannelName(testChannelNameAsString ).build();
+      final WicaStream wicaStream = WicaStreamBuilder.create().withId( "myStream" ).withChannelNameAndDefaultProperties( testChannelNameAsString ).build();
 
       assertEquals(0, service.getInterestCountForChannel( testChannelName ) );
 
@@ -78,7 +80,7 @@ class WicaStreamDataRequesterServiceTest
    {
       final String testChannelNameAsString ="XXX";
       final WicaChannelName testChannelName = WicaChannelName.of( testChannelNameAsString );
-      final WicaStream wicaStream = WicaStream.createBuilder().withId( "myStream" ).withChannelName(testChannelNameAsString ).build();
+      final WicaStream wicaStream = WicaStreamBuilder.create().withId( "myStream" ).withChannelNameAndDefaultProperties( testChannelNameAsString ).build();
 
       service.startMonitoring( wicaStream );
       service.startMonitoring( wicaStream );
@@ -96,15 +98,25 @@ class WicaStreamDataRequesterServiceTest
    @Test
    void testStartMonitoring_wicaStreamMetadataCollectorServiceInitialisedOk()
    {
-      final WicaChannelName myWicaChannelName = WicaChannelName.of( "simon:counter:01" );
-      final WicaChannel myWicaChannel = WicaChannel.createFromName( myWicaChannelName );
-      final WicaStream wicaStream = WicaStream.createBuilder()
-            .withId( "myStream" )
-            .withChannelName( myWicaChannelName )
+      final String myWicaChannelName = "simon:counter:01";
+      final WicaChannelProperties wicaChannelProperties = WicaChannelPropertiesBuilder.create()
+            .withDataAcquisitionMode( WicaDataAcquisitionMode.MONITOR )
+            .withFilterType(WicaFilterType.ALL_VALUE )
             .build();
 
+      final WicaChannel myWicaChannel = WicaChannelBuilder.create().withChannelNameAndProperties( myWicaChannelName, wicaChannelProperties ).build();
+
+      final WicaStream wicaStream = WicaStreamBuilder.create()
+            .withId( "myStream" )
+            .withChannel( myWicaChannel )
+            .build();
+
+      final Map<WicaChannel, WicaChannelMetadata> preInitialValueMap = wicaStreamMetadataCollectorService.get( wicaStream, LocalDateTime.MIN );
+      assertThat( preInitialValueMap.size(), is( 0 ) );
+
       service.startMonitoring( wicaStream );
-      final Map<WicaChannel, WicaChannelMetadata> initialMetadataMap = wicaStreamMetadataCollectorService.get( wicaStream );
+
+      final Map<WicaChannel, WicaChannelMetadata> initialMetadataMap = wicaStreamMetadataCollectorService.get( wicaStream, LocalDateTime.MIN );
       assertThat( initialMetadataMap.size(), is( 1 ) );
       assertThat( initialMetadataMap.get( myWicaChannel ).getType(), is( WicaChannelType.UNKNOWN ) );
    }
@@ -112,54 +124,56 @@ class WicaStreamDataRequesterServiceTest
    @Test
    void testStartMonitoring_wicaStreamMonitoredValueCollectorServiceInitialisedOk()
    {
-      final WicaChannelName myWicaChannelName = WicaChannelName.of( "simon:counter:01" );
-      final WicaChannel myWicaChannel = WicaChannel.createFromName( myWicaChannelName );
-      final WicaStream wicaStream = WicaStream.createBuilder()
-            .withId( "myStream" )
-            .withChannelName( myWicaChannelName )
+      final String myWicaChannelName = "simon:counter:01";
+      final WicaChannelProperties wicaChannelProperties = WicaChannelPropertiesBuilder.create()
+            .withDataAcquisitionMode( WicaDataAcquisitionMode.MONITOR )
+            .withFilterType(WicaFilterType.ALL_VALUE )
             .build();
 
-      final Map<WicaChannel, Optional<WicaChannelValue>> preInitialValueMap = wicaStreamMonitoredValueCollectorService.getLatest(wicaStream );
-      assertThat( preInitialValueMap.size(), is( 1 ) );
-      assertThat( preInitialValueMap.containsKey( myWicaChannel ), is( true ) );
-      assertThat( preInitialValueMap.get( myWicaChannel).isPresent(), is( false ) );
+      final WicaChannel myWicaChannel = WicaChannelBuilder.create().withChannelNameAndProperties( myWicaChannelName, wicaChannelProperties ).build();
+
+      final WicaStream wicaStream = WicaStreamBuilder.create()
+         .withId( "myStream" )
+         .withChannel( myWicaChannel )
+         .build();
+
+      final Map<WicaChannel, List<WicaChannelValue>> preInitialValueMap = wicaStreamMonitoredValueCollectorService.get( wicaStream, LocalDateTime.MIN );
+      assertThat( preInitialValueMap.size(), is( 0 ) );
 
       service.startMonitoring( wicaStream );
 
-      final Map<WicaChannel, Optional<WicaChannelValue>> initialValueMap = wicaStreamMonitoredValueCollectorService.getLatest(wicaStream );
+      final Map<WicaChannel, List<WicaChannelValue>> initialValueMap = wicaStreamMonitoredValueCollectorService.get( wicaStream, LocalDateTime.MIN );
       assertThat( initialValueMap.size(), is( 1 ) );
       assertThat( initialValueMap.containsKey( myWicaChannel ), is( true ) );
-      assertThat( initialValueMap.get( myWicaChannel).isPresent(), is( true ) );
-      assertThat( initialValueMap.get( myWicaChannel ).get().isConnected(), is( false ) );
+      assertThat( initialValueMap.get( myWicaChannel ).get( 0 ).isConnected(), is( false ) );
    }
 
    @Test
    void testStartPolling_wicaStreamPolledValueCollectorServiceInitialisedOk()
    {
-      final WicaChannelName myWicaChannelName = WicaChannelName.of( "simon:counter:01" );
-      final WicaChannelProperties wicaChannelProperties = WicaChannelProperties.createBuilder()
-            .withDataAcquisitionMode( WicaChannelProperties.DataAcquisitionMode.POLL )
+      final String myWicaChannelName = "simon:counter:01";
+      final WicaChannelProperties wicaChannelProperties = WicaChannelPropertiesBuilder.create()
+            .withDataAcquisitionMode( WicaDataAcquisitionMode.POLL )
+            .withFilterType(WicaFilterType.ALL_VALUE )
+            .withPollingIntervalInMillis( 200 )
             .build();
 
-      final WicaChannel myWicaChannel = WicaChannel.createFromNameAndProperties( myWicaChannelName, wicaChannelProperties );
+      final WicaChannel myWicaChannel = WicaChannelBuilder.create().withChannelNameAndProperties( myWicaChannelName, wicaChannelProperties ).build();
 
-      final WicaStream wicaStream = WicaStream.createBuilder()
+      final WicaStream wicaStream = WicaStreamBuilder.create()
             .withId( "myStream" )
             .withChannel( myWicaChannel )
             .build();
 
-      final Map<WicaChannel, Optional<WicaChannelValue>> preFirstValueMap = wicaStreamPolledValueCollectorService.getLatest( wicaStream );
-      assertThat( preFirstValueMap.size(), is( 1 ) );
-      assertThat( preFirstValueMap.containsKey( myWicaChannel ), is( true ) );
-      assertThat( preFirstValueMap.get( myWicaChannel).isPresent(), is( false ) );
+      final Map<WicaChannel, List<WicaChannelValue>> preFirstValueMap = wicaStreamPolledValueCollectorService.get(wicaStream, LocalDateTime.MIN );
+      assertThat( preFirstValueMap.size(), is( 0 ) );
 
       service.startPolling( wicaStream );
 
-      final Map<WicaChannel, Optional<WicaChannelValue>> firstValueMap = wicaStreamPolledValueCollectorService.getLatest( wicaStream );
+      final Map<WicaChannel, List<WicaChannelValue>> firstValueMap = wicaStreamPolledValueCollectorService.get( wicaStream, LocalDateTime.MIN  );
       assertThat( firstValueMap.size(), is( 1 ) );
       assertThat( firstValueMap.containsKey( myWicaChannel ), is( true ) );
-      assertThat( firstValueMap.get( myWicaChannel).isPresent(), is( true ) );
-      assertThat( firstValueMap.get( myWicaChannel ).get().isConnected(), is( false ) );
+      assertThat( firstValueMap.get( myWicaChannel ).get( 0 ).isConnected(), is( false ) );
    }
 
    @CsvSource( { "1", "10", "100", "1000", "10000" })
@@ -169,12 +183,12 @@ class WicaStreamDataRequesterServiceTest
       final Set<WicaChannel> wicaChannelSet = new HashSet<>();
       for ( int i = 0; i < numberOfChannelsInStream; i++ )
       {
-         final WicaChannelName myWicaChannelName = WicaChannelName.of( "chan-" + i );
-         final WicaChannel myWicaChannel = WicaChannel.createFromName( myWicaChannelName );
+         final String myWicaChannelName = "chan-" + i;
+         final WicaChannel myWicaChannel = WicaChannelBuilder.create().withChannelNameAndDefaultProperties( myWicaChannelName ).build();
          wicaChannelSet.add( myWicaChannel );
       }
 
-      final WicaStream wicaStream = WicaStream.createBuilder()
+      final WicaStream wicaStream = WicaStreamBuilder.create()
             .withId( "myStream" )
             .withChannels( wicaChannelSet )
             .build();

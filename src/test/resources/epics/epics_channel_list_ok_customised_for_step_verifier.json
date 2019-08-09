@@ -1,5 +1,5 @@
 {
-  "props": { "monflux": 3000, "pollflux": 4000, "heartbeat" : 5000 },
+  "props": { "monflux": 3000, "pollflux": 4000, "hbflux" : 5000 },
   "channels" : [ { "name": "test:counter00" },
                  { "name": "test:counter01" } ]
 }

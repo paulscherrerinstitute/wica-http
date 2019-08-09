@@ -118,7 +118,7 @@
     </logger>
 
     <logger name="ch.psi.wica" level="DEBUG"/>
-
+    <logger name="ch.psi.wica.controlsystem.epics" level="TRACE"/>
 
     <!-- ROOT CONFIGURATION STARTS HERE -->
 

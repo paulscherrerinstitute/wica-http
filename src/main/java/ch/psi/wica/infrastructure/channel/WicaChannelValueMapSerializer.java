@@ -81,7 +81,7 @@ public class WicaChannelValueMapSerializer
          {
             final WicaChannel wicaChannel = (WicaChannel) channel;
             final int numericScale = wicaChannel.getProperties().getNumericPrecision();
-            final Set<String> fieldsOfInterest = wicaChannel.getProperties().getFieldsOfInterest();
+            final Set<String> fieldsOfInterest = Set.of( wicaChannel.getProperties().getFieldsOfInterest().split(";" ) );
 
             final WicaChannelDataSerializer serializer;
             if ( fieldsOfInterest.size() == 0 )

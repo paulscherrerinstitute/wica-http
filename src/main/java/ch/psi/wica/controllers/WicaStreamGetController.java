@@ -117,7 +117,7 @@ class WicaStreamGetController implements StatisticsCollectable
 
       // Handle the situation where an unknown stream ID is given
       final WicaStreamId wicaStreamId = WicaStreamId.of( optStreamId.get() );
-      if ( ! wicaStreamLifecycleService.isKnown(wicaStreamId ) )
+      if ( ! wicaStreamLifecycleService.isKnown( wicaStreamId ) )
       {
          final String errorMessage = "WICA SERVER: The stream ID '" + optStreamId.get() + "' was not recognised.";
          logger.warn( "GET: Rejected request because {}", errorMessage  );

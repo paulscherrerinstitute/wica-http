@@ -3,12 +3,9 @@ package ch.psi.wica.model.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelProperties;
+import ch.psi.wica.model.app.WicaDataAcquisitionMode;
+import ch.psi.wica.model.app.WicaFilterType;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Set;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.NONE )
 class WicaStreamPropertiesTest
 {
 
@@ -29,59 +25,121 @@ class WicaStreamPropertiesTest
 /*- Public methods -----------------------------------------------------------*/
 
    @Test
-   void testOf_UnrecognisedKey_ThrowsIllegalArgumentException()
+   void testEmptyConstructorReturnsDefaultPropertyValues()
    {
-      final Exception ex = assertThrows( IllegalArgumentException.class, () -> WicaStreamProperties.of( "{" + "\"XXX\"" + ":" + 12345 + "}" ) );
-      assertThat( ex.getMessage(), is("The input string: '{\"XXX\":12345}' was not a valid descriptor for the properties of a wica stream." ) );
+      final var objectUnderTest = new WicaStreamProperties();
+
+      assertThat( objectUnderTest.getHeartbeatFluxIntervalInMillis(),      is( WicaStreamPropertiesDefaults.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS ) );
+      assertThat( objectUnderTest.getMetadataFluxIntervalInMillis(),       is( WicaStreamPropertiesDefaults.DEFAULT_METADATA_FLUX_INTERVAL_IN_MILLIS ) );
+      assertThat( objectUnderTest.getMonitoredValueFluxIntervalInMillis(), is( WicaStreamPropertiesDefaults.DEFAULT_MONITORED_VALUE_FLUX_INTERVAL_IN_MILLIS ) );
+      assertThat( objectUnderTest.getPolledValueFluxIntervalInMillis(),    is( WicaStreamPropertiesDefaults.DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS ) );
+      assertThat( objectUnderTest.getDataAcquisitionMode(),                is( WicaStreamPropertiesDefaults.DEFAULT_DATA_ACQUISITION_MODE ) );
+      assertThat( objectUnderTest.getPollingIntervalInMillis(),            is( WicaStreamPropertiesDefaults.DEFAULT_POLLING_INTERVAL_IN_MILLIS) );
+      assertThat( objectUnderTest.getFieldsOfInterest(),                   is( WicaStreamPropertiesDefaults.DEFAULT_FIELDS_OF_INTEREST ) );
+      assertThat( objectUnderTest.getNumericPrecision(),                   is( WicaStreamPropertiesDefaults.DEFAULT_NUMERIC_PRECISION ) );
+      assertThat( objectUnderTest.getFilterType(),                         is( WicaStreamPropertiesDefaults.DEFAULT_FILTER_TYPE ) );
+      assertThat( objectUnderTest.getFilterNumSamples(),                   is( WicaStreamPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES ) );
+      assertThat( objectUnderTest.getFilterCycleLength(),                  is( WicaStreamPropertiesDefaults.DEFAULT_FILTER_CYCLE_LENGTH ) );
+      assertThat( objectUnderTest.getFilterSamplingIntervalInMillis(),     is( WicaStreamPropertiesDefaults.DEFAULT_FILTER_SAMPLING_INTERVAL_IN_MILLIS) );
+      assertThat( objectUnderTest.getFilterDeadband(),                     is( WicaStreamPropertiesDefaults.DEFAULT_FILTER_DEADBAND ) );
    }
 
    @Test
-   void testOf_InvalidValue_ThrowsIllegalArgumentException()
+   void testFullConstructorReturnsAssignedValues()
    {
-      final Exception ex = assertThrows( IllegalArgumentException.class, () -> WicaStreamProperties.of("{" + "\"daqmode\"" + ":" + 99 + "}" ));
-      assertThat( ex.getMessage(), is("The input string: '{\"daqmode\":99}' was not a valid descriptor for the properties of a wica stream." ) );
+      final var objectUnderTest = new WicaStreamProperties(20,
+                                                           21,
+                                                           22,
+                                                           23,
+                                                            WicaDataAcquisitionMode.MONITOR,
+                                                           11,
+                                                           "fields",
+                                                           12,
+                                                            WicaFilterType.LAST_N,
+                                                           13,
+                                                           14,
+                                                           15,
+                                                           16.0 );
+
+      assertThat( objectUnderTest.getHeartbeatFluxIntervalInMillis(),      is(20 ) );
+      assertThat( objectUnderTest.getMetadataFluxIntervalInMillis(),       is(21 ) );
+      assertThat( objectUnderTest.getMonitoredValueFluxIntervalInMillis(), is(22 ) );
+      assertThat( objectUnderTest.getPolledValueFluxIntervalInMillis(),    is(23 ) );
+      assertThat( objectUnderTest.getDataAcquisitionMode(),                is( WicaDataAcquisitionMode.MONITOR ) );
+      assertThat( objectUnderTest.getPollingIntervalInMillis(),            is(11 ) );
+      assertThat( objectUnderTest.getFieldsOfInterest(),                   is("fields" ));
+      assertThat( objectUnderTest.getNumericPrecision(),                   is(12 ) );
+      assertThat( objectUnderTest.getFilterType(),                         is( WicaFilterType.LAST_N) );
+      assertThat( objectUnderTest.getFilterNumSamples(),                   is(13 ) );
+      assertThat( objectUnderTest.getFilterCycleLength(),                  is(14 ) );
+      assertThat( objectUnderTest.getFilterSamplingIntervalInMillis(),     is(15 ) );
+      assertThat( objectUnderTest.getFilterDeadband(),                     is(16.0 ) );
+
+      assertThat( objectUnderTest.getOptionalHeartbeatFluxIntervalInMillis().isPresent(),      is(true ) );
+      assertThat( objectUnderTest.getOptionalMetadataFluxIntervalInMillis().isPresent(),       is(true ) );
+      assertThat( objectUnderTest.getOptionalMonitoredValueFluxIntervalInMillis().isPresent(), is(true ) );
+      assertThat( objectUnderTest.getOptionalPolledValueFluxIntervalInMillis().isPresent(),    is(true ) );
+      assertThat( objectUnderTest.getOptionalDataAcquisitionMode().isPresent(),                is(true ) );
+      assertThat( objectUnderTest.getOptionalPollingIntervalInMillis().isPresent(),            is(true ) );
+      assertThat( objectUnderTest.getOptionalFieldsOfInterest().isPresent(),                   is(true ) );
+      assertThat( objectUnderTest.getOptionalNumericPrecision().isPresent(),                   is(true ) );
+      assertThat( objectUnderTest.getOptionalFilterType().isPresent(),                         is(true ) );
+      assertThat( objectUnderTest.getOptionalFilterNumSamples().isPresent(),                   is(true ) );
+      assertThat( objectUnderTest.getOptionalFilterCycleLength().isPresent(),                  is(true ) );
+      assertThat( objectUnderTest.getOptionalFilterSamplingIntervalInMillis().isPresent(),     is(true ) );
+      assertThat( objectUnderTest.getOptionalFilterDeadband().isPresent(),                     is(true ) );
+
+      assertThat( objectUnderTest.getOptionalHeartbeatFluxIntervalInMillis().get(),      is(20 ) );
+      assertThat( objectUnderTest.getOptionalMetadataFluxIntervalInMillis().get(),       is(21 ) );
+      assertThat( objectUnderTest.getOptionalMonitoredValueFluxIntervalInMillis().get(), is(22 ) );
+      assertThat( objectUnderTest.getOptionalPolledValueFluxIntervalInMillis().get(),    is(23 ) );
+      assertThat( objectUnderTest.getOptionalDataAcquisitionMode().get(),                is( WicaDataAcquisitionMode.MONITOR ) );
+      assertThat( objectUnderTest.getOptionalPollingIntervalInMillis().get(),            is(11 ) );
+      assertThat( objectUnderTest.getOptionalFieldsOfInterest().get(),                   is("fields" ));
+      assertThat( objectUnderTest.getOptionalNumericPrecision().get(),                   is(12 ) );
+      assertThat( objectUnderTest.getOptionalFilterType().get(),                         is( WicaFilterType.LAST_N) );
+      assertThat( objectUnderTest.getOptionalFilterNumSamples().get(),                   is(13 ) );
+      assertThat( objectUnderTest.getOptionalFilterCycleLength().get(),                  is(14 ) );
+      assertThat( objectUnderTest.getOptionalFilterSamplingIntervalInMillis().get(),     is(15 ) );
+      assertThat( objectUnderTest.getOptionalFilterDeadband().get(),                     is(16.0 ) );
    }
 
    @Test
-   void testOf_AllFieldsPresentDecodedOk()
+   void testConstructorWithNullValues()
    {
-      final String inputString = "{" + "\"heartbeat\"" + ":" + 12345 + "," +
-                                       "\"monflux\"" + ":" + 99 + "," +
-                                       "\"pollflux\""   + ":" + 101 + "," +
-                                       "\"daqmode\""   + ":" + "\"poll-and-monitor\"" + "," +
-                                       "\"fields\""    + ":" + "\"abc;def\"" + "," +
-                                       "\"prec\""      + ":" + 9 + "}";
+      final var objectUnderTest = new WicaStreamProperties(null,null,
+                                                           null,null,
+                                                           null,null,null,
+                                                           null,null,null,
+                                                           null,null, null );
 
-      final WicaStreamProperties props = WicaStreamProperties.of( inputString );
-      assertThat( props.getHeartbeatFluxIntervalInMillis(), is( 12345 ) );
-      assertThat(props.getMonitoredValueFluxIntervalInMillis(), is(99 ) );
-      assertThat( props.getPolledValueFluxIntervalInMillis(), is( 101 ) );
-      assertThat( props.getDataAcquisitionMode(), is ( WicaChannelProperties.DataAcquisitionMode.POLL_AND_MONITOR) );
-      assertThat( props.getNumericPrecision(), is( 9 ) );
-      assertThat( props.getFieldsOfInterest(), is( Set.of( "abc", "def" ) ) );
-   }
+      var ex01 = assertThrows( IllegalArgumentException.class, objectUnderTest::getHeartbeatFluxIntervalInMillis );
+      var ex02 = assertThrows( IllegalArgumentException.class, objectUnderTest::getMetadataFluxIntervalInMillis );
+      var ex03 = assertThrows( IllegalArgumentException.class, objectUnderTest::getMonitoredValueFluxIntervalInMillis );
+      var ex04 = assertThrows( IllegalArgumentException.class, objectUnderTest::getPolledValueFluxIntervalInMillis );
+      var ex05 = assertThrows( IllegalArgumentException.class, objectUnderTest::getDataAcquisitionMode );
+      var ex06 = assertThrows( IllegalArgumentException.class, objectUnderTest::getPollingIntervalInMillis );
+      var ex07 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFieldsOfInterest );
+      var ex08 = assertThrows( IllegalArgumentException.class, objectUnderTest::getNumericPrecision );
+      var ex09 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterType );
+      var ex10 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterNumSamples );
+      var ex11 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterCycleLength );
+      var ex12 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterSamplingIntervalInMillis );
+      var ex13 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterDeadband );
 
-   @Test
-   void testDefaultFieldValues()
-   {
-      final WicaStreamProperties props = WicaStreamProperties.of( "{}" );
-      assertThat( props.getHeartbeatFluxIntervalInMillis(), is ( WicaStreamProperties.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS ) );
-      assertThat(props.getMonitoredValueFluxIntervalInMillis(), is (WicaStreamProperties.DEFAULT_MONITORED_VALUE_FLUX_INTERVAL_IN_MILLIS) );
-      assertThat( props.getPolledValueFluxIntervalInMillis(), is ( WicaStreamProperties.DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS ) );
-
-      assertThat( props.getDataAcquisitionMode(), is( WicaChannelProperties.DEFAULT_DATA_ACQUISITION_MODE ) );
-      assertThat( props.getPolledValueSampleRatio(), is( WicaChannelProperties.DEFAULT_POLLING_INTERVAL) );
-      assertThat( props.getFieldsOfInterest(), is( Set.of( WicaChannelProperties.DEFAULT_FIELDS_OF_INTEREST.split( ";" ) ) ) );
-      assertThat( props.getNumericPrecision(), is( WicaChannelProperties.DEFAULT_NUMERIC_PRECISION ) );
-      assertThat( props.getFilterType(), is( WicaChannelProperties.DEFAULT_FILTER_TYPE ) );
-      assertThat( props.getFilterNumSamples(), is( WicaChannelProperties.DEFAULT_FILTER_NUM_SAMPLES ) );
-      assertThat( props.getFilterCycleLength(), is( WicaChannelProperties.DEFAULT_FILTER_CYCLE_LENGTH ) );
-      assertThat( props.getFilterSamplingIntervalInMillis(), is( WicaChannelProperties.DEFAULT_FILTER_SAMPLING_INTERVAL ) );
-      assertThat( props.getFilterDeadband(), is( WicaChannelProperties.DEFAULT_FILTER_DEADBAND ) );
-
-      assertThat( props, is( WicaStreamProperties.createDefaultInstance() ) );
-      assertThat( props, is( WicaStreamProperties.createBuilder().build() ) );
-
+      assertThat( ex01.getMessage(), is("The heartbeat flux interval for this stream was not specified." ) );
+      assertThat( ex02.getMessage(), is("The metadata flux interval for this stream was not specified." ) );
+      assertThat( ex03.getMessage(), is("The monitored value flux interval for this stream was not specified." ) );
+      assertThat( ex04.getMessage(), is("The polled value flux interval for this stream was not specified." ) );
+      assertThat( ex05.getMessage(), is("The data acquisition mode for this stream was not specified." ) );
+      assertThat( ex06.getMessage(), is("The polling interval for this stream was not specified." ) );
+      assertThat( ex07.getMessage(), is("The fields of interest for this stream were not specified." ) );
+      assertThat( ex08.getMessage(), is("The numeric precision for this stream was not specified." ) );
+      assertThat( ex09.getMessage(), is("The filter type for this stream was not specified." ) );
+      assertThat( ex10.getMessage(), is("The number of samples for this stream's LAST_N filter was not specified." ) );
+      assertThat( ex11.getMessage(), is("The cycle length for this stream's ONE_IN_M filter was not specified." ) );
+      assertThat( ex12.getMessage(), is("The sampling interval for this stream's RATE_LIMITER filter was not specified." ) );
+      assertThat( ex13.getMessage(), is("The deadband for this stream's CHANGE_FILTERER was not specified." ) );
    }
 
 /*- Private methods ----------------------------------------------------------*/

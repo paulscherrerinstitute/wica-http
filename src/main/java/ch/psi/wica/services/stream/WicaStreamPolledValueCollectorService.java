@@ -3,10 +3,10 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.WicaChannelDataBuffer;
+import ch.psi.wica.infrastructure.stream.WicaStreamPolledValueDataBuffer;
 import ch.psi.wica.controlsystem.event.WicaChannelPolledValueUpdateEvent;
-import ch.psi.wica.model.app.ControlSystemName;
 import ch.psi.wica.model.channel.WicaChannel;
+import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.services.channel.WicaChannelValueFilteringService;
@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -35,7 +34,7 @@ public class WicaStreamPolledValueCollectorService
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final WicaChannelDataBuffer<WicaChannelValue> wicaChannelDataBuffer;
+   private final WicaStreamPolledValueDataBuffer wicaStreamPolledValueDataBuffer;
    private final WicaChannelValueFilteringService wicaChannelValueFilteringService;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -44,7 +43,7 @@ public class WicaStreamPolledValueCollectorService
    public WicaStreamPolledValueCollectorService( @Value( "${wica.channel-value-stash-buffer-size}") int bufferSize,
                                                  @Autowired WicaChannelValueFilteringService wicaChannelValueFilteringService)
    {
-      this.wicaChannelDataBuffer = new WicaChannelDataBuffer<>( bufferSize );
+      this.wicaStreamPolledValueDataBuffer = new WicaStreamPolledValueDataBuffer( bufferSize );
       this.wicaChannelValueFilteringService = wicaChannelValueFilteringService;
    }
 
@@ -53,20 +52,20 @@ public class WicaStreamPolledValueCollectorService
 
    public Map<WicaChannel,List<WicaChannelValue>> get( WicaStream wicaStream, LocalDateTime since)
    {
-      final var inputMap = wicaChannelDataBuffer.getLaterThan( wicaStream.getWicaChannels(), since );
-
+      final var inputMap = wicaStreamPolledValueDataBuffer.getLaterThan( wicaStream.getWicaChannels(), since );
       final Map<WicaChannel,List<WicaChannelValue>> outputMap = new ConcurrentHashMap<>();
       inputMap.forEach( (ch,lst ) -> {
-         var outputList = wicaChannelValueFilteringService.filterValues(ch, lst );
-         outputMap.put( ch, outputList );
+         if ( ch.getProperties().getDataAcquisitionMode().doesPolling() )
+         {
+            var outputList = wicaChannelValueFilteringService.filterValues( ch, lst);
+            if ( outputList.size() != 0 )
+            {
+               outputMap.put(ch, outputList);
+            }
+         }
       } );
 
       return Collections.unmodifiableMap( outputMap );
-   }
-
-   Map<WicaChannel,Optional<WicaChannelValue>> getLatest( WicaStream wicaStream )
-   {
-      return Collections.unmodifiableMap( wicaChannelDataBuffer.getLatest( wicaStream.getWicaChannels() ) );
    }
 
 /*- Private methods ----------------------------------------------------------*/
@@ -75,9 +74,9 @@ public class WicaStreamPolledValueCollectorService
    public void handleUpdateEvent( WicaChannelPolledValueUpdateEvent event)
    {
       Validate.notNull( event );
-      final ControlSystemName controlSystemName = event.getControlSystemName();
+      final WicaChannelName wicaChannelName = event.getWicaChannelName();
       final WicaChannelValue wicaChannelValue = event.getWicaChannelValue();
-      wicaChannelDataBuffer.saveControlSystemDataPoint( controlSystemName, wicaChannelValue );
+      wicaStreamPolledValueDataBuffer.saveDataPoint(wicaChannelName, wicaChannelValue );
    }
 
 /*- Nested Classes -----------------------------------------------------------*/

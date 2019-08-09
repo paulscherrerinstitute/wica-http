@@ -3,9 +3,15 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.infrastructure.stream.WicaStreamSerializer;
+import ch.psi.wica.model.app.WicaDataAcquisitionMode;
+import ch.psi.wica.model.app.WicaFilterType;
 import ch.psi.wica.model.channel.WicaChannelProperties;
+import ch.psi.wica.infrastructure.channel.WicaChannelPropertiesBuilder;
 import ch.psi.wica.model.stream.WicaStream;
+import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
 import ch.psi.wica.model.stream.WicaStreamProperties;
+import ch.psi.wica.infrastructure.stream.WicaStreamPropertiesBuilder;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -34,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT )
+@SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.NONE )
 @AutoConfigureMockMvc
 class WicaStreamLoadTest
 {
@@ -115,7 +121,7 @@ class WicaStreamLoadTest
       // Sequentially execute all the CREATE tasks.
       for ( int i = 1; i < iterations; i++ )
       {
-         assertNotNull(sendStreamCreateRequest(wicaStream ) );
+         assertNotNull( sendStreamCreateRequest( wicaStream ) );
       }
       final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
       logger.info( "Stream Create test completed {} iterations in {} ms. Throughput = {} requests/second.", iterations, createStreamCycleTime, (1000 * iterations ) / createStreamCycleTime );
@@ -160,13 +166,13 @@ class WicaStreamLoadTest
       logger.info( "Starting Multi-Threaded Stream Create test..." );
       final CompletionService<String> executor = new ExecutorCompletionService<>( Executors.newFixedThreadPool( 100 ) );
       final StopWatch stopWatch = StopWatch.createStarted();
-      final String firstResult = sendStreamCreateRequest(wicaStream );
+      final String firstResult = sendStreamCreateRequest( wicaStream );
       assertNotNull( firstResult );
 
       // Submit all the CREATE tasks.
       for ( int i = 1; i < iterations; i++ )
       {
-         executor.submit(() -> sendStreamCreateRequest(wicaStream ));
+         executor.submit(() -> sendStreamCreateRequest (wicaStream ));
       }
 
       // Get all the results and check that each CREATE operation succeeded.
@@ -219,7 +225,7 @@ class WicaStreamLoadTest
       // Sequentially execute all the CREATE tasks.
       for ( int i = 1; i < numberOfStreams; i++ )
       {
-         assertNotNull( sendStreamCreateRequest(wicaStream ) );
+         assertNotNull( sendStreamCreateRequest( wicaStream ) );
       }
       final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
       logger.info( "Stream Create test completed {} iterations in {} ms. Throughput = {} requests/second.", numberOfStreams, createStreamCycleTime, (1000 * numberOfStreams ) / createStreamCycleTime );
@@ -253,7 +259,7 @@ class WicaStreamLoadTest
       {
          disposables.get( i ).dispose();
       }
-      logger.info( "OK - diposed subscribers..." );
+      logger.info( "OK - disposed subscribers..." );
 
       logger.info( "Starting Single-Threaded Stream Delete test..." );
       stopWatch.reset();
@@ -273,142 +279,144 @@ class WicaStreamLoadTest
 
    private static WicaStream makeProscanStream()
    {
-      WicaStreamProperties wicaStreamProperties = WicaStreamProperties.createBuilder()
+      WicaStreamProperties wicaStreamProperties = WicaStreamPropertiesBuilder.create()
             .withHeartbeatFluxInterval( 15000 )
+            .withMetadataFluxInterval( 100 )
             .withMonitoredValueFluxInterval(100 )
             .withPolledValueFluxInterval( 1000 )
-            .withDataAcquisitionMode( WicaChannelProperties.DataAcquisitionMode.MONITOR )
-            .withPolledValueSamplingRatio( 1 )
+            .withDataAcquisitionMode( WicaDataAcquisitionMode.MONITOR )
+            .withPollingIntervalInMillis( 1000 )
             .withNumericPrecision(6)
-            .withFieldsOfInterest("val;sevr").build();
+            .withFieldsOfInterest( "val,sevr" )
+            .withFilterType(WicaFilterType.LAST_N )
+            .withFilterNumSamples( 1 )
+            .build();
 
-      return WicaStream.createBuilder()
+      return WicaStreamBuilder.create()
             .withStreamProperties( wicaStreamProperties )
-            .withChannelName("XPROSCAN:TIME:2" )
-            .withChannelName("XPROREG:STAB:1" )
-            .withChannelName("EMJCYV:STA3:2" )
-            .withChannelName("EMJCYV:CTRL:1" )
-            .withChannelName("MMAV6:IST:2" )
-            .withChannelName("MMAC3:STR:2" )
-            .withChannelNameAndProperties("EMJCYV:STAW:1", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).build() )
-            .withChannelNameAndProperties("EMJCYV:IST:2", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).build() )
-            .withChannelName("MMAC:SOL:2" )
-            .withChannelName("DMAD1:IST:2" )
-            .withChannelNameAndProperties("PRO:REG2D:Y:2", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2 ).build() )
-            .withChannelNameAndProperties("PRO:REG2D:X:2", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2 ).build() )
-            .withChannelNameAndProperties("PRO:REG2D:X", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2 ).build() )
-            .withChannelNameAndProperties("PRO:REG2D:Y", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2 ).build() )
-            .withChannelName("AMAKI1:IST:2" )
-            .withChannelName("CMJSEV:PWRF:2" )
-            .withChannelName("CMJLL:SOLA:2" )
-            .withChannelName("EMJEC1V:IST:2" )
-            .withChannelName("EMJEC2V:IST:2" )
-            .withChannelName("AMJHS-I:IADC:2" )
-            .withChannelName("MMJF:IST:2" )
-            .withChannelName("IMJV:IST:2" )
-            .withChannelName("IMJI:IST:2" )
-            .withChannelName("IMJGF:IST:2" )
-            .withChannelName("XPROIONS:IST1:2" )
-            .withChannelName("QMA1:IST:2" )
-            .withChannelName("QMA2:IST:2" )
-            .withChannelName("QMA3:IST:2" )
-            .withChannelName("SMJ1X:IST:2" )
-            .withChannelName("SMJ2Y:IST:2" )
-            .withChannelName("SMA1X:IST:2" )
-            .withChannelName("SMA1Y:IST:2" )
-            .withChannelName("FMJEP:IST:2" )
-            .withChannelName("MMJP2:IST1:2" )
-            .withChannelName("FMJEPI:POS:2" )
-            .withChannelName("FMJIP:IST:2" )
-            .withChannelName("MMJP2:IST2:2" )
-            .withChannelName("FMJIPI:POS:2" )
-            .withChannelName("FMJIPI:BREI:2" )
-            .withChannelName("PRO:CURRENTALARM:1" )
-            .withChannelNameAndProperties("MMAC3:STR:2##2", WicaChannelProperties.createBuilder()
-                  .withDataAcquisitionMode( WicaChannelProperties.DataAcquisitionMode.POLL_AND_MONITOR )
-                  .withFieldsOfInterest( "val;ts" )
-                  .withFilterType(WicaChannelProperties.FilterType.CHANGE_FILTERER )
-                  .withFilterDeadband( 5 ).build() )
-            .withChannelNameAndProperties("EMJCYV:IST:2##2", WicaChannelProperties.createBuilder()
-                                        .withDataAcquisitionMode( WicaChannelProperties.DataAcquisitionMode.POLL_AND_MONITOR )
-                                        .withFieldsOfInterest( "val;ts" )
-                                        .withFilterType(WicaChannelProperties.FilterType.ONE_IN_M )
-                                        .withFilterCycleLength( 5 ).build() )
-            .withChannelNameAndProperties("CMJSEV:PWRF:2##2", WicaChannelProperties.createBuilder()
-                                        .withDataAcquisitionMode( WicaChannelProperties.DataAcquisitionMode.POLL_AND_MONITOR )
-                                        .withFieldsOfInterest( "val;ts" )
-                                        .withFilterType(WicaChannelProperties.FilterType.ONE_IN_M )
-                                        .withFilterCycleLength( 5 ).build() )
-            .withChannelName("BMA1:STA:2" )
-            .withChannelName("BMA1:STAR:2##1" )
-            .withChannelName("BMA1:STAR:2##2" )
-            .withChannelName("BMA1:STAP:2##1" )
-            .withChannelName("BMA1:STAP:2##2" )
-            .withChannelName("BME1:STA:2" )
-            .withChannelName("BME1:STAR:2##1" )
-            .withChannelName("BME1:STAR:2##2" )
-            .withChannelName("BME1:STAP:2##1" )
-            .withChannelName("BME1:STAP:2##2" )
-            .withChannelName("BMB1:STA:2" )
-            .withChannelName("BMB1:STAR:2##1" )
-            .withChannelName("BMB1:STAR:2##2" )
-            .withChannelName("BMB1:STAP:2##1" )
-            .withChannelName("BMB1:STAP:2##2" )
-            .withChannelName("BMC1:STA:2" )
-            .withChannelName("BMC1:STAR:2##1" )
-            .withChannelName("BMC1:STAR:2##2" )
-            .withChannelName("BMC1:STAP:2##1" )
-            .withChannelName("BMC1:STAP:2##2" )
-            .withChannelName("BMD1:STA:2" )
-            .withChannelName("BMD1:STAR:2##1" )
-            .withChannelName("BMD1:STAR:2##2" )
-            .withChannelName("BMD2:STA:2" )
-            .withChannelName("BMD2:STAR:2##1" )
-            .withChannelName("BMD2:STAR:2##2" )
-            .withChannelName("BMD2:STAP:2##1" )
-            .withChannelName("BMD2:STAP:2##2" )
-            .withChannelNameAndProperties("MMAP5X:PROF:2:P", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2).build() )
-            .withChannelNameAndProperties("MMAP5X:PROF:2", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2).build() )
-            .withChannelName("MMAP5X:SPB:2" )
-            .withChannelNameAndProperties("MMAP6Y:PROF:2:P", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2).build() )
-            .withChannelNameAndProperties("MMAP6Y:PROF:2", WicaChannelProperties.createBuilder().withFieldsOfInterest("val" ).withNumericPrecision(2).build() )
-            .withChannelName("MMAP6Y:SPB:2" )
-            .withChannelName("YMJCS1K:IST:2" )
-            .withChannelName("YMJCS2K:IST:2" )
-            .withChannelName("YMJHH:SPARB:2" )
-            .withChannelName("YMJHH:STR:2" )
-            .withChannelName("YMJHL:IST:2" )
-            .withChannelName("YMJHG:IST:2" )
-            .withChannelName("YMJKKRT:IST:2" )
-            .withChannelName("RPS-IQ:STA:1" )
-            .withChannelName("UMJSSB:BIQX:1" )
-            .withChannelName("RPS-HFRD:STA:1" )
-            .withChannelName("UMJSSB:BHRX:1" )
-            .withChannelName("RPS-HF:STA:1" )
-            .withChannelName("UMJSSB:BHFX:1" )
-            .withChannelName("MJSSB:BDEX:1" )
-            .withChannelName("XPROSCAN:STAB:2" )
+            .withChannelNameAndStreamProperties("XPROSCAN:TIME:2" )
+            .withChannelNameAndStreamProperties("XPROREG:STAB:1" )
+            .withChannelNameAndStreamProperties("EMJCYV:STA3:2" )
+            .withChannelNameAndStreamProperties("EMJCYV:CTRL:1" )
+            .withChannelNameAndStreamProperties("MMAV6:IST:2" )
+            .withChannelNameAndStreamProperties("MMAC3:STR:2" )
+            .withChannelNameAndCombinedProperties("EMJCYV:STAW:1", WicaChannelPropertiesBuilder.create().withFieldsOfInterest("val" ).build() )
+            .withChannelNameAndCombinedProperties("EMJCYV:IST:2", WicaChannelPropertiesBuilder.create().withFieldsOfInterest("val" ).build() )
+            .withChannelNameAndStreamProperties("MMAC:SOL:2" )
+            .withChannelNameAndStreamProperties("DMAD1:IST:2" )
+            .withChannelNameAndCombinedProperties("PRO:REG2D:Y:2", WicaChannelPropertiesBuilder.create().withFieldsOfInterest("val" ).withNumericPrecision(2 ).build() )
+            .withChannelNameAndCombinedProperties("PRO:REG2D:X:2", WicaChannelPropertiesBuilder.create().withFieldsOfInterest("val" ).withNumericPrecision(2 ).build() )
+            .withChannelNameAndCombinedProperties("PRO:REG2D:X", WicaChannelPropertiesBuilder.create().withFieldsOfInterest("val" ).withNumericPrecision(2 ).build() )
+            .withChannelNameAndCombinedProperties("PRO:REG2D:Y", WicaChannelPropertiesBuilder.create().withFieldsOfInterest("val" ).withNumericPrecision(2 ).build() )
+            .withChannelNameAndStreamProperties("AMAKI1:IST:2" )
+            .withChannelNameAndStreamProperties("CMJSEV:PWRF:2" )
+            .withChannelNameAndStreamProperties("CMJLL:SOLA:2" )
+            .withChannelNameAndStreamProperties("EMJEC1V:IST:2" )
+            .withChannelNameAndStreamProperties("EMJEC2V:IST:2" )
+            .withChannelNameAndStreamProperties("AMJHS-I:IADC:2" )
+            .withChannelNameAndStreamProperties("MMJF:IST:2" )
+            .withChannelNameAndStreamProperties("IMJV:IST:2" )
+            .withChannelNameAndStreamProperties("IMJI:IST:2" )
+            .withChannelNameAndStreamProperties("IMJGF:IST:2" )
+            .withChannelNameAndStreamProperties("XPROIONS:IST1:2" )
+            .withChannelNameAndStreamProperties("QMA1:IST:2" )
+            .withChannelNameAndStreamProperties("QMA2:IST:2" )
+            .withChannelNameAndStreamProperties("QMA3:IST:2" )
+            .withChannelNameAndStreamProperties("SMJ1X:IST:2" )
+            .withChannelNameAndStreamProperties("SMJ2Y:IST:2" )
+            .withChannelNameAndStreamProperties("SMA1X:IST:2" )
+            .withChannelNameAndStreamProperties("SMA1Y:IST:2" )
+            .withChannelNameAndStreamProperties("FMJEP:IST:2" )
+            .withChannelNameAndStreamProperties("MMJP2:IST1:2" )
+            .withChannelNameAndStreamProperties("FMJEPI:POS:2" )
+            .withChannelNameAndStreamProperties("FMJIP:IST:2" )
+            .withChannelNameAndStreamProperties("MMJP2:IST2:2" )
+            .withChannelNameAndStreamProperties("FMJIPI:POS:2" )
+            .withChannelNameAndStreamProperties("FMJIPI:BREI:2" )
+            .withChannelNameAndStreamProperties("PRO:CURRENTALARM:1" )
+            .withChannelNameAndCombinedProperties("MMAC3:STR:2##2", WicaChannelPropertiesBuilder.create()
+               .withDataAcquisitionMode(WicaDataAcquisitionMode.POLL_AND_MONITOR )
+               .withFieldsOfInterest( "val;ts" )
+               .withFilterType( WicaFilterType.CHANGE_FILTERER )
+               .withFilterDeadband( 5 )
+               .build() )
+            .withChannelNameAndCombinedProperties("EMJCYV:IST:2##2", WicaChannelPropertiesBuilder.create()
+               .withDataAcquisitionMode( WicaDataAcquisitionMode.POLL_AND_MONITOR )
+               .withFieldsOfInterest( "val;ts" )
+               .withFilterType( WicaFilterType.ONE_IN_M )
+               .withFilterCycleLength( 1 )
+               .build() )
+            .withChannelNameAndCombinedProperties("CMJSEV:PWRF:2##2", WicaChannelPropertiesBuilder.create()
+               .withDataAcquisitionMode( WicaDataAcquisitionMode.POLL_AND_MONITOR )
+               .withFieldsOfInterest( "val;ts" )
+               .withFilterType( WicaFilterType.ONE_IN_M )
+               .withFilterCycleLength( 1 )
+               .build() )
+            .withChannelNameAndStreamProperties("BMA1:STA:2" )
+            .withChannelNameAndStreamProperties("BMA1:STAR:2##1" )
+            .withChannelNameAndStreamProperties("BMA1:STAR:2##2" )
+            .withChannelNameAndStreamProperties("BMA1:STAP:2##1" )
+            .withChannelNameAndStreamProperties("BMA1:STAP:2##2" )
+            .withChannelNameAndStreamProperties("BME1:STA:2" )
+            .withChannelNameAndStreamProperties("BME1:STAR:2##1" )
+            .withChannelNameAndStreamProperties("BME1:STAR:2##2" )
+            .withChannelNameAndStreamProperties("BME1:STAP:2##1" )
+            .withChannelNameAndStreamProperties("BME1:STAP:2##2" )
+            .withChannelNameAndStreamProperties("BMB1:STA:2" )
+            .withChannelNameAndStreamProperties("BMB1:STAR:2##1" )
+            .withChannelNameAndStreamProperties("BMB1:STAR:2##2" )
+            .withChannelNameAndStreamProperties("BMB1:STAP:2##1" )
+            .withChannelNameAndStreamProperties("BMB1:STAP:2##2" )
+            .withChannelNameAndStreamProperties("BMC1:STA:2" )
+            .withChannelNameAndStreamProperties("BMC1:STAR:2##1" )
+            .withChannelNameAndStreamProperties("BMC1:STAR:2##2" )
+            .withChannelNameAndStreamProperties("BMC1:STAP:2##1" )
+            .withChannelNameAndStreamProperties("BMC1:STAP:2##2" )
+            .withChannelNameAndStreamProperties("BMD1:STA:2" )
+            .withChannelNameAndStreamProperties("BMD1:STAR:2##1" )
+            .withChannelNameAndStreamProperties("BMD1:STAR:2##2" )
+            .withChannelNameAndStreamProperties("BMD2:STA:2" )
+            .withChannelNameAndStreamProperties("BMD2:STAR:2##1" )
+            .withChannelNameAndStreamProperties("BMD2:STAR:2##2" )
+            .withChannelNameAndStreamProperties("BMD2:STAP:2##1" )
+            .withChannelNameAndStreamProperties("BMD2:STAP:2##2" )
+            .withChannelNameAndCombinedProperties("MMAP5X:PROF:2:P", WicaChannelPropertiesBuilder.create().withFieldsOfInterest("val" ).withNumericPrecision(2).build() )
+            .withChannelNameAndCombinedProperties("MMAP5X:PROF:2", WicaChannelPropertiesBuilder.create().withFieldsOfInterest("val" ).withNumericPrecision(2).build() )
+            .withChannelNameAndStreamProperties("MMAP5X:SPB:2" )
+            .withChannelNameAndCombinedProperties("MMAP6Y:PROF:2:P", WicaChannelPropertiesBuilder.create().withFieldsOfInterest("val" ).withNumericPrecision(2).build() )
+            .withChannelNameAndCombinedProperties("MMAP6Y:PROF:2", WicaChannelPropertiesBuilder.create().withFieldsOfInterest("val" ).withNumericPrecision(2).build() )
+            .withChannelNameAndStreamProperties("MMAP6Y:SPB:2" )
+            .withChannelNameAndStreamProperties("YMJCS1K:IST:2" )
+            .withChannelNameAndStreamProperties("YMJCS2K:IST:2" )
+            .withChannelNameAndStreamProperties("YMJHH:SPARB:2" )
+            .withChannelNameAndStreamProperties("YMJHH:STR:2" )
+            .withChannelNameAndStreamProperties("YMJHL:IST:2" )
+            .withChannelNameAndStreamProperties("YMJHG:IST:2" )
+            .withChannelNameAndStreamProperties("YMJKKRT:IST:2" )
+            .withChannelNameAndStreamProperties("RPS-IQ:STA:1" )
+            .withChannelNameAndStreamProperties("UMJSSB:BIQX:1" )
+            .withChannelNameAndStreamProperties("RPS-HFRD:STA:1" )
+            .withChannelNameAndStreamProperties("UMJSSB:BHRX:1" )
+            .withChannelNameAndStreamProperties("RPS-HF:STA:1" )
+            .withChannelNameAndStreamProperties("UMJSSB:BHFX:1" )
+            .withChannelNameAndStreamProperties("MJSSB:BDEX:1" )
+            .withChannelNameAndStreamProperties("XPROSCAN:STAB:2" )
             .build();
    }
 
 
    private static WicaStream makeWicaStream( int numberOfChannels )
    {
-      WicaStreamProperties wicaStreamProperties = WicaStreamProperties.createBuilder()
-            .withHeartbeatFluxInterval( 15000 )
-            .withMonitoredValueFluxInterval(100 )
-            .withPolledValueFluxInterval( 1000 )
-            .withDataAcquisitionMode(WicaChannelProperties.DataAcquisitionMode.MONITOR)
-            .withPolledValueSamplingRatio(1)
-            .withNumericPrecision(6)
-            .withFieldsOfInterest("val;sevr").build();
+      WicaStreamProperties wicaStreamProperties = WicaStreamPropertiesBuilder.create()
+            .withDefaultProperties()
+            .build();
 
-      WicaStream.Builder wicaStreamBuilder = WicaStream.createBuilder()
+      WicaStreamBuilder wicaStreamBuilder = WicaStreamBuilder.create()
             .withStreamProperties( wicaStreamProperties );
 
       for ( int i =0; i < numberOfChannels; i++ )
       {
-         wicaStreamBuilder = wicaStreamBuilder.withChannelName("CHAN-" + i  );
+         wicaStreamBuilder = wicaStreamBuilder.withChannelNameAndDefaultProperties( "CHAN-" + i  );
       }
 
       return wicaStreamBuilder.build();
@@ -418,7 +426,8 @@ class WicaStreamLoadTest
    {
       logger.trace( "Creating new Stream..." );
 
-      final String jsonStreamConfiguration = wicaStream.toJsonString();
+      final String jsonStreamConfiguration = WicaStreamSerializer.writeToJson( wicaStream );
+
       final ClientResponse postResponse = WebClient.create( wicaStreamUri + "/ca/streams")
             .post()
             .body(BodyInserters.fromObject( jsonStreamConfiguration ) )

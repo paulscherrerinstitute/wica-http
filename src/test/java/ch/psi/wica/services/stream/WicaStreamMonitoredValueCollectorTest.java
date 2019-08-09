@@ -4,6 +4,7 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.channel.WicaChannel;
+import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +22,7 @@ import static org.junit.Assert.assertThat;
 /*- Class Declaration --------------------------------------------------------*/
 
 @SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.NONE )
-class WicaStreamValueCollectorTest
+class WicaStreamMonitoredValueCollectorTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -58,23 +59,25 @@ class WicaStreamValueCollectorTest
    @Test
    void test_getMonitoredValueCollector()
    {
-      // Verify that a first call to getFilteredMonitoredValueMap does indeed get everything
       final var valueMap = wicaStreamMonitoredValueCollectorService.get( wicaStream, LONG_AGO );
+      final WicaChannel testChannel1 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH1##1").build();
+      final WicaChannel testChannel2 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH1##2").build();
+      final WicaChannel testChannel3 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH2").build();
+
       assertThat( valueMap.size(), is( 3) );
 
-      assertThat( valueMap.containsKey( WicaChannel.createFromName( "CH1##1") ), is( true )  );
-      final var valueList1 = valueMap.get( WicaChannel.createFromName( "CH1##1") );
-
+      assertThat( valueMap.containsKey( testChannel1 ), is(true )  );
+      final var valueList1 = valueMap.get( testChannel1 );
       assertThat( valueList1.size(), is( 1 ) );
       assertThat( valueList1.get( 0 ), instanceOf( WicaChannelValue.WicaChannelValueDisconnected.class ) );
 
-      assertThat( valueMap.containsKey( WicaChannel.createFromName( "CH1##2") ), is( true) );
-      final var valueList2 = valueMap.get( WicaChannel.createFromName( "CH1##2" ) );
+      assertThat(valueMap.containsKey( testChannel2 ), is(true) );
+      final var valueList2 = valueMap.get( testChannel2 );
       assertThat( valueList2.get( 0 ), instanceOf( WicaChannelValue.WicaChannelValueDisconnected.class ) );
-      assertThat( valueList2.size(), is( 1) );
+      assertThat( valueList2.size(), is( 1 ) );
 
-      assertThat( valueMap.containsKey( WicaChannel.createFromName( "CH2" ) ), is( true ) );
-      final var valueList3 = valueMap.get( WicaChannel.createFromName( "CH2" ) );
+      assertThat( valueMap.containsKey( testChannel3 ), is(true ) );
+      final var valueList3 = valueMap.get( testChannel3 );
       assertThat( valueList3.get( 0 ), instanceOf( WicaChannelValue.WicaChannelValueDisconnected.class ) );
       assertThat( valueList3.size(), is( 1 ) );
    }
@@ -82,23 +85,25 @@ class WicaStreamValueCollectorTest
    @Test
    void test_getPolledValueCollector()
    {
-      // Verify that a first call to getFilteredMonitoredValueMap does indeed get everything
       final var valueMap = wicaStreamPolledValueCollectorService.get( wicaStream, LONG_AGO );
+      final WicaChannel testChannel1 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH1##1").build();
+      final WicaChannel testChannel2 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH1##2").build();
+      final WicaChannel testChannel3 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH2").build();
+
       assertThat( valueMap.size(), is( 3) );
 
-      assertThat( valueMap.containsKey( WicaChannel.createFromName( "CH1##1") ), is( true )  );
-      final var valueList1 = valueMap.get( WicaChannel.createFromName( "CH1##1") );
-
+      assertThat( valueMap.containsKey( testChannel1 ), is(true )  );
+      final var valueList1 = valueMap.get( testChannel1 );
       assertThat( valueList1.size(), is( 1 ) );
       assertThat( valueList1.get( 0 ), instanceOf( WicaChannelValue.WicaChannelValueDisconnected.class ) );
 
-      assertThat( valueMap.containsKey( WicaChannel.createFromName( "CH1##2") ), is( true) );
-      final var valueList2 = valueMap.get( WicaChannel.createFromName( "CH1##2" ) );
+      assertThat(valueMap.containsKey( testChannel2 ), is(true) );
+      final var valueList2 = valueMap.get( testChannel2 );
       assertThat( valueList2.get( 0 ), instanceOf( WicaChannelValue.WicaChannelValueDisconnected.class ) );
-      assertThat( valueList2.size(), is( 1) );
+      assertThat( valueList2.size(), is( 1 ) );
 
-      assertThat( valueMap.containsKey( WicaChannel.createFromName( "CH2" ) ), is( true ) );
-      final var valueList3 = valueMap.get( WicaChannel.createFromName( "CH2" ) );
+      assertThat( valueMap.containsKey( testChannel3 ), is(true ) );
+      final var valueList3 = valueMap.get( testChannel3 );
       assertThat( valueList3.get( 0 ), instanceOf( WicaChannelValue.WicaChannelValueDisconnected.class ) );
       assertThat( valueList3.size(), is( 1 ) );
    }

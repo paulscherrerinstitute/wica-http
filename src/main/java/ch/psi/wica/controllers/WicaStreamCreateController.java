@@ -123,7 +123,7 @@ class WicaStreamCreateController implements StatisticsCollectable
       final WicaStream wicaStream;
       try
       {
-         wicaStream = wicaStreamLifecycleService.create(optJsonStreamConfiguration.get() );
+         wicaStream = wicaStreamLifecycleService.create( optJsonStreamConfiguration.get() );
       }
       catch( Exception ex )
       {

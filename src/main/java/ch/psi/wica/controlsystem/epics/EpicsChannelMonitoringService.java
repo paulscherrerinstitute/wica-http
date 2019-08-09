@@ -140,40 +140,44 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       Validate.validState( ! closed, "The monitor service was previously closed and can no longer be used." );
       Validate.validState( ! channels.containsKey( epicsChannelName ), "The channel name: '" + epicsChannelName.asString() + "' is already being monitored."  );
 
-      logger.trace("'{}' - starting to monitor... ", epicsChannelName);
+      logger.warn("'{}' - starting to monitor... ", epicsChannelName);
       channelsCreatedCount++;
 
       try
       {
-         logger.trace("'{}' - creating channel of type '{}'...", epicsChannelName, "generic");
+         logger.warn("'{}' - creating channel of type '{}'...", epicsChannelName, "generic");
          final Channel<Object> channel = caContext.createChannel(epicsChannelName.asString(), Object.class);
          channels.put(epicsChannelName, channel);
-         logger.trace("'{}' - channel created ok.", epicsChannelName);
+         logger.warn("'{}' - channel created ok.", epicsChannelName);
 
          // Synchronously add a connection listener before making any attempt to connect the channel.
          logger.trace("'{}' - adding connection listener... ", epicsChannelName);
-         epicsChannelConnectionChangeSubscriber.subscribe( channel, connectionStateChangeHandler );
-         logger.trace("'{}' - connection listener added ok.", epicsChannelName);
-
-         logger.trace("'{}' - connecting asynchronously to... ", epicsChannelName);
-         channel.connectAsync()
-            .thenRunAsync(() -> {
-               logger.trace("'{}' - asynchronous connect completed ok.", epicsChannelName);
+         epicsChannelConnectionChangeSubscriber.subscribe( channel, (conn) -> {
+            if ( conn )
+            {
+               logger.warn("'{}' - connection state changed to CONNECTED.", epicsChannelName);
 
                // Synchronously obtain the channel's metadata.
                final var wicaChannelMetadata = epicsChannelMetadataGetter.get( channel );
-               logger.trace("'{}' - channel metadata obtained ok.", epicsChannelName);
+               logger.warn("'{}' - channel metadata obtained ok.", epicsChannelName);
                metadataChangeHandler.accept( wicaChannelMetadata );
 
                // Synchronously obtain the channel's initial value.
                final var wicaChannelValue = epicsChannelValueGetter.get(channel);
-               logger.trace("'{}' - channel value obtained ok.", epicsChannelName);
+               logger.warn("'{}' - channel value obtained ok.", epicsChannelName);
                valueChangeHandler.accept(wicaChannelValue);
 
                // Synchronously create a monitor which will notify all future value changes.
                final Monitor<Timestamped<Object>> monitor = epicsChannelValueChangeSubscriber.subscribe(channel, valueChangeHandler);
                monitors.put(epicsChannelName, monitor);
-            })
+            }
+            connectionStateChangeHandler.accept( conn );
+         } );
+         logger.warn("'{}' - connection listener added ok.", epicsChannelName);
+
+         logger.warn("'{}' - connecting asynchronously to... ", epicsChannelName);
+         channel.connectAsync()
+            .thenRunAsync(() -> logger.warn("'{}' - asynchronous connect completed ok.", epicsChannelName))
             .exceptionally(( ex ) -> {
                logger.warn("'{}' - exception on channel, details were as follows: {}", this, ex.toString());
                return null;

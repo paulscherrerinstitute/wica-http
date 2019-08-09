@@ -6,9 +6,7 @@ package ch.psi.wica.services.stream;
 
 import ch.psi.wica.infrastructure.channel.WicaChannelMetadataMapSerializer;
 import ch.psi.wica.infrastructure.channel.WicaChannelValueMapSerializer;
-import ch.psi.wica.infrastructure.stream.WicaServerSentEventBuilder;
-import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
+import ch.psi.wica.infrastructure.stream.WicaStreamServerSentEventBuilder;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamId;
 import ch.psi.wica.model.stream.WicaStreamProperties;
@@ -21,7 +19,6 @@ import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -45,7 +42,6 @@ public class WicaStreamServerSentEventPublisher
 
    private final WicaChannelMetadataMapSerializer wicaChannelMetadataMapSerializer;
    private final WicaChannelValueMapSerializer wicaChannelValueMapSerializer;
-   private final Flux<ServerSentEvent<String>> combinedFlux;
    private final AtomicBoolean shutdown = new AtomicBoolean( false );
 
 
@@ -66,10 +62,7 @@ public class WicaStreamServerSentEventPublisher
       this.wicaStreamProperties = Validate.notNull( wicaStream.getWicaStreamProperties() );
 
       this.wicaChannelMetadataMapSerializer = new WicaChannelMetadataMapSerializer(false );
-
       this.wicaChannelValueMapSerializer = new WicaChannelValueMapSerializer( false );
-
-      this.combinedFlux = createCombinedFlux();
       shutdown.set( false );
    }
 
@@ -100,7 +93,7 @@ public class WicaStreamServerSentEventPublisher
          logger.error( "Programming error: unexpected state - attempt to get flux after publisher has been shut down." );
          throw new IllegalStateException( "Call to getFlux(), but the publisher has already been shut down." );
       }
-      return combinedFlux;
+      return createCombinedFlux();
    }
 
    /**
@@ -127,9 +120,11 @@ public class WicaStreamServerSentEventPublisher
     *
     * The purpose of this flux is to periodically tell remote clients that the stream is
     * still alive. If remote clients do not receive heartbeat events within the expected
-    * time intervals then they will conclude that the event stream is no longer active.
-    * This may then lead to closing the event stream on the client side and sending a
-    * request to the server to recreate the stream.
+    * time intervals then they may typically conclude that the event stream is no longer
+    * active. This may then lead them to close the event stream and to send new requests
+    * to the server to recreate the stream.
+    *
+    * This flux runs periodically at a rate determined by the properties of the stream.
     *
     * @return the flux.
     */
@@ -139,7 +134,7 @@ public class WicaStreamServerSentEventPublisher
             .map(l -> {
                logger.trace("heartbeat flux is publishing new SSE...");
                final String jsonHeartbeatString = LocalDateTime.now().toString();
-               return WicaServerSentEventBuilder.EV_WICA_SERVER_HEARTBEAT.build(wicaStreamId, jsonHeartbeatString );
+               return WicaStreamServerSentEventBuilder.EV_WICA_SERVER_HEARTBEAT.build(wicaStreamId, jsonHeartbeatString );
             })
             .doOnComplete( () -> logger.warn( "heartbeat flux with id: '{}' completed.", wicaStreamId   ))
             .doOnCancel( () -> logger.warn( "heartbeat flux with id: '{}' was cancelled.", wicaStreamId  ))
@@ -150,26 +145,35 @@ public class WicaStreamServerSentEventPublisher
    /**
     * Creates the CHANNEL METADATA FLUX.
     *
-    * The purpose of this flux is to publish additional information about the nature of the
-    * underlying Wica Channel. This may include the channel's type and where relevant the
-    * channel's display, alarm and operator limits.
+    * The purpose of this flux is to publish extra information (typically slow
+    * changing or fixed) about the nature of the  underlying Wica Channel. This
+    * may include the channel's type and where relevant the channel's display,
+    * alarm and operator limits.
     *
-    * This flux runs just once and delivers its payload on initial connection to the stream.
+    * This flux runs periodically at a rate determined by the properties of the stream.
+    *
+    * New subscribers to this flux receive firstly the latest received metadata for
+    * all channels, then subsequently only updates for those channels whose metadata
+    * has changed.
     *
     * @return the flux.
     */
    private Flux<ServerSentEvent<String>> createMetadataFlux()
    {
-      return Flux.range( 1, 1 )
-            .map( l -> {
-               logger.trace( "channel-metadata flux with id: '{}' is publishing new SSE...", wicaStreamId  );
-               final Map<WicaChannel, WicaChannelMetadata> channelMetadataMap = wicaStreamMetadataCollectorService.get( wicaStream );
-               final String jsonMetadataString = wicaChannelMetadataMapSerializer.serialize( channelMetadataMap );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build ( wicaStreamId, jsonMetadataString );
-            } )
-            .doOnComplete( () -> logger.warn( "channel-metadata flux with id: '{}' completed.", wicaStreamId  ))
-            .doOnCancel( () -> logger.warn( "channel-metadata flux with id: '{}' was cancelled.", wicaStreamId  ) )
-            .doOnError( (e) -> logger.warn( "heartbeat flux with id: '{}' had error.", wicaStreamId, e ));
+      final AtomicReference<LocalDateTime> lastUpdateTime = new AtomicReference<>( LONG_AGO );
+      return Flux.interval( Duration.ofMillis( wicaStreamProperties.getMetadataFluxIntervalInMillis() ) )
+         .map( l -> {
+            logger.trace("channel-metadata flux with id: '{}' is publishing new SSE...", wicaStreamId);
+            return wicaStreamMetadataCollectorService.get( wicaStream, lastUpdateTime.getAndSet( LocalDateTime.now()) );
+         } )
+         .filter( m -> m.keySet().size() > 0 )
+         .map( map -> {
+               final String jsonMetadataString = wicaChannelMetadataMapSerializer.serialize( map );
+               return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build(wicaStreamId, jsonMetadataString );
+         } )
+         .doOnComplete( () -> logger.warn( "channel-metadata flux with id: '{}' completed.", wicaStreamId  ))
+         .doOnCancel( () -> logger.warn( "channel-metadata flux with id: '{}' was cancelled.", wicaStreamId  ) )
+         .doOnError( (e) -> logger.warn( "heartbeat flux with id: '{}' had error.", wicaStreamId, e ));
       //.log();
    }
 
@@ -177,10 +181,15 @@ public class WicaStreamServerSentEventPublisher
    /**
     * Create the WICA CHANNEL MONITORED VALUES FLUX.
     *
-    * The purpose of this flux is to publish the latest polled values for ALL channels
-    * in the stream.
+    * The purpose of this flux is to publish the latest received values for channels
+    * in the stream which are configured with a data acquisition mode that supports
+    * MONITORING.
     *
-    * This flux runs just once and delivers its payload on initial connection to the stream.
+    * This flux runs periodically at a rate determined by the properties of the stream.
+    *
+    * New subscribers to this flux receive firstly the latest received value for all
+    * monitored channels, then subsequently only updates for those channels whose
+    * values have changed.
     *
     * @return the flux.
     */
@@ -188,15 +197,15 @@ public class WicaStreamServerSentEventPublisher
    {
       final AtomicReference<LocalDateTime> lastUpdateTime = new AtomicReference<>( LONG_AGO );
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getMonitoredValueFluxIntervalInMillis() ) )
-            .map(l -> {
-               logger.trace("channel-value-poll flux with id: '{}' is publishing new SSE...", wicaStreamId );
-               final var map = wicaStreamMonitoredValueCollectorService.get( wicaStream, lastUpdateTime.getAndSet(LocalDateTime.now() ) );
-               final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_MONITORED_VALUES.build( wicaStreamId, jsonServerSentEventString );
-            } )
-            .doOnComplete( () -> logger.warn( "channel-value-poll flux with id: '{}' completed.", wicaStreamId ))
-            .doOnCancel( () -> logger.warn("channel-value-poll flux with id: '{}' was cancelled.", wicaStreamId ))
-            .doOnError( (e) -> logger.warn( "channel-value-poll flux with id: '{}' had error.", wicaStreamId, e ));
+         .map(l -> {
+            logger.trace("channel-value-monitor flux with id: '{}' is publishing new SSE...", wicaStreamId );
+            final var map = wicaStreamMonitoredValueCollectorService.get( wicaStream, lastUpdateTime.getAndSet( LocalDateTime.now() ) );
+            final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
+            return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_MONITORED_VALUES.build(wicaStreamId, jsonServerSentEventString );
+         } )
+         .doOnComplete( () -> logger.warn( "channel-value-monitor flux with id: '{}' completed.", wicaStreamId ))
+         .doOnCancel( () -> logger.warn("channel-value-monitor flux with id: '{}' was cancelled.", wicaStreamId ))
+         .doOnError( (e) -> logger.warn( "channel-value-monitor flux with id: '{}' had error.", wicaStreamId, e ));
       //.log();
    }
 
@@ -204,10 +213,15 @@ public class WicaStreamServerSentEventPublisher
    /**
     * Create the WICA CHANNEL POLLED VALUES FLUX.
     *
-    * The purpose of this flux is to publish the latest polled values for ALL channels
-    * in the stream.
+    * The purpose of this flux is to publish the latest received values for channels
+    * in the stream which are configured with a data acquisition mode that supports
+    * POLLING.
     *
-    * This flux runs just once and delivers its payload on initial connection to the stream.
+    * This flux runs periodically at a rate determined by the properties of the stream.
+    *
+    * New subscribers to this flux receive first the latest received value for all
+    * polled channels, then subsequently only updates for those channels whose
+    * values have changed.
     *
     * @return the flux.
     */
@@ -215,16 +229,16 @@ public class WicaStreamServerSentEventPublisher
    {
       final AtomicReference<LocalDateTime> lastUpdateTime = new AtomicReference<>( LONG_AGO );
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getPolledValueFluxIntervalInMillis() ) )
-            .map(l -> {
-               logger.trace("channel-value-poll flux with id: '{}' is publishing new SSE...", wicaStreamId );
-               final var map = wicaStreamPolledValueCollectorService.get( wicaStream, lastUpdateTime.getAndSet( LocalDateTime.now() ) );
-               final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
-               return WicaServerSentEventBuilder.EV_WICA_CHANNEL_POLLED_VALUES.build( wicaStreamId, jsonServerSentEventString );
-            } )
-            .doOnComplete( () -> logger.warn( "channel-value-poll flux with id: '{}' completed.", wicaStreamId ))
-            .doOnCancel( () -> logger.warn("channel-value-poll flux with id: '{}' was cancelled.", wicaStreamId ))
-            .doOnError( (e) -> logger.warn( "channel-value-poll flux with id: '{}' had error.", wicaStreamId, e ));
-      //.log();
+         .map(l -> {
+            logger.trace("channel-value-poll flux with id: '{}' is publishing new SSE...", wicaStreamId );
+            final var map = wicaStreamPolledValueCollectorService.get( wicaStream, lastUpdateTime.getAndSet( LocalDateTime.now() ) );
+            final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
+            return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_POLLED_VALUES.build(wicaStreamId, jsonServerSentEventString );
+         } )
+         .doOnComplete( () -> logger.warn( "channel-value-poll flux with id: '{}' completed.", wicaStreamId ))
+         .doOnCancel( () -> logger.warn("channel-value-poll flux with id: '{}' was cancelled.", wicaStreamId ))
+         .doOnError( (e) -> logger.warn( "channel-value-poll flux with id: '{}' had error.", wicaStreamId, e ));
+   //.log();
    }
 
    /**
@@ -236,26 +250,32 @@ public class WicaStreamServerSentEventPublisher
     */
    private Flux<ServerSentEvent<String>> createCombinedFlux()
    {
-      final Flux<ServerSentEvent<String>> heartbeatFlux = createHeartbeatFlux();
-      final Flux<ServerSentEvent<String>> metadataFlux = createMetadataFlux();
-      final Flux<ServerSentEvent<String>> monitoredValueFlux = createMonitoredValueFlux();
-      final Flux<ServerSentEvent<String>> polledValueFlux = createPolledValueFlux();
+      // Any flux can be suppressed by configuring its refresh rate to 0ms.
+      final var heartbeatFlux = wicaStreamProperties.getHeartbeatFluxIntervalInMillis() > 0 ? createHeartbeatFlux() :
+         Flux.<ServerSentEvent<String>>empty();
+      final var metadataFlux = wicaStreamProperties.getMetadataFluxIntervalInMillis() > 0 ? createMetadataFlux() :
+         Flux.<ServerSentEvent<String>>empty();
+      final var monitoredValueFlux = wicaStreamProperties.getMonitoredValueFluxIntervalInMillis() > 0 ? createMonitoredValueFlux() :
+         Flux.<ServerSentEvent<String>>empty();
+      final var polledValueFlux = wicaStreamProperties.getPolledValueFluxIntervalInMillis() > 0 ?  createPolledValueFlux() :
+         Flux.<ServerSentEvent<String>>empty();
 
       // Create a single Flux which merges all of the above.
-      return heartbeatFlux.mergeWith( metadataFlux )
-            .mergeWith( monitoredValueFlux )
-            .mergeWith( polledValueFlux )
-            .doOnComplete( () -> logger.warn( "combined with id: '{}' flux completed.", wicaStreamId ))
-            .doOnCancel( () -> logger.warn("combined flux with id '{}' was cancelled.", wicaStreamId ))
-            .doOnError( (e) -> logger.warn( "combined flux with id: '{}' had error: '{}'", wicaStreamId, e ) )
-            .takeUntil( (sse) -> {
-               final boolean shutdownRequest = shutdown.get();
-               if ( shutdownRequest)
-               {
-                  logger.warn( "combined flux with id: '{}' discovered shutdown request when delivering SSE: '{}'",  wicaStreamId, sse );
-               }
-               return shutdownRequest;
-            } );
+      return heartbeatFlux
+         .mergeWith( metadataFlux )
+         .mergeWith( monitoredValueFlux )
+         .mergeWith( polledValueFlux )
+         .doOnComplete( () -> logger.warn( "combined flux with id: '{}' flux completed.", wicaStreamId ))
+         .doOnCancel( () -> logger.warn("combined flux with id: '{}' was cancelled.", wicaStreamId ))
+         .doOnError( (e) -> logger.warn( "combined flux with id: '{}' had error: '{}'", wicaStreamId, e ) )
+         .takeUntil( (sse) -> {
+            final boolean shutdownRequest = shutdown.get();
+            if ( shutdownRequest)
+            {
+               logger.warn( "combined flux with id: '{}' discovered shutdown request when delivering SSE: '{}'",  wicaStreamId, sse );
+            }
+            return shutdownRequest;
+         } );
       //.log();
    }
 
