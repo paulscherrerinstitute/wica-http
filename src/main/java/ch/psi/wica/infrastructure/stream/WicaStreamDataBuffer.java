@@ -5,7 +5,6 @@ package ch.psi.wica.infrastructure.stream;
 
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelData;
-import ch.psi.wica.model.channel.WicaChannelName;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 
@@ -49,7 +48,7 @@ abstract class WicaStreamDataBuffer<K, T extends WicaChannelData>
       Validate.notNull( wicaChannels );
       Validate.notNull( since );
 
-      return wicaChannels.stream().collect( Collectors.toUnmodifiableMap( c -> c , c-> this.getLaterThan( getKeyFromChannelName( c.getName() ), since ) ) );
+      return wicaChannels.stream().collect( Collectors.toUnmodifiableMap( c -> c , c-> this.getLaterThan( getStorageKeyForChannel( c ), since ) ) );
    }
 
    public void saveDataPoint( K key, T t )
@@ -79,9 +78,21 @@ abstract class WicaStreamDataBuffer<K, T extends WicaChannelData>
       }
    }
 
+   public T getLastDataPoint( K key )
+   {
+      Validate.notNull( key );
+      Validate.isTrue( stash.containsKey( key ) );
+
+      synchronized ( this )
+      {
+         final Deque<T> deque = stash.get( key );
+         return deque.peekLast();
+      }
+   }
+
 /*- Protected methods --------------------------------------------------------*/
 
-   protected abstract K getKeyFromChannelName( WicaChannelName wicaChannelName );
+   protected abstract K getStorageKeyForChannel( WicaChannel wicaChannel );
 
 /*- Private methods ----------------------------------------------------------*/
 

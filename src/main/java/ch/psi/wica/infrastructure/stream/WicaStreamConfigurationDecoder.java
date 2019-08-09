@@ -131,7 +131,10 @@ public class WicaStreamConfigurationDecoder
                throw new IllegalArgumentException( "The 'props' field in one or more channel nodes of the JSON configuration string was not a container value." );
             }
          }
-         wicaStreamBuilder = wicaStreamBuilder.withChannelNameAndStreamProperties( wicaChannelName );
+         else
+         {
+            wicaStreamBuilder = wicaStreamBuilder.withChannelNameAndStreamProperties(wicaChannelName);
+         }
       }
 
       return wicaStreamBuilder.build();

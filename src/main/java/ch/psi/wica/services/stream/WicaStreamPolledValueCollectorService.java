@@ -9,10 +9,9 @@ import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
-import ch.psi.wica.services.channel.WicaChannelValueFilteringService;
+
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -35,16 +34,13 @@ public class WicaStreamPolledValueCollectorService
 /*- Private attributes -------------------------------------------------------*/
 
    private final WicaStreamPolledValueDataBuffer wicaStreamPolledValueDataBuffer;
-   private final WicaChannelValueFilteringService wicaChannelValueFilteringService;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaStreamPolledValueCollectorService( @Value( "${wica.channel-value-stash-buffer-size}") int bufferSize,
-                                                 @Autowired WicaChannelValueFilteringService wicaChannelValueFilteringService)
+   public WicaStreamPolledValueCollectorService( @Value( "${wica.channel-value-stash-buffer-size}") int bufferSize )
    {
       this.wicaStreamPolledValueDataBuffer = new WicaStreamPolledValueDataBuffer( bufferSize );
-      this.wicaChannelValueFilteringService = wicaChannelValueFilteringService;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -57,10 +53,9 @@ public class WicaStreamPolledValueCollectorService
       inputMap.forEach( (ch,lst ) -> {
          if ( ch.getProperties().getDataAcquisitionMode().doesPolling() )
          {
-            var outputList = wicaChannelValueFilteringService.filterValues( ch, lst);
-            if ( outputList.size() != 0 )
+            if ( lst.size() != 0 )
             {
-               outputMap.put(ch, outputList);
+               outputMap.put(ch, lst );
             }
          }
       } );
@@ -76,7 +71,7 @@ public class WicaStreamPolledValueCollectorService
       Validate.notNull( event );
       final WicaChannelName wicaChannelName = event.getWicaChannelName();
       final WicaChannelValue wicaChannelValue = event.getWicaChannelValue();
-      wicaStreamPolledValueDataBuffer.saveDataPoint(wicaChannelName, wicaChannelValue );
+      wicaStreamPolledValueDataBuffer.saveDataPoint( wicaChannelName, wicaChannelValue );
    }
 
 /*- Nested Classes -----------------------------------------------------------*/

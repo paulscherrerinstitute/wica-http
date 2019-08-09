@@ -5,11 +5,11 @@ package ch.psi.wica.services.stream;
 
 import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.infrastructure.channel.WicaChannelPropertiesBuilder;
+import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.app.WicaFilterType;
 import ch.psi.wica.model.channel.*;
 import ch.psi.wica.model.stream.WicaStream;
-import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,7 +21,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -34,13 +37,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DirtiesContext( classMode= DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD )
 @SpringBootTest
-class WicaStreamDataRequesterServiceTest
+class WicaStreamMonitoredValueRequesterServiceTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaStreamDataRequesterServiceTest.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaStreamMonitoredValueRequesterServiceTest.class );
 
    @Autowired
    private WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService;
@@ -49,10 +52,7 @@ class WicaStreamDataRequesterServiceTest
    private WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService;
 
    @Autowired
-   private WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService;
-
-   @Autowired
-   private WicaStreamDataRequesterService service;
+   private WicaStreamMonitoredValueRequesterService service;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -148,33 +148,6 @@ class WicaStreamDataRequesterServiceTest
       assertThat( initialValueMap.get( myWicaChannel ).get( 0 ).isConnected(), is( false ) );
    }
 
-   @Test
-   void testStartPolling_wicaStreamPolledValueCollectorServiceInitialisedOk()
-   {
-      final String myWicaChannelName = "simon:counter:01";
-      final WicaChannelProperties wicaChannelProperties = WicaChannelPropertiesBuilder.create()
-            .withDataAcquisitionMode( WicaDataAcquisitionMode.POLL )
-            .withFilterType(WicaFilterType.ALL_VALUE )
-            .withPollingIntervalInMillis( 200 )
-            .build();
-
-      final WicaChannel myWicaChannel = WicaChannelBuilder.create().withChannelNameAndProperties( myWicaChannelName, wicaChannelProperties ).build();
-
-      final WicaStream wicaStream = WicaStreamBuilder.create()
-            .withId( "myStream" )
-            .withChannel( myWicaChannel )
-            .build();
-
-      final Map<WicaChannel, List<WicaChannelValue>> preFirstValueMap = wicaStreamPolledValueCollectorService.get(wicaStream, LocalDateTime.MIN );
-      assertThat( preFirstValueMap.size(), is( 0 ) );
-
-      service.startPolling( wicaStream );
-
-      final Map<WicaChannel, List<WicaChannelValue>> firstValueMap = wicaStreamPolledValueCollectorService.get( wicaStream, LocalDateTime.MIN  );
-      assertThat( firstValueMap.size(), is( 1 ) );
-      assertThat( firstValueMap.containsKey( myWicaChannel ), is( true ) );
-      assertThat( firstValueMap.get( myWicaChannel ).get( 0 ).isConnected(), is( false ) );
-   }
 
    @CsvSource( { "1", "10", "100", "1000", "10000" })
    @ParameterizedTest

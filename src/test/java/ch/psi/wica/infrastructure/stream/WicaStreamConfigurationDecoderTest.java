@@ -6,7 +6,6 @@ package ch.psi.wica.infrastructure.stream;
 import ch.psi.wica.model.app.WicaFilterType;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelName;
-import ch.psi.wica.model.channel.WicaChannelProperties;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamProperties;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +56,7 @@ class WicaStreamConfigurationDecoderTest
       final WicaStreamProperties wicaStreamProperties = wicaStream.getWicaStreamProperties();
       final Set<WicaChannel> channels = wicaStream.getWicaChannels();
 
-      assertThat(wicaStreamProperties.getHeartbeatFluxIntervalInMillis(), is(50 ) );
+      assertThat (wicaStreamProperties.getHeartbeatFluxIntervalInMillis(), is(50 ) );
       assertThat( wicaStreamProperties.getMonitoredValueFluxIntervalInMillis(), is(40 ) );
       assertThat( channels.size(), is( 3 ) );
 
@@ -250,11 +249,21 @@ class WicaStreamConfigurationDecoderTest
 
       final var stream = decoder.decode( testString );
       assertThat( stream.getWicaChannels().size(), is( 2 ) );
-      final var arr = stream.getWicaChannels().toArray(new WicaChannel[] {} );
-      assertThat( arr[ 0 ].getName().asString(), is(  "MHC2:IST:2" ) );
-      assertThat( arr[ 0 ].getProperties().getFilterNumSamples(), is(  4 ) );
-      assertThat( arr[ 1 ].getName().asString(), is(  "MHC1:IST:2" ) );
-      assertThat( arr[ 1 ].getProperties().getFilterNumSamples(), is(  8 ) );
+      for (WicaChannel channel : stream.getWicaChannels() )
+      {
+         if ( channel.getName().asString().equals( "MHC1:IST:2" ) )
+         {
+            assertThat( channel.getProperties().getFilterNumSamples(), is(  8 ) );
+         }
+         else if ( channel.getName().asString().equals( "MHC2:IST:2" ) )
+         {
+            assertThat( channel.getProperties().getFilterNumSamples(), is(  4 ) );
+         }
+         else
+         {
+            fail();
+         }
+      }
    }
 
 

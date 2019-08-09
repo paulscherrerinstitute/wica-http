@@ -15,7 +15,7 @@ import java.util.List;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * A filter that returns an output list which includes one-in-every-N values
+ * A filter that returns an output list which includes one-in-every-M values
  * taken from the input list over successive invocations.
  */
 @NotThreadSafe
@@ -35,7 +35,7 @@ class WicaChannelValueFixedSamplingCycleFilter implements WicaChannelValueFilter
     * Constructs a new instance with the specified sampling cycle length.
     *
     * @param samplingCycleLength - the sampling cycle length. (ie the value
-    *     of N in this 1-in-every-N sampler).
+    *     of M in this 1-in-every-M sampler).
     */
    WicaChannelValueFixedSamplingCycleFilter( int samplingCycleLength )
    {

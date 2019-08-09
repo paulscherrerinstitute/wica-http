@@ -17,25 +17,29 @@ public enum WicaDataAcquisitionMode
 
 /*- Public attributes --------------------------------------------------------*/
 
-   POLL             ("poll",true, false ),
-   MONITOR          ("monitor",false, true ),
-   POLL_AND_MONITOR ("poll-and-monitor",true, true );
-
+   POLL              ("poll",true, false, false, false ),
+   MONITOR           ("monitor",false, true, true, false ),
+   POLL_AND_MONITOR  ("poll-and-monitor", true, true, true, true ),
+   POLL_MONITOR      ("poll-monitor", true, true, false,true );
 
 /*- Private attributes -------------------------------------------------------*/
 
    private final String name;
    private final boolean doesPolling;
    private final boolean doesMonitoring;
+   private final boolean doesMonitorPublication;
+   private final boolean doesMonitorPolling;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   WicaDataAcquisitionMode( String name, boolean doesPolling, boolean doesMonitoring )
+   WicaDataAcquisitionMode( String name, boolean doesPolling, boolean doesMonitoring, boolean doesMonitorPublication, boolean doesMonitorPolling )
    {
       this.name = name;
       this.doesPolling = doesPolling;
       this.doesMonitoring = doesMonitoring;
+      this.doesMonitorPublication = doesMonitorPublication;
+      this.doesMonitorPolling = doesMonitorPolling;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -48,6 +52,15 @@ public enum WicaDataAcquisitionMode
    public boolean doesMonitoring()
    {
       return doesMonitoring;
+   }
+   public boolean doesMonitorPublication()
+   {
+      return doesMonitorPublication;
+   }
+
+   public boolean doesMonitorPolling()
+   {
+      return doesMonitorPolling;
    }
 
    @Override

@@ -5,6 +5,7 @@ package ch.psi.wica.controlsystem.epics;
 
 import ch.psi.wica.controlsystem.event.*;
 import ch.psi.wica.model.app.ControlSystemName;
+import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
 import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
@@ -108,6 +109,13 @@ public class EpicsChannelDataRequesterService
       final WicaChannelName wicaChannelName = wicaChannelStartPollingEvent.get();
       final int pollingIntervalInMillis = wicaChannelStartPollingEvent.getPollingIntervalInMillis();
 
+      final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannelStartPollingEvent.getWicaDataAcquisitionMode();
+      if ( wicaDataAcquisitionMode != WicaDataAcquisitionMode.POLL )
+      {
+         logger.trace( "Ignoring start poll request for wica channel named: '{}'", wicaChannelName );
+         return;
+      }
+
       // This service will start polling Wica channels where the protocol is
       // not explicitly set, or where it is set to indicate that EPICS Channel
       // Access (CA) protocol should be used.
@@ -127,6 +135,13 @@ public class EpicsChannelDataRequesterService
    {
       Validate.notNull( wicaChannelStopPollingEvent);
       final WicaChannelName wicaChannelName = wicaChannelStopPollingEvent.get();
+
+      final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannelStopPollingEvent.getWicaDataAcquisitionMode();
+      if ( wicaDataAcquisitionMode != WicaDataAcquisitionMode.POLL )
+      {
+         logger.trace( "Ignoring stop poll request for wica channel named: '{}'", wicaChannelName );
+         return;
+      }
 
       // This service will stop polling Wica channels where the protocol is
       // not explicitly set, or where it is set to indicate that EPICS Channel

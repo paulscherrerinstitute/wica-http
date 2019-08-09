@@ -94,7 +94,7 @@ class WicaChannelValueNoiseRejectionFilter implements WicaChannelValueFilter
 
          final WicaChannelValue.WicaChannelValueConnected currentValueConnected = (WicaChannelValue.WicaChannelValueConnected) currentValue;
          final WicaChannelValue.WicaChannelValueConnected previousValueConnected = (WicaChannelValue.WicaChannelValueConnected) previousValue;
-         if ( changeDetected( currentValueConnected, previousValueConnected ) )
+         if ( isChangeDetected( currentValueConnected, previousValueConnected ) )
          {
             outputList.add( currentValue );
          }
@@ -114,8 +114,8 @@ class WicaChannelValueNoiseRejectionFilter implements WicaChannelValueFilter
 
    /*- Private methods ----------------------------------------------------------*/
 
-   private boolean changeDetected( WicaChannelValue.WicaChannelValueConnected currentValue,
-                                   WicaChannelValue.WicaChannelValueConnected previousValue )
+   private boolean isChangeDetected( WicaChannelValue.WicaChannelValueConnected currentValue,
+                                     WicaChannelValue.WicaChannelValueConnected previousValue )
    {
       Validate.notNull( currentValue );
       Validate.notNull( previousValue );

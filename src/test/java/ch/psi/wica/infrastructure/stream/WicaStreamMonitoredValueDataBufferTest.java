@@ -153,18 +153,36 @@ class WicaStreamMonitoredValueDataBufferTest
 
       final var laterThanBeginTimeMap = testObject.getLaterThan( stream.getWicaChannels(), beginTime );
       assertThat( laterThanBeginTimeMap.size(), is( 3 )  );
-      assertThat( laterThanBeginTimeMap.get( abc ).size(), is( 3 )  );
-      assertThat( laterThanBeginTimeMap.get( def ).size(), is( 2 )  );
-      assertThat( laterThanBeginTimeMap.get( ghi ).size(), is( 1 )  );
+      for ( WicaChannel wicaChannel : laterThanBeginTimeMap.keySet() )
+      {
+         switch ( wicaChannel.getName().asString() )
+         {
+            case "abc" : assertThat( laterThanBeginTimeMap.get( wicaChannel ).size(), is( 3) ); break;
+            case "def" : assertThat( laterThanBeginTimeMap.get( wicaChannel ).size(), is( 2) ); break;
+            case "ghi" : assertThat( laterThanBeginTimeMap.get( wicaChannel ).size(), is( 1) ); break;
+         }
+      }
 
       final var laterThanMiddleTimeMap = testObject.getLaterThan( stream.getWicaChannels(), middleTime );
-      assertThat( laterThanMiddleTimeMap.size(), is( 3) );
-      assertThat( laterThanMiddleTimeMap.get( def ).size(), is( 2 ) );
-      assertThat( laterThanMiddleTimeMap.get( ghi ).size(), is( 1 ) );
+      assertThat( laterThanMiddleTimeMap.size(), is( 3 )  );
+      for ( WicaChannel wicaChannel : laterThanMiddleTimeMap.keySet() )
+      {
+         switch ( wicaChannel.getName().asString() )
+         {
+            case "def" : assertThat( laterThanMiddleTimeMap.get( wicaChannel ).size(), is( 2) ); break;
+            case "ghi" : assertThat( laterThanMiddleTimeMap.get( wicaChannel ).size(), is( 1) ); break;
+         }
+      }
 
       final var laterThanEndTimeMap = testObject.getLaterThan( stream.getWicaChannels(), endTime );
-      assertThat( laterThanEndTimeMap.size(), is( 3) );
-      assertThat( laterThanEndTimeMap.get( ghi ).size(), is( 1) );
+      assertThat( laterThanEndTimeMap.size(), is( 3 )  );
+      for ( WicaChannel wicaChannel : laterThanEndTimeMap.keySet() )
+      {
+         if ( "ghi".equals(wicaChannel.getName().asString()) )
+         {
+            assertThat(laterThanMiddleTimeMap.get(wicaChannel).size(), is(1));
+         }
+      }
    }
 
 /*- Private methods ----------------------------------------------------------*/

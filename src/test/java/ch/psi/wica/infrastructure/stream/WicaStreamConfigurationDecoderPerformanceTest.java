@@ -76,9 +76,9 @@ class WicaStreamConfigurationDecoderPerformanceTest
                "{\"name\":\"FMJIPI:POS:2\"}," +
                "{\"name\":\"FMJIPI:BREI:2\"}," +
                "{\"name\":\"PRO:CURRENTALARM:1\"}," +
-               "{\"name\":\"MMAC3:STR:2##2\",\"props\":{\"daqmode\":\"poll-and-monitor\",\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":5}}," +
-               "{\"name\":\"EMJCYV:IST:2##2\",\"props\":{\"daqmode\":\"poll-and-monitor\",\"fields\":\"val;ts\",\"filter\":\"one-in-m\",\"m\":5}}," +
-               "{\"name\":\"CMJSEV:PWRF:2##2\",\"props\":{\"daqmode\":\"poll-and-monitor\",\"fields\":\"val;ts\",\"filter\":\"one-in-m\",\"m\":5}}," +
+               "{\"name\":\"MMAC3:STR:2##2\",\"props\":{\"daqmode\":\"poll-monitor\",\"fields\":\"val;ts\",\"filter\":\"changes\",\"deadband\":5}}," +
+               "{\"name\":\"EMJCYV:IST:2##2\",\"props\":{\"daqmode\":\"poll-monitor\",\"fields\":\"val;ts\",\"filter\":\"one-in-m\",\"m\":5}}," +
+               "{\"name\":\"CMJSEV:PWRF:2##2\",\"props\":{\"daqmode\":\"poll-monitor\",\"fields\":\"val;ts\",\"filter\":\"one-in-m\",\"m\":5}}," +
                "{\"name\":\"BMA1:STA:2\"}," +
                "{\"name\":\"BMA1:STAR:2##1\"}," +
                "{\"name\":\"BMA1:STAR:2##2\"}," +

@@ -117,6 +117,7 @@ public class WicaChannelName
       return asString();
    }
 
+   // Note: The WicaChannelName class generates VALUE objects which are considered equal if the fields match.
    @Override
    public boolean equals( Object o )
    {

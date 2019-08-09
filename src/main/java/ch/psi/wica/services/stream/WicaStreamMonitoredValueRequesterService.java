@@ -27,17 +27,17 @@ import java.util.Map;
 
 /**
  * Provides a service for starting and stopping the control system monitoring
- * for a WicaStream.
+ * of a WicaStream.
  */
 @Service
 @ThreadSafe
-public class WicaStreamDataRequesterService
+public class WicaStreamMonitoredValueRequesterService
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(WicaStreamDataRequesterService.class );
+   private final Logger logger = LoggerFactory.getLogger(WicaStreamMonitoredValueRequesterService.class );
    private final ApplicationEventPublisher applicationEventPublisher;
 
    private final Map<ControlSystemName,Integer> controlSystemInterestMap;
@@ -52,7 +52,7 @@ public class WicaStreamDataRequesterService
     *    which will be used to publish the channels that are to be monitored
     *    or which are no longer of interest.
     */
-   WicaStreamDataRequesterService( @Autowired ApplicationEventPublisher applicationEventPublisher )
+   WicaStreamMonitoredValueRequesterService( @Autowired ApplicationEventPublisher applicationEventPublisher )
    {
       this.applicationEventPublisher = Validate.notNull( applicationEventPublisher );
       this.controlSystemInterestMap = Collections.synchronizedMap( new HashMap<>() );
@@ -88,36 +88,6 @@ public class WicaStreamDataRequesterService
             .stream()
             .filter( c -> c.getProperties().getDataAcquisitionMode().doesMonitoring() )
             .forEach( c -> stopMonitoringChannel( c.getName() ) );
-   }
-
-   /**
-    * Starts polling the specified stream.
-    *
-    * @param wicaStream the stream to monitor.
-    */
-   void startPolling( WicaStream wicaStream )
-   {
-      Validate.notNull( wicaStream );
-      wicaStream.getWicaChannels()
-         .stream()
-         .filter( c -> c.getProperties().getDataAcquisitionMode().doesPolling() )
-         .filter( c -> c.getProperties().getOptionalPollingIntervalInMillis().isPresent() )
-         .filter( c -> c.getProperties().getOptionalPollingIntervalInMillis().get() > 0  )
-         .forEach( c -> startPollingChannel( c.getName(), c.getProperties().getPollingIntervalInMillis() ) );
-   }
-
-   /**
-    * Stops polling the specified stream.
-    *
-    * @param wicaStream the stream that is no longer of interest.
-    */
-   void stopPolling( WicaStream wicaStream )
-   {
-      Validate.notNull( wicaStream );
-      wicaStream.getWicaChannels()
-         .stream()
-         .filter( c -> c.getProperties().getDataAcquisitionMode().doesPolling() )
-         .map( WicaChannel::getName ).forEach( this::stopPollingChannel);
    }
 
    /**
@@ -217,36 +187,6 @@ public class WicaStreamDataRequesterService
          controlSystemInterestMap.remove( controlSystemName );
          applicationEventPublisher.publishEvent( new WicaChannelStopMonitoringEvent(wicaChannelName ) );
       }
-   }
-
-
-   private void startPollingChannel( WicaChannelName wicaChannelName, int pollingIntervalInMillis )
-   {
-      logger.trace( "Request to start polling wica channel named: '{}'", wicaChannelName.asString() );
-
-      Validate.notNull( wicaChannelName );
-      final var controlSystemName = wicaChannelName.getControlSystemName();
-
-      logger.trace( "Starting polling on control system channel named: '{}'", controlSystemName.asString() );
-
-      // Set the initial state for the value and metadata stashes.
-      applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent( wicaChannelName.getControlSystemName(), WicaChannelMetadata.createUnknownInstance()  ));
-      applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannelName, WicaChannelValue.createChannelValueDisconnected() ));
-
-      // Now start polling
-      applicationEventPublisher.publishEvent( new WicaChannelStartPollingEvent( wicaChannelName, pollingIntervalInMillis ) );
-   }
-
-   private void stopPollingChannel( WicaChannelName wicaChannelName )
-   {
-      logger.trace( "Request to stop polling wica channel named: '{}'", wicaChannelName.asString() );
-
-      Validate.notNull( wicaChannelName );
-      final var controlSystemName = wicaChannelName.getControlSystemName();
-
-      logger.trace( "Stopping polling on control system channel named: '{}'", controlSystemName.asString() );
-      applicationEventPublisher.publishEvent( new WicaChannelStopPollingEvent( wicaChannelName ) );
-
    }
 
 /*- Nested Classes -----------------------------------------------------------*/

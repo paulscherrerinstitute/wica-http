@@ -3,6 +3,7 @@ package ch.psi.wica.infrastructure.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.ThreadSafe;
@@ -29,9 +30,9 @@ public class WicaStreamPolledValueDataBuffer extends WicaStreamDataBuffer<WicaCh
 /*- Protected methods --------------------------------------------------------*/
 
    @Override
-   protected WicaChannelName getKeyFromChannelName( WicaChannelName wicaChannelName )
+   protected WicaChannelName getStorageKeyForChannel( WicaChannel wicaChannel )
    {
-      return wicaChannelName;
+      return wicaChannel.getName();
    }
 
 /*- Private methods ----------------------------------------------------------*/

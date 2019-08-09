@@ -67,7 +67,7 @@ public class WicaStreamMetadataCollectorService
     */
    public Map<WicaChannel,WicaChannelMetadata> get( WicaStream wicaStream, LocalDateTime since )
    {
-      final Map<WicaChannel, List<WicaChannelMetadata>> inputMap = wicaStreamMetadataDataBuffer.getLaterThan(wicaStream.getWicaChannels(), since );
+      final Map<WicaChannel, List<WicaChannelMetadata>> inputMap = wicaStreamMetadataDataBuffer.getLaterThan( wicaStream.getWicaChannels(), since );
       final var outputMap = inputMap.keySet().stream()
               .filter( c -> ! inputMap.get( c ).isEmpty() )
               .collect( Collectors.toUnmodifiableMap( c -> c, c-> inputMap.get( c ).get( 0 ) ) );
@@ -94,7 +94,7 @@ public class WicaStreamMetadataCollectorService
 
          final ControlSystemName controlSystemName = wicaChannelMetadataUpdateEvent.getControlSystemName();
          final WicaChannelMetadata wicaChannelMetadata = wicaChannelMetadataUpdateEvent.getWicaChannelData();
-         wicaStreamMetadataDataBuffer.saveDataPoint(controlSystemName, wicaChannelMetadata );
+         wicaStreamMetadataDataBuffer.saveDataPoint( controlSystemName, wicaChannelMetadata );
 
       }
    }

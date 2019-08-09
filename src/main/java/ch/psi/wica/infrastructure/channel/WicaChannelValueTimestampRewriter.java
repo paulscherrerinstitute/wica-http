@@ -6,12 +6,14 @@ package ch.psi.wica.infrastructure.channel;
 import ch.psi.wica.model.channel.WicaChannelAlarmSeverity;
 import ch.psi.wica.model.channel.WicaChannelAlarmStatus;
 import ch.psi.wica.model.channel.WicaChannelValue;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+@Component
 public class WicaChannelValueTimestampRewriter
 {
 

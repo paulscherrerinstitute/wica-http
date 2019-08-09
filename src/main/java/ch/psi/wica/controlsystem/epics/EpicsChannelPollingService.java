@@ -31,7 +31,6 @@ public class EpicsChannelPollingService
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final EpicsChannelMonitoringService epicsChannelMonitoringService;
    private final EpicsChannelGetAndPutService epicsChannelGetAndPutService;
 
    private final ScheduledExecutorService executor;
@@ -43,11 +42,9 @@ public class EpicsChannelPollingService
 /*- Constructor --------------------------------------------------------------*/
 
    public EpicsChannelPollingService( @Value( "${wica.channel-get-timeout-interval-in-ms}") int timeoutInMillis,
-                                      @Autowired EpicsChannelMonitoringService epicsChannelMonitoringService,
                                       @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService )
    {
       this.timeoutInMillis = timeoutInMillis;
-      this.epicsChannelMonitoringService = Validate.notNull( epicsChannelMonitoringService );
       this.epicsChannelGetAndPutService = Validate.notNull( epicsChannelGetAndPutService );
 
       this.executor = Executors.newSingleThreadScheduledExecutor();
@@ -67,7 +64,6 @@ public class EpicsChannelPollingService
       }, pollingIntervalInMillis, pollingIntervalInMillis, TimeUnit.MILLISECONDS );
 
       this.channelExecutorMap.put( epicsChannelName, scheduledFuture );
-
    }
 
    void stopPolling( EpicsChannelName epicsChannelName )
@@ -82,12 +78,6 @@ public class EpicsChannelPollingService
    {
       return epicsChannelGetAndPutService.get( epicsChannelName, timeoutInMillis, TimeUnit.MILLISECONDS );
    }
-
-   private WicaChannelValue pollLatestCachedValue( EpicsChannelName epicsChannelName )
-   {
-      return epicsChannelGetAndPutService.get( epicsChannelName, timeoutInMillis, TimeUnit.MILLISECONDS );
-   }
-
 
 /*- Nested Classes -----------------------------------------------------------*/
 

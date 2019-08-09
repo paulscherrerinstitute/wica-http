@@ -3,9 +3,7 @@ package ch.psi.wica.controlsystem.event;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.channel.WicaChannelName;
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,47 +11,40 @@ import org.slf4j.LoggerFactory;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-public class WicaChannelStopPollingEvent
+public class WicaChannelPollMonitorEvent
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
    private final WicaChannelName wicaChannelName;
-   private final WicaDataAcquisitionMode wicaDataAcquisitionMode;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelStopPollingEvent( WicaChannelName wicaChannelName, WicaDataAcquisitionMode wicaDataAcquisitionMode )
+   public WicaChannelPollMonitorEvent( WicaChannelName wicaChannelName )
    {
-      final Logger logger = LoggerFactory.getLogger( WicaChannelStopPollingEvent.class);
-      this.wicaChannelName = Validate.notNull( wicaChannelName );
-      this.wicaDataAcquisitionMode = Validate.notNull( wicaDataAcquisitionMode );
+      final Logger logger = LoggerFactory.getLogger( WicaChannelPollMonitorEvent.class);
+      this.wicaChannelName = wicaChannelName;
       logger.trace("Event created: '{}'.", this );
+
    }
 
-/*- Class methods ------------------------------------------------------------*/
-/*- Public methods -----------------------------------------------------------*/
+   /*- Class methods ------------------------------------------------------------*/
+   /*- Public methods -----------------------------------------------------------*/
 
-   public WicaChannelName get()
+   public WicaChannelName getWicaChannelName()
    {
       return wicaChannelName;
-   }
-
-   public WicaDataAcquisitionMode getWicaDataAcquisitionMode()
-   {
-      return wicaDataAcquisitionMode;
    }
 
    @Override
    public String toString()
    {
-      return "WicaChannelStopPollingEvent{" +
+      return "WicaChannelPollMonitorEvent{" +
          "wicaChannelName=" + wicaChannelName +
-         ", wicaDataAcquisitionMode=" + wicaDataAcquisitionMode +
-      '}';
-}
+         '}';
+   }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

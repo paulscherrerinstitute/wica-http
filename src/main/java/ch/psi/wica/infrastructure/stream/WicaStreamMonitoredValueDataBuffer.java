@@ -4,7 +4,7 @@ package ch.psi.wica.infrastructure.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.app.ControlSystemName;
-import ch.psi.wica.model.channel.WicaChannelName;
+import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.ThreadSafe;
 
@@ -30,9 +30,9 @@ public class WicaStreamMonitoredValueDataBuffer extends WicaStreamDataBuffer<Con
 /*- Protected methods --------------------------------------------------------*/
 
    @Override
-   protected ControlSystemName getKeyFromChannelName( WicaChannelName wicaChannelName )
+   protected ControlSystemName getStorageKeyForChannel( WicaChannel wicaChannel )
    {
-      return  wicaChannelName.getControlSystemName();
+      return  wicaChannel.getName().getControlSystemName();
    }
 
 /*- Private methods ----------------------------------------------------------*/

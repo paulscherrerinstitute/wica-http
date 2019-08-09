@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -53,13 +55,14 @@ class WicaStreamMonitoredValueCollectorTest
                                                                    "{ \"name\": \"CH1##2\" }, " +
                                                                    "{ \"name\": \"CH2\" }  ] }";
 
+
       wicaStream = wicaStreamLifecycleService.create( testString );
    }
 
    @Test
    void test_getMonitoredValueCollector()
    {
-      final var valueMap = wicaStreamMonitoredValueCollectorService.get( wicaStream, LONG_AGO );
+      final Map<WicaChannel, List<WicaChannelValue>> valueMap = wicaStreamMonitoredValueCollectorService.get( wicaStream, LONG_AGO );
       final WicaChannel testChannel1 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH1##1").build();
       final WicaChannel testChannel2 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH1##2").build();
       final WicaChannel testChannel3 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH2").build();
