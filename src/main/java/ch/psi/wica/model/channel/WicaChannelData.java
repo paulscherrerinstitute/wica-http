@@ -5,7 +5,8 @@ package ch.psi.wica.model.channel;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.apache.commons.lang3.Validate;
 
 import java.time.LocalDateTime;
@@ -33,7 +34,8 @@ public abstract class WicaChannelData
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-public LocalDateTime getWicaServerTimestamp()
+   @JsonIgnore
+   public LocalDateTime getWicaServerTimestamp()
 {
    return this.wicaServerTimestamp;
 }
