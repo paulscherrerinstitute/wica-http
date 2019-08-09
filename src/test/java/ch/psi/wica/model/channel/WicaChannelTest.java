@@ -3,6 +3,7 @@ package ch.psi.wica.model.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.infrastructure.channel.WicaChannelPropertiesBuilder;
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.app.WicaFilterType;
 import org.junit.jupiter.api.Test;
@@ -53,6 +54,22 @@ class WicaChannelTest
 
       assertThat( objectUnderTest.getName(), is( testName ) );
       assertThat( objectUnderTest.getProperties(), is( testProps ) );
+   }
+
+   @Test
+   void testIsValueObject()
+   {
+      final WicaChannelName nameN1 = WicaChannelName.of(  "N" );
+      final WicaChannelName nameN2 = WicaChannelName.of(  "N" );
+      final WicaChannelProperties propsP1 = WicaChannelPropertiesBuilder.create().withFieldsOfInterest( "P" ).build();
+      final WicaChannelProperties propsP2 = WicaChannelPropertiesBuilder.create().withFieldsOfInterest( "P" ).build();
+      final WicaChannel wicaChannelN1P1 = new WicaChannel( nameN1, propsP1 );
+      final WicaChannel wicaChannelN1P2 = new WicaChannel( nameN1, propsP2 );
+      final WicaChannel wicaChannelN2P1 = new WicaChannel( nameN2, propsP1 );
+      final WicaChannel wicaChannelN2P2 = new WicaChannel( nameN2, propsP2 );
+      assertThat( wicaChannelN1P1, is( wicaChannelN1P2 ) );
+      assertThat( wicaChannelN2P1, is( wicaChannelN2P2 ) );
+      assertThat( wicaChannelN1P1, is( wicaChannelN2P2 ) );
    }
 
 /*- Private methods ----------------------------------------------------------*/
