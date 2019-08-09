@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -29,8 +31,16 @@ public class WicaChannelValueFilteringService
 
    private static final Logger logger = LoggerFactory.getLogger(WicaChannelValueFilteringService.class );
 
+   private final Map<WicaChannel,WicaChannelValueFilter> wicaChannelValueFilterMap;
+
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
+
+   public WicaChannelValueFilteringService()
+   {
+      this.wicaChannelValueFilterMap = new ConcurrentHashMap<>();
+   }
+
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
@@ -47,10 +57,28 @@ public class WicaChannelValueFilteringService
       Validate.notNull( wicaChannel );
       Validate.notNull( wicaChannelValues );
 
+      final WicaChannelValueFilter filter;
+      if ( wicaChannelValueFilterMap.containsKey( wicaChannel ) )
+      {
+         filter = wicaChannelValueFilterMap.get( wicaChannel );
+      }
+      else
+      {
+         filter = getFilterForChannel( wicaChannel );
+         wicaChannelValueFilterMap.put( wicaChannel, filter );
+      }
+
+      return filter.apply( wicaChannelValues );
+   }
+
+/*- Private methods ----------------------------------------------------------*/
+
+   private WicaChannelValueFilter getFilterForChannel( WicaChannel wicaChannel )
+   {
       final WicaChannelProperties wicaChannelProperties = wicaChannel.getProperties();
       final WicaFilterType filterType = wicaChannelProperties.getFilterType();
-      final WicaChannelValueFilter filter;
 
+      final WicaChannelValueFilter filter;
       switch ( filterType )
       {
          case ALL_VALUE:
@@ -61,39 +89,38 @@ public class WicaChannelValueFilteringService
          case RATE_LIMITER:
             final int samplingInterval = wicaChannelProperties.getFilterSamplingIntervalInMillis();
             logger.trace("Creating channel value filter for MONITORED channels with filterType='rate-limiter', samplingInterval='{}'", samplingInterval);
-            filter = new WicaChannelValueRateLimitingFilter(samplingInterval);
+            filter = new WicaChannelValueRateLimitingFilter( samplingInterval );
             break;
 
          case LAST_N:
             final int numSamples = wicaChannelProperties.getFilterNumSamples();
             logger.trace("Creating channel value filter for MONITORED channels with filterType='last-n', n='{}'", numSamples);
-            filter = new WicaChannelValueLatestValueFilter(numSamples);
+            filter = new WicaChannelValueLatestValueFilter( numSamples );
             break;
 
          case ONE_IN_M:
             final int cycleLength = wicaChannelProperties.getFilterCycleLength();
             logger.trace("Creating channel value filter for MONITORED channels with filterType='one-in-m', m='{}'", cycleLength);
-            filter = new WicaChannelValueFixedSamplingCycleFilter(cycleLength);
+            filter = new WicaChannelValueFixedSamplingCycleFilter( cycleLength );
             break;
 
          case CHANGE_FILTERER:
             final double deadband = wicaChannelProperties.getFilterDeadband();
             logger.trace("Creating channel value filter for MONITORED channels with filterType='changes', deadband='{}'", deadband);
-            filter = new WicaChannelValueNoiseRejectionFilter(deadband);
+            filter = new WicaChannelValueNoiseRejectionFilter( deadband );
             break;
 
          default:
             logger.warn("The filterType parameter was not recognised. Using default (last-n) filter.");
             final int defaultMaxNumberOfSamples = 1;
             logger.trace("Creating channel value filter for MONITORED channels with filterType='last-n', n='{}'", defaultMaxNumberOfSamples);
-            filter = new WicaChannelValueLatestValueFilter(defaultMaxNumberOfSamples);
+            filter = new WicaChannelValueLatestValueFilter( defaultMaxNumberOfSamples );
             break;
       }
-
-      return filter.apply( wicaChannelValues );
+      return filter;
    }
 
-/*- Private methods ----------------------------------------------------------*/
+
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

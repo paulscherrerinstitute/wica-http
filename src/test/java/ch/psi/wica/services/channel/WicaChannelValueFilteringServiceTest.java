@@ -74,8 +74,8 @@ class WicaChannelValueFilteringServiceTest
 
       final List<WicaChannelValue> inputList = List.of( intValue1, intValue2, intValue3, intValue4 );
       final List<WicaChannelValue> outputList = serviceUnderTest.filterValues( WicaChannelBuilder.create()
-                                                                                     .withChannelNameAndProperties( "abc", props )
-                                                                                     .build(), inputList );
+                                                                                 .withChannelNameAndProperties( "abc", props )
+                                                                                 .build(), inputList );
       assertEquals( 2, outputList.size() );
       assertEquals( 129, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue() );
       assertEquals( 15, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue() );
