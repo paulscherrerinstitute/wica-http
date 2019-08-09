@@ -73,22 +73,21 @@ public class WicaChannel
             '}';
    }
 
+   // Note: The WicaChannel class generates VALUE objects which are considered equal if the fields match.
    @Override
    public boolean equals( Object o )
    {
       if ( this == o ) return true;
       if ( !(o instanceof WicaChannel) ) return false;
       WicaChannel that = (WicaChannel) o;
-      return Objects.equals(wicaChannelName, that.wicaChannelName);
+      return Objects.equals(wicaChannelName, that.wicaChannelName) &&
+            Objects.equals(wicaChannelProperties, that.wicaChannelProperties);
    }
 
-   // Note: the hash code for a channel relies only on the channel name. This means
-   // that Wica channels can be stored and conveniently searched for in collection
-   // objects.
    @Override
    public int hashCode()
    {
-      return Objects.hash(wicaChannelName);
+      return Objects.hash(wicaChannelName, wicaChannelProperties);
    }
 
 /*- Private methods ----------------------------------------------------------*/
