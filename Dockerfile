@@ -90,6 +90,9 @@ ENV KEYSTORE_PASS "XXXXXX"
 # Document the ports that will be exposed by the Spring Boot Application
 EXPOSE 443
 
+# The JDWP Debug port
+EXPOSE 5005
+
 # Setup the container so that it defaults to the timezone of PSI. This can
 # always be overridden later. This step is important as the timezone is used
 # in all log messages and is reported on the GUI.
@@ -157,6 +160,7 @@ VOLUME /root/config
 # Here's looking at you HIPA !
 ENTRYPOINT exec java -Dfile.encoding=ISO8859-1 \
            -Dspring.config.location=config/application-docker-run.properties \
+           -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
            -p lib/jarfile.jar \
            --add-modules ALL-DEFAULT \
            -m jarfile \
