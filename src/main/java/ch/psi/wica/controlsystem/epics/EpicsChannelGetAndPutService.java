@@ -6,10 +6,12 @@ package ch.psi.wica.controlsystem.epics;
 /*- Class Declaration --------------------------------------------------------*/
 
 import ch.psi.wica.model.channel.WicaChannelValue;
+import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
 import org.epics.ca.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,7 @@ public class EpicsChannelGetAndPutService
 
    private final Logger logger = LoggerFactory.getLogger(EpicsChannelMonitoringService.class );
    private final Context context;
+   private final EpicsChannelValueGetter epicsChannelValueGetter;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -35,11 +38,15 @@ public class EpicsChannelGetAndPutService
     *
     * @param epicsCaLibraryMonitorNotifierImpl the CA library monitor notifier configuration.
     * @param epicsCaLibraryDebugLevel the CA library debug level.
+    * @param epicsChannelValueGetter an object that can get and build the returned value.
 
     */
    public EpicsChannelGetAndPutService( @Value( "${wica.epics-ca-library-monitor-notifier-impl}") String  epicsCaLibraryMonitorNotifierImpl,
-                                        @Value( "${wica.epics-ca-library-debug-level}") int epicsCaLibraryDebugLevel )
+                                        @Value( "${wica.epics-ca-library-debug-level}") int epicsCaLibraryDebugLevel,
+                                        @Autowired EpicsChannelValueGetter epicsChannelValueGetter )
    {
+      this.epicsChannelValueGetter = Validate.notNull(epicsChannelValueGetter );
+
       logger.info( "Creating CA context for WicaChannelService..." );
 
       // Setup a context that uses the monitor notification policy and debug
@@ -73,11 +80,11 @@ public class EpicsChannelGetAndPutService
    {
       // Create a new channel
       final String channelName = epicsChannelName.asString();
-      final Channel<String> caChannel;
+      final Channel<Object> caChannel;
       try
       {
          logger.info( "'{}' - Creating channel...", channelName );
-         caChannel = context.createChannel( channelName, String.class );
+         caChannel = context.createChannel( channelName, Object.class );
          logger.info( "'{}' - OK: channel created.", channelName );
       }
       catch ( Throwable ex )
@@ -99,23 +106,7 @@ public class EpicsChannelGetAndPutService
          return WicaChannelValue.createChannelValueDisconnected();
       }
 
-
-      // Now get value, ensuring channel gets closed afterwards.
-      final String channelValue;
-      try( Channel<String> channel = caChannel )
-      {
-         logger.info( "'{}' - Getting from channel with timeout {} {}...", channelName, timeout, timeUnit );
-         channelValue = channel.getAsync().get( timeout, timeUnit );
-         logger.info( "'{}' - OK: channel GET completed.", channelName );
-      }
-      catch ( Throwable ex )
-      {
-         logger.info( "ERROR: Exception whilst getting from channel '{}'. Details: '{}'.", channelName, ex.getMessage() );
-         return WicaChannelValue.createChannelValueDisconnected();
-      }
-
-      // If we get here return the String representation of the channel we obtained.
-      return WicaChannelValue.createChannelValueConnected( channelValue );
+      return epicsChannelValueGetter.get( caChannel );
    }
 
    /**

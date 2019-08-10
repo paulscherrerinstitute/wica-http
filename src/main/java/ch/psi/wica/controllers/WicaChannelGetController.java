@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -42,6 +43,7 @@ class WicaChannelGetController implements StatisticsCollectable
    private final EpicsChannelGetAndPutService epicsChannelGetAndPutService;
    private final int defaultTimeoutInMillis;
    private final int defaultNumericScale;
+   private final String defaultFieldsOfInterest;
 
    private final StatisticsCollector statisticsCollector = new StatisticsCollector();
 
@@ -62,6 +64,7 @@ class WicaChannelGetController implements StatisticsCollectable
     */
    private WicaChannelGetController( @Value( "${wica.channel-get-timeout-interval-in-ms}") int defaultTimeoutInMillis,
                                      @Value( "${wica.channel-get-numeric-scale}") int defaultNumericScale,
+                                     @Value( "${wica.channel-get-fields-of-interest}") String defaultFieldsOfInterest,
                                      @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService
    )
    {
@@ -71,6 +74,7 @@ class WicaChannelGetController implements StatisticsCollectable
 
       this.defaultTimeoutInMillis = defaultTimeoutInMillis;
       this.defaultNumericScale = defaultNumericScale;
+      this.defaultFieldsOfInterest = defaultFieldsOfInterest;
       this.epicsChannelGetAndPutService = epicsChannelGetAndPutService;
    }
 
@@ -104,6 +108,7 @@ class WicaChannelGetController implements StatisticsCollectable
    public ResponseEntity<String> getChannelValue( @PathVariable String channelName,
                                                   @RequestParam( value="timeout", required = false ) Integer timeoutInMillis,
                                                   @RequestParam( value="numericScale", required = false ) Integer numericScale,
+                                                  @RequestParam( value="fieldsOfInterest", required = false ) String fieldsOfInterest,
                                                   HttpServletRequest httpServletRequest )
    {
       logger.info( "GET: Handling channel get request." );
@@ -121,9 +126,10 @@ class WicaChannelGetController implements StatisticsCollectable
       // Assign default values when not explicitly provided.
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
       numericScale = numericScale == null ? defaultNumericScale : numericScale;
+      fieldsOfInterest = fieldsOfInterest == null ? defaultFieldsOfInterest : fieldsOfInterest;
 
-      final WicaChannelValue wicaChannelValue = epicsChannelGetAndPutService.get( EpicsChannelName.of(channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
-      final WicaChannelValueSerializer wicaChannelValueSerializer = new WicaChannelValueSerializer( numericScale, false );
+      final WicaChannelValue wicaChannelValue = epicsChannelGetAndPutService.get( EpicsChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
+      final WicaChannelValueSerializer wicaChannelValueSerializer = new WicaChannelValueSerializer( Set.of( fieldsOfInterest.split(";" ) ), numericScale, false );
 
       logger.info( "'{}' - OK: Returning wica channel value.", channelName );
       return new ResponseEntity<>( wicaChannelValueSerializer.serialize( wicaChannelValue ), HttpStatus.OK );
