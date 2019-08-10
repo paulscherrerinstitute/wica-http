@@ -8,7 +8,7 @@ import ch.psi.wica.controlsystem.event.WicaChannelPollMonitorEvent;
 import ch.psi.wica.controlsystem.event.WicaChannelStartPollingEvent;
 import ch.psi.wica.controlsystem.event.WicaChannelStopPollingEvent;
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
-import ch.psi.wica.model.channel.WicaChannelName;
+import ch.psi.wica.model.channel.WicaChannel;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class WicaChannelPollMonitorService
    private final Logger logger = LoggerFactory.getLogger(WicaChannelPollMonitorService.class );
 
    private final ApplicationEventPublisher applicationEventPublisher;
-   private final Map<WicaChannelName, ScheduledFuture> channelExecutorMap = new ConcurrentHashMap<>();
+   private final Map<WicaChannel, ScheduledFuture> channelExecutorMap = new ConcurrentHashMap<>();
    private final ScheduledExecutorService executor;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -60,16 +60,16 @@ public class WicaChannelPollMonitorService
    {
       Validate.notNull( wicaChannelStartPollingEvent );
 
-      final WicaChannelName wicaChannelName = wicaChannelStartPollingEvent.get();
+      final WicaChannel wicaChannel = wicaChannelStartPollingEvent.get();
       final int pollingIntervalInMillis = wicaChannelStartPollingEvent.getPollingIntervalInMillis();
       final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannelStartPollingEvent.getWicaDataAcquisitionMode();
 
       if ( ! wicaDataAcquisitionMode.doesMonitorPolling() )
       {
-         logger.trace( "Ignoring start poll request for wica channel named: '{}'", wicaChannelName );
+         logger.trace( "Ignoring start poll request for wica channel named: '{}'", wicaChannel);
          return;
       }
-      startPolling( wicaChannelName, pollingIntervalInMillis );
+      startPolling( wicaChannel, pollingIntervalInMillis );
    }
 
    @EventListener
@@ -77,30 +77,29 @@ public class WicaChannelPollMonitorService
    {
       Validate.notNull( wicaChannelStopPollingEvent );
 
-      final WicaChannelName wicaChannelName = wicaChannelStopPollingEvent.get();
+      final WicaChannel wicaChannel = wicaChannelStopPollingEvent.get();
       final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannelStopPollingEvent.getWicaDataAcquisitionMode();
 
       if ( ! wicaDataAcquisitionMode.doesMonitorPolling() )
       {
-         logger.trace( "Ignoring start poll request for wica channel named: '{}'", wicaChannelName );
+         logger.trace( "Ignoring start poll request for wica channel: '{}'", wicaChannel );
          return;
       }
-      stopPolling( wicaChannelName );
+      stopPolling( wicaChannel );
    }
-
 
 /*- Private methods ----------------------------------------------------------*/
 
-   private void startPolling( WicaChannelName wicaChannelName, int pollingIntervalInMillis )
+   private void startPolling( WicaChannel wicaChannel, int pollingIntervalInMillis )
    {
-      final ScheduledFuture scheduledFuture = executor.scheduleAtFixedRate(() -> applicationEventPublisher.publishEvent(new WicaChannelPollMonitorEvent( wicaChannelName ) ), pollingIntervalInMillis, pollingIntervalInMillis, TimeUnit.MILLISECONDS );
+      final ScheduledFuture scheduledFuture = executor.scheduleAtFixedRate(() -> applicationEventPublisher.publishEvent( new WicaChannelPollMonitorEvent( wicaChannel ) ), pollingIntervalInMillis, pollingIntervalInMillis, TimeUnit.MILLISECONDS );
 
-      this.channelExecutorMap.put( wicaChannelName, scheduledFuture );
+      this.channelExecutorMap.put( wicaChannel, scheduledFuture );
    }
 
-   private void stopPolling( WicaChannelName wicaChannelName )
+   private void stopPolling( WicaChannel wicaChannel )
    {
-      channelExecutorMap.get(  wicaChannelName).cancel( false );
+      channelExecutorMap.get(  wicaChannel ).cancel( false );
    }
 
 /*- Nested Classes -----------------------------------------------------------*/

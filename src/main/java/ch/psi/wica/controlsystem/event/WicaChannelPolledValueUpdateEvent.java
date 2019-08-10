@@ -3,7 +3,7 @@ package ch.psi.wica.controlsystem.event;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelName;
+import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -19,16 +19,16 @@ public class WicaChannelPolledValueUpdateEvent
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final WicaChannelName wicaChannelName;
+   private final WicaChannel wicaChannel;
    private final WicaChannelValue wicaChannelValue;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelPolledValueUpdateEvent( WicaChannelName WicaChannelName, WicaChannelValue wicaChannelValue )
+   public WicaChannelPolledValueUpdateEvent( WicaChannel WicaChannel, WicaChannelValue wicaChannelValue )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelPolledValueUpdateEvent.class);
-      this.wicaChannelName = Validate.notNull( WicaChannelName );
+      this.wicaChannel = Validate.notNull( WicaChannel );
       this.wicaChannelValue = Validate.notNull( wicaChannelValue );
       logger.trace("Event created: '{}'.", this );
    }
@@ -36,9 +36,9 @@ public class WicaChannelPolledValueUpdateEvent
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public WicaChannelName getWicaChannelName()
+   public WicaChannel getWicaChannel()
    {
-      return wicaChannelName;
+      return wicaChannel;
    }
 
    public WicaChannelValue getWicaChannelValue()
@@ -50,7 +50,7 @@ public class WicaChannelPolledValueUpdateEvent
    public String toString()
    {
       return "WicaChannelPolledValueUpdateEvent{" +
-         "wicaChannelName=" + wicaChannelName +
+         "wicaChannel=" + wicaChannel +
          ", wicaChannelValue=" + wicaChannelValue +
       '}';
    }

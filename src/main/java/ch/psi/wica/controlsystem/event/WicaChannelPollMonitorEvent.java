@@ -3,7 +3,7 @@ package ch.psi.wica.controlsystem.event;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelName;
+import ch.psi.wica.model.channel.WicaChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,15 +17,15 @@ public class WicaChannelPollMonitorEvent
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final WicaChannelName wicaChannelName;
+   private final WicaChannel wicaChannel;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelPollMonitorEvent( WicaChannelName wicaChannelName )
+   public WicaChannelPollMonitorEvent( WicaChannel wicaChannel )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelPollMonitorEvent.class);
-      this.wicaChannelName = wicaChannelName;
+      this.wicaChannel = wicaChannel;
       logger.trace("Event created: '{}'.", this );
 
    }
@@ -33,16 +33,16 @@ public class WicaChannelPollMonitorEvent
    /*- Class methods ------------------------------------------------------------*/
    /*- Public methods -----------------------------------------------------------*/
 
-   public WicaChannelName getWicaChannelName()
+   public WicaChannel getWicaChannel()
    {
-      return wicaChannelName;
+      return wicaChannel;
    }
 
    @Override
    public String toString()
    {
       return "WicaChannelPollMonitorEvent{" +
-         "wicaChannelName=" + wicaChannelName +
+         "wicaChannel=" + wicaChannel +
          '}';
    }
 

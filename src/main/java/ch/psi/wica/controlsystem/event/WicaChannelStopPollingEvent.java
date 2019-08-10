@@ -4,7 +4,7 @@ package ch.psi.wica.controlsystem.event;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
-import ch.psi.wica.model.channel.WicaChannelName;
+import ch.psi.wica.model.channel.WicaChannel;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +19,16 @@ public class WicaChannelStopPollingEvent
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final WicaChannelName wicaChannelName;
+   private final WicaChannel wicaChannel;
    private final WicaDataAcquisitionMode wicaDataAcquisitionMode;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelStopPollingEvent( WicaChannelName wicaChannelName, WicaDataAcquisitionMode wicaDataAcquisitionMode )
+   public WicaChannelStopPollingEvent( WicaChannel wicaChannel, WicaDataAcquisitionMode wicaDataAcquisitionMode )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelStopPollingEvent.class);
-      this.wicaChannelName = Validate.notNull( wicaChannelName );
+      this.wicaChannel = Validate.notNull( wicaChannel );
       this.wicaDataAcquisitionMode = Validate.notNull( wicaDataAcquisitionMode );
       logger.trace("Event created: '{}'.", this );
    }
@@ -36,9 +36,9 @@ public class WicaChannelStopPollingEvent
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public WicaChannelName get()
+   public WicaChannel get()
    {
-      return wicaChannelName;
+      return wicaChannel;
    }
 
    public WicaDataAcquisitionMode getWicaDataAcquisitionMode()
@@ -50,7 +50,7 @@ public class WicaChannelStopPollingEvent
    public String toString()
    {
       return "WicaChannelStopPollingEvent{" +
-         "wicaChannelName=" + wicaChannelName +
+         "wicaChannel=" + wicaChannel +
          ", wicaDataAcquisitionMode=" + wicaDataAcquisitionMode +
       '}';
 }

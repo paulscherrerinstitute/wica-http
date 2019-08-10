@@ -6,7 +6,6 @@ package ch.psi.wica.services.stream;
 import ch.psi.wica.infrastructure.stream.WicaStreamPolledValueDataBuffer;
 import ch.psi.wica.controlsystem.event.WicaChannelPolledValueUpdateEvent;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 
@@ -69,9 +68,9 @@ public class WicaStreamPolledValueCollectorService
    public void handleUpdateEvent( WicaChannelPolledValueUpdateEvent event)
    {
       Validate.notNull( event );
-      final WicaChannelName wicaChannelName = event.getWicaChannelName();
+      final WicaChannel wicaChannel = event.getWicaChannel();
       final WicaChannelValue wicaChannelValue = event.getWicaChannelValue();
-      wicaStreamPolledValueDataBuffer.saveDataPoint( wicaChannelName, wicaChannelValue );
+      wicaStreamPolledValueDataBuffer.saveDataPoint( wicaChannel, wicaChannelValue );
    }
 
 /*- Nested Classes -----------------------------------------------------------*/

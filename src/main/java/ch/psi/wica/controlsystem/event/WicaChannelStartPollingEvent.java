@@ -4,7 +4,7 @@ package ch.psi.wica.controlsystem.event;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
-import ch.psi.wica.model.channel.WicaChannelName;
+import ch.psi.wica.model.channel.WicaChannel;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ public class WicaChannelStartPollingEvent
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final WicaChannelName wicaChannelName;
+   private final WicaChannel wicaChannel;
    private final WicaDataAcquisitionMode wicaDataAcquisitionMode;
    private final int pollingIntervalInMillis;
 
@@ -27,14 +27,14 @@ public class WicaChannelStartPollingEvent
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelStartPollingEvent( WicaChannelName wicaChannelName, WicaDataAcquisitionMode wicaDataAcquisitionMode, int pollingIntervalInMillis )
+   public WicaChannelStartPollingEvent( WicaChannel wicaChannel, WicaDataAcquisitionMode wicaDataAcquisitionMode, int pollingIntervalInMillis )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelStartPollingEvent.class);
-      Validate.notNull( wicaChannelName );
+      Validate.notNull( wicaChannel );
       Validate.notNull( wicaDataAcquisitionMode );
       Validate.isTrue( pollingIntervalInMillis > 0 );
 
-      this.wicaChannelName = wicaChannelName;
+      this.wicaChannel = wicaChannel;
       this.wicaDataAcquisitionMode = wicaDataAcquisitionMode;
       this.pollingIntervalInMillis = pollingIntervalInMillis;
       logger.trace("Event created: '{}'.", this );
@@ -43,9 +43,9 @@ public class WicaChannelStartPollingEvent
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public WicaChannelName get()
+   public WicaChannel get()
    {
-      return wicaChannelName;
+      return wicaChannel;
    }
 
    public WicaDataAcquisitionMode getWicaDataAcquisitionMode()
@@ -62,7 +62,7 @@ public class WicaChannelStartPollingEvent
    public String toString()
    {
       return "WicaChannelStartPollingEvent{" +
-         "wicaChannelName=" + wicaChannelName +
+         "wicaChannel=" + wicaChannel +
          ", wicaDataAcquisitionMode=" + wicaDataAcquisitionMode +
          ", pollingIntervalInMillis=" + pollingIntervalInMillis +
       '}';

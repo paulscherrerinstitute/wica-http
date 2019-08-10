@@ -3,14 +3,13 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.WicaChannelPollMonitorEvent;
 import ch.psi.wica.controlsystem.event.WicaChannelMonitoredValueUpdateEvent;
+import ch.psi.wica.controlsystem.event.WicaChannelPollMonitorEvent;
 import ch.psi.wica.controlsystem.event.WicaChannelPolledValueUpdateEvent;
 import ch.psi.wica.infrastructure.channel.WicaChannelValueTimestampRewriter;
 import ch.psi.wica.infrastructure.stream.WicaStreamMonitoredValueDataBuffer;
 import ch.psi.wica.model.app.ControlSystemName;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.services.channel.WicaChannelValueFilteringService;
@@ -93,11 +92,11 @@ public class WicaStreamMonitoredValueCollectorService
    public void handleWicaChannelPollMonitorEvent( WicaChannelPollMonitorEvent event)
    {
       Validate.notNull( event );
-      final WicaChannelName wicaChannelName = event.getWicaChannelName();
-      final ControlSystemName controlSystemName = wicaChannelName.getControlSystemName();
+      final WicaChannel wicaChannel = event.getWicaChannel();
+      final ControlSystemName controlSystemName = wicaChannel.getName().getControlSystemName();
       final WicaChannelValue wicaChannelValue = wicaStreamMonitoredValueDataBuffer.getLastDataPoint( controlSystemName );
       final WicaChannelValue rewrittenChannelValue = wicaChannelValueTimestampRewriter.rewrite( wicaChannelValue, LocalDateTime.now() );
-      applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannelName, rewrittenChannelValue ) );
+      applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannel, rewrittenChannelValue ) );
    }
 
 /*- Nested Classes -----------------------------------------------------------*/
