@@ -70,7 +70,7 @@ class WicaChannelGetControllerTest
    {
       final String channelName = "XXXXX";
       final int userSpecifiedTimeout = 300;
-      final RequestBuilder getRequest = MockMvcRequestBuilders.get("/ca/channel/" + channelName + "?timeout=" + userSpecifiedTimeout )
+      final RequestBuilder getRequest = MockMvcRequestBuilders.get("/ca/channel/" + channelName + "?timeout=" + userSpecifiedTimeout + "&fieldsOfInterest=conn" )
                                                               .accept( MediaType.APPLICATION_JSON_VALUE );
 
       // Check that the method returns in less than the user specified timeout
