@@ -31,6 +31,11 @@
       "description": "The default number of digits after the decimal point when getting the current value of a wica channel."
     },
     {
+      "name": "wica.channel-get-fields-of-interest",
+      "type": "java.lang.String",
+      "description": "Semicolon separated list specifying the default names of the fields that will be returned when getting the current value of a wica channel."
+    },
+    {
       "name": "wica.channel-put-timeout-interval-in-ms",
       "type": "java.lang.Integer",
       "description": "The default timeout in milliseconds to be applied when putting a new value to a wica channel."
