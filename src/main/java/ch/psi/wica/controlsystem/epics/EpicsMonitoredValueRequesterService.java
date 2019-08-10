@@ -5,7 +5,6 @@ package ch.psi.wica.controlsystem.epics;
 
 import ch.psi.wica.controlsystem.event.*;
 import ch.psi.wica.model.app.ControlSystemName;
-import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
 import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
@@ -33,31 +32,27 @@ import java.util.function.Consumer;
  */
 @Service
 @ThreadSafe
-public class EpicsChannelDataRequesterService
+public class EpicsMonitoredValueRequesterService
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
-   private final Logger logger = LoggerFactory.getLogger(EpicsChannelDataRequesterService.class );
+   private final Logger logger = LoggerFactory.getLogger(EpicsMonitoredValueRequesterService.class );
 
    private final ApplicationEventPublisher applicationEventPublisher;
    private final EpicsChannelMonitoringService epicsChannelMonitoringService;
-   private final EpicsChannelPollingService epicsChannelPollingService;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   EpicsChannelDataRequesterService( ApplicationEventPublisher applicationEventPublisher,
-                                     EpicsChannelMonitoringService epicsChannelMonitoringService,
-                                     EpicsChannelPollingService epicsChannelPollingService )
+   EpicsMonitoredValueRequesterService( ApplicationEventPublisher applicationEventPublisher,
+                                        EpicsChannelMonitoringService epicsChannelMonitoringService )
    {
       this.applicationEventPublisher = Validate.notNull( applicationEventPublisher );
       this.epicsChannelMonitoringService = Validate.notNull (epicsChannelMonitoringService);
-      this.epicsChannelPollingService = Validate.notNull( epicsChannelPollingService );
    }
-
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
@@ -99,61 +94,6 @@ public class EpicsChannelDataRequesterService
       else
       {
          logger.trace( "Ignoring stop monitor request for wica channel named: '{}'", wicaChannelName );
-      }
-   }
-
-   @EventListener
-   public void handleWicaChannelStartPollingEvent( WicaChannelStartPollingEvent wicaChannelStartPollingEvent )
-   {
-      Validate.notNull( wicaChannelStartPollingEvent );
-      final WicaChannelName wicaChannelName = wicaChannelStartPollingEvent.get();
-      final int pollingIntervalInMillis = wicaChannelStartPollingEvent.getPollingIntervalInMillis();
-
-      final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannelStartPollingEvent.getWicaDataAcquisitionMode();
-      if ( wicaDataAcquisitionMode != WicaDataAcquisitionMode.POLL )
-      {
-         logger.trace( "Ignoring start poll request for wica channel named: '{}'", wicaChannelName );
-         return;
-      }
-
-      // This service will start polling Wica channels where the protocol is
-      // not explicitly set, or where it is set to indicate that EPICS Channel
-      // Access (CA) protocol should be used.
-      if ( ( wicaChannelName.getProtocol().isEmpty() ) || ( wicaChannelName.getProtocol().get() == WicaChannelName.Protocol.CA ) )
-      {
-         logger.trace( "Starting to poll wica channel named: '{}'", wicaChannelName );
-         startPolling( wicaChannelName, pollingIntervalInMillis );
-      }
-      else
-      {
-         logger.trace( "Ignoring start poll request for wica channel named: '{}'", wicaChannelName );
-      }
-   }
-
-   @EventListener
-   public void handleWicaChannelStopPollingEvent( WicaChannelStopPollingEvent wicaChannelStopPollingEvent )
-   {
-      Validate.notNull( wicaChannelStopPollingEvent);
-      final WicaChannelName wicaChannelName = wicaChannelStopPollingEvent.get();
-
-      final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannelStopPollingEvent.getWicaDataAcquisitionMode();
-      if ( wicaDataAcquisitionMode != WicaDataAcquisitionMode.POLL )
-      {
-         logger.trace( "Ignoring stop poll request for wica channel named: '{}'", wicaChannelName );
-         return;
-      }
-
-      // This service will stop polling Wica channels where the protocol is
-      // not explicitly set, or where it is set to indicate that EPICS Channel
-      // Access (CA) protocol should be used.
-      if ( ( wicaChannelName.getProtocol().isEmpty() ) || ( wicaChannelName.getProtocol().get() == WicaChannelName.Protocol.CA ) )
-      {
-         logger.trace( "Stopping polling wica channel named: '{}'", wicaChannelName );
-         stopPolling( wicaChannelName.getControlSystemName() );
-      }
-      else
-      {
-         logger.trace( "Ignoring stop poll request for wica channel named: '{}'", wicaChannelName );
       }
    }
 
@@ -243,54 +183,6 @@ public class EpicsChannelDataRequesterService
 
       logger.trace("'{}' - value changed to: '{}'", controlSystemName, wicaChannelValue );
       applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( controlSystemName, wicaChannelValue ) );
-   }
-
-   /**
-    * Starts polling the control system channel with the specified name at the specified interval
-    *
-    * @param wicaChannelName the name of the channel to monitor.
-    * @param pollingIntervalInMillis the polling interval.
-    */
-   private void startPolling( WicaChannelName wicaChannelName, int pollingIntervalInMillis )
-   {
-      Validate.notNull( wicaChannelName );
-      appLogger.info( "EPICS channel subscribe: '{}'", wicaChannelName.asString() );
-      logger.trace("Subscribing to new control system channel named: '{}'", wicaChannelName.asString() );
-
-      // Define the handlers to be informed of interesting changes to the channel
-      final Consumer<WicaChannelValue> valueUpdateHandler = v -> handlePolledValueUpdate( wicaChannelName, v );
-
-      // Now start polling
-      epicsChannelPollingService.startPolling( EpicsChannelName.of( wicaChannelName.getControlSystemName() ), pollingIntervalInMillis, valueUpdateHandler );
-   }
-
-   /**
-    * Stops monitoring the control system channel with the specified name.
-    *
-    * @param controlSystemName the name of the channel which is no longer of interest.
-    */
-   private void stopPolling( ControlSystemName controlSystemName  )
-   {
-      Validate.notNull( controlSystemName );
-      appLogger.info( "EPICS channel unsubscribe: '{}'", controlSystemName.asString() );
-      logger.trace( "Unsubscribing from control system channel named: '{}'", controlSystemName.asString() );
-
-      epicsChannelPollingService.stopPolling( EpicsChannelName.of( controlSystemName ) );
-   }
-
-   /**
-    * Handles a value update published by the EPICS channel poller.
-    *
-    * @param wicaChannelName the name of the channel whose value has changed.
-    * @param wicaChannelValue the new value.
-    */
-   private void handlePolledValueUpdate( WicaChannelName wicaChannelName, WicaChannelValue wicaChannelValue )
-   {
-      Validate.notNull( wicaChannelName, "The 'controlSystemName' argument was null");
-      Validate.notNull( wicaChannelValue, "The 'wicaChannelValue' argument was null");
-
-      logger.trace("'{}' - value changed to: '{}'", wicaChannelName, wicaChannelValue );
-      applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannelName, wicaChannelValue ) );
    }
 
 /*- Nested Classes -----------------------------------------------------------*/
