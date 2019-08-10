@@ -80,14 +80,13 @@ class EpicsChannelValueGetter
       // Perform a channel GET request to obtain the properties of the channel which
       // may change quickly. Currently (2019-07-11) this includes the current value,
       // the timestamp the and alarm state.
-      logger.trace( "'{}' - getting epics TIMESTAMPED metadata...", controlSystemName );
+      logger.trace( "'{}' - getting EPICS TIMESTAMPED data...", controlSystemName );
       final Timestamped<Object> epicsTimestampedObject = channel.get( Timestamped.class );
-      logger.trace( "'{}' - EPICS TIMESTAMPED metadata received.", controlSystemName) ;
+      logger.trace( "'{}' - EPICS TIMESTAMPED data received.", controlSystemName ) ;
 
       // Now construct and return a wica value object using the timestamped object information.
       return wicaChannelValueBuilder.build( controlSystemName, epicsTimestampedObject );
    }
-
 
 /*- Private methods ----------------------------------------------------------*/
 
