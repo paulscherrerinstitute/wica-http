@@ -71,6 +71,18 @@ public class WicaChannelValueFilteringService
       return filter.apply( wicaChannelValues );
    }
 
+   /**
+    * Filters the supplied list of channel values directly using a last value filter.
+    *
+    * @param wicaChannelValues the list of values to filter.
+    * @return the filtered output.
+    */
+   public List<WicaChannelValue> filterLastValues( List<WicaChannelValue> wicaChannelValues )
+   {
+      var filter = new WicaChannelValueLatestValueFilter( 1 );
+      return filter.apply( wicaChannelValues);
+   }
+
 /*- Private methods ----------------------------------------------------------*/
 
    private WicaChannelValueFilter getFilterForChannel( WicaChannel wicaChannel )
@@ -119,7 +131,6 @@ public class WicaChannelValueFilteringService
       }
       return filter;
    }
-
 
 /*- Nested Classes -----------------------------------------------------------*/
 
