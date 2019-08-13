@@ -5,7 +5,7 @@ package ch.psi.wica.services.stream;
 
 import ch.psi.wica.controlsystem.event.WicaChannelMetadataUpdateEvent;
 import ch.psi.wica.infrastructure.stream.WicaStreamMetadataDataBuffer;
-import ch.psi.wica.model.app.ControlSystemName;
+import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
 import ch.psi.wica.model.stream.WicaStream;
@@ -39,9 +39,7 @@ public class WicaStreamMetadataCollectorService
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger( WicaStreamMetadataCollectorService.class );
-
    private final WicaStreamMetadataDataBuffer wicaStreamMetadataDataBuffer;
-
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -69,12 +67,11 @@ public class WicaStreamMetadataCollectorService
    {
       final Map<WicaChannel, List<WicaChannelMetadata>> inputMap = wicaStreamMetadataDataBuffer.getLaterThan( wicaStream.getWicaChannels(), since );
       final var outputMap = inputMap.keySet().stream()
-              .filter( c -> ! inputMap.get( c ).isEmpty() )
-              .collect( Collectors.toUnmodifiableMap( c -> c, c-> inputMap.get( c ).get( 0 ) ) );
+        .filter( c -> ! inputMap.get( c ).isEmpty() )
+        .collect( Collectors.toUnmodifiableMap( c -> c, c-> inputMap.get( c ).get( 0 ) ) );
 
       logger.trace( "INPUT MAP IS: {} ", inputMap );
       logger.trace( "OUTPUT MAP IS: {} ", outputMap );
-
       return outputMap;
    }
 
@@ -90,11 +87,12 @@ public class WicaStreamMetadataCollectorService
       {
          Validate.notNull( wicaChannelMetadataUpdateEvent );
 
-         logger.info( "NEW METADATA: {} ", wicaChannelMetadataUpdateEvent);
+         logger.info( "Received METADATA update event: {} ", wicaChannelMetadataUpdateEvent);
 
-         final ControlSystemName controlSystemName = wicaChannelMetadataUpdateEvent.getControlSystemName();
+         final WicaChannel wicaChannel = wicaChannelMetadataUpdateEvent.getWicaChannel();
+         final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey(wicaChannel );
          final WicaChannelMetadata wicaChannelMetadata = wicaChannelMetadataUpdateEvent.getWicaChannelData();
-         wicaStreamMetadataDataBuffer.saveDataPoint( controlSystemName, wicaChannelMetadata );
+         wicaStreamMetadataDataBuffer.saveDataPoint( wicaDataBufferStorageKey, wicaChannelMetadata );
 
       }
    }
