@@ -3,12 +3,11 @@ package ch.psi.wica.controlsystem.event;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.app.ControlSystemName;
+import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -16,29 +15,34 @@ import org.slf4j.LoggerFactory;
 public class WicaChannelMonitoredValueUpdateEvent
 {
 
-/*- Public attributes --------------------------------------------------------*/
-/*- Private attributes -------------------------------------------------------*/
+   /*- Public attributes --------------------------------------------------------*/
+   /*- Private attributes -------------------------------------------------------*/
 
-   private final ControlSystemName controlSystemName;
+   private final WicaChannel wicaChannel;
    private final WicaChannelValue wicaChannelValue;
 
-/*- Main ---------------------------------------------------------------------*/
-/*- Constructor --------------------------------------------------------------*/
+   /*- Main ---------------------------------------------------------------------*/
+   /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelMonitoredValueUpdateEvent( ControlSystemName controlSystemName, WicaChannelValue wicaChannelValue )
+   public WicaChannelMonitoredValueUpdateEvent( WicaChannel wicaChannel, WicaChannelValue wicaChannelValue )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelMonitoredValueUpdateEvent.class);
-      this.controlSystemName = Validate.notNull( controlSystemName );
-      this.wicaChannelValue = Validate.notNull( wicaChannelValue );
+
+      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannelValue );
+      Validate.isTrue( wicaChannel.getProperties().getDataAcquisitionMode().doesMonitoring(), "The data acquisition mode of this channel does not support monitoring." );
+
+      this.wicaChannel = wicaChannel;
+      this.wicaChannelValue = wicaChannelValue;
       logger.trace("Event created: '{}'.", this );
    }
 
    /*- Class methods ------------------------------------------------------------*/
    /*- Public methods -----------------------------------------------------------*/
 
-   public ControlSystemName getControlSystemName()
+   public WicaChannel getWicaChannel()
    {
-      return controlSystemName;
+      return wicaChannel;
    }
 
    public WicaChannelValue getWicaChannelValue()
@@ -50,9 +54,9 @@ public class WicaChannelMonitoredValueUpdateEvent
    public String toString()
    {
       return "WicaChannelMonitoredValueUpdateEvent{" +
-         "controlSystemName=" + controlSystemName +
-         ", wicaChannelValue=" + wicaChannelValue +
-         '}';
+            "wicaChannel=" + wicaChannel +
+            ", wicaChannelValue=" + wicaChannelValue +
+            '}';
    }
 
 /*- Private methods ----------------------------------------------------------*/
