@@ -3,22 +3,31 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannel;
+import ch.psi.wica.controlsystem.event.WicaChannelMonitoredValueUpdateEvent;
 import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
+import ch.psi.wica.infrastructure.channel.WicaChannelPropertiesBuilder;
+import ch.psi.wica.infrastructure.channel.WicaChannelValueTimestampRewriter;
+import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
+import ch.psi.wica.model.app.WicaDataAcquisitionMode;
+import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
+import ch.psi.wica.services.channel.WicaChannelValueFilteringService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -30,18 +39,27 @@ class WicaStreamMonitoredValueCollectorTest
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private static final LocalDateTime LONG_AGO = LocalDateTime.of(1961, 8, 25, 0, 0 );
+   @MockBean
+   private WicaChannelValueFilteringService wicaChannelValueFilteringServiceMock;
 
-   @Autowired
-   private WicaStreamLifecycleService wicaStreamLifecycleService;
+   @MockBean
+   private ApplicationEventPublisher applicationEventPublisher;
 
-   @Autowired
-   private WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService;
+   @MockBean
+   private WicaChannelValueTimestampRewriter wicaChannelValueTimestampRewriter;
 
-   @Autowired
-   private WicaStreamMonitoredValueCollectorService wicaStreamPolledValueCollectorService;
+   @Captor
+   private ArgumentCaptor<WicaChannel> captorChannel;
 
-   private WicaStream wicaStream;
+   @Captor
+   private ArgumentCaptor<List<WicaChannelValue>> captorValueList;
+
+   private WicaStreamMonitoredValueCollectorService serviceUnderTest;
+   private WicaStream testStream;
+   private WicaChannel testChannel1;
+   private WicaChannel testChannel2;
+   private WicaChannel testChannel3;
+   private WicaChannel testChannel4;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -49,66 +67,117 @@ class WicaStreamMonitoredValueCollectorTest
 /*- Public methods -----------------------------------------------------------*/
 
    @BeforeEach
-   void setUp()
+   void beforeEach()
    {
-      final String testString = "{ \"props\" : {}, \"channels\":  [ { \"name\": \"CH1##1\" }, " +
-                                                                   "{ \"name\": \"CH1##2\" }, " +
-                                                                   "{ \"name\": \"CH2\" }  ] }";
+      // Note: CH1 DOES publish any values to the monitor buffer.
+      testChannel1 = WicaChannelBuilder.create().withChannelNameAndProperties( "CH1_MONITOR", WicaChannelPropertiesBuilder
+            .create()
+            .withDefaultProperties()
+            .withDataAcquisitionMode( WicaDataAcquisitionMode.MONITOR )
+            .build() )
+            .build();
 
+      // Note: CH2 does NOT publish any values to the monitor buffer.
+      testChannel2 = WicaChannelBuilder.create().withChannelNameAndProperties( "CH2_POLL", WicaChannelPropertiesBuilder
+            .create()
+            .withDefaultProperties()
+            .withDataAcquisitionMode( WicaDataAcquisitionMode.POLL )
+            .build())
+            .build();
 
-      wicaStream = wicaStreamLifecycleService.create( testString );
+      // Note: CH3 DOES publish any values to the monitor buffer.
+      testChannel3 = WicaChannelBuilder.create().withChannelNameAndProperties( "CH3_POLL_AND_MONITOR", WicaChannelPropertiesBuilder
+            .create()
+            .withDefaultProperties()
+            .withDataAcquisitionMode( WicaDataAcquisitionMode.POLL_AND_MONITOR )
+            .build() )
+            .build();
+
+      // Note: CH4 does NOT publish any values to the monitor buffer.
+      testChannel4 = WicaChannelBuilder.create().withChannelNameAndProperties( "CH4_POLL_MONITOR", WicaChannelPropertiesBuilder
+            .create()
+            .withDefaultProperties()
+            .withDataAcquisitionMode( WicaDataAcquisitionMode.POLL_MONITOR )
+            .build() )
+            .build();
+
+      testStream = WicaStreamBuilder
+            .create()
+            .withChannel( testChannel1 )
+            .withChannel( testChannel2 )
+            .withChannel( testChannel3 )
+            .withChannel( testChannel4 )
+            .build();
+
+      serviceUnderTest = new WicaStreamMonitoredValueCollectorService( 5,
+                                                                       applicationEventPublisher,
+                                                                       wicaChannelValueTimestampRewriter,
+                                                                       wicaChannelValueFilteringServiceMock );
+
+      given( wicaChannelValueFilteringServiceMock.filterValues( captorChannel.capture(), captorValueList.capture() ) ).willAnswer(( x) -> captorValueList.getValue() );
+      given( wicaChannelValueFilteringServiceMock.filterLastValues( captorValueList.capture() ) ).willAnswer(( x) -> captorValueList.getValue() );
    }
 
    @Test
-   void test_getMonitoredValueCollector()
+   void test_initialisation()
    {
-      final Map<WicaChannel, List<WicaChannelValue>> valueMap = wicaStreamMonitoredValueCollectorService.get( wicaStream, LONG_AGO );
-      final WicaChannel testChannel1 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH1##1").build();
-      final WicaChannel testChannel2 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH1##2").build();
-      final WicaChannel testChannel3 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH2").build();
+      assertThat( serviceUnderTest.getLatest( testStream ).entrySet().isEmpty(), is( true ) );
+      assertThat( serviceUnderTest.get( testStream, LocalDateTime.MIN ).entrySet().isEmpty(), is( true ) );
+      assertThat( serviceUnderTest.get( testStream, LocalDateTime.MAX ).entrySet().isEmpty(), is( true ) );
+  }
 
-      assertThat( valueMap.size(), is( 3) );
+   @Test
+   void test_getLatest()
+   {
+      final WicaChannelValue someValue1A = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue someValue1B = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue someValue2A = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue someValue2B = WicaChannelValue.createChannelValueDisconnected();
 
-      assertThat( valueMap.containsKey( testChannel1 ), is(true )  );
-      final var valueList1 = valueMap.get( testChannel1 );
-      assertThat( valueList1.size(), is( 1 ) );
-      assertThat( valueList1.get( 0 ), instanceOf( WicaChannelValue.WicaChannelValueDisconnected.class ) );
+      serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel1, someValue1A ) );
+      serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel1, someValue1B ) );
+      serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel3, someValue2A ) );
+      serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel3, someValue2B ) );
 
-      assertThat(valueMap.containsKey( testChannel2 ), is(true) );
-      final var valueList2 = valueMap.get( testChannel2 );
-      assertThat( valueList2.get( 0 ), instanceOf( WicaChannelValue.WicaChannelValueDisconnected.class ) );
-      assertThat( valueList2.size(), is( 1 ) );
+      final Map<WicaChannel, List<WicaChannelValue>> resultMap = serviceUnderTest.getLatest( testStream );
 
-      assertThat( valueMap.containsKey( testChannel3 ), is(true ) );
-      final var valueList3 = valueMap.get( testChannel3 );
-      assertThat( valueList3.get( 0 ), instanceOf( WicaChannelValue.WicaChannelValueDisconnected.class ) );
-      assertThat( valueList3.size(), is( 1 ) );
+      assertThat( resultMap.entrySet().size(), is( 2 ) );
+      assertThat( resultMap.keySet(), not( hasItems( testChannel2, testChannel4 ) ) );
+      assertThat( resultMap.keySet(), hasItems( testChannel1, testChannel3 ) );
+      assertThat( resultMap.values(), hasItem( List.of( someValue1A, someValue1B) ) );
+      assertThat( resultMap.values(), hasItem( List.of( someValue2A, someValue2B) ) );
    }
 
    @Test
-   void test_getPolledValueCollector()
+   void test_get()
    {
-      final var valueMap = wicaStreamPolledValueCollectorService.get( wicaStream, LONG_AGO );
-      final WicaChannel testChannel1 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH1##1").build();
-      final WicaChannel testChannel2 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH1##2").build();
-      final WicaChannel testChannel3 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CH2").build();
+      final WicaChannelValue someValue1A = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue someValue1B = WicaChannelValue.createChannelValueDisconnected();
+      serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel1, someValue1A ) );
+      serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel1, someValue1B ) );
 
-      assertThat( valueMap.size(), is( 3) );
+      final LocalDateTime middleTime = LocalDateTime.now();
 
-      assertThat( valueMap.containsKey( testChannel1 ), is(true )  );
-      final var valueList1 = valueMap.get( testChannel1 );
-      assertThat( valueList1.size(), is( 1 ) );
-      assertThat( valueList1.get( 0 ), instanceOf( WicaChannelValue.WicaChannelValueDisconnected.class ) );
+      final WicaChannelValue someValue2A = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue someValue2B = WicaChannelValue.createChannelValueDisconnected();
+      serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel3, someValue2A ) );
+      serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel3, someValue2B ) );
 
-      assertThat(valueMap.containsKey( testChannel2 ), is(true) );
-      final var valueList2 = valueMap.get( testChannel2 );
-      assertThat( valueList2.get( 0 ), instanceOf( WicaChannelValue.WicaChannelValueDisconnected.class ) );
-      assertThat( valueList2.size(), is( 1 ) );
+      final Map<WicaChannel, List<WicaChannelValue>> resultMap1 = serviceUnderTest.get( testStream, LocalDateTime.MIN );
+      assertThat( resultMap1.entrySet().size(), is( 2 ) );
+      assertThat( resultMap1.keySet(), not( hasItems( testChannel2, testChannel4 ) ) );
+      assertThat( resultMap1.keySet(), hasItems( testChannel1, testChannel3 ) );
+      assertThat( resultMap1.values(), hasItem( List.of( someValue1A, someValue1B) ) );
+      assertThat( resultMap1.values(), hasItem( List.of( someValue2A, someValue2B) ) );
 
-      assertThat( valueMap.containsKey( testChannel3 ), is(true ) );
-      final var valueList3 = valueMap.get( testChannel3 );
-      assertThat( valueList3.get( 0 ), instanceOf( WicaChannelValue.WicaChannelValueDisconnected.class ) );
-      assertThat( valueList3.size(), is( 1 ) );
+      final Map<WicaChannel, List<WicaChannelValue>> resultMap2 = serviceUnderTest.get( testStream, middleTime );
+      assertThat( resultMap2.entrySet().size(), is( 1 ) );
+      assertThat( resultMap2.keySet(), hasItem( testChannel3 ) );
+      assertThat( resultMap2.keySet(), not( hasItems( testChannel1, testChannel2 ) ) );
+      assertThat( resultMap2.values(), hasItem( List.of( someValue2A, someValue2B) ) );
+
+      final Map<WicaChannel, List<WicaChannelValue>> resultMap3 = serviceUnderTest.get( testStream, LocalDateTime.MAX );
+      assertThat( resultMap3.entrySet().size(), is( 0 ) );
    }
 
 /*- Private methods ----------------------------------------------------------*/
