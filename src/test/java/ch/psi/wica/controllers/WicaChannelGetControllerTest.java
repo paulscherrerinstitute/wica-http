@@ -48,7 +48,7 @@ class WicaChannelGetControllerTest
    void testGetRequest_DefaultTimeout()
    {
       final String channelName = "XXXXX";
-      final RequestBuilder getRequest = MockMvcRequestBuilders.get("/ca/channel/" + channelName )
+      final RequestBuilder getRequest = MockMvcRequestBuilders.get("/ca/channel/" + channelName + "?fieldsOfInterest=conn" )
                                                               .accept(MediaType.APPLICATION_JSON_VALUE );
 
       // Check that the method returns in less than the default timeout
@@ -90,7 +90,7 @@ class WicaChannelGetControllerTest
    void testGetRequest_HappyDay()
    {
       final String channelName = "test:db_ok";
-      final RequestBuilder getRequest = MockMvcRequestBuilders.get("/ca/channel/" + channelName )
+      final RequestBuilder getRequest = MockMvcRequestBuilders.get("/ca/channel/" + channelName + "?fieldsOfInterest=conn" )
                                                               .accept( MediaType.APPLICATION_JSON_VALUE );
 
       // Check that the method returns in less than the default timeout
