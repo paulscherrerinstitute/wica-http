@@ -70,23 +70,23 @@ class WicaStreamServerSentEventPublisherTest
 
    private final Map<WicaChannel,WicaChannelMetadata> req2MetadataMap = Map.of();
 
-   private final Map<WicaChannel,List<WicaChannelValue>> req1PolledValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_1_Request_1_Value" ) ),
-                                                                                      wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_2_Request_1_Value" ) ) );
+   private final Map<WicaChannel,List<WicaChannelValue>> req1PolledValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_1_Request_1_Value_Initial" ) ),
+                                                                                      wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_2_Request_1_Value_Initial" ) ) );
 
-   private final Map<WicaChannel,List<WicaChannelValue>> req2PolledValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_1_Request_2_Value" ) ),
-                                                                                      wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_2_Request_2_Value" ) ) );
+   private final Map<WicaChannel,List<WicaChannelValue>> req2PolledValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_1_Request_2_Value_1" ),
+                                                                                                                 WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_1_Request_2_Value_2" ) ),
+                                                                                      wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_2_Request_2_Value_1" ),
+                                                                                                                 WicaChannelValue.createChannelValueConnected( "PollMap_CHAN_2_Request_2_Value_2" ) ) );
 
-   private final Map<WicaChannel,List<WicaChannelValue>> req1MonitoredValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnected( "MonitorMap_CHAN_1_Request_1_Value" ) ),
-                                                                                         wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnected( "MonitorMap_CHAN_2_Request_1_Value" ) ) );
+   private final Map<WicaChannel,List<WicaChannelValue>> req1MonitoredValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnected( "MonMap_CHAN_1_Request_1_Value_Initial" ) ),
+                                                                                         wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnected( "MonMap_CHAN_2_Request_1_Value_Initial" ) ) );
 
-   private final Map<WicaChannel,List<WicaChannelValue>> req2MonitoredValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnected( "MonitorMap_CHAN_1_Request_2_Value" ) ),
-                                                                                         wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnected( "MonitorMap_CHAN_2_Request_2_Value" ) ) );
-
+   private final Map<WicaChannel,List<WicaChannelValue>> req2MonitoredValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnected( "MonMap_CHAN_1_Request_2_Value_1" ),
+                                                                                                                    WicaChannelValue.createChannelValueConnected( "MonMap_CHAN_1_Request_2_Value_2" ) ),
+                                                                                         wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnected( "MonMap_CHAN_2_Request_2_Value_1" ),
+                                                                                                                    WicaChannelValue.createChannelValueConnected( "MonMap_CHAN_2_Request_1_Value_2" )) );
 
    private final AtomicReference<Map<WicaChannel,WicaChannelMetadata>> atomicMetadataMap = new AtomicReference<>();
-   private final AtomicReference<Map<WicaChannel,List<WicaChannelValue>>> atomicPolledValueMap = new AtomicReference<>();
-   private final AtomicReference<Map<WicaChannel,List<WicaChannelValue>>> atomicMonitoredValueMap = new AtomicReference<>();
-
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -98,20 +98,19 @@ class WicaStreamServerSentEventPublisherTest
    {
       WicaStreamId.resetAllocationSequencer();
       atomicMetadataMap .set( req1MetadataMap );
-      atomicPolledValueMap .set( req1PolledValueMap );
-      atomicMonitoredValueMap.set( req1MonitoredValueMap );
 
       final WicaStreamProperties wicaStreamProperties = WicaStreamPropertiesBuilder.create()
             .withMetadataFluxInterval( 200 )
             .withHeartbeatFluxInterval( 1400 )
             .withPolledValueFluxInterval( 500 )
             .withMonitoredValueFluxInterval( 640 )
+            .withFieldsOfInterest( "val;ts" )
             .build();
 
       final WicaStream wicaStream = WicaStreamBuilder.create()
             .withStreamProperties( wicaStreamProperties )
-            .withChannelNameAndDefaultProperties( "CHAN_1" )
-            .withChannelNameAndDefaultProperties( "CHAN_2" )
+            .withChannelNameAndStreamProperties( "CHAN_1" )
+            .withChannelNameAndStreamProperties( "CHAN_2" )
             .build();
 
       objectUnderTest = new WicaStreamServerSentEventPublisher( wicaStream,
@@ -129,8 +128,8 @@ class WicaStreamServerSentEventPublisherTest
       final ArgumentCaptor<WicaStream>captor1 = ArgumentCaptor.forClass( WicaStream.class );
       final ArgumentCaptor<LocalDateTime>captor2 = ArgumentCaptor.forClass( LocalDateTime.class );
       given( wicaStreamMetadataCollectorServiceMock.get( captor1.capture(), captor2.capture() ) ).willAnswer( rqst -> getMetadataMap() );
-      given( wicaStreamMonitoredValueCollectorService.get(captor1.capture(), captor2.capture() ) ).willAnswer( rqst -> getMonitoredValueMap() );
-      given( wicaStreamPolledValueCollectorService.get(captor1.capture(), captor2.capture() ) ).willAnswer(rqst -> getPolledValueMap() );
+      given( wicaStreamMonitoredValueCollectorService.get(captor1.capture(), captor2.capture() ) ).willAnswer( rqst -> req1MonitoredValueMap );
+      given( wicaStreamPolledValueCollectorService.get(captor1.capture(), captor2.capture() ) ).willAnswer(rqst -> req1MonitoredValueMap  );
 
       final var flux = objectUnderTest.getFlux();
       flux.subscribe( (c) -> logger.info( "c is: ------> {}", c ) );
@@ -170,8 +169,10 @@ class WicaStreamServerSentEventPublisherTest
       final ArgumentCaptor<WicaStream>captor1 = ArgumentCaptor.forClass( WicaStream.class );
       final ArgumentCaptor<LocalDateTime>captor2 = ArgumentCaptor.forClass( LocalDateTime.class );
       given( wicaStreamMetadataCollectorServiceMock.get( captor1.capture(), captor2.capture() ) ).willAnswer( rqst -> getMetadataMap() );
-      given( wicaStreamMonitoredValueCollectorService.get( captor1.capture(), captor2.capture() ) ).willAnswer( rqst -> getMonitoredValueMap() );
-      given( wicaStreamPolledValueCollectorService.get( captor1.capture(), captor2.capture() ) ).willAnswer(rqst -> getPolledValueMap() );
+      given( wicaStreamMonitoredValueCollectorService.getLatest( captor1.capture() ) ).willAnswer( rqst -> req1MonitoredValueMap );
+      given( wicaStreamMonitoredValueCollectorService.get( captor1.capture(), captor2.capture() ) ).willAnswer( rqst -> req2MonitoredValueMap );
+      given( wicaStreamPolledValueCollectorService.getLatest( captor1.capture() ) ).willAnswer(rqst -> req1PolledValueMap );
+      given( wicaStreamPolledValueCollectorService.get( captor1.capture(), captor2.capture() ) ).willAnswer(rqst -> req2PolledValueMap );
 
       // Subscribe to the stream publisher,
       final List<ServerSentEvent<String>> sseList = new ArrayList<>();
@@ -228,8 +229,10 @@ class WicaStreamServerSentEventPublisherTest
       assertThat( sse1Node.has( "CHAN_2" ), is( true ) );
       assertThat( sse1Node.get( "CHAN_1" ).isArray(), is( true ) );
       assertThat( sse1Node.get( "CHAN_2" ).isArray(), is( true ) );
-      assertThat( sse1Node.get( "CHAN_1" ).get( 0 ).get( "val").textValue(), is( "PollMap_CHAN_1_Request_1_Value" ) );
-      assertThat( sse1Node.get( "CHAN_2" ).get( 0 ).get( "val").textValue(), is( "PollMap_CHAN_2_Request_1_Value" ) );
+      assertThat( sse1Node.get( "CHAN_1" ).has( 1 ), is( false ) );
+      assertThat( sse1Node.get( "CHAN_2" ).has( 1 ), is( false ) );
+      assertThat( sse1Node.get( "CHAN_1" ).get( 0 ).get( "val" ).textValue(), is( "PollMap_CHAN_1_Request_1_Value_Initial" ) );
+      assertThat( sse1Node.get( "CHAN_2" ).get( 0 ).get( "val" ).textValue(), is( "PollMap_CHAN_2_Request_1_Value_Initial" ) );
 
       //---------------------------------------------------------------------------------
       // 1.3 Verify that the THIRD notification contains the channel's monitored values.
@@ -246,8 +249,10 @@ class WicaStreamServerSentEventPublisherTest
       assertThat( sse2Node.has( "CHAN_2" ), is( true ) );
       assertThat( sse2Node.get( "CHAN_1" ).isArray(), is( true ) );
       assertThat( sse2Node.get( "CHAN_2" ).isArray(), is( true ) );
-      assertThat( sse2Node.get( "CHAN_1" ).get( 0 ).get( "val").textValue(), is( "MonitorMap_CHAN_1_Request_1_Value" ) );
-      assertThat( sse2Node.get( "CHAN_2" ).get( 0 ).get( "val").textValue(), is( "MonitorMap_CHAN_2_Request_1_Value" ) );
+      assertThat( sse2Node.get( "CHAN_1" ).has( 1 ), is( false ) );
+      assertThat( sse2Node.get( "CHAN_2" ).has( 1 ), is( false ) );
+      assertThat( sse2Node.get( "CHAN_1" ).get( 0 ).get( "val").textValue(), is( "MonMap_CHAN_1_Request_1_Value_Initial" ) );
+      assertThat( sse2Node.get( "CHAN_2" ).get( 0 ).get( "val").textValue(), is( "MonMap_CHAN_2_Request_1_Value_Initial" ) );
 
       //---------------------------------------------------------------------------------
       // 1.4 Verify that the FOURTH notification contains the channel's polled values.
@@ -264,8 +269,12 @@ class WicaStreamServerSentEventPublisherTest
       assertThat( sse3Node.has( "CHAN_2" ), is( true ) );
       assertThat( sse3Node.get( "CHAN_1" ).isArray(), is( true ) );
       assertThat( sse3Node.get( "CHAN_2" ).isArray(), is( true ) );
-      assertThat( sse3Node.get( "CHAN_1" ).get( 0 ).get( "val").textValue(), is( "PollMap_CHAN_1_Request_2_Value" ) );
-      assertThat( sse3Node.get( "CHAN_2" ).get( 0 ).get( "val").textValue(), is( "PollMap_CHAN_2_Request_2_Value" ) );
+      assertThat( sse3Node.get( "CHAN_1" ).has( 1 ), is( true ) );
+      assertThat( sse3Node.get( "CHAN_2" ).has( 1 ), is( true ) );
+      assertThat( sse3Node.get( "CHAN_1" ).get( 0 ).get( "val").textValue(), is( "PollMap_CHAN_1_Request_2_Value_1" ) );
+      assertThat( sse3Node.get( "CHAN_1" ).get( 1 ).get( "val").textValue(), is( "PollMap_CHAN_1_Request_2_Value_2" ) );
+      assertThat( sse3Node.get( "CHAN_2" ).get( 0 ).get( "val").textValue(), is( "PollMap_CHAN_2_Request_2_Value_1" ) );
+      assertThat( sse3Node.get( "CHAN_2" ).get( 1 ).get( "val").textValue(), is( "PollMap_CHAN_2_Request_2_Value_2" ) );
 
       //---------------------------------------------------------------------------------
       // 1.5 Verify that the FIFTH notification contains the channel's monitored values.
@@ -282,8 +291,10 @@ class WicaStreamServerSentEventPublisherTest
       assertThat( sse4Node.has( "CHAN_2" ), is( true ) );
       assertThat( sse4Node.get( "CHAN_1" ).isArray(), is( true ) );
       assertThat( sse4Node.get( "CHAN_2" ).isArray(), is( true ) );
-      assertThat( sse4Node.get( "CHAN_1" ).get( 0 ).get( "val").textValue(), is( "MonitorMap_CHAN_1_Request_2_Value" ) );
-      assertThat( sse4Node.get( "CHAN_2" ).get( 0 ).get( "val").textValue(), is( "MonitorMap_CHAN_2_Request_2_Value" ) );
+      assertThat( sse4Node.get( "CHAN_1" ).has( 1 ), is( true ) );
+      assertThat( sse4Node.get( "CHAN_2" ).has( 1 ), is( true ) );
+      assertThat( sse4Node.get( "CHAN_1" ).get( 0 ).get( "val").textValue(), is( "MonMap_CHAN_1_Request_2_Value_1" ) );
+      assertThat( sse4Node.get( "CHAN_2" ).get( 0 ).get( "val").textValue(), is( "MonMap_CHAN_2_Request_2_Value_1" ) );
 
       //---------------------------------------------------------------------------------
       // 1.6 Verify that the SIXTH notification contain's the stream's heartbeat.
@@ -301,15 +312,7 @@ class WicaStreamServerSentEventPublisherTest
       return atomicMetadataMap.getAndSet( req2MetadataMap );
    }
 
-   private Map<WicaChannel,List<WicaChannelValue>> getPolledValueMap()
-   {
-      return atomicPolledValueMap.getAndSet( req2PolledValueMap );
-   }
 
-   private Map<WicaChannel,List<WicaChannelValue>> getMonitoredValueMap()
-   {
-      return atomicMonitoredValueMap.getAndSet( req2MonitoredValueMap );
-   }
 
 /*- Nested Classes -----------------------------------------------------------*/
 
