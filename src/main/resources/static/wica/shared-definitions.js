@@ -258,7 +258,7 @@ const WicaRenderingProperties = Object.freeze ({
  * @property {number} [pollflux=1000] The interval in milliseconds between transmitting successive
  *    Server-Sent-Event (SSE) messages with the latest wica channel polled values.
  * @property {number} [daqmode=monitor] - The default data acquisition mode.
- * @property {number} [pollratio=1] - The default number of polling cycles before a sample is taken.
+ * @property {number} [pollint=1000] - The default polling interval in milliseconds.
  * @property {number} [prec=6] - The precision (= number of digits after the decimal point) to be used when
  *     sending numeric information.
  * @property {string} [fields=val;sevr] - A semicolon delimited list defining the data fields that
