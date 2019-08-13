@@ -3,8 +3,12 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.*;
+import ch.psi.wica.controlsystem.event.WicaChannelMetadataUpdateEvent;
+import ch.psi.wica.controlsystem.event.WicaChannelMonitoredValueUpdateEvent;
+import ch.psi.wica.controlsystem.event.WicaChannelStartMonitoringEvent;
+import ch.psi.wica.controlsystem.event.WicaChannelStopMonitoringEvent;
 import ch.psi.wica.model.app.ControlSystemName;
+import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
 import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
@@ -60,129 +64,138 @@ public class EpicsMonitoredValueRequesterService
    @EventListener
    public void handleWicaChannelStartMonitoringEvent( WicaChannelStartMonitoringEvent wicaChannelStartMonitoringEvent )
    {
-      Validate.notNull(wicaChannelStartMonitoringEvent);
-      final WicaChannelName wicaChannelName = wicaChannelStartMonitoringEvent.get();
+      Validate.notNull( wicaChannelStartMonitoringEvent);
+      final WicaChannel wicaChannel = wicaChannelStartMonitoringEvent.get();
 
       // This service will start monitoring Wica channels where the protocol is
       // not explicitly set, or where it is set to indicate that EPICS Channel
       // Access (CA) protocol should be used.
-      if ( ( wicaChannelName.getProtocol().isEmpty() ) || ( wicaChannelName.getProtocol().get() == WicaChannelName.Protocol.CA ) )
+      if ( ( isMonitorable( wicaChannel.getName() )) )
       {
-         logger.trace( "Starting to monitor wica channel named: '{}'", wicaChannelName );
-         startMonitoring( wicaChannelName.getControlSystemName());
+         logger.trace( "Starting to monitor wica channel: '{}'", wicaChannel );
+         startMonitoring( wicaChannel );
       }
       else
       {
-         logger.trace( "Ignoring start monitoring request for wica channel named: '{}'", wicaChannelName );
+         logger.trace( "Ignoring start monitoring request for wica channel: '{}'", wicaChannel );
       }
    }
 
    @EventListener
    public void handleWicaChannelStopMonitoringEvent( WicaChannelStopMonitoringEvent wicaChannelStopMonitoringEvent )
    {
-      Validate.notNull(wicaChannelStopMonitoringEvent);
-      final WicaChannelName wicaChannelName = wicaChannelStopMonitoringEvent.get();
+      Validate.notNull( wicaChannelStopMonitoringEvent);
+      final WicaChannel wicaChannel = wicaChannelStopMonitoringEvent.get();
 
       // This service will stop monitoring Wica channels where the protocol is
       // not explicitly set, or where it is set to indicate that EPICS Channel
       // Access (CA) protocol should be used.
-      if ( ( wicaChannelName.getProtocol().isEmpty() ) || ( wicaChannelName.getProtocol().get() == WicaChannelName.Protocol.CA ) )
+      if ( isMonitorable( wicaChannel.getName() ) )
       {
-         logger.trace( "Stopping monitoring wica channel named: '{}'", wicaChannelName );
-         stopMonitoring( wicaChannelName.getControlSystemName() );
+         logger.trace( "Stopping monitoring wica channel named: '{}'", wicaChannel );
+         stopMonitoring( wicaChannel );
       }
       else
       {
-         logger.trace( "Ignoring stop monitor request for wica channel named: '{}'", wicaChannelName );
+         logger.trace( "Ignoring stop monitor request for wica channel: '{}'", wicaChannel );
       }
    }
 
 /*- Private methods ----------------------------------------------------------*/
 
+   private boolean isMonitorable( WicaChannelName wicaChannelName)
+   {
+      return ( wicaChannelName.getProtocol().isEmpty() ) || ( wicaChannelName.getProtocol().get() == WicaChannelName.Protocol.CA );
+   }
+
    /**
     * Starts monitoring the control system channel with the specified name.
     *
-    * @param controlSystemName the name of the channel to monitor.
+    * @param wicaChannel the name of the channel to monitor.
     */
-   private void startMonitoring( ControlSystemName controlSystemName )
+   private void startMonitoring( WicaChannel wicaChannel )
    {
-      Validate.notNull( controlSystemName );
+      Validate.notNull( wicaChannel );
+      final ControlSystemName controlSystemName = wicaChannel.getName().getControlSystemName();
+
       appLogger.info( "EPICS channel subscribe: '{}'", controlSystemName.asString() );
-      logger.trace("Subscribing to new control system channel named: '{}'", controlSystemName.asString() );
+      logger.trace( "Subscribing to new control system channel named: '{}'", controlSystemName.asString() );
 
       // Define the handlers to be informed of interesting changes to the channel
-      final Consumer<Boolean> stateChangedHandler = b -> handleConnectionStateChanged( controlSystemName, b );
-      final Consumer<WicaChannelValue> valueChangedHandler = v -> handleMonitoredValueChanged(controlSystemName, v );
-      final Consumer<WicaChannelMetadata> metadataChangedHandler = v -> handleMetadataChanged( controlSystemName, v );
+      final Consumer<Boolean> stateChangedHandler = b -> handleConnectionStateChanged( wicaChannel, b );
+      final Consumer<WicaChannelValue> valueChangedHandler = v -> handleMonitoredValueChanged( wicaChannel, v );
+      final Consumer<WicaChannelMetadata> metadataChangedHandler = v -> handleMetadataChanged( wicaChannel, v );
 
       // Now start monitoring
-      epicsChannelMonitoringService.startMonitoring(EpicsChannelName.of(controlSystemName ), stateChangedHandler, metadataChangedHandler, valueChangedHandler );
+      epicsChannelMonitoringService.startMonitoring( EpicsChannelName.of( controlSystemName ), stateChangedHandler, metadataChangedHandler, valueChangedHandler );
    }
 
    /**
     * Stops monitoring the control system channel with the specified name.
     *
-    * @param controlSystemName the name of the channel which is no longer of interest.
+    * @param wicaChannel the name of the channel which is no longer of interest.
     */
-   private void stopMonitoring( ControlSystemName controlSystemName  )
+   private void stopMonitoring( WicaChannel wicaChannel )
    {
-      Validate.notNull( controlSystemName );
+      Validate.notNull( wicaChannel );
+      final ControlSystemName controlSystemName = wicaChannel.getName().getControlSystemName();
+
       appLogger.info( "EPICS channel unsubscribe: '{}'", controlSystemName.asString() );
       logger.trace( "Unsubscribing from control system channel named: '{}'", controlSystemName.asString() );
 
-      epicsChannelMonitoringService.stopMonitoring(EpicsChannelName.of(controlSystemName ) );
+      epicsChannelMonitoringService.stopMonitoring( EpicsChannelName.of( controlSystemName ) );
    }
 
    /**
     * Handles a connection state change published by the EPICS channel monitor.
     *
-    * @param controlSystemName the name of the channel whose connection state has changed.
+    * @param wicaChannel the name of the channel whose connection state has changed.
     * @param isConnected the new connection state.
     */
-   private void handleConnectionStateChanged( ControlSystemName controlSystemName, Boolean isConnected )
+   private void handleConnectionStateChanged( WicaChannel wicaChannel, Boolean isConnected )
    {
-      Validate.notNull( controlSystemName, "The 'controlSystemName' argument was null" );
+      Validate.notNull( wicaChannel, "The 'controlSystemName' argument was null" );
       Validate.notNull( isConnected, "The 'isConnected' argument was null"  );
 
-      logger.trace("'{}' - connection state changed to '{}'.", controlSystemName, isConnected);
+      logger.trace("'{}' - connection state changed to '{}'.", wicaChannel, isConnected);
 
       if ( ! isConnected )
       {
-         logger.trace("'{}' - value changed to DISCONNECTED to indicate the connection was lost.", controlSystemName);
+         logger.trace("'{}' - value changed to DISCONNECTED to indicate the connection was lost.", wicaChannel);
          final WicaChannelValue disconnectedValue = WicaChannelValue.createChannelValueDisconnected();
 
-         applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( controlSystemName, disconnectedValue ) );
+         applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( wicaChannel, disconnectedValue ) );
       }
    }
 
    /**
     * Handles a metadata change published by the EPICS channel monitor.
     *
-    * @param controlSystemName the name of the channel whose metadata has changed.
+    * @param wicaChannel the name of the channel whose metadata has changed.
     * @param wicaChannelMetadata the metadata
     */
-   private void handleMetadataChanged( ControlSystemName controlSystemName, WicaChannelMetadata wicaChannelMetadata )
+   private void handleMetadataChanged( WicaChannel wicaChannel, WicaChannelMetadata wicaChannelMetadata )
    {
-      Validate.notNull( controlSystemName, "The 'controlSystemName' argument was null");
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument was null");
       Validate.notNull( wicaChannelMetadata, "The 'wicaChannelMetadata' argument was null");
 
-      logger.trace("'{}' - metadata changed to: '{}'", controlSystemName, wicaChannelMetadata);
-      applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent( controlSystemName, wicaChannelMetadata ) );
+      logger.trace("'{}' - metadata changed to: '{}'", wicaChannel, wicaChannelMetadata);
+      applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent( wicaChannel, wicaChannelMetadata ) );
    }
 
    /**
     * Handles a value change published by the EPICS channel monitor.
     *
-    * @param controlSystemName the name of the channel whose value has changed.
+    * @param wicaChannel the name of the channel whose value has changed.
     * @param wicaChannelValue the new value.
     */
-   private void handleMonitoredValueChanged( ControlSystemName controlSystemName, WicaChannelValue wicaChannelValue )
+   private void handleMonitoredValueChanged( WicaChannel wicaChannel, WicaChannelValue wicaChannelValue )
    {
-      Validate.notNull( controlSystemName, "The 'controlSystemName' argument was null");
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument was null");
       Validate.notNull( wicaChannelValue, "The 'wicaChannelValue' argument was null");
 
-      logger.trace("'{}' - value changed to: '{}'", controlSystemName, wicaChannelValue );
-      applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( controlSystemName, wicaChannelValue ) );
+      logger.trace("'{}' - value changed to: '{}'", wicaChannel, wicaChannelValue );
+      applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( wicaChannel, wicaChannelValue ) );
    }
 
 /*- Nested Classes -----------------------------------------------------------*/
