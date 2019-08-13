@@ -13,6 +13,7 @@ import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamProperties;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -307,7 +308,9 @@ class WicaStreamSerializerTest
             .build();
 
       final String resultStr = WicaStreamSerializer.writeToJson( testStream );
-      assertThat( resultStr, is( "{\"props\":{\"pollflux\":16,\"daqmode\":\"poll\"},\"channels\":[{\"name\":\"CHAN-X\",\"props\":{\"prec\":4}},{\"name\":\"CHAN-Y\",\"props\":{\"daqmode\":\"poll\",\"prec\":4}}]}" ) );
+      assertThat( resultStr, containsString( "{\"props\":{\"pollflux\":16,\"daqmode\":\"poll\"},\"channels\"" ) );
+      assertThat( resultStr, containsString( "{\"name\":\"CHAN-X\",\"props\":{\"prec\":4}}" ) );
+      assertThat( resultStr, containsString( "{\"name\":\"CHAN-Y\",\"props\":{\"daqmode\":\"poll\",\"prec\":4}}" ) );
    }
 
    /****************************************************************************************
