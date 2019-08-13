@@ -126,8 +126,8 @@ class WicaStreamLoadTest
       {
          assertNotNull( sendStreamCreateRequest( wicaStream ) );
       }
-      final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
-      logger.info( "Stream Create test completed {} iterations in {} ms. Throughput = {} requests/second.", iterations, createStreamCycleTime, (1000 * iterations ) / createStreamCycleTime );
+      final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
+      logger.info( "Stream Create test completed {} iterations in {} us. Throughput = {} requests/second.", iterations, createStreamCycleTime, (1_000_000 * iterations ) / createStreamCycleTime );
 
       logger.info( "Starting Single-Threaded Stream Delete test..." );
       int firstId = Integer.parseInt( firstResult );
@@ -139,8 +139,8 @@ class WicaStreamLoadTest
       {
          assertNotNull(sendStreamDeleteRequest(String.valueOf(firstId + i ) ) );
       }
-      final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
-      logger.info( "Stream Delete Test completed {} iterations in {} ms. Throughput = {} requests/second.", iterations, deleteStreamCycleTime, (1000 * iterations ) / deleteStreamCycleTime );
+      final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
+      logger.info( "Stream Delete Test completed {} iterations in {} us. Throughput = {} requests/second.", iterations, deleteStreamCycleTime, (1_000_000 * iterations ) / deleteStreamCycleTime );
    }
 
 
@@ -184,8 +184,8 @@ class WicaStreamLoadTest
          final String result = executor.take().get();
          assertNotNull( result );
       }
-      final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
-      logger.info( "Multi-Threaded Stream Create test completed {} iterations in {} ms. Throughput = {} requests/second.", iterations, createStreamCycleTime, (1000 * iterations ) / createStreamCycleTime );
+      final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
+      logger.info( "Multi-Threaded Stream Create test completed {} iterations in {} us. Throughput = {} requests/second.", iterations, createStreamCycleTime, (1_000_000 * iterations ) / createStreamCycleTime );
 
       logger.info( "Starting Multi-Threaded Stream Delete test..." );
       int firstId = Integer.parseInt( firstResult );
@@ -207,8 +207,8 @@ class WicaStreamLoadTest
          final String result = executor.take().get();
          assertNotNull( result );
       }
-      final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
-      logger.info( "Multi-Threaded Stream Delete test completed {} iterations in {} ms. Throughput = {} requests/second.", iterations, deleteStreamCycleTime, (1000 * iterations ) / deleteStreamCycleTime );
+      final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
+      logger.info( "Multi-Threaded Stream Delete test completed {} iterations in {} us. Throughput = {} requests/second.", iterations, deleteStreamCycleTime, (1_000_000 * iterations ) / deleteStreamCycleTime );
    }
 
    private static Stream<Arguments> getArgsForTestGetSingleThreadedThroughput()
@@ -235,8 +235,8 @@ class WicaStreamLoadTest
       {
          assertNotNull( sendStreamCreateRequest( wicaStream ) );
       }
-      final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
-      logger.info( "Stream Create test peformed POST operate on {} streams in {} ms. Throughput = {} requests/second.", numberOfStreams, createStreamCycleTime, (1000 * numberOfStreams ) / createStreamCycleTime );
+      final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
+      logger.info( "Stream Create test peformed POST operate on {} streams in {} us. Throughput = {} requests/second.", numberOfStreams, createStreamCycleTime, (1_000_000 * numberOfStreams ) / createStreamCycleTime );
 
       logger.info( "Starting Single-Threaded Stream Get test..." );
       int firstId = Integer.parseInt( firstResult );
@@ -261,8 +261,8 @@ class WicaStreamLoadTest
          disposables.add( f );
       }
 
-      final long getStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
-      logger.info( "Stream Get Test performed GET operation on {} streams in {} ms. Throughput = {} requests/second. ", numberOfStreams, getStreamCycleTime, (1000 * numberOfStreams ) / getStreamCycleTime );
+      final long getStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
+      logger.info( "Stream Get Test performed GET operation on {} streams in {} us. Throughput = {} requests/second. ", numberOfStreams, getStreamCycleTime, (1_000_000 * numberOfStreams ) / getStreamCycleTime );
 
       logger.info( "Pausing for {} ms.", applyLoadForDurationInMillis );
       Thread.sleep( applyLoadForDurationInMillis );
@@ -285,10 +285,10 @@ class WicaStreamLoadTest
       // Sequentially execute all the DELETE tasks.
       for ( int i = 0; i < numberOfStreams; i++ )
       {
-         assertNotNull(sendStreamDeleteRequest(String.valueOf(firstId + i ) ) );
+         assertNotNull( sendStreamDeleteRequest(String.valueOf(firstId + i ) ) );
       }
-      final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MILLISECONDS );
-      logger.info( "Stream Delete Test performed DELETE operation on {} streams in {} ms. Throughput = {} requests/second.", numberOfStreams, deleteStreamCycleTime, (1000 * numberOfStreams ) / deleteStreamCycleTime );
+      final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
+      logger.info( "Stream Delete Test performed DELETE operation on {} streams in {} us. Throughput = {} requests/second.", numberOfStreams, deleteStreamCycleTime, (1_000_000 * numberOfStreams ) / deleteStreamCycleTime );
    }
 
 
