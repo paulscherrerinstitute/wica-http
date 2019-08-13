@@ -12,6 +12,7 @@ import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
 import ch.psi.wica.model.stream.WicaStreamProperties;
 import ch.psi.wica.infrastructure.stream.WicaStreamPropertiesBuilder;
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -42,6 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+// By default these tests are suppressed as they would create problems in the automatic
+// build system. They test should be enabled as required during pre-production testing.
+@Disabled
 @SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.NONE )
 @AutoConfigureMockMvc
 class WicaStreamLoadTest
@@ -278,6 +282,11 @@ class WicaStreamLoadTest
       }
       logger.info( "OK - disposed subscribers..." );
 
+      // This sleep is an attempt to workaround a problem with the reactor
+      // netty library which generates the following exception:
+      // reactor.netty.http.client.PrematureCloseException: Connection prematurely closed BEFORE response
+      Thread.sleep( 500 );
+
       logger.info( "Starting Single-Threaded Stream Delete test..." );
       stopWatch.reset();
       stopWatch.start();
@@ -285,7 +294,7 @@ class WicaStreamLoadTest
       // Sequentially execute all the DELETE tasks.
       for ( int i = 0; i < numberOfStreams; i++ )
       {
-         assertNotNull( sendStreamDeleteRequest(String.valueOf(firstId + i ) ) );
+         assertNotNull( sendStreamDeleteRequest( String.valueOf(firstId + i ) ) );
       }
       final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
       logger.info( "Stream Delete Test performed DELETE operation on {} streams in {} us. Throughput = {} requests/second.", numberOfStreams, deleteStreamCycleTime, (1_000_000 * numberOfStreams ) / deleteStreamCycleTime );
