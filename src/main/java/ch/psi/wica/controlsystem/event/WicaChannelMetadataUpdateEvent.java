@@ -3,7 +3,7 @@ package ch.psi.wica.controlsystem.event;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.app.ControlSystemName;
+import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -19,16 +19,16 @@ public class WicaChannelMetadataUpdateEvent
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final ControlSystemName controlSystemName;
+   private final WicaChannel wicaChannel;
    private final WicaChannelMetadata wicaChannelMetadata;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelMetadataUpdateEvent( ControlSystemName controlSystemName, WicaChannelMetadata wicaChannelMetadata )
+   public WicaChannelMetadataUpdateEvent( WicaChannel wicaChannel, WicaChannelMetadata wicaChannelMetadata )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelMetadataUpdateEvent.class);
-      this.controlSystemName = Validate.notNull( controlSystemName );
+      this.wicaChannel = Validate.notNull( wicaChannel );
       this.wicaChannelMetadata = Validate.notNull( wicaChannelMetadata );
       logger.info("Event created: '{}'.", this );
    }
@@ -36,9 +36,9 @@ public class WicaChannelMetadataUpdateEvent
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public ControlSystemName getControlSystemName()
+   public WicaChannel getWicaChannel()
    {
-      return controlSystemName;
+      return wicaChannel;
    }
 
    public WicaChannelMetadata getWicaChannelData()
@@ -50,7 +50,7 @@ public class WicaChannelMetadataUpdateEvent
    public String toString()
    {
       return "WicaChannelMetadataUpdateEvent{" +
-         "controlSystemName=" + controlSystemName +
+         "wicaChannel=" + wicaChannel +
          ", wicaChannelMetadata=" + wicaChannelMetadata +
       '}';
    }
