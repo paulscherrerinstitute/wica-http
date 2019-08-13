@@ -3,16 +3,17 @@ package ch.psi.wica.infrastructure.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.app.ControlSystemName;
+import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.ThreadSafe;
+import org.apache.commons.lang3.Validate;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
 @ThreadSafe
-public class WicaStreamMonitoredValueDataBuffer extends WicaStreamDataBuffer<ControlSystemName, WicaChannelValue>
+public class WicaStreamMonitoredValueDataBuffer extends WicaStreamDataBuffer<WicaChannelValue>
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -30,9 +31,10 @@ public class WicaStreamMonitoredValueDataBuffer extends WicaStreamDataBuffer<Con
 /*- Protected methods --------------------------------------------------------*/
 
    @Override
-   protected ControlSystemName getStorageKeyForChannel( WicaChannel wicaChannel )
+   protected WicaDataBufferStorageKey getStorageKey( WicaChannel wicaChannel )
    {
-      return  wicaChannel.getName().getControlSystemName();
+      Validate.notNull(wicaChannel );
+      return WicaDataBufferStorageKey.getMonitoredValueStorageKey(wicaChannel );
    }
 
 /*- Private methods ----------------------------------------------------------*/
