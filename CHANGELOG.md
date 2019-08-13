@@ -175,6 +175,17 @@ First release which supports new embryonic feature: channel GET and PUT operatio
       the same underlying control varaiable.
     - Fixed bug whereby polling operation was setting metadata to UNKNOWN.    
     - Added JDWP support so that the live application can be debugged inside a Docker container. 
+
+* [1.6.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/1.6.0-RELEASE)
+   - [CTRLIT-7235](https://jira.psi.ch/browse/CTRLIT-7235): Create 1.6.0-RELEASE. 
+    - Better support for polling (both direct) and on monitors. Polling channels are now shared when
+      the polling interval and channel name are the same.
+    - Wica Channel Get controller can now return data of varied type. Fixed bug whereby numeric
+      precision did not work (because all channels were considered Strings).
+    - Added possibility to specify fields of interest to be returned by Wica Channel Get controller.
+    - Wica streams no longer provide back history from when the channel was created. Each new subscriber
+      received the last available value plus all values which subsequently arrive.
+    - further code cleanup and work on making the unit tests more robust.   
      
 # Project Ideas Completed in Latest and Earlier Releases
 
@@ -217,12 +228,12 @@ a desktop monitor). DONE.
 1. Run units tests on GitLab server on check in. DONE.
 1. Provide automanagement for channel names which share the same epics channel. DONE.
 1. Fix bug whereby whereby metadata says type UNKNOWN (causes occasional problem with formatting). FIXED.
+1. Create end-to-end tests to measure performance. DONE.
 
 # Project Ideas Backlog
 
 When an idea is under serious consideration and a candidate for
 implementation it will be placed on the project's [Jira Kanban Board](https://jira.psi.ch/secure/RapidBoard.jspa?rapidView=1631)
-1. Create end-to-end tests to measure performance.
 
 1. Consider switching to http2. Need to resolve bug exposed when client navigates away.
 1. Improve page load times by minifying loadable artifacts.
@@ -238,3 +249,8 @@ implementation it will be placed on the project's [Jira Kanban Board](https://ji
 1. Ability to set stream properties on html page rather than just accept defaults. 
 1. Improve diagnostic messages when HTML page contains json content that is not valid.
 1. Improve performance of channel GET and PUT.
+1. Consider adding the possibility of stream sharing, data value backtrace (eg "backtrace: true")
+   and buffer size ("bufsize: 1000"). This would allow us to solve the problem with the ten hours
+   trace data needed for the HIPA display.
+1. Consider adding a pre-transition point to the change filter.    
+1. Consider adding support for explicitly controlling stream properties in html pages.
