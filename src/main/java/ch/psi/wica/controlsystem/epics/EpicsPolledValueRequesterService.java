@@ -64,25 +64,24 @@ public class EpicsPolledValueRequesterService
       final WicaChannel wicaChannel = wicaChannelStartPollingEvent.get();
       final int pollingIntervalInMillis = wicaChannelStartPollingEvent.getPollingIntervalInMillis();
 
+      // Note: this service only handles direct, network-based polling of a remote IOC
+      // using the EPICS channel access protocol. All other requests will be silently ignored.
       final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannelStartPollingEvent.getWicaDataAcquisitionMode();
-      if ( wicaDataAcquisitionMode != WicaDataAcquisitionMode.POLL )
+      if ( wicaDataAcquisitionMode.doesNetworkPolling() )
       {
-         logger.trace( "Ignoring start poll request for wica channel: '{}'", wicaChannel );
-         return;
-      }
-
-      // This service will start polling Wica channels where the protocol is
-      // not explicitly set, or where it is set to indicate that EPICS Channel
-      // Access (CA) protocol should be used.
-      final WicaChannelName wicaChannelName = wicaChannel.getName();
-      if ( ( wicaChannelName.getProtocol().isEmpty() ) || ( wicaChannelName.getProtocol().get() == WicaChannelName.Protocol.CA ) )
-      {
-         logger.trace( "Starting to poll wica channel: '{}'", wicaChannel );
-         startPolling( wicaChannel, pollingIntervalInMillis );
-      }
-      else
-      {
-         logger.trace( "Ignoring start poll request for wica channel: '{}'", wicaChannel );
+         // This service will start polling Wica channels where the protocol is
+         // not explicitly set, or where it is set to indicate that EPICS Channel
+         // Access (CA) protocol should be used.
+         final WicaChannelName wicaChannelName = wicaChannel.getName();
+         if ( (wicaChannelName.getProtocol().isEmpty()) || (wicaChannelName.getProtocol().get() == WicaChannelName.Protocol.CA) )
+         {
+            logger.trace("Starting to poll wica channel: '{}'", wicaChannel);
+            startPolling(wicaChannel, pollingIntervalInMillis);
+         }
+         else
+         {
+            logger.trace("Ignoring start poll request for wica channel: '{}'", wicaChannel);
+         }
       }
    }
 
@@ -92,25 +91,24 @@ public class EpicsPolledValueRequesterService
       Validate.notNull( wicaChannelStopPollingEvent);
       final WicaChannel wicaChannel = wicaChannelStopPollingEvent.get();
 
+      // Note: this service only handles direct, network-based polling of a remote IOC
+      // using the EPICS channel access protocol. All other requests will be silently ignored.
       final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannelStopPollingEvent.getWicaDataAcquisitionMode();
-      if ( wicaDataAcquisitionMode != WicaDataAcquisitionMode.POLL )
+      if ( wicaDataAcquisitionMode.doesNetworkPolling() )
       {
-         logger.trace( "Ignoring stop poll request for wica channel: '{}'", wicaChannel );
-         return;
-      }
-
-      // This service will stop polling Wica channels where the protocol is
-      // not explicitly set, or where it is set to indicate that EPICS Channel
-      // Access (CA) protocol should be used.
-      final WicaChannelName wicaChannelName = wicaChannel.getName();
-      if ( ( wicaChannelName.getProtocol().isEmpty() ) || ( wicaChannelName.getProtocol().get() == WicaChannelName.Protocol.CA ) )
-      {
-         logger.trace( "Stopping polling wica channel: '{}'", wicaChannel );
-         stopPolling( wicaChannel );
-      }
-      else
-      {
-         logger.trace( "Ignoring stop poll request for wica channel: '{}'", wicaChannel );
+         // This service will stop polling Wica channels where the protocol is
+         // not explicitly set, or where it is set to indicate that EPICS Channel
+         // Access (CA) protocol should be used.
+         final WicaChannelName wicaChannelName = wicaChannel.getName();
+         if ( (wicaChannelName.getProtocol().isEmpty()) || (wicaChannelName.getProtocol().get() == WicaChannelName.Protocol.CA) )
+         {
+            logger.trace("Stopping polling wica channel: '{}'", wicaChannel);
+            stopPolling(wicaChannel);
+         }
+         else
+         {
+            logger.trace("Ignoring stop poll request for wica channel: '{}'", wicaChannel);
+         }
       }
    }
 
