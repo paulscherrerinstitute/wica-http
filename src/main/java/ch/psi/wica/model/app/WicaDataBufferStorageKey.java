@@ -37,13 +37,27 @@ public class WicaDataBufferStorageKey
    public static WicaDataBufferStorageKey getPolledValueStorageKey( WicaChannel wicaChannel )
    {
       Validate.notNull( wicaChannel );
-      final int hashCode = (Objects.hash( wicaChannel.getName(), wicaChannel.getProperties().getOptionalPollingIntervalInMillis() ) );
+
+      // Optimisation Note:
+      // The storage key for polling a channel is based on the channel's name, the
+      // channel's polling interval and the type of polling mode (network-based or
+      // monitor based). This means that resources can be shared between different
+      // subscribers when/if these parameters are aligned.
+      final int hashCode = (Objects.hash( wicaChannel.getName(),
+                                          wicaChannel.getProperties().getOptionalPollingIntervalInMillis(),
+                                          wicaChannel.getProperties().getDataAcquisitionMode() ) );
+
       return new WicaDataBufferStorageKey( wicaChannel, hashCode );
    }
 
    public static WicaDataBufferStorageKey getMonitoredValueStorageKey( WicaChannel wicaChannel )
    {
       Validate.notNull( wicaChannel );
+
+      // Optimisation Note:
+      // The storage key for monitoring a channel is based only on the channel's name.
+      // This means that resources can be shared when multiple wica stream subscribers
+      // share the same parameters.
       final int hashCode = (Objects.hash( wicaChannel.getName().getControlSystemName() ) );
       return new WicaDataBufferStorageKey( wicaChannel, hashCode );
    }
