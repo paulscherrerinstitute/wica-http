@@ -3,6 +3,7 @@ package ch.psi.wica.infrastructure.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelData;
 import net.jcip.annotations.ThreadSafe;
@@ -18,13 +19,13 @@ import java.util.stream.Collectors;
 /*- Class Declaration --------------------------------------------------------*/
 
 @ThreadSafe
-abstract class WicaStreamDataBuffer<K, T extends WicaChannelData>
+abstract class WicaStreamDataBuffer<T extends WicaChannelData>
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Map<K, Deque<T>> stash;
+   private final Map<WicaDataBufferStorageKey, Deque<T>> stash;
    private final int bufferSize;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -48,10 +49,13 @@ abstract class WicaStreamDataBuffer<K, T extends WicaChannelData>
       Validate.notNull( wicaChannels );
       Validate.notNull( since );
 
-      return wicaChannels.stream().collect( Collectors.toUnmodifiableMap( c -> c , c-> this.getLaterThan( getStorageKeyForChannel( c ), since ) ) );
+      return wicaChannels.stream().collect( Collectors.toUnmodifiableMap( c -> c , c-> {
+         final WicaDataBufferStorageKey wicaDataBufferStorageKey = getStorageKey( c );
+         return this.getLaterThan( wicaDataBufferStorageKey, since );
+      } ) );
    }
 
-   public void saveDataPoint( K key, T t )
+   public void saveDataPoint( WicaDataBufferStorageKey key, T t )
    {
       Validate.notNull( key );
       Validate.notNull( t );
@@ -78,7 +82,7 @@ abstract class WicaStreamDataBuffer<K, T extends WicaChannelData>
       }
    }
 
-   public T getLastDataPoint( K key )
+   public T getLatest( WicaDataBufferStorageKey key )
    {
       Validate.notNull( key );
       Validate.isTrue( stash.containsKey( key ) );
@@ -92,11 +96,11 @@ abstract class WicaStreamDataBuffer<K, T extends WicaChannelData>
 
 /*- Protected methods --------------------------------------------------------*/
 
-   protected abstract K getStorageKeyForChannel( WicaChannel wicaChannel );
+   protected abstract WicaDataBufferStorageKey getStorageKey( WicaChannel wicaChannel );
 
 /*- Private methods ----------------------------------------------------------*/
 
-   private List<T> getLaterThan( K key, LocalDateTime since )
+   private List<T> getLaterThan( WicaDataBufferStorageKey key, LocalDateTime since )
    {
       Validate.notNull( key );
       Validate.notNull( since );
