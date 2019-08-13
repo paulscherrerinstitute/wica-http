@@ -29,8 +29,6 @@ public class WicaStreamServerSentEventPublisher
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
-
    private final Logger logger = LoggerFactory.getLogger( WicaStreamServerSentEventPublisher.class );
    private final WicaStream wicaStream;
    private final WicaStreamId wicaStreamId;
@@ -160,7 +158,7 @@ public class WicaStreamServerSentEventPublisher
     */
    private Flux<ServerSentEvent<String>> createMetadataFlux()
    {
-      final AtomicReference<LocalDateTime> lastUpdateTime = new AtomicReference<>( LONG_AGO );
+      final AtomicReference<LocalDateTime> lastUpdateTime = new AtomicReference<>( LocalDateTime.MIN );
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getMetadataFluxIntervalInMillis() ) )
          .map( l -> {
             logger.trace("channel-metadata flux with id: '{}' is publishing new SSE...", wicaStreamId);
@@ -176,7 +174,6 @@ public class WicaStreamServerSentEventPublisher
          .doOnError( (e) -> logger.warn( "heartbeat flux with id: '{}' had error.", wicaStreamId, e ));
       //.log();
    }
-
 
    /**
     * Create the WICA CHANNEL MONITORED VALUES FLUX.
@@ -195,12 +192,15 @@ public class WicaStreamServerSentEventPublisher
     */
    private Flux<ServerSentEvent<String>> createMonitoredValueFlux()
    {
-      final AtomicReference<LocalDateTime> lastUpdateTime = new AtomicReference<>( LONG_AGO );
+      final AtomicReference<LocalDateTime> lastUpdateTime = new AtomicReference<>( LocalDateTime.MIN  );
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getMonitoredValueFluxIntervalInMillis() ) )
          .map(l -> {
             logger.trace("channel-value-monitor flux with id: '{}' is publishing new SSE...", wicaStreamId );
-            final var map = wicaStreamMonitoredValueCollectorService.get( wicaStream, lastUpdateTime.getAndSet( LocalDateTime.now() ) );
-            final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
+            final var timeOfLastUpdate = lastUpdateTime.getAndSet( LocalDateTime.now() );
+            final var map = timeOfLastUpdate.equals( LocalDateTime.MIN  ) ?
+               wicaStreamMonitoredValueCollectorService.getLatest( wicaStream ) :
+               wicaStreamMonitoredValueCollectorService.get( wicaStream, timeOfLastUpdate );
+            final var jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
             return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_MONITORED_VALUES.build(wicaStreamId, jsonServerSentEventString );
          } )
          .doOnComplete( () -> logger.warn( "channel-value-monitor flux with id: '{}' completed.", wicaStreamId ))
@@ -208,7 +208,6 @@ public class WicaStreamServerSentEventPublisher
          .doOnError( (e) -> logger.warn( "channel-value-monitor flux with id: '{}' had error.", wicaStreamId, e ));
       //.log();
    }
-
 
    /**
     * Create the WICA CHANNEL POLLED VALUES FLUX.
@@ -227,12 +226,15 @@ public class WicaStreamServerSentEventPublisher
     */
    private Flux<ServerSentEvent<String>> createPolledValueFlux()
    {
-      final AtomicReference<LocalDateTime> lastUpdateTime = new AtomicReference<>( LONG_AGO );
+      final AtomicReference<LocalDateTime> lastUpdateTime = new AtomicReference<>( LocalDateTime.MIN  );
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getPolledValueFluxIntervalInMillis() ) )
          .map(l -> {
             logger.trace("channel-value-poll flux with id: '{}' is publishing new SSE...", wicaStreamId );
-            final var map = wicaStreamPolledValueCollectorService.get( wicaStream, lastUpdateTime.getAndSet( LocalDateTime.now() ) );
-            final String jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
+            final var timeOfLastUpdate = lastUpdateTime.getAndSet( LocalDateTime.now() );
+            final var map = timeOfLastUpdate.equals( LocalDateTime.MIN  ) ?
+               wicaStreamPolledValueCollectorService.getLatest( wicaStream ) :
+               wicaStreamPolledValueCollectorService.get( wicaStream, timeOfLastUpdate );
+            final var jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
             return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_POLLED_VALUES.build(wicaStreamId, jsonServerSentEventString );
          } )
          .doOnComplete( () -> logger.warn( "channel-value-poll flux with id: '{}' completed.", wicaStreamId ))
