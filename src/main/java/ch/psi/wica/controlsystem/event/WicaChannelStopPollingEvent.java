@@ -25,11 +25,15 @@ public class WicaChannelStopPollingEvent
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelStopPollingEvent( WicaChannel wicaChannel, WicaDataAcquisitionMode wicaDataAcquisitionMode )
+   public WicaChannelStopPollingEvent( WicaChannel wicaChannel )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelStopPollingEvent.class);
-      this.wicaChannel = Validate.notNull( wicaChannel );
-      this.wicaDataAcquisitionMode = Validate.notNull( wicaDataAcquisitionMode );
+
+      Validate.notNull( wicaChannel );
+      Validate.isTrue( wicaChannel.getProperties().getDataAcquisitionMode().doesPolling() );
+      this.wicaChannel = wicaChannel;
+      this.wicaDataAcquisitionMode = wicaChannel.getProperties().getDataAcquisitionMode();
+
       logger.trace("Event created: '{}'.", this );
    }
 

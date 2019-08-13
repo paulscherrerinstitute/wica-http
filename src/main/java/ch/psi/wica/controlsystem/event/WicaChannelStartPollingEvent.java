@@ -27,16 +27,18 @@ public class WicaChannelStartPollingEvent
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelStartPollingEvent( WicaChannel wicaChannel, WicaDataAcquisitionMode wicaDataAcquisitionMode, int pollingIntervalInMillis )
+   public WicaChannelStartPollingEvent( WicaChannel wicaChannel )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelStartPollingEvent.class);
+
       Validate.notNull( wicaChannel );
-      Validate.notNull( wicaDataAcquisitionMode );
-      Validate.isTrue( pollingIntervalInMillis > 0 );
+      Validate.isTrue( wicaChannel.getProperties().getDataAcquisitionMode().doesPolling() );
+      Validate.isTrue(  wicaChannel.getProperties().getPollingIntervalInMillis() > 0 );
 
       this.wicaChannel = wicaChannel;
-      this.wicaDataAcquisitionMode = wicaDataAcquisitionMode;
-      this.pollingIntervalInMillis = pollingIntervalInMillis;
+      this.wicaDataAcquisitionMode = wicaChannel.getProperties().getDataAcquisitionMode();
+      this.pollingIntervalInMillis = wicaChannel.getProperties().getPollingIntervalInMillis();
+
       logger.trace("Event created: '{}'.", this );
    }
 
