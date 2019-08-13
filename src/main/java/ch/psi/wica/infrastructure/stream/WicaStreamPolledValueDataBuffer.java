@@ -3,15 +3,17 @@ package ch.psi.wica.infrastructure.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.ThreadSafe;
+import org.apache.commons.lang3.Validate;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
 @ThreadSafe
-public class WicaStreamPolledValueDataBuffer extends WicaStreamDataBuffer<WicaChannel, WicaChannelValue>
+public class WicaStreamPolledValueDataBuffer extends WicaStreamDataBuffer<WicaChannelValue>
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -29,9 +31,10 @@ public class WicaStreamPolledValueDataBuffer extends WicaStreamDataBuffer<WicaCh
 /*- Protected methods --------------------------------------------------------*/
 
    @Override
-   protected WicaChannel getStorageKeyForChannel( WicaChannel wicaChannel )
+   protected WicaDataBufferStorageKey getStorageKey( WicaChannel wicaChannel )
    {
-      return wicaChannel;
+      Validate.notNull( wicaChannel );
+      return WicaDataBufferStorageKey.getPolledValueStorageKey(wicaChannel );
    }
 
 /*- Private methods ----------------------------------------------------------*/
