@@ -11,6 +11,7 @@ import ch.psi.wica.model.app.WicaFilterType;
 import ch.psi.wica.model.channel.*;
 import ch.psi.wica.model.stream.WicaStream;
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -54,45 +55,58 @@ class WicaStreamMonitoredValueRequesterServiceTest
    @Autowired
    private WicaStreamMonitoredValueRequesterService service;
 
+   private WicaChannel testChannel;
+   private WicaStream wicaStream;
+
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   @BeforeEach
+   void beforeEach()
+   {
+      testChannel = WicaChannelBuilder
+            .create()
+            .withChannelNameAndProperties( "XXX", WicaChannelPropertiesBuilder
+                  .create().withDataAcquisitionMode( WicaDataAcquisitionMode.MONITOR )
+                  .build() )
+            .build();
+
+      wicaStream = WicaStreamBuilder
+            .create()
+            .withId( "myStream" )
+            .withChannel( testChannel )
+            .build();
+
+   }
+
    @Test
    void testStartMonitoring_IncreasesInterestCount()
    {
-      final String testChannelNameAsString ="XXX";
-      final WicaChannelName testChannelName = WicaChannelName.of( testChannelNameAsString );
-      final WicaStream wicaStream = WicaStreamBuilder.create().withId( "myStream" ).withChannelNameAndDefaultProperties( testChannelNameAsString ).build();
-
-      assertEquals(0, service.getInterestCountForChannel( testChannelName ) );
+      assertEquals(0, service.getInterestCountForChannel( testChannel ) );
 
       service.startMonitoring( wicaStream );
-      assertEquals(1, service.getInterestCountForChannel( testChannelName ) );
+      assertEquals(1, service.getInterestCountForChannel( testChannel ) );
 
       service.startMonitoring( wicaStream );
-      assertEquals(2, service.getInterestCountForChannel( testChannelName ) );
+      assertEquals(2, service.getInterestCountForChannel( testChannel ) );
    }
 
    @Test
    void testStopMonitoring_DecreasesInterestCount()
    {
-      final String testChannelNameAsString ="XXX";
-      final WicaChannelName testChannelName = WicaChannelName.of( testChannelNameAsString );
-      final WicaStream wicaStream = WicaStreamBuilder.create().withId( "myStream" ).withChannelNameAndDefaultProperties( testChannelNameAsString ).build();
-
       service.startMonitoring( wicaStream );
       service.startMonitoring( wicaStream );
       service.startMonitoring( wicaStream );
-      assertEquals(3, service.getInterestCountForChannel(testChannelName ) );
+      assertEquals(3, service.getInterestCountForChannel( testChannel ) );
 
       service.stopMonitoring( wicaStream );
-      assertEquals(2, service.getInterestCountForChannel( testChannelName ) );
+      assertEquals(2, service.getInterestCountForChannel( testChannel ) );
       service.stopMonitoring( wicaStream );
-      assertEquals(1, service.getInterestCountForChannel( testChannelName ) );
+      assertEquals(1, service.getInterestCountForChannel( testChannel ) );
       service.stopMonitoring( wicaStream );
-      assertEquals(0, service.getInterestCountForChannel( testChannelName ) );
+      assertEquals(0, service.getInterestCountForChannel( testChannel ) );
    }
 
    @Test
