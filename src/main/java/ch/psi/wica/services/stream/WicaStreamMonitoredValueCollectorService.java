@@ -8,7 +8,7 @@ import ch.psi.wica.controlsystem.event.WicaChannelPollMonitorEvent;
 import ch.psi.wica.controlsystem.event.WicaChannelPolledValueUpdateEvent;
 import ch.psi.wica.infrastructure.channel.WicaChannelValueTimestampRewriter;
 import ch.psi.wica.infrastructure.stream.WicaStreamMonitoredValueDataBuffer;
-import ch.psi.wica.model.app.ControlSystemName;
+import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
@@ -22,10 +22,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -49,7 +49,7 @@ public class WicaStreamMonitoredValueCollectorService
    public WicaStreamMonitoredValueCollectorService( @Value( "${wica.channel-value-stash-buffer-size}") int bufferSize,
                                                     @Autowired ApplicationEventPublisher applicationEventPublisher,
                                                     @Autowired WicaChannelValueTimestampRewriter wicaChannelValueTimestampRewriter,
-                                                    @Autowired WicaChannelValueFilteringService wicaChannelValueFilteringService)
+                                                    @Autowired WicaChannelValueFilteringService wicaChannelValueFilteringService )
    {
       this.wicaStreamMonitoredValueDataBuffer = new WicaStreamMonitoredValueDataBuffer( bufferSize );
       this.applicationEventPublisher = applicationEventPublisher;
@@ -60,32 +60,36 @@ public class WicaStreamMonitoredValueCollectorService
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public Map<WicaChannel,List<WicaChannelValue>> get( WicaStream wicaStream, LocalDateTime since)
+   public Map<WicaChannel,List<WicaChannelValue>> get( WicaStream wicaStream, LocalDateTime since )
    {
       final var inputMap = wicaStreamMonitoredValueDataBuffer.getLaterThan( wicaStream.getWicaChannels(), since );
-      final Map<WicaChannel,List<WicaChannelValue>> outputMap = new ConcurrentHashMap<>();
-      inputMap.forEach( (ch,lst ) -> {
-         if ( ch.getProperties().getDataAcquisitionMode().doesMonitorPublication() )
-         {
-            var outputList = wicaChannelValueFilteringService.filterValues( ch, lst );
-            if ( outputList.size() != 0 )
-            {
-               outputMap.put(ch, outputList);
-            }
-         }
-      } );
-      return Collections.unmodifiableMap( outputMap );
+      return inputMap.entrySet()
+            .stream()
+            .filter( e -> e.getKey().getProperties().getDataAcquisitionMode().doesMonitorPublication() )
+            .map( e -> new AbstractMap.SimpleEntry<>( e.getKey(), wicaChannelValueFilteringService.filterValues( e.getKey(), e.getValue() ) ) )
+            .filter( e -> e.getValue().size() > 0 )
+            .collect( Collectors.toUnmodifiableMap( Map.Entry::getKey, Map.Entry::getValue ) );
    }
 
-/*- Private methods ----------------------------------------------------------*/
+   Map<WicaChannel,List<WicaChannelValue>> getLatest( WicaStream wicaStream )
+   {
+      final var inputMap = wicaStreamMonitoredValueDataBuffer.getLaterThan( wicaStream.getWicaChannels(), LocalDateTime.MIN );
+      return inputMap.entrySet()
+                     .stream()
+                     .filter( e -> e.getKey().getProperties().getDataAcquisitionMode().doesMonitorPublication() )
+                     .map( e -> new AbstractMap.SimpleEntry<>( e.getKey(), wicaChannelValueFilteringService.filterLastValues( e.getValue() ) ) )
+                     .filter( e -> e.getValue().size() > 0 )
+                     .collect( Collectors.toUnmodifiableMap( Map.Entry::getKey, Map.Entry::getValue ) );
+   }
 
    @EventListener
    public void handleWicaChannelMonitoredValueUpdateEvent( WicaChannelMonitoredValueUpdateEvent event)
    {
       Validate.notNull( event );
-      final ControlSystemName controlSystemName = event.getControlSystemName();
+      final WicaChannel wicaChannel = event.getWicaChannel();
+      final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey(wicaChannel );
       final WicaChannelValue wicaChannelValue = event.getWicaChannelValue();
-      wicaStreamMonitoredValueDataBuffer.saveDataPoint(controlSystemName, wicaChannelValue );
+      wicaStreamMonitoredValueDataBuffer.saveDataPoint( wicaDataBufferStorageKey, wicaChannelValue );
    }
 
    @EventListener
@@ -93,13 +97,13 @@ public class WicaStreamMonitoredValueCollectorService
    {
       Validate.notNull( event );
       final WicaChannel wicaChannel = event.getWicaChannel();
-      final ControlSystemName controlSystemName = wicaChannel.getName().getControlSystemName();
-      final WicaChannelValue wicaChannelValue = wicaStreamMonitoredValueDataBuffer.getLastDataPoint( controlSystemName );
+      final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey(wicaChannel );
+      final WicaChannelValue wicaChannelValue = wicaStreamMonitoredValueDataBuffer.getLatest( wicaDataBufferStorageKey );
       final WicaChannelValue rewrittenChannelValue = wicaChannelValueTimestampRewriter.rewrite( wicaChannelValue, LocalDateTime.now() );
       applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannel, rewrittenChannelValue ) );
    }
 
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
-
 
 }
