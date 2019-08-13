@@ -60,16 +60,15 @@ public class WicaChannelPollMonitorService
    {
       Validate.notNull( wicaChannelStartPollingEvent );
 
+      // Note: this service only handles the indirect, local, polling of a monitor which should
+      // already have been established on the remote IOC. All other requests will be  silently ignored.
       final WicaChannel wicaChannel = wicaChannelStartPollingEvent.get();
-      final int pollingIntervalInMillis = wicaChannelStartPollingEvent.getPollingIntervalInMillis();
       final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannelStartPollingEvent.getWicaDataAcquisitionMode();
-
-      if ( ! wicaDataAcquisitionMode.doesMonitorPolling() )
+      if ( wicaDataAcquisitionMode.doesMonitorPolling() )
       {
-         logger.trace( "Ignoring start poll request for wica channel named: '{}'", wicaChannel);
-         return;
+         final int pollingIntervalInMillis = wicaChannelStartPollingEvent.getPollingIntervalInMillis();
+         startPolling(wicaChannel, pollingIntervalInMillis);
       }
-      startPolling( wicaChannel, pollingIntervalInMillis );
    }
 
    @EventListener
@@ -77,15 +76,14 @@ public class WicaChannelPollMonitorService
    {
       Validate.notNull( wicaChannelStopPollingEvent );
 
+      // Note: this service only handles the indirect, local, polling of a monitor which should
+      // already have been established on the remote IOC. All other requests will be  silently ignored.
       final WicaChannel wicaChannel = wicaChannelStopPollingEvent.get();
       final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannelStopPollingEvent.getWicaDataAcquisitionMode();
-
-      if ( ! wicaDataAcquisitionMode.doesMonitorPolling() )
+      if ( wicaDataAcquisitionMode.doesMonitorPolling() )
       {
-         logger.trace( "Ignoring start poll request for wica channel: '{}'", wicaChannel );
-         return;
+         stopPolling(wicaChannel);
       }
-      stopPolling( wicaChannel );
    }
 
 /*- Private methods ----------------------------------------------------------*/
