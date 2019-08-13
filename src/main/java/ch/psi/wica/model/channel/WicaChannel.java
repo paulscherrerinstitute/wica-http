@@ -87,7 +87,7 @@ public class WicaChannel
    @Override
    public int hashCode()
    {
-      return Objects.hash(wicaChannelName, wicaChannelProperties);
+      return Objects.hash( wicaChannelName, wicaChannelProperties);
    }
 
 /*- Private methods ----------------------------------------------------------*/
