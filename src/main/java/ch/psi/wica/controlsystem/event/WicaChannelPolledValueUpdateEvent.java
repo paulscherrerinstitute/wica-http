@@ -25,11 +25,16 @@ public class WicaChannelPolledValueUpdateEvent
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelPolledValueUpdateEvent( WicaChannel WicaChannel, WicaChannelValue wicaChannelValue )
+   public WicaChannelPolledValueUpdateEvent( WicaChannel wicaChannel, WicaChannelValue wicaChannelValue )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelPolledValueUpdateEvent.class);
-      this.wicaChannel = Validate.notNull( WicaChannel );
-      this.wicaChannelValue = Validate.notNull( wicaChannelValue );
+
+      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannelValue );
+      Validate.isTrue( wicaChannel.getProperties().getDataAcquisitionMode().doesPolling(), "The data acquisition mode of this channel does not support polling." );
+
+      this.wicaChannel = wicaChannel;
+      this.wicaChannelValue = wicaChannelValue;
       logger.trace("Event created: '{}'.", this );
    }
 
