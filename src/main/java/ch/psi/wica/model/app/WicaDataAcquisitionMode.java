@@ -17,10 +17,10 @@ public enum WicaDataAcquisitionMode
 
 /*- Public attributes --------------------------------------------------------*/
 
-   POLL              ("poll",true, false, false, false ),
-   MONITOR           ("monitor",false, true, true, false ),
-   POLL_AND_MONITOR  ("poll-and-monitor", true, true, true, true ),
-   POLL_MONITOR      ("poll-monitor", true, true, false,true );
+   POLL              ("poll",true, false, false, false, true ),
+   MONITOR           ("monitor",false, true, true, false, false ),
+   POLL_AND_MONITOR  ("poll-and-monitor", true, true, true, true, false ),
+   POLL_MONITOR      ("poll-monitor", true, true, false,true, false );
 
 /*- Private attributes -------------------------------------------------------*/
 
@@ -29,17 +29,19 @@ public enum WicaDataAcquisitionMode
    private final boolean doesMonitoring;
    private final boolean doesMonitorPublication;
    private final boolean doesMonitorPolling;
+   private final boolean doesNetworkPolling;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   WicaDataAcquisitionMode( String name, boolean doesPolling, boolean doesMonitoring, boolean doesMonitorPublication, boolean doesMonitorPolling )
+   WicaDataAcquisitionMode( String name, boolean doesPolling, boolean doesMonitoring, boolean doesMonitorPublication, boolean doesMonitorPolling, boolean doesNetworkPolling )
    {
       this.name = name;
       this.doesPolling = doesPolling;
       this.doesMonitoring = doesMonitoring;
       this.doesMonitorPublication = doesMonitorPublication;
       this.doesMonitorPolling = doesMonitorPolling;
+      this.doesNetworkPolling = doesNetworkPolling;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -49,18 +51,23 @@ public enum WicaDataAcquisitionMode
    {
       return doesPolling;
    }
-   public boolean doesMonitoring()
-   {
-      return doesMonitoring;
-   }
+
    public boolean doesMonitorPublication()
    {
       return doesMonitorPublication;
    }
-
+   public boolean doesMonitoring()
+   {
+      return doesMonitoring;
+   }
    public boolean doesMonitorPolling()
    {
       return doesMonitorPolling;
+   }
+
+   public boolean doesNetworkPolling()
+   {
+      return doesNetworkPolling;
    }
 
    @Override

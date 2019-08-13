@@ -3,7 +3,7 @@ package ch.psi.wica.controlsystem.event;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelName;
+import ch.psi.wica.model.channel.WicaChannel;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,32 +18,35 @@ public class WicaChannelStopMonitoringEvent
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final WicaChannelName wicaChannelName;
+   private final WicaChannel wicaChannel;
 
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelStopMonitoringEvent( WicaChannelName wicaChannelName )
+   public WicaChannelStopMonitoringEvent( WicaChannel wicaChannel )
    {
-      final Logger logger = LoggerFactory.getLogger(WicaChannelStopMonitoringEvent.class);
-      this.wicaChannelName = Validate.notNull(wicaChannelName );
+      final Logger logger = LoggerFactory.getLogger( WicaChannelStopMonitoringEvent.class);
+
+      Validate.isTrue( wicaChannel.getProperties().getDataAcquisitionMode().doesMonitoring() );
+
+      this.wicaChannel = Validate.notNull( wicaChannel );
       logger.trace("Event created: '{}'.", this );
    }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public WicaChannelName get()
+   public WicaChannel get()
    {
-      return wicaChannelName;
+      return wicaChannel;
    }
 
    @Override
    public String toString()
    {
       return "WicaChannelStopMonitoringEvent{" +
-         "wicaChannelName=" + wicaChannelName +
+         "wicaChannel=" + wicaChannel +
       '}';
    }
 
