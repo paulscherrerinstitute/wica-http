@@ -4,7 +4,7 @@ package ch.psi.wica.model.channel;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.app.ControlSystemName;
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
