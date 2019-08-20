@@ -251,7 +251,7 @@ const WicaRenderingProperties = Object.freeze ({
  * JS Object that defines the properties and default values supported by a WicaStream.
  *
  * @property {number} [hbflux=15000] - The interval in milliseconds between heartbeat messages.
- * @property {number} [monflux=100] The interval in milliseconds between transmitting successive
+ * @property {number} [metaflux=100] The interval in milliseconds between transmitting successive
  *    Server-Sent-Event (SSE) messages with the latest wica channel metadata.
  * @property {number} [monflux=100] The interval in milliseconds between transmitting successive
  *    Server-Sent-Event (SSE) messages with the latest wica channel monitored values.
@@ -267,11 +267,11 @@ const WicaRenderingProperties = Object.freeze ({
 const WicaStreamProperties = Object.freeze ({
     hbflux: 15000,
     metaflux: 100,
-    monflux: 100,
+    monflux: 200,
     pollflux: 1000,
     daqmode: "monitor",
     pollint: 1000,
-    prec: 6,
+    prec: 3,
     fields: "val;sevr"
 } );
 
