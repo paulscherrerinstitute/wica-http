@@ -8,12 +8,16 @@ import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -79,6 +83,31 @@ class WicaChannelMetadataMapSerializerTest
       logger.info("JSON Metadata MAP serialisation like this: '{}'", JsonStringFormatter.prettyFormat(jsonStr ) );
    }
 
+   @CsvSource( { "10000", "1", "10", "100", "1000", "1000", "1000", "10000", "10000", "10000" } )
+   @ParameterizedTest
+   void test_serializePerformance( int times )
+   {
+      final Map<WicaChannel, WicaChannelMetadata> map = Map.of( WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "unkMetadataChannel"     ).build(), unkMetadata,
+                                                                WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "strMetadataChannel"     ).build(), strMetadata,
+                                                                WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "strArrMetadataChannel"  ).build(), strArrMetadata,
+                                                                WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "intMetadataChannel"     ).build(), intMetadata,
+                                                                WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "intArrMetadataChannel"  ).build(), intArrMetadata,
+                                                                WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "realMetadataChannel"    ).build(), realMetadata,
+                                                                WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "realArrMetadataChannel" ).build(), realArrMetadata,
+                                                                WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "realNanMetadataChannel" ).build(), realNanMetadata,
+                                                                WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "realInfMetadataChannel" ).build(), realInfMetadata );
+
+
+      final var serializer = new WicaChannelMetadataMapSerializer( false );
+
+      final StopWatch stopwatch = StopWatch.createStarted();
+      for ( int i= 0; i < times; i++ )
+      {
+         serializer.serialize( map );
+      }
+      long elapsedTime = stopwatch.getTime(TimeUnit.MILLISECONDS);
+      logger.info( "Elapsed time for {} iterations was: {} ms", times, elapsedTime );
+   }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
