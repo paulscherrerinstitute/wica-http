@@ -3,7 +3,6 @@ package ch.psi.wica.infrastructure.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.infrastructure.channel.WicaChannelValueTimestampRewriter;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
