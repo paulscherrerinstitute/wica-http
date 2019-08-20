@@ -11,7 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -44,8 +45,11 @@ class WicaChannelValuePassEverythingFilterTest
 
       final WicaChannelValueFilter mapper = new WicaChannelValuePassEverythingFilter();
       final List<WicaChannelValue> outputList  = mapper.apply(inputList );
-      assertEquals( inputList.size(), outputList.size() );
-      assertEquals( inputList.get( 3 ), outputList.get( 3 ) );
+      assertThat( outputList.size(), is( inputList.size() ) );
+      assertThat( outputList.get( 0 ), is( inputList.get( 0 ) ) );
+      assertThat( outputList.get( 1 ), is( inputList.get( 1 ) ) );
+      assertThat( outputList.get( 2 ), is( inputList.get( 2 ) ) );
+      assertThat( outputList.get( 3 ), is( inputList.get( 3 ) ) );
    }
 
 
