@@ -95,6 +95,13 @@ public enum WicaChannelType
 
 
 /*- Public methods -----------------------------------------------------------*/
+
+   @Override
+   public String toString()
+   {
+      return this.name();
+   }
+
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
