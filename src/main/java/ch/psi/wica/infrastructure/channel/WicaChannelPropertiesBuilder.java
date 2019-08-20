@@ -102,6 +102,7 @@ public class WicaChannelPropertiesBuilder
 
    public WicaChannelPropertiesBuilder withPollingIntervalInMillis( int pollingIntervalInMillis )
    {
+      Validate.isTrue( pollingIntervalInMillis >= 0,"The 'pollingIntervalInMillis' argument was negative." );
       this.pollingIntervalInMillis = pollingIntervalInMillis;
       return this;
    }
@@ -114,6 +115,7 @@ public class WicaChannelPropertiesBuilder
 
    public WicaChannelPropertiesBuilder withNumericPrecision( int numericPrecision )
    {
+      Validate.isTrue( numericPrecision >= 0,"The 'numericPrecision' argument was negative." );
       this.numericPrecision = numericPrecision;
       return this;
    }
@@ -126,24 +128,28 @@ public class WicaChannelPropertiesBuilder
 
    public WicaChannelPropertiesBuilder withFilterNumSamples( int filterNumSamples )
    {
+      Validate.isTrue( filterNumSamples >= 0,"The 'filterNumSamples' argument was negative." );
       this.filterNumSamples = filterNumSamples;
       return this;
    }
 
    public WicaChannelPropertiesBuilder withFilterCycleLength( int filterCycleLength )
    {
+      Validate.isTrue( filterCycleLength >= 0,"The 'filterCycleLength' argument was negative." );
       this.filterCycleLength = filterCycleLength;
       return this;
    }
 
    public WicaChannelPropertiesBuilder withFilterSamplingIntervalInMillis( int filterSamplingIntervalInMillis )
    {
+      Validate.isTrue( filterSamplingIntervalInMillis >= 0,"The 'filterSamplingIntervalInMillis' argument was negative." );
       this.filterSamplingIntervalInMillis = filterSamplingIntervalInMillis;
       return this;
    }
 
    public WicaChannelPropertiesBuilder withFilterDeadband( double filterDeadband )
    {
+      Validate.isTrue( filterDeadband >= 0.0,"The 'filterDeadband' argument was negative." );
       this.filterDeadband = filterDeadband;
       return this;
    }
