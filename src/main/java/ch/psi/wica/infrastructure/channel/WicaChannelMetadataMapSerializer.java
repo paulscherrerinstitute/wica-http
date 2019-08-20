@@ -28,24 +28,36 @@ public class WicaChannelMetadataMapSerializer
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final ObjectMapper mapper;
+   private static final ObjectMapper mapperWithoutQuotedStrings = Jackson2ObjectMapperBuilder.json().build();
+   private static final ObjectMapper mapperWithQuotedStrings = Jackson2ObjectMapperBuilder.json().build();
 
-/*- Main ---------------------------------------------------------------------*/
+   static {
+      final SimpleModule moduleWithoutQuotedStrings = new SimpleModule();
+      moduleWithoutQuotedStrings.addSerializer( new MyCustomWicaChannelMetadataMapSerializer(false ) );
+      mapperWithoutQuotedStrings.registerModule(moduleWithoutQuotedStrings );
+
+      final SimpleModule moduleWithQuotedStrings = new SimpleModule();
+      moduleWithQuotedStrings.addSerializer( new MyCustomWicaChannelMetadataMapSerializer(true ) );
+      mapperWithQuotedStrings.registerModule(moduleWithQuotedStrings );
+   }
+
+   private final boolean quoteNumericStrings;
+
+   /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelMetadataMapSerializer( boolean quoteNumericStrings )
+   public WicaChannelMetadataMapSerializer( boolean quoteNumericStrings)
    {
-        final SimpleModule module = new SimpleModule();
-        module.addSerializer( new MyCustomWicaChannelMetadataMapSerializer( quoteNumericStrings ) );
-        mapper = new Jackson2ObjectMapperBuilder().createXmlMapper( false ).build();
-        mapper.registerModule(module );
+      this.quoteNumericStrings = quoteNumericStrings;
    }
+
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
     public String serialize( Map<WicaChannel, WicaChannelMetadata> channelMetadataMap )
     {
+      final ObjectMapper mapper = getMapper();
       try
       {
          return mapper.writeValueAsString( channelMetadataMap );
@@ -58,6 +70,12 @@ public class WicaChannelMetadataMapSerializer
 
 
 /*- Private methods ----------------------------------------------------------*/
+
+   private ObjectMapper getMapper()
+   {
+      return quoteNumericStrings ? mapperWithQuotedStrings : mapperWithoutQuotedStrings;
+   }
+
 /*- Nested Interfaces --------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
@@ -78,11 +96,18 @@ public class WicaChannelMetadataMapSerializer
          for ( Object channel : value.keySet() )
          {
             final WicaChannel wicaChannel = (WicaChannel) channel;
-            final int numericScale = wicaChannel.getProperties().getNumericPrecision();
-            final WicaChannelDataSerializer serializer = new WicaChannelDataSerializer( numericScale, quoteNumericStrings );
             gen.writeFieldName( wicaChannel.getName().toString() );
             final WicaChannelMetadata wicaChannelMetadata = (WicaChannelMetadata) value.get( wicaChannel );
-            final String str = serializer.serialize( wicaChannelMetadata );
+
+            final int numericScale = wicaChannel.getProperties().getNumericPrecision();
+
+            final WicaChannelDataSerializer serializer = WicaChannelDataSerializerBuilder
+                  .create()
+                  .withNumericScale( numericScale )
+                  .withQuotedNumericStrings( quoteNumericStrings )
+                  .build();
+
+            final String str = serializer.writeToJson( wicaChannelMetadata );
             gen.writeRawValue( str );
          }
          gen.writeEndObject();

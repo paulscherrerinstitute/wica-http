@@ -30,17 +30,27 @@ public class WicaChannelValueMapSerializer
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final ObjectMapper mapper;
+   private static final ObjectMapper mapperWithoutQuotedStrings = Jackson2ObjectMapperBuilder.json().build();
+   private static final ObjectMapper mapperWithQuotedStrings = Jackson2ObjectMapperBuilder.json().build();
+
+   static {
+      final SimpleModule moduleWithoutQuotedStrings = new SimpleModule();
+      moduleWithoutQuotedStrings.addSerializer( new MyCustomWicaChannelValueMapSerializer( false ) );
+      mapperWithoutQuotedStrings.registerModule(moduleWithoutQuotedStrings );
+
+      final SimpleModule moduleWithQuotedStrings = new SimpleModule();
+      moduleWithQuotedStrings.addSerializer( new MyCustomWicaChannelValueMapSerializer( true ) );
+      mapperWithQuotedStrings.registerModule(moduleWithQuotedStrings );
+   }
+
+   private final boolean quoteNumericStrings;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    public WicaChannelValueMapSerializer( boolean quoteNumericStrings)
    {
-        final SimpleModule module = new SimpleModule();
-        module.addSerializer( new MyCustomWicaChannelValueMapSerializer( quoteNumericStrings ) );
-        mapper = new Jackson2ObjectMapperBuilder().createXmlMapper( false ).build();
-        mapper.registerModule(module );
+      this.quoteNumericStrings = quoteNumericStrings;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -48,6 +58,7 @@ public class WicaChannelValueMapSerializer
 
    public String serialize( Map<WicaChannel,List<WicaChannelValue>> channelValueMap )
    {
+      final ObjectMapper mapper = getMapper();
       try
       {
          return mapper.writeValueAsString( channelValueMap );
@@ -58,8 +69,13 @@ public class WicaChannelValueMapSerializer
       }
    }
 
-
 /*- Private methods ----------------------------------------------------------*/
+
+   private ObjectMapper getMapper()
+   {
+      return quoteNumericStrings ? mapperWithQuotedStrings : mapperWithoutQuotedStrings;
+   }
+
 /*- Nested Interfaces --------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
@@ -83,15 +99,12 @@ public class WicaChannelValueMapSerializer
             final int numericScale = wicaChannel.getProperties().getNumericPrecision();
             final Set<String> fieldsOfInterest = Set.of( wicaChannel.getProperties().getFieldsOfInterest().split(";" ) );
 
-            final WicaChannelDataSerializer serializer;
-            if ( fieldsOfInterest.size() == 0 )
-            {
-               serializer = new WicaChannelDataSerializer( numericScale, quoteNumericStrings );
-            }
-            else
-            {
-               serializer = new WicaChannelDataSerializer( fieldsOfInterest, numericScale, quoteNumericStrings );
-            }
+            final var serializer = WicaChannelDataSerializerBuilder.create()
+               .withFieldsOfInterest( fieldsOfInterest )
+               .withNumericScale( numericScale )
+               .withQuotedNumericStrings( quoteNumericStrings )
+               .build();
+
             gen.writeFieldName( wicaChannel.getName().toString() );
 
             // This cast is ok. Unfortunately this method cannot be generified because
@@ -101,7 +114,7 @@ public class WicaChannelValueMapSerializer
             gen.writeStartArray();
             for ( WicaChannelValue wicaChannelValue : wicaChannelValueList )
             {
-               final String str = serializer.serialize( wicaChannelValue );
+               final String str = serializer.writeToJson(wicaChannelValue );
                gen.writeRawValue(str);
             }
             gen.writeEndArray();
