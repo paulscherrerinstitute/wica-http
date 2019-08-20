@@ -145,7 +145,7 @@ public class WicaStreamMonitoredValueRequesterService
 
          // Set the initial state for the value and metadata stashes.
          applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent( wicaChannel, WicaChannelMetadata.createUnknownInstance()  ));
-         applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( wicaChannel, WicaChannelValue.createChannelValueDisconnected() ));
+         applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent(wicaChannel, WicaChannelValue.createChannelValueDisconnected() ));
 
          // Now start monitoring
          applicationEventPublisher.publishEvent( new WicaChannelStartMonitoringEvent( wicaChannel ) );
