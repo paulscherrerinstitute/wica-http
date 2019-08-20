@@ -3,13 +3,15 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
 import ch.psi.wica.infrastructure.stream.WicaStreamPropertiesBuilder;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
 import ch.psi.wica.model.channel.WicaChannelValue;
-import ch.psi.wica.model.stream.*;
+import ch.psi.wica.model.stream.WicaStream;
+import ch.psi.wica.model.stream.WicaStreamId;
+import ch.psi.wica.model.stream.WicaStreamProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +34,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
@@ -196,8 +197,8 @@ class WicaStreamServerSentEventPublisherTest
       Thread.sleep( 1450 );
       objectUnderTest.shutdown();
 
-      // Verify that seven notifications were received in the flux
-      assertEquals(6, sseList.size() );
+      // Verify that six notifications were received in the flux
+      assertThat(sseList.size(), is(6) );
 
       //---------------------------------------------------------------------------------
       // 1.1 Verify that the FIRST notification contains channel metadata.
