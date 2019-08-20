@@ -7,9 +7,7 @@ import ch.psi.wica.model.channel.WicaChannelAlarmSeverity;
 import ch.psi.wica.model.channel.WicaChannelAlarmStatus;
 import ch.psi.wica.model.channel.WicaChannelType;
 import ch.psi.wica.model.channel.WicaChannelValue;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.time.LocalDateTime;
@@ -29,25 +27,21 @@ class WicaChannelValueMixins
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes: ----------------------------------------------------------*/
 
-   /**
-    * WicaChannelValueSerializerMixin
-    */
-   @JsonFilter( "WicaChannelDataFilter" )
-   @JsonPropertyOrder({ "wsts", "conn", "type", "stat", "sevr", "ts", "val" })
+/*- Nested Class: WicaChannelValueSerializerMixin ----------------------------*/
+
    public static abstract class WicaChannelValueSerializerMixin extends WicaChannelValue
    {
-      private WicaChannelValueSerializerMixin() { super( false, null); }
+      // Dummy: only required to detect signature override errors.
+      private WicaChannelValueSerializerMixin() { super( null, null, false ); }
 
-      @Override public abstract @JsonProperty( "wsts" )
-      LocalDateTime getWicaServerTimestamp();
       @Override public abstract @JsonProperty( "conn" ) boolean isConnected();
    }
 
-   /**
-    * WicaChannelValueConnectedSerializerMixin
-    */
+/*- Nested Class: WicaChannelValueConnectedSerializerMixin --------------------*/
+
    public static abstract class WicaChannelValueConnectedSerializerMixin extends WicaChannelValue.WicaChannelValueConnected
    {
+      // Dummy: only required to detect signature override errors.
       private WicaChannelValueConnectedSerializerMixin() { super( null, null, null, null); }
 
       @Override public abstract @JsonProperty( "type" )
@@ -59,75 +53,97 @@ class WicaChannelValueMixins
       @Override public abstract @JsonProperty( "ts"   ) LocalDateTime getDataSourceTimestamp();
    }
 
-   /**
-    * WicaChannelValueDisconnectedSerializerMixin
-    */
+/*- Nested Class: WicaChannelValueDisconnectedSerializerMixin -----------------*/
+
    public static abstract class WicaChannelValueDisconnectedSerializerMixin extends WicaChannelValue.WicaChannelValueDisconnected
    {
+      // Dummy: only required to detect signature override errors.
       private WicaChannelValueDisconnectedSerializerMixin() { super(); }
+
+      // Mappings: start here.
       @Override public abstract @JsonProperty( "val"  ) String getValue();
    }
 
-   /**
-    * WicaChannelValueConnectedStringSerializerMixin
-    */
+
+/*- Nested Class: WicaChannelValueConnectedStringSerializerMixin --------------*/
+
    public static abstract class WicaChannelValueConnectedStringSerializerMixin extends WicaChannelValue.WicaChannelValueConnectedString
    {
+      // Dummy: only required to detect signature override errors.
       private  WicaChannelValueConnectedStringSerializerMixin() { super(null, null, null, null ); }
+
+      // Mappings: start here.
       @Override public abstract @JsonProperty( "val"  ) String getValue();
    }
 
-   /**
-    * WicaChannelValueConnectedStringArraySerializerMixin
-    */
+
+/*- Nested Class: WicaChannelValueConnectedStringArraySerializerMixin ----------*/
+
    public static abstract class WicaChannelValueConnectedStringArraySerializerMixin extends WicaChannelValue.WicaChannelValueConnectedStringArray
    {
+      // Dummy: only required to detect signature override errors.
       private  WicaChannelValueConnectedStringArraySerializerMixin() { super(null, null, null, null ); }
+
+      // Mappings: start here.
       @Override public abstract @JsonProperty( "val" ) String[] getValue();
    }
 
-   /**
-    * WicaChannelValueConnectedIntegerSerializerMixin
-    */
+
+/*- Nested Class: WicaChannelValueConnectedIntegerSerializerMixin --------------*/
+
    public static abstract class WicaChannelValueConnectedIntegerSerializerMixin extends WicaChannelValue.WicaChannelValueConnectedInteger
    {
+      // Dummy: only required to detect signature override errors.
       private  WicaChannelValueConnectedIntegerSerializerMixin() { super(null, null, null, 0 ); }
+
+      // Mappings: start here.
       @Override public abstract @JsonProperty( "val" ) int getValue();
    }
 
-   /**
-    * WicaChannelValueConnectedIntegerArraySerializerMixin
-    */
+
+/*- Nested Class: WicaChannelValueConnectedIntegerArraySerializerMixin ---------*/
+
    public static abstract class WicaChannelValueConnectedIntegerArraySerializerMixin extends WicaChannelValue.WicaChannelValueConnectedIntegerArray
    {
+      // Dummy: only required to detect signature override errors.
       private  WicaChannelValueConnectedIntegerArraySerializerMixin() { super(null, null, null, null ); }
+
+      // Mappings: start here.
       @Override public abstract @JsonProperty( "val" ) int[] getValue();
    }
 
-   /**
-    * WicaChannelValueConnectedRealSerializerMixin
-    */
+
+/*- Nested Class: WicaChannelValueConnectedRealSerializerMixin -----------------*/
+
    public static abstract class WicaChannelValueConnectedRealSerializerMixin extends WicaChannelValue.WicaChannelValueConnectedReal
    {
+      // Dummy: only required to detect signature override errors.
       private  WicaChannelValueConnectedRealSerializerMixin() { super( null, null, null, 0.0 ); }
+
+      // Mappings: start here.
       @Override public abstract @JsonProperty( "val" ) double getValue();
    }
 
-   /**
-    * WicaChannelValueConnectedRealArraySerializerMixin
-    */
+
+/*- Nested Class: WicaChannelValueConnectedRealArraySerializerMixin ------------*/
+
    public static abstract class WicaChannelValueConnectedRealArraySerializerMixin extends WicaChannelValue.WicaChannelValueConnectedRealArray
    {
+      // Dummy: only required to detect signature override errors.
       private  WicaChannelValueConnectedRealArraySerializerMixin() { super( null, null, null, null ); }
+
+      // Mappings: start here.
       @Override public abstract @JsonProperty( "val" ) double[] getValue();
    }
 
-   /**
-    * WicaChannelAlarmStatusMixin
-    */
+/*- Nested Class: WicaChannelAlarmStatusMixin ----------------------------------*/
+
    public static abstract class WicaChannelAlarmStatusMixin extends WicaChannelAlarmStatus
    {
+      // Dummy: only required to detect signature override errors.
       private  WicaChannelAlarmStatusMixin() { super( 0 ); }
+
+      // Mappings: start here.
       @Override public abstract @JsonValue
       int getStatusCode();
    }

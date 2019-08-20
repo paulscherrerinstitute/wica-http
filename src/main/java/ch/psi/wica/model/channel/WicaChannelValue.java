@@ -21,9 +21,9 @@ public abstract class WicaChannelValue extends WicaChannelData
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelValue( boolean connected, LocalDateTime wicaServerTimestamp )
+   public WicaChannelValue( WicaChannelType wicaChannelType, LocalDateTime wicaServerTimestamp, boolean connected )
    {
-      super( wicaServerTimestamp );
+      super( wicaChannelType, wicaServerTimestamp);
       this.connected = connected;
    }
 
@@ -101,12 +101,6 @@ public abstract class WicaChannelValue extends WicaChannelData
       return connected;
    }
 
-   public LocalDateTime getWicaServerTimestamp()
-   {
-      return super.getWicaServerTimestamp();
-   }
-
-
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
@@ -122,7 +116,7 @@ public abstract class WicaChannelValue extends WicaChannelData
 
       public WicaChannelValueDisconnected()
       {
-         super(false, LocalDateTime.now() );
+         super( WicaChannelType.UNKNOWN, LocalDateTime.now(), false );
          this.val = null;
       }
    }
@@ -155,7 +149,7 @@ public abstract class WicaChannelValue extends WicaChannelData
 
       public WicaChannelValueConnected( WicaChannelType wicaChannelType, WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp )
       {
-         super(true, LocalDateTime.now());
+         super( wicaChannelType, LocalDateTime.now(), true );
          this.wicaChannelType = Validate.notNull( wicaChannelType, "wicaChannelType cannot be null " );
          this.wicaChannelAlarmSeverity = Validate.notNull( wicaChannelAlarmSeverity, "wicaAlarmSeverity cannot be null " );
          this.wicaChannelAlarmStatus = Validate.notNull( wicaChannelAlarmStatus, "wicaAlarmStatus cannot be null " );

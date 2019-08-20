@@ -3,14 +3,14 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.infrastructure.channel.WicaChannelPropertiesBuilder;
+import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
+import ch.psi.wica.infrastructure.stream.WicaStreamPropertiesBuilder;
 import ch.psi.wica.infrastructure.stream.WicaStreamSerializer;
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.app.WicaFilterType;
-import ch.psi.wica.infrastructure.channel.WicaChannelPropertiesBuilder;
 import ch.psi.wica.model.stream.WicaStream;
-import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
 import ch.psi.wica.model.stream.WicaStreamProperties;
-import ch.psi.wica.infrastructure.stream.WicaStreamPropertiesBuilder;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,9 +35,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import java.util.stream.Stream;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -57,11 +58,14 @@ class WicaStreamLoadTest
    private final Logger logger = LoggerFactory.getLogger( WicaStreamLoadTest.class );
 
    private final String wicaStreamUri = "http://localhost:8080";
-   //private final String wicaStreamUri = "https://gfa-wica.psi.ch";
+//   private final String wicaStreamUri = "https://gfa-wica.psi.ch";
+//   private final String wicaStreamUri = "https://gfa-wica-dev.psi.ch";
 
    private static WicaStream lightStream = makeWicaStream( 1 );
    private static WicaStream heavyStream = makeWicaStream( 1000 );
    private static WicaStream proscanStream = makeProscanStream();
+
+   private static WicaStream testStream = makeTestStream();
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -73,44 +77,44 @@ class WicaStreamLoadTest
       return Stream.of( Arguments.of(   1, lightStream ),
                         Arguments.of(   1, lightStream ),
                         Arguments.of(   1, lightStream ),
-                        Arguments.of(   2, lightStream ),
-                        Arguments.of(   2, lightStream ),
-                        Arguments.of(   2, lightStream ),
-                        Arguments.of(   5, lightStream ),
-                        Arguments.of(   5, lightStream ),
-                        Arguments.of(   5, lightStream ),
-                        Arguments.of(  10, lightStream ),
-                        Arguments.of(  10, lightStream ),
-                        Arguments.of(  10, lightStream ),
-                        Arguments.of(  20, lightStream ),
-                        Arguments.of(  20, lightStream ),
-                        Arguments.of(  50, lightStream ),
-                        Arguments.of(  50, lightStream ),
-                        Arguments.of(  50, lightStream ),
-                        Arguments.of( 100, lightStream ),
-                        Arguments.of( 100, lightStream ),
-                        Arguments.of( 100, lightStream ),
-                        Arguments.of(   1, heavyStream ),
-                        Arguments.of(   1, heavyStream ),
-                        Arguments.of(   1, heavyStream ),
-                        Arguments.of(   2, heavyStream ),
-                        Arguments.of(   2, heavyStream ),
-                        Arguments.of(   2, heavyStream ),
-                        Arguments.of(   5, heavyStream ),
-                        Arguments.of(   5, heavyStream ),
-                        Arguments.of(   5, heavyStream ),
-                        Arguments.of(  10, heavyStream ),
-                        Arguments.of(  10, heavyStream ),
-                        Arguments.of(  10, heavyStream ),
-                        Arguments.of(  20, heavyStream ),
-                        Arguments.of(  20, heavyStream ),
-                        Arguments.of(  20, heavyStream ),
-                        Arguments.of(  50, heavyStream ),
-                        Arguments.of(  50, heavyStream ),
-                        Arguments.of(  50, heavyStream ),
-                        Arguments.of( 100, heavyStream ),
-                        Arguments.of( 100, heavyStream ),
-                        Arguments.of( 100, heavyStream ),
+//                        Arguments.of(   2, lightStream ),
+//                        Arguments.of(   2, lightStream ),
+//                        Arguments.of(   2, lightStream ),
+//                        Arguments.of(   5, lightStream ),
+//                        Arguments.of(   5, lightStream ),
+//                        Arguments.of(   5, lightStream ),
+//                        Arguments.of(  10, lightStream ),
+//                        Arguments.of(  10, lightStream ),
+//                        Arguments.of(  10, lightStream ),
+//                        Arguments.of(  20, lightStream ),
+//                        Arguments.of(  20, lightStream ),
+//                        Arguments.of(  50, lightStream ),
+//                        Arguments.of(  50, lightStream ),
+//                        Arguments.of(  50, lightStream ),
+//                        Arguments.of( 100, lightStream ),
+//                        Arguments.of( 100, lightStream ),
+//                        Arguments.of( 100, lightStream ),
+//                        Arguments.of(   1, heavyStream ),
+//                        Arguments.of(   1, heavyStream ),
+//                        Arguments.of(   1, heavyStream ),
+//                        Arguments.of(   2, heavyStream ),
+//                        Arguments.of(   2, heavyStream ),
+//                        Arguments.of(   2, heavyStream ),
+//                        Arguments.of(   5, heavyStream ),
+//                        Arguments.of(   5, heavyStream ),
+//                        Arguments.of(   5, heavyStream ),
+//                        Arguments.of(  10, heavyStream ),
+//                        Arguments.of(  10, heavyStream ),
+//                        Arguments.of(  10, heavyStream ),
+//                        Arguments.of(  20, heavyStream ),
+//                        Arguments.of(  20, heavyStream ),
+//                        Arguments.of(  20, heavyStream ),
+//                        Arguments.of(  50, heavyStream ),
+//                        Arguments.of(  50, heavyStream ),
+//                        Arguments.of(  50, heavyStream ),
+//                        Arguments.of( 100, heavyStream ),
+//                        Arguments.of( 100, heavyStream ),
+//                        Arguments.of( 100, heavyStream ),
                         Arguments.of( 10, proscanStream ),
                         Arguments.of( 20, proscanStream ),
                         Arguments.of( 50, proscanStream ) );
@@ -153,17 +157,24 @@ class WicaStreamLoadTest
       return Stream.of( Arguments.of(   1, lightStream  ),
                         Arguments.of(   2, lightStream  ),
                         Arguments.of(   5, lightStream  ),
-                        Arguments.of(  10, lightStream  ),
-                        Arguments.of(  20, lightStream  ),
-                        Arguments.of(  50, lightStream  ),
-                        Arguments.of( 100, lightStream  ),
-                        Arguments.of(   1, heavyStream  ),
-                        Arguments.of(   2, heavyStream  ),
-                        Arguments.of(   5, heavyStream  ),
-                        Arguments.of(  10, heavyStream  ),
-                        Arguments.of(  20, heavyStream  ),
-                        Arguments.of(  50, heavyStream  ),
-                        Arguments.of( 100, heavyStream  ) );
+//                        Arguments.of(  10, lightStream  ),
+//                        Arguments.of(  20, lightStream  ),
+//                        Arguments.of(  50, lightStream  ),
+//                        Arguments.of( 100, lightStream  ),
+//                        Arguments.of(   1, heavyStream  ),
+//                        Arguments.of(   2, heavyStream  ),
+//                        Arguments.of(   5, heavyStream  ),
+//                        Arguments.of(  10, heavyStream  ),
+//                        Arguments.of(  20, heavyStream  ),
+//                        Arguments.of(  50, heavyStream  ),
+//                        Arguments.of( 100, heavyStream  ),
+                        Arguments.of( 1, proscanStream ),
+                        Arguments.of( 2, proscanStream ),
+                        Arguments.of( 5, proscanStream ),
+                        Arguments.of( 10, proscanStream ),
+                        Arguments.of( 15, proscanStream ),
+                        Arguments.of( 20, proscanStream ),
+                        Arguments.of( 50, proscanStream ) );
    }
 
    @MethodSource( "getArgsForTestStreamCreateAndDeleteMultiThreadedThroughput" )
@@ -217,17 +228,26 @@ class WicaStreamLoadTest
 
    private static Stream<Arguments> getArgsForTestGetSingleThreadedThroughput()
    {
-      return Stream.of( Arguments.of( 1, 10_000, proscanStream ),
-                        Arguments.of( 1, 10_000, proscanStream ),
-                        Arguments.of( 1, 10_000, proscanStream ),
-                        Arguments.of( 10, 10_000, proscanStream ),
-                        Arguments.of( 10, 10_000, proscanStream ),
-                        Arguments.of( 10, 10_000, proscanStream ) );
+//      return Stream.of( Arguments.of( 500, testStream,  50*10*500, 10_100  ) );
+
+      return Stream.of( Arguments.of(  1, proscanStream,  50, 10_100  ),
+//                        Arguments.of(  2, proscanStream, 100, 10_100  ),
+//                        Arguments.of(  4, proscanStream, 200, 10_100  ),
+//                        Arguments.of(  6, proscanStream, 300, 10_100  ),
+//                        Arguments.of(  8, proscanStream, 400, 10_100  ),
+//                        Arguments.of( 10, proscanStream, 500, 10_100  ),
+//                        Arguments.of( 12, proscanStream, 600, 10_100  ),
+//                        Arguments.of( 14, proscanStream, 700, 10_100  ),
+//                        Arguments.of( 16, proscanStream, 800, 10_100  ),
+//                        Arguments.of( 18, proscanStream, 900, 10_100  ),
+//                        Arguments.of( 20, proscanStream, 1000, 10_100 ),
+                        Arguments.of( 200, proscanStream, 10000, 10_100  ) );
    }
 
    @MethodSource( "getArgsForTestGetSingleThreadedThroughput" )
    @ParameterizedTest
-   void testGetSingleThreadedThroughput( int numberOfStreams, int applyLoadForDurationInMillis, WicaStream wicaStream ) throws InterruptedException
+   void testGetSingleThreadedThroughput( int numberOfStreams, WicaStream wicaStream,
+                                         int expectedEvents, int expectedTimeInMillis ) throws InterruptedException
    {
       logger.info( "Starting Single-Threaded Stream Create test..." );
       final StopWatch stopWatch = StopWatch.createStarted();
@@ -240,39 +260,45 @@ class WicaStreamLoadTest
          assertNotNull( sendStreamCreateRequest( wicaStream ) );
       }
       final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
-      logger.info( "Stream Create test peformed POST operate on {} streams in {} us. Throughput = {} requests/second.", numberOfStreams, createStreamCycleTime, (1_000_000 * numberOfStreams ) / createStreamCycleTime );
+      logger.info( "Stream Create test peformed POST operate on {} streams in {} us. Throughput = {} requests/second.",
+                   numberOfStreams, createStreamCycleTime, (1_000_000 * numberOfStreams ) / createStreamCycleTime );
 
       logger.info( "Starting Single-Threaded Stream Get test..." );
       int firstId = Integer.parseInt( firstResult );
       stopWatch.reset();
       stopWatch.start();
 
-      List<Disposable> disposables = new ArrayList<>();
+      final List<Disposable> disposables = new ArrayList<>();
 
       // Sequentially execute all the GET tasks.
-      final AtomicInteger eventCounter = new AtomicInteger();
+      final CountDownLatch countDownLatch = new CountDownLatch( expectedEvents );
       final AtomicInteger byteCounter = new AtomicInteger();
       for ( int i = 0; i < numberOfStreams; i++ )
       {
-         var f = sendStreamSubscribeRequest(String.valueOf(firstId + i ) )
+         var f = sendStreamSubscribeRequest( String.valueOf( firstId + i ) )
                  .doOnCancel(() -> logger.info( "FLUX CANCELLED !!" ) )
                  .subscribe( (sse) -> {
-                    logger.trace( "Received SSE from stream with id: {}, event: {}",sse.id(), sse.event() );
-                    eventCounter.incrementAndGet();
+                    //logger.trace( "Received SSE from stream with id: {}, event: {}", sse.id(), sse.event() );
+                    countDownLatch.countDown();
                     Optional.ofNullable( sse.data() ).ifPresent( (x) -> byteCounter.accumulateAndGet( x.length(), Integer::sum ) );
                  },
                    (e) -> logger.error( "FLUX ERROR: {} ", e.toString() ) );
          disposables.add( f );
       }
 
-      final long getStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
-      logger.info( "Stream Get Test performed GET operation on {} streams in {} us. Throughput = {} requests/second. ", numberOfStreams, getStreamCycleTime, (1_000_000 * numberOfStreams ) / getStreamCycleTime );
+      final long getStreamCycleTime = stopWatch.getTime( TimeUnit.MICROSECONDS );
+      logger.info( "Stream Get Test performed GET operation on {} streams in {} us. Throughput = {} requests/second. ",
+                   numberOfStreams, getStreamCycleTime, (1_000_000 * numberOfStreams ) / getStreamCycleTime );
 
-      logger.info( "Pausing for {} ms.", applyLoadForDurationInMillis );
-      Thread.sleep( applyLoadForDurationInMillis );
+      logger.info( "Pausing for event delivery." );
+      stopWatch.reset();
+      stopWatch.start();
+      countDownLatch.await();
+      final long deliveryTimeInMillis = stopWatch.getTime( TimeUnit.MILLISECONDS );
 
-      logger.info( "Event counter received {} events on all channels", eventCounter.get() );
+      logger.info( "Event counter received {} events on all channels in {} milliseconds.", expectedEvents, deliveryTimeInMillis );
       logger.info( "Event data payload was {} unicode characters on all channels", byteCounter.get() );
+      logger.info( "Average data rate was: {} Kb/s", (16.0 * byteCounter.get() ) / deliveryTimeInMillis );
 
       logger.info( "Disposing subscribers..." );
       // Sequentially execute all the DISPOSE tasks.
@@ -286,7 +312,6 @@ class WicaStreamLoadTest
       // netty library which generates the following exception:
       // reactor.netty.http.client.PrematureCloseException: Connection prematurely closed BEFORE response
       Thread.sleep( 500 );
-
       logger.info( "Starting Single-Threaded Stream Delete test..." );
       stopWatch.reset();
       stopWatch.start();
@@ -297,22 +322,41 @@ class WicaStreamLoadTest
          assertNotNull( sendStreamDeleteRequest( String.valueOf(firstId + i ) ) );
       }
       final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
-      logger.info( "Stream Delete Test performed DELETE operation on {} streams in {} us. Throughput = {} requests/second.", numberOfStreams, deleteStreamCycleTime, (1_000_000 * numberOfStreams ) / deleteStreamCycleTime );
+      logger.info( "Stream Delete Test performed DELETE operation on {} streams in {} us. Throughput = {} requests/second.",
+                   numberOfStreams, deleteStreamCycleTime, (1_000_000 * numberOfStreams ) / deleteStreamCycleTime );
+
+      assertThat( deliveryTimeInMillis < expectedTimeInMillis, is( true ) );
+
    }
 
 
 /*- Private methods ----------------------------------------------------------*/
 
+   private static WicaStream makeTestStream()
+   {
+      final WicaStreamProperties wicaStreamProperties = WicaStreamPropertiesBuilder.create()
+            .withHeartbeatFluxInterval( 100 )
+            .withMetadataFluxInterval( 0 )
+            .withMonitoredValueFluxInterval( 0 )
+            .withPolledValueFluxInterval( 0 )
+            .build();
+
+      return WicaStreamBuilder.create()
+            .withStreamProperties( wicaStreamProperties )
+            .withChannelNameAndStreamProperties( "simon" )
+            .build();
+   }
+
    private static WicaStream makeProscanStream()
    {
       WicaStreamProperties wicaStreamProperties = WicaStreamPropertiesBuilder.create()
-            .withHeartbeatFluxInterval( 15000 )
-            .withMetadataFluxInterval( 100 )
-            .withMonitoredValueFluxInterval(100 )
-            .withPolledValueFluxInterval( 1000 )
+            .withHeartbeatFluxInterval( 0 )
+            .withMetadataFluxInterval( 0 )
+            .withMonitoredValueFluxInterval( 200 )
+            .withPolledValueFluxInterval( 0 )
             .withDataAcquisitionMode( WicaDataAcquisitionMode.MONITOR )
-            .withPollingIntervalInMillis( 1000 )
-            .withNumericPrecision(6)
+        //    .withPollingIntervalInMillis( 1000 )
+            .withNumericPrecision( 3 )
             .withFieldsOfInterest( "val,sevr" )
             .withFilterType(WicaFilterType.LAST_N )
             .withFilterNumSamples( 1 )
@@ -429,7 +473,6 @@ class WicaStreamLoadTest
             .withChannelNameAndStreamProperties("XPROSCAN:STAB:2" )
             .build();
    }
-
 
    private static WicaStream makeWicaStream( int numberOfChannels )
    {

@@ -4,11 +4,7 @@ package ch.psi.wica.infrastructure.channel;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.channel.*;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import java.time.LocalDateTime;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -27,50 +23,57 @@ class WicaChannelMetadataMixins
 
 /*- Nested Class: WicaChannelMetadataSerializerMixin -------------------------*/
 
-   @JsonFilter( "WicaChannelDataFilter" )
-   @JsonPropertyOrder( { "wsts", "egu", "prec", "hopr", "lopr", "drvh", "drvl", "hihi", "lolo", "high", "low" } )
    static abstract class WicaChannelMetadataSerializerMixin extends WicaChannelMetadata
    {
+      // Dummy: only required to detect signature override errors.
       private WicaChannelMetadataSerializerMixin()
       {
          super(null);
       }
 
-      @Override
-      public abstract @JsonProperty( "wsts" )
-      LocalDateTime getWicaServerTimestamp();
+      // Mappings: start here...
    }
 
 /*- Nested Class: WicaChannelMetadataUnknownSerializerMixin ------------------*/
 
    static abstract class WicaChannelMetadataUnknownSerializerMixin extends WicaChannelMetadata.WicaChannelMetadataUnknown
    {
+      // Dummy: only required to detect signature override errors.
       private WicaChannelMetadataUnknownSerializerMixin() { super(); }
+
+      // Mappings: start here...
    }
 
 /*- Nested Class: WicaChannelMetadataStringSerializerMixin -------------------*/
 
    static abstract class WicaChannelMetadataStringSerializerMixin extends WicaChannelMetadata.WicaChannelMetadataString
    {
+      // Dummy: only required to detect signature override errors.
       private WicaChannelMetadataStringSerializerMixin()
       {
          super();
       }
+
+      // Mappings: start here...
    }
 
 /*- Nested Class: WicaChannelMetadataStringArraySerializerMixin --------------*/
 
    static abstract class WicaChannelMetadataStringArraySerializerMixin extends WicaChannelMetadata.WicaChannelMetadataStringArray
    {
+      // Dummy: only required to detect signature override errors.
       private WicaChannelMetadataStringArraySerializerMixin()
       {
          super();
       }
+
+      // Mappings: start here...
    }
 
 /*- Nested Class: WicaChannelMetadataIntegerSerializerMixin ------------------*/
    public static abstract class WicaChannelMetadataIntegerSerializerMixin extends WicaChannelMetadata.WicaChannelMetadataInteger
    {
+      // Dummy: only required to detect signature override errors.
       private WicaChannelMetadataIntegerSerializerMixin()
       {
          super(null, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -127,13 +130,17 @@ class WicaChannelMetadataMixins
 
    static abstract class WicaChannelMetadataIntegerArraySerializerMixin extends WicaChannelMetadataMixins.WicaChannelMetadataIntegerSerializerMixin
    {
+      // Dummy: only required to detect signature override errors.
       private WicaChannelMetadataIntegerArraySerializerMixin() { super(); }
+
+      // Mappings: start here...
    }
 
 /*- Nested Class: WicaChannelMetadataRealSerializerMixin ---------------------*/
 
    static abstract class WicaChannelMetadataRealSerializerMixin extends WicaChannelMetadata.WicaChannelMetadataReal
    {
+      // Dummy: only required to detect signature override errors.
       private WicaChannelMetadataRealSerializerMixin()
       {
          super( null, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -194,7 +201,10 @@ class WicaChannelMetadataMixins
 
    static abstract class WicaChannelMetadataRealArraySerializerMixin extends WicaChannelMetadataMixins.WicaChannelMetadataRealSerializerMixin
    {
+      // Dummy: only required to detect signature override errors.
       private WicaChannelMetadataRealArraySerializerMixin() { super(); }
+
+      // Mappings: start here...
    }
 
 }

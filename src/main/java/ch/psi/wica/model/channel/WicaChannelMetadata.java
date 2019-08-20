@@ -17,16 +17,12 @@ public abstract class WicaChannelMetadata extends WicaChannelData
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
-
-   private final WicaChannelType type;
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelMetadata( WicaChannelType type )
+   public WicaChannelMetadata( WicaChannelType wicaChannelType )
    {
-      super( LocalDateTime.now() );
-      this.type = type;
+      super( wicaChannelType, LocalDateTime.now() );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -85,12 +81,6 @@ public abstract class WicaChannelMetadata extends WicaChannelData
    }
 
 /*- Public methods -----------------------------------------------------------*/
-
-   public WicaChannelType getType()
-   {
-      return type;
-   }
-
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
