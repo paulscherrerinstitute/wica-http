@@ -6,10 +6,9 @@ package ch.psi.wica.controllers;
 
 import ch.psi.wica.controlsystem.epics.EpicsChannelGetAndPutService;
 import ch.psi.wica.controlsystem.epics.EpicsChannelName;
-import ch.psi.wica.infrastructure.channel.WicaChannelValueSerializer;
+import ch.psi.wica.infrastructure.channel.WicaChannelDataSerializerBuilder;
 import ch.psi.wica.model.app.StatisticsCollectable;
 import ch.psi.wica.model.app.StatisticsCollector;
-import ch.psi.wica.model.channel.WicaChannelValue;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,11 +127,18 @@ class WicaChannelGetController implements StatisticsCollectable
       numericScale = numericScale == null ? defaultNumericScale : numericScale;
       fieldsOfInterest = fieldsOfInterest == null ? defaultFieldsOfInterest : fieldsOfInterest;
 
-      final WicaChannelValue wicaChannelValue = epicsChannelGetAndPutService.get( EpicsChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
-      final WicaChannelValueSerializer wicaChannelValueSerializer = new WicaChannelValueSerializer( Set.of( fieldsOfInterest.split(";" ) ), numericScale, false );
+      final var wicaChannelValue = epicsChannelGetAndPutService.get( EpicsChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
+      final var fieldsOfInterestSet = Set.of( fieldsOfInterest.split( ";" ) );
+
+      final var serializer = WicaChannelDataSerializerBuilder
+            .create()
+            .withFieldsOfInterest( fieldsOfInterestSet )
+            .withNumericScale( numericScale )
+            .withQuotedNumericStrings( false )
+            .build();
 
       logger.info( "'{}' - OK: Returning wica channel value.", channelName );
-      return new ResponseEntity<>( wicaChannelValueSerializer.serialize( wicaChannelValue ), HttpStatus.OK );
+      return new ResponseEntity<>( serializer.writeToJson( wicaChannelValue ), HttpStatus.OK );
    }
 
    @ExceptionHandler( Exception.class )
