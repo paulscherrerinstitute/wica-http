@@ -114,7 +114,7 @@ class WicaChannelDataSerializerTestWithMetadata
       final var serializer = new WicaChannelDataSerializer( Set.of(),5, false );
       final var jsonStr =  serializer.writeToJson( intMetadata );
       logger.info("JSON Metadata INTEGER serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
-      final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
+      final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "type") );
       assertEquals( "INTEGER", rootNode.get( "type" ).textValue() );
