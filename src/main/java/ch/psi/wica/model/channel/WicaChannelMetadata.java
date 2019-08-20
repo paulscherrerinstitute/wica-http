@@ -3,8 +3,6 @@ package ch.psi.wica.model.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
@@ -13,9 +11,6 @@ import java.time.LocalDateTime;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-// Note the Filter Id in the annotation here must match the definition in
-// the WicaChannelMetadataSerializer.
-@JsonFilter( "WicaChannelDataFilter" )
 @Immutable
 public abstract class WicaChannelMetadata extends WicaChannelData
 {
@@ -25,45 +20,39 @@ public abstract class WicaChannelMetadata extends WicaChannelData
 
    private final WicaChannelType type;
 
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   private WicaChannelMetadata( WicaChannelType type )
+   public WicaChannelMetadata( WicaChannelType type )
    {
       super( LocalDateTime.now() );
       this.type = type;
    }
 
-
 /*- Class methods ------------------------------------------------------------*/
 
-   public static WicaChannelMetadata createUnknownInstance()
-   {
-      return WicaChannelMetadataUnknown.UNKNOWN_INSTANCE;
-   }
+   public static WicaChannelMetadata.WicaChannelMetadataUnknown createUnknownInstance() { return new WicaChannelMetadataUnknown(); }
 
-   public static WicaChannelMetadata createStringInstance()
+   public static WicaChannelMetadata.WicaChannelMetadataString createStringInstance()
    {
       return new WicaChannelMetadataString();
    }
-
-   public static WicaChannelMetadata createStringArrayInstance()
+   public static WicaChannelMetadata.WicaChannelMetadataStringArray createStringArrayInstance()
    {
       return new WicaChannelMetadataStringArray();
    }
 
-   public static WicaChannelMetadata createIntegerInstance( String units,
-                                                            int upperDisplay, int lowerDisplay,
-                                                            int upperControl, int lowerControl,
-                                                            int upperAlarm, int lowerAlarm,
-                                                            int upperWarning, int lowerWarning )
+   public static WicaChannelMetadata.WicaChannelMetadataInteger createIntegerInstance( String units,
+                                                                  int upperDisplay, int lowerDisplay,
+                                                                  int upperControl, int lowerControl,
+                                                                  int upperAlarm, int lowerAlarm,
+                                                                  int upperWarning, int lowerWarning )
    {
-      return new WicaChannelMetadataInteger(units, upperDisplay, lowerDisplay, upperControl, lowerControl,
-                                            upperAlarm, lowerAlarm, upperWarning, lowerWarning );
+      return new WicaChannelMetadataInteger( units, upperDisplay, lowerDisplay, upperControl, lowerControl,
+                                             upperAlarm, lowerAlarm, upperWarning, lowerWarning );
    }
 
-   public static WicaChannelMetadata createIntegerArrayInstance( String units,
+   public static WicaChannelMetadata.WicaChannelMetadataIntegerArray createIntegerArrayInstance( String units,
                                                                  int upperDisplay, int lowerDisplay,
                                                                  int upperControl, int lowerControl,
                                                                  int upperAlarm, int lowerAlarm,
@@ -73,31 +62,30 @@ public abstract class WicaChannelMetadata extends WicaChannelData
                                                  upperAlarm, lowerAlarm, upperWarning, lowerWarning );
    }
 
-   public static WicaChannelMetadata createRealInstance( String units,
+   public static WicaChannelMetadata.WicaChannelMetadataReal createRealInstance( String units,
                                                          int precision,
                                                          double upperDisplay, double lowerDisplay,
                                                          double upperControl, double lowerControl,
                                                          double upperAlarm, double lowerAlarm,
                                                          double upperWarning, double lowerWarning )
    {
-      return new WicaChannelMetadataReal(units, precision, upperDisplay, lowerDisplay, upperControl, lowerControl,
+      return new WicaChannelMetadataReal( units, precision, upperDisplay, lowerDisplay, upperControl, lowerControl,
                                          upperAlarm, lowerAlarm, upperWarning, lowerWarning );
    }
 
-   public static WicaChannelMetadata createRealArrayInstance( String units,
+   public static WicaChannelMetadata.WicaChannelMetadataRealArray createRealArrayInstance( String units,
                                                               int precision,
                                                               double upperDisplay, double lowerDisplay,
                                                               double upperControl, double lowerControl,
                                                               double upperAlarm, double lowerAlarm,
                                                               double upperWarning, double lowerWarning )
    {
-      return new WicaChannelMetadataRealArray(units, precision, upperDisplay, lowerDisplay, upperControl, lowerControl,
+      return new WicaChannelMetadataRealArray( units, precision, upperDisplay, lowerDisplay, upperControl, lowerControl,
                                               upperAlarm, lowerAlarm, upperWarning, lowerWarning );
    }
 
 /*- Public methods -----------------------------------------------------------*/
 
-   @JsonProperty( "type" )
    public WicaChannelType getType()
    {
       return type;
@@ -106,50 +94,42 @@ public abstract class WicaChannelMetadata extends WicaChannelData
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
-/*- Nested Class: WicaChannelMetadataUnknown --------------------------------*/
+/*- Nested Class: WicaChannelMetadataUnknown ---------------------------------*/
 
-   private static class WicaChannelMetadataUnknown extends WicaChannelMetadata
+   public static class WicaChannelMetadataUnknown extends WicaChannelMetadata
    {
-      private static final WicaChannelMetadataUnknown UNKNOWN_INSTANCE = new WicaChannelMetadataUnknown();
-
-      WicaChannelMetadataUnknown()
+      public WicaChannelMetadataUnknown()
       {
          super( WicaChannelType.UNKNOWN );
       }
    }
 
 
-/*- Nested Class: WicaChannelMetadataString --------------------------------*/
+/*- Nested Class: WicaChannelMetadataString ----------------------------------*/
 
-   private static class WicaChannelMetadataString extends WicaChannelMetadata
+   public static class WicaChannelMetadataString extends WicaChannelMetadata
    {
-      WicaChannelMetadataString()
+      public WicaChannelMetadataString()
       {
          super( WicaChannelType.STRING );
-      }
-
-      @SuppressWarnings( "SameParameterValue" )
-      WicaChannelMetadataString( WicaChannelType subtype )
-      {
-         super( subtype );
       }
    }
 
 
-/*- Nested Class: WicaChannelMetadataStringArray ----------------------------*/
+/*- Nested Class: WicaChannelMetadataStringArray -----------------------------*/
 
-   private static class WicaChannelMetadataStringArray extends WicaChannelMetadataString
+   public static class WicaChannelMetadataStringArray extends WicaChannelMetadata
    {
-      WicaChannelMetadataStringArray()
+      public WicaChannelMetadataStringArray()
       {
          super( WicaChannelType.STRING_ARRAY );
       }
    }
 
 
-/*- Nested Class: WicaChannelMetadataInteger --------------------------------*/
+/*- Nested Class: WicaChannelMetadataInteger ---------------------------------*/
 
-   private static class WicaChannelMetadataInteger extends WicaChannelMetadata
+   public static class WicaChannelMetadataInteger extends WicaChannelMetadata
    {
       private final String units;
       private final int upperDisplay;
@@ -162,12 +142,12 @@ public abstract class WicaChannelMetadata extends WicaChannelData
       private final int lowerWarning;
 
       @SuppressWarnings( "Duplicates" )
-      private WicaChannelMetadataInteger( WicaChannelType subType,
-                                          String units,
-                                          int upperDisplay, int lowerDisplay,
-                                          int upperControl, int lowerControl,
-                                          int upperAlarm, int lowerAlarm,
-                                          int upperWarning, int lowerWarning )
+      WicaChannelMetadataInteger( WicaChannelType subType,
+                                  String units,
+                                  int upperDisplay, int lowerDisplay,
+                                  int upperControl, int lowerControl,
+                                  int upperAlarm, int lowerAlarm,
+                                  int upperWarning, int lowerWarning )
       {
          super( subType );
          this.units = Validate.notNull( units );
@@ -175,12 +155,13 @@ public abstract class WicaChannelMetadata extends WicaChannelData
          this.lowerDisplay = lowerDisplay;
          this.upperControl = upperControl;
          this.lowerControl = lowerControl;
-         this.upperAlarm =   upperAlarm;
-         this.lowerAlarm =   lowerAlarm;
+         this.upperAlarm   = upperAlarm;
+         this.lowerAlarm   = lowerAlarm;
          this.upperWarning = upperWarning;
          this.lowerWarning = lowerWarning;
       }
-      private WicaChannelMetadataInteger( String units,
+
+      public WicaChannelMetadataInteger( String units,
                                           int upperDisplay, int lowerDisplay,
                                           int upperControl, int lowerControl,
                                           int upperAlarm, int lowerAlarm,
@@ -194,65 +175,55 @@ public abstract class WicaChannelMetadata extends WicaChannelData
                upperWarning, lowerWarning );
       }
 
-
       // Engineering Units
-      @JsonProperty( "egu" )
       public String getUnits()
       {
          return units;
       }
 
       // High Operating Range
-      @JsonProperty( "hopr" )
       public int getUpperDisplay()
       {
          return upperDisplay;
       }
 
       // Low Operating Range
-      @JsonProperty( "lopr" )
       public int getLowerDisplay()
       {
          return lowerDisplay;
       }
 
       // Drive High Control Limit
-      @JsonProperty( "drvh" )
       public int getUpperControl()
       {
          return upperControl;
       }
 
       // Drive Low Control Limit
-      @JsonProperty( "drvl" )
       public int getLowerControl()
       {
          return lowerControl;
       }
 
       // Upper Alarm limit
-      @JsonProperty( "hihi" )
       public int getUpperAlarm()
       {
          return upperAlarm;
       }
 
       // Lower Alarm Limit
-      @JsonProperty( "lolo" )
       public int getLowerAlarm()
       {
          return lowerAlarm;
       }
 
       // Upper Warning Limit
-      @JsonProperty( "high" )
       public int getUpperWarning()
       {
          return upperWarning;
       }
 
       // Lower Warning Limit
-      @JsonProperty( "low" )
       public int getLowerWarning()
       {
          return lowerWarning;
@@ -260,23 +231,24 @@ public abstract class WicaChannelMetadata extends WicaChannelData
    }
 
 
-/*- Nested Class: WicaChannelMetadataIntegerArray ---------------------------*/
+/*- Nested Class: WicaChannelMetadataIntegerArray ----------------------------*/
 
-   private static class WicaChannelMetadataIntegerArray extends WicaChannelMetadataInteger
+   public static class WicaChannelMetadataIntegerArray extends WicaChannelMetadataInteger
    {
-      private WicaChannelMetadataIntegerArray( String units,
-                                               int upperDisplay, int lowerDisplay,
-                                               int upperControl, int lowerControl,
-                                               int upperAlarm, int lowerAlarm,
-                                               int upperWarning, int lowerWarning )
+      WicaChannelMetadataIntegerArray( String units,
+                                       int upperDisplay, int lowerDisplay,
+                                       int upperControl, int lowerControl,
+                                       int upperAlarm, int lowerAlarm,
+                                       int upperWarning, int lowerWarning )
       {
          super( WicaChannelType.INTEGER_ARRAY, units, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
       }
    }
 
-/*- Nested Class: WicaChannelMetadataReal -----------------------------------*/
 
-   private static class WicaChannelMetadataReal extends WicaChannelMetadata
+/*- Nested Class: WicaChannelMetadataReal ------------------------------------*/
+
+   public static class WicaChannelMetadataReal extends WicaChannelMetadata
    {
       private final String units;
       private final int precision;
@@ -289,15 +261,14 @@ public abstract class WicaChannelMetadata extends WicaChannelData
       private final double upperWarning;
       private final double lowerWarning;
 
-
       @SuppressWarnings( "Duplicates" )
-      private WicaChannelMetadataReal( WicaChannelType subType,
-                                       String units,
-                                       int precision,
-                                       double upperDisplay, double lowerDisplay,
-                                       double upperControl, double lowerControl,
-                                       double upperAlarm, double lowerAlarm,
-                                       double upperWarning, double lowerWarning )
+      WicaChannelMetadataReal( WicaChannelType subType,
+                               String units,
+                               int precision,
+                               double upperDisplay, double lowerDisplay,
+                               double upperControl, double lowerControl,
+                               double upperAlarm, double lowerAlarm,
+                               double upperWarning, double lowerWarning )
       {
          super( subType );
          this.units = Validate.notNull( units );
@@ -312,7 +283,7 @@ public abstract class WicaChannelMetadata extends WicaChannelData
          this.lowerWarning = lowerWarning;
       }
 
-      private WicaChannelMetadataReal( String units,
+      public WicaChannelMetadataReal( String units,
                                        int precision,
                                        double upperDisplay, double lowerDisplay,
                                        double upperControl, double lowerControl,
@@ -329,70 +300,60 @@ public abstract class WicaChannelMetadata extends WicaChannelData
       }
 
       // Engineering Units
-      @JsonProperty( "egu" )
       public String getUnits()
       {
          return units;
       }
 
       // Display Precision
-      @JsonProperty( "prec" )
       public int getPrecision()
       {
          return precision;
       }
 
       // High Operating Range
-      @JsonProperty( "hopr" )
       public double getUpperDisplay()
       {
          return upperDisplay;
       }
 
       // Low Operating Range
-      @JsonProperty( "lopr" )
       public double getLowerDisplay()
       {
          return lowerDisplay;
       }
 
       // Drive High Control Limit
-      @JsonProperty( "drvh" )
       public double getUpperControl()
       {
          return upperControl;
       }
 
       // Drive Low Control Limit
-      @JsonProperty( "drvl" )
       public double getLowerControl()
       {
          return lowerControl;
       }
 
       // Upper Alarm limit
-      @JsonProperty( "hihi" )
       public double getUpperAlarm()
       {
          return upperAlarm;
       }
 
       // Lower Alarm Limit
-      @JsonProperty( "lolo" )
       public double getLowerAlarm()
       {
          return lowerAlarm;
       }
 
       // Upper Warning Limit
-      @JsonProperty( "high" )
       public double getUpperWarning()
       {
          return upperWarning;
       }
 
       // Lower Warning Limit
-      @JsonProperty( "low" )
       public double getLowerWarning()
       {
          return lowerWarning;
@@ -400,16 +361,16 @@ public abstract class WicaChannelMetadata extends WicaChannelData
    }
 
 
-/*- Nested Class: WicaChannelMetadataRealArray ------------------------------*/
+/*- Nested Class: WicaChannelMetadataRealArray -------------------------------*/
 
-   private static class WicaChannelMetadataRealArray extends WicaChannelMetadataReal
+   public static class WicaChannelMetadataRealArray extends WicaChannelMetadataReal
    {
-      private WicaChannelMetadataRealArray( String units,
-                                            int precision,
-                                            double upperDisplay, double lowerDisplay,
-                                            double upperControl, double lowerControl,
-                                            double upperAlarm, double lowerAlarm,
-                                            double upperWarning, double lowerWarning )
+      WicaChannelMetadataRealArray( String units,
+                                           int precision,
+                                           double upperDisplay, double lowerDisplay,
+                                           double upperControl, double lowerControl,
+                                           double upperAlarm,   double lowerAlarm,
+                                           double upperWarning, double lowerWarning )
       {
          super( WicaChannelType.REAL_ARRAY, units, precision, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
       }
