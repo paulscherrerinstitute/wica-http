@@ -3,7 +3,9 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.*;
+import ch.psi.wica.controlsystem.event.WicaChannelPolledValueUpdateEvent;
+import ch.psi.wica.controlsystem.event.WicaChannelStartPollingEvent;
+import ch.psi.wica.controlsystem.event.WicaChannelStopPollingEvent;
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelName;
