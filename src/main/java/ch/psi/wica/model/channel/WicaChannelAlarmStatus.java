@@ -17,7 +17,7 @@ public class WicaChannelAlarmStatus
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   private WicaChannelAlarmStatus( int wicaAlarmStatusCode )
+   WicaChannelAlarmStatus( int wicaAlarmStatusCode )
    {
       this.wicaAlarmStatusCode = wicaAlarmStatusCode;
    }
@@ -29,16 +29,17 @@ public class WicaChannelAlarmStatus
       return new WicaChannelAlarmStatus( statusCode );
    }
 
-   public static WicaChannelAlarmStatus ofNoError()
-   {
-      return new WicaChannelAlarmStatus( 0 );
-   }
-
 /*- Public methods -----------------------------------------------------------*/
 
    public int getStatusCode()
    {
       return wicaAlarmStatusCode;
+   }
+
+   @Override
+   public String toString()
+   {
+      return String.valueOf( getStatusCode() );
    }
 
 /*- Private methods ----------------------------------------------------------*/
