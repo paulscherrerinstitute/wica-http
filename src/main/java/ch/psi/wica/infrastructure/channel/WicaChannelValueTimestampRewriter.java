@@ -33,7 +33,7 @@ public class WicaChannelValueTimestampRewriter
       }
       else
       {
-         return WicaChannelValue.createChannelValueDisconnected( LocalDateTime.now() );
+         return WicaChannelValue.createChannelValueDisconnected();
       }
 
       final WicaChannelAlarmStatus alarmStatus = connectedValue.getWicaChannelAlarmStatus();
