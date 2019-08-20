@@ -9,8 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -38,7 +38,7 @@ class WicaChannelValueLatestValueFilterTest
 
       final WicaChannelValueFilter mapper = new WicaChannelValueLatestValueFilter(0 );
       final List<WicaChannelValue> outputList  = mapper.apply(inputList );
-      assertEquals( 0, outputList.size() );
+      assertThat( outputList.size(), is( 0 ) );
    }
 
    @Test
@@ -53,8 +53,8 @@ class WicaChannelValueLatestValueFilterTest
 
       final WicaChannelValueFilter mapper = new WicaChannelValueLatestValueFilter(1 );
       final List<WicaChannelValue> outputList  = mapper.apply(inputList );
-      assertEquals( 1, outputList.size() );
-      assertEquals( inputList.get( 3), outputList.get( 0 ) );
+      assertThat( outputList.size(), is( 1 ) );
+      assertThat( outputList.get( 0 ), is( inputList.get( 3 ) ) );
    }
 
    @Test
@@ -69,11 +69,11 @@ class WicaChannelValueLatestValueFilterTest
 
       final WicaChannelValueFilter mapper = new WicaChannelValueLatestValueFilter(Integer.MAX_VALUE );
       final List<WicaChannelValue> outputList  = mapper.apply(inputList );
-      assertEquals( 4, outputList.size() );
-      assertEquals( inputList.get( 0 ), outputList.get( 0 ) );
-      assertEquals( inputList.get( 1 ), outputList.get( 1 ) );
-      assertEquals( inputList.get( 2 ), outputList.get( 2 ) );
-      assertEquals( inputList.get( 3 ), outputList.get( 3 ) );
+      assertThat( outputList.size(), is( 4 ) );
+      assertThat( outputList.get( 0 ), is( inputList.get( 0 ) ) );
+      assertThat( outputList.get( 1 ), is( inputList.get( 1 ) ) );
+      assertThat( outputList.get( 2 ), is( inputList.get( 2 ) ) );
+      assertThat( outputList.get( 3 ), is( inputList.get( 3 ) ) );
    }
 
 
