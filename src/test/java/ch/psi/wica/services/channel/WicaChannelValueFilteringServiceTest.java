@@ -5,9 +5,8 @@ package ch.psi.wica.services.channel;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
-import ch.psi.wica.model.app.WicaFilterType;
-import ch.psi.wica.model.channel.WicaChannelProperties;
 import ch.psi.wica.infrastructure.channel.WicaChannelPropertiesBuilder;
+import ch.psi.wica.model.app.WicaFilterType;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -54,9 +54,9 @@ class WicaChannelValueFilteringServiceTest
                                                                                  .withChannelNameAndProperties( "abc", props )
                                                                                  .build(), inputList );
 
-      assertEquals(2, outputList.size() );
-      assertEquals( 15.123456, ( (WicaChannelValue.WicaChannelValueConnectedReal) outputList.get( 0 ) ).getValue() );
-      assertEquals(111.123456, ( (WicaChannelValue.WicaChannelValueConnectedReal) outputList.get( 1 ) ).getValue() );
+      assertThat(outputList.size(), is( 2 ) );
+      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedReal) outputList.get( 0 ) ).getValue(), is(15.123456 ) );
+      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedReal) outputList.get( 1 ) ).getValue(), is(111.123456 ) );
    }
 
    @Test
@@ -76,9 +76,10 @@ class WicaChannelValueFilteringServiceTest
       final List<WicaChannelValue> outputList = serviceUnderTest.filterValues( WicaChannelBuilder.create()
                                                                                  .withChannelNameAndProperties( "abc", props )
                                                                                  .build(), inputList );
-      assertEquals( 2, outputList.size() );
-      assertEquals( 129, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue() );
-      assertEquals( 15, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue() );
+
+      assertThat( outputList.size(), is( 2 ) );
+      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue(), is(129 ) );
+      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue(), is(15 ) );
    }
 
    @Test
@@ -103,10 +104,11 @@ class WicaChannelValueFilteringServiceTest
       final List<WicaChannelValue> outputList = serviceUnderTest.filterValues( WicaChannelBuilder.create()
                                                                                .withChannelNameAndProperties( "abc", props )
                                                                                .build(), inputList );
-      assertEquals( 2, outputList.size() );
-      assertEquals( 1, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue() );
-      assertEquals( 5, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue() );
+      assertThat( outputList.size(), is( 2 ) );
+      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue(), is(1 ) );
+      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue(), is(5 ) );
    }
+
    @Test
    void testFilterValues_PassEverythingFilter()
    {
@@ -125,11 +127,11 @@ class WicaChannelValueFilteringServiceTest
                                                                                      .withChannelNameAndProperties( "abc", props )
                                                                                      .build(), inputList );
 
-      assertEquals( 4, outputList.size() );
-      assertEquals( 129, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue() );
-      assertEquals( 14,  ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue() );
-      assertEquals( 15,  ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 2 ) ).getValue() );
-      assertEquals( 111, ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 3 ) ).getValue() );
+      assertThat( outputList.size(), is( 4 ) );
+      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue(), is(129 ) );
+      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue(), is(14 ) );
+      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 2 ) ).getValue(), is(15 ) );
+      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 3 ) ).getValue(), is(111 ) );
    }
 
 
