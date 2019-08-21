@@ -186,7 +186,19 @@ First release which supports new embryonic feature: channel GET and PUT operatio
     - Wica streams no longer provide back history from when the channel was created. Each new subscriber
       received the last available value plus all values which subsequently arrive.
     - further code cleanup and work on making the unit tests more robust.   
-     
+    
+* [1.7.0-RELEASE](https://git.psi.ch/controls_highlevel_applications/ch.psi.wica2/tags/1.7.0-RELEASE)
+   - [CTRLIT-7469](https://jira.psi.ch/browse/CTRLIT-7469): Create 1.7.0-RELEASE.
+   - This release contains a performance optimisation so that Jackson Object Mappers are cached and
+     reused rather than created on each notification. 
+   - The WicaChannelValue, WicaChannelMetadata and WicaChannelData classes have been reworked so
+     that they are pure immutable model elements; serialisation is now achieved using the same
+     Mixin approach that has now been adopted for the stream configuration.  
+   - The default stream parameters sent by the JS component have now been modified to reduce the
+     demands on the browser. The new default monitor flux update rate is 200ms (reduced from 100ms), 
+     the default numeric precision is now 3 digits (reduced from 6). 
+   - The above changed were verified by a corresponding increase in the number of unit tests.
+ 
 # Project Ideas Completed in Latest and Earlier Releases
 
 1. Consider refactoring so that the app only uses one context (channels can then be cached and shared between 
