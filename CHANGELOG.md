@@ -198,6 +198,9 @@ First release which supports new embryonic feature: channel GET and PUT operatio
      demands on the browser. The new default monitor flux update rate is 200ms (reduced from 100ms), 
      the default numeric precision is now 3 digits (reduced from 6). 
    - The above changed were verified by a corresponding increase in the number of unit tests.
+   - Added support for JMX debugging inside docker container. But turned off for now.
+   - Added .pom file support for running using Undertow embedded server. But turned off for now. 
+ 
  
 # Project Ideas Completed in Latest and Earlier Releases
 
