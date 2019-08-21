@@ -90,9 +90,6 @@ ENV KEYSTORE_PASS "XXXXXX"
 # Document the ports that will be exposed by the Spring Boot Application
 EXPOSE 443
 
-# The JDWP Debug port
-EXPOSE 5005
-
 # Setup the container so that it defaults to the timezone of PSI. This can
 # always be overridden later. This step is important as the timezone is used
 # in all log messages and is reported on the GUI.
@@ -132,7 +129,6 @@ RUN mkdir log config lib
 
 # Populate the application directories as appropriate
 COPY ./target/${JAR_FILE} lib/jarfile.jar
-
 COPY ./src/main/resources/config/keystore.jks config
 COPY ./src/main/resources/application-docker-run.properties config
 COPY src/main/resources/logback_config.xml config
@@ -148,7 +144,23 @@ VOLUME /root/config
 
 
 ###############################################################################
-# 7.0 Define the ENTRYPOINT
+# 7.0 Uncomment the block below to add support for attaching a debugger
+###############################################################################
+
+# Add support for remote debugging.
+# The JDWP Port
+EXPOSE 5005
+ENV JAVA_DBG_OPTS "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+
+# Add support for remote profiling with JMX technology (eg jvisualvm, jconsole etc)
+# This works on both OpenJDK 11 and Azul JDK 11
+# Note: this is hardcoded in the configuration to work on the development server
+# 'gfa-wica-dev.psi.ch'. For other servers this config will need adjusting.
+# EXPOSE 9010
+# ENV JAVA_JMX_OPTS  "-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=gfa-wica-dev.psi.ch -Dcom.sun.management.jmxremote.rmi.port=9010"
+
+###############################################################################
+# 8.0 Define the ENTRYPOINT
 ###############################################################################
 
 # Run the application on the Java 11 module path invoking the docker-run configuration profile
@@ -158,10 +170,13 @@ VOLUME /root/config
 # character set this means we can cater for EPICS IOC DB files that are encoded
 # the old-school (ISO8859-1) way and which include special characters like 'mu'.
 # Here's looking at you HIPA !
-ENTRYPOINT exec java -Dfile.encoding=ISO8859-1 \
+ENTRYPOINT exec java $JAVA_DBG_OPTS $JAVA_JMX_OPTS \
+           -Dfile.encoding=ISO8859-1 \
            -Dspring.config.location=config/application-docker-run.properties \
-           -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
+           -p lib/jmuxutils.jar \
            -p lib/jarfile.jar \
            --add-modules ALL-DEFAULT \
            -m jarfile \
            "$KEYSTORE_PASS"
+
+# java -Dfile.encoding=ISO8859-1 -Dspring.config.location=config/application-docker-run.properties  -p ~rees_s/jarfile.jar --add-modules ALL-DEFAULT  -m jarfile "!Wurenlingen2018$"
