@@ -8,6 +8,8 @@ package ch.psi.wica.services.stream;
 import ch.psi.wica.infrastructure.stream.WicaStreamConfigurationDecoder;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamId;
+import ch.psi.wica.services.channel.WicaChannelMetadataMapSerializerService;
+import ch.psi.wica.services.channel.WicaChannelValueMapSerializerService;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.StopWatch;
@@ -42,6 +44,8 @@ public class WicaStreamLifecycleService
    private final WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService;
    private final WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService;
    private final WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService;
+   private final WicaChannelMetadataMapSerializerService wicaChannelMetadataMapSerializerService;
+   private final WicaChannelValueMapSerializerService wicaChannelValueMapSerializerService;
 
    private final AtomicInteger streamsCreated;
    private final AtomicInteger streamsDeleted;
@@ -70,7 +74,10 @@ public class WicaStreamLifecycleService
                                       @Autowired WicaStreamPolledValueRequesterService wicaStreamPolledValueRequesterService,
                                       @Autowired WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService,
                                       @Autowired WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService,
-                                      @Autowired WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService )
+                                      @Autowired WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService,
+                                      @Autowired WicaChannelMetadataMapSerializerService wicaChannelMetadataMapSerializerService,
+                                      @Autowired WicaChannelValueMapSerializerService wicaChannelValueMapSerializerService
+   )
    {
       this.wicaStreamConfigurationDecoder = wicaStreamConfigurationDecoder;
       this.wicaStreamMonitoredValueRequesterService = Validate.notNull( wicaStreamMonitoredValueRequesterService);
@@ -78,6 +85,8 @@ public class WicaStreamLifecycleService
       this.wicaStreamMetadataCollectorService = wicaStreamMetadataCollectorService;
       this.wicaStreamMonitoredValueCollectorService = wicaStreamMonitoredValueCollectorService;
       this.wicaStreamPolledValueCollectorService = wicaStreamPolledValueCollectorService;
+      this.wicaChannelMetadataMapSerializerService = wicaChannelMetadataMapSerializerService;
+      this.wicaChannelValueMapSerializerService = wicaChannelValueMapSerializerService;
 
       this.streamsCreated = new AtomicInteger( 0 );
       this.streamsDeleted = new AtomicInteger( 0 );
@@ -138,7 +147,9 @@ public class WicaStreamLifecycleService
          final var wicaStreamServerSentEventPublisher = new WicaStreamServerSentEventPublisher( wicaStream,
                                                                                                 wicaStreamMetadataCollectorService,
                                                                                                 wicaStreamMonitoredValueCollectorService,
-                                                                                                wicaStreamPolledValueCollectorService );
+                                                                                                wicaStreamPolledValueCollectorService,
+                                                                                                wicaChannelMetadataMapSerializerService,
+                                                                                                wicaChannelValueMapSerializerService);
 
          wicaStreamPublisherMap.put( wicaStream.getWicaStreamId(), wicaStreamServerSentEventPublisher );
 
