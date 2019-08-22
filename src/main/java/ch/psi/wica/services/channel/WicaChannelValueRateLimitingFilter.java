@@ -29,7 +29,6 @@ class WicaChannelValueRateLimitingFilter implements WicaChannelValueFilter
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private static final LocalDateTime LONG_AGO = LocalDateTime.of( 1961,8,25,0,0 );
    private final Duration samplingInterval;
    private LocalDateTime lastSampleTimestamp;
 
@@ -49,7 +48,7 @@ class WicaChannelValueRateLimitingFilter implements WicaChannelValueFilter
       Validate.isTrue(samplingIntervalInMillis > 0 );
 
       samplingInterval = Duration.of( samplingIntervalInMillis, MILLIS );
-      this.lastSampleTimestamp = LONG_AGO;
+      this.lastSampleTimestamp = LocalDateTime.MIN;
    }
 
 /*- Class methods ------------------------------------------------------------*/
