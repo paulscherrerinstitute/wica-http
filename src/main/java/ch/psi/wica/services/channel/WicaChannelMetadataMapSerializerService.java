@@ -1,8 +1,10 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.infrastructure.channel;
+package ch.psi.wica.services.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.infrastructure.channel.WicaChannelDataSerializer;
+import ch.psi.wica.infrastructure.channel.WicaChannelDataSerializerBuilder;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -12,52 +14,50 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import net.jcip.annotations.Immutable;
+import org.apache.commons.lang3.Validate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+@Service
 @Immutable
-public class WicaChannelMetadataMapSerializer
+public class WicaChannelMetadataMapSerializerService
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private static final ObjectMapper mapperWithoutQuotedStrings = Jackson2ObjectMapperBuilder.json().build();
-   private static final ObjectMapper mapperWithQuotedStrings = Jackson2ObjectMapperBuilder.json().build();
+   private final ObjectMapper mapper;
 
-   static {
-      final SimpleModule moduleWithoutQuotedStrings = new SimpleModule();
-      moduleWithoutQuotedStrings.addSerializer( new MyCustomWicaChannelMetadataMapSerializer(false ) );
-      mapperWithoutQuotedStrings.registerModule(moduleWithoutQuotedStrings );
 
-      final SimpleModule moduleWithQuotedStrings = new SimpleModule();
-      moduleWithQuotedStrings.addSerializer( new MyCustomWicaChannelMetadataMapSerializer(true ) );
-      mapperWithQuotedStrings.registerModule(moduleWithQuotedStrings );
-   }
-
-   private final boolean quoteNumericStrings;
-
-   /*- Main ---------------------------------------------------------------------*/
+/*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelMetadataMapSerializer( boolean quoteNumericStrings)
+   public WicaChannelMetadataMapSerializerService( @Value( "${wica.stream-metadata-fields-of-interest}" ) String fieldsOfInterest,
+                                                   @Value( "${wica.stream-quote-numeric-strings}" ) boolean quoteNumericStrings )
    {
-      this.quoteNumericStrings = quoteNumericStrings;
-   }
+      Validate.notNull( fieldsOfInterest );
+      final Set<String> fieldsOfInterestSet = Set.of( fieldsOfInterest.split( ";" ) );
 
+      mapper = Jackson2ObjectMapperBuilder.json().build();
+      final SimpleModule module = new SimpleModule();
+      module.addSerializer( new MyCustomWicaChannelMetadataMapSerializer( fieldsOfInterestSet, quoteNumericStrings ) );
+      mapper.registerModule( module );
+   }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
     public String serialize( Map<WicaChannel, WicaChannelMetadata> channelMetadataMap )
     {
-      final ObjectMapper mapper = getMapper();
       try
       {
          return mapper.writeValueAsString( channelMetadataMap );
@@ -70,22 +70,18 @@ public class WicaChannelMetadataMapSerializer
 
 
 /*- Private methods ----------------------------------------------------------*/
-
-   private ObjectMapper getMapper()
-   {
-      return quoteNumericStrings ? mapperWithQuotedStrings : mapperWithoutQuotedStrings;
-   }
-
 /*- Nested Interfaces --------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
    private static class MyCustomWicaChannelMetadataMapSerializer extends StdSerializer<Map>
    {
+      final Set<String> fieldsOfInterest;
       final boolean quoteNumericStrings;
 
-      MyCustomWicaChannelMetadataMapSerializer( boolean quoteNumericStrings)
+      MyCustomWicaChannelMetadataMapSerializer( Set<String> fieldsOfInterest, boolean quoteNumericStrings)
       {
          super( Map.class );
+         this.fieldsOfInterest = fieldsOfInterest;
          this.quoteNumericStrings = quoteNumericStrings;
       }
 
@@ -103,6 +99,7 @@ public class WicaChannelMetadataMapSerializer
 
             final WicaChannelDataSerializer serializer = WicaChannelDataSerializerBuilder
                   .create()
+                  .withFieldsOfInterest( fieldsOfInterest )
                   .withNumericScale( numericScale )
                   .withQuotedNumericStrings( quoteNumericStrings )
                   .build();
