@@ -46,7 +46,7 @@ public class WicaStreamMonitoredValueCollectorService
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaStreamMonitoredValueCollectorService( @Value( "${wica.channel-value-stash-buffer-size}") int bufferSize,
+   public WicaStreamMonitoredValueCollectorService( @Value( "${wica.channel-monitored-value-buffer-size}") int bufferSize,
                                                     @Autowired ApplicationEventPublisher applicationEventPublisher,
                                                     @Autowired WicaChannelValueTimestampRewriter wicaChannelValueTimestampRewriter,
                                                     @Autowired WicaChannelValueFilteringService wicaChannelValueFilteringService )
