@@ -4,12 +4,12 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-import ch.psi.wica.infrastructure.channel.WicaChannelMetadataMapSerializer;
-import ch.psi.wica.infrastructure.channel.WicaChannelValueMapSerializer;
 import ch.psi.wica.infrastructure.stream.WicaStreamServerSentEventBuilder;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamId;
 import ch.psi.wica.model.stream.WicaStreamProperties;
+import ch.psi.wica.services.channel.WicaChannelMetadataMapSerializerService;
+import ch.psi.wica.services.channel.WicaChannelValueMapSerializerService;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -38,8 +38,8 @@ public class WicaStreamServerSentEventPublisher
    private final WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService;
    private final WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService;
 
-   private final WicaChannelMetadataMapSerializer wicaChannelMetadataMapSerializer;
-   private final WicaChannelValueMapSerializer wicaChannelValueMapSerializer;
+   private final WicaChannelMetadataMapSerializerService wicaChannelMetadataMapSerializerService;
+   private final WicaChannelValueMapSerializerService wicaChannelValueMapSerializerService;
    private final AtomicBoolean shutdown = new AtomicBoolean( false );
 
 
@@ -49,18 +49,21 @@ public class WicaStreamServerSentEventPublisher
    WicaStreamServerSentEventPublisher( WicaStream wicaStream,
                                        WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService,
                                        WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService,
-                                       WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService )
+                                       WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService,
+                                       WicaChannelMetadataMapSerializerService wicaChannelMetadataMapSerializerService,
+                                       WicaChannelValueMapSerializerService wicaChannelValueMapSerializerService
+   )
    {
       this.wicaStream = Validate.notNull( wicaStream );
       this.wicaStreamMetadataCollectorService = Validate.notNull( wicaStreamMetadataCollectorService );
       this.wicaStreamMonitoredValueCollectorService = Validate.notNull( wicaStreamMonitoredValueCollectorService );
       this.wicaStreamPolledValueCollectorService = Validate.notNull( wicaStreamPolledValueCollectorService );
+      this.wicaChannelMetadataMapSerializerService = Validate.notNull(wicaChannelMetadataMapSerializerService);
+      this.wicaChannelValueMapSerializerService = Validate.notNull(wicaChannelValueMapSerializerService);
 
       this.wicaStreamId = Validate.notNull( wicaStream.getWicaStreamId() );
       this.wicaStreamProperties = Validate.notNull( wicaStream.getWicaStreamProperties() );
 
-      this.wicaChannelMetadataMapSerializer = new WicaChannelMetadataMapSerializer(false );
-      this.wicaChannelValueMapSerializer = new WicaChannelValueMapSerializer( false );
       shutdown.set( false );
    }
 
@@ -166,8 +169,8 @@ public class WicaStreamServerSentEventPublisher
          } )
          .filter( m -> m.keySet().size() > 0 )
          .map( map -> {
-               final String jsonMetadataString = wicaChannelMetadataMapSerializer.serialize( map );
-               return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build(wicaStreamId, jsonMetadataString );
+               final String jsonMetadataString = wicaChannelMetadataMapSerializerService.serialize ( map );
+               return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build( wicaStreamId, jsonMetadataString );
          } )
          .doOnComplete( () -> logger.warn( "channel-metadata flux with id: '{}' completed.", wicaStreamId  ))
          .doOnCancel( () -> logger.warn( "channel-metadata flux with id: '{}' was cancelled.", wicaStreamId  ) )
@@ -200,7 +203,7 @@ public class WicaStreamServerSentEventPublisher
             final var map = timeOfLastUpdate.equals( LocalDateTime.MIN  ) ?
                wicaStreamMonitoredValueCollectorService.getLatest( wicaStream ) :
                wicaStreamMonitoredValueCollectorService.get( wicaStream, timeOfLastUpdate );
-            final var jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
+            final var jsonServerSentEventString = wicaChannelValueMapSerializerService.serialize(map );
             return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_MONITORED_VALUES.build(wicaStreamId, jsonServerSentEventString );
          } )
          .doOnComplete( () -> logger.warn( "channel-value-monitor flux with id: '{}' completed.", wicaStreamId ))
@@ -234,7 +237,7 @@ public class WicaStreamServerSentEventPublisher
             final var map = timeOfLastUpdate.equals( LocalDateTime.MIN  ) ?
                wicaStreamPolledValueCollectorService.getLatest( wicaStream ) :
                wicaStreamPolledValueCollectorService.get( wicaStream, timeOfLastUpdate );
-            final var jsonServerSentEventString = wicaChannelValueMapSerializer.serialize( map );
+            final var jsonServerSentEventString = wicaChannelValueMapSerializerService.serialize(map );
             return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_POLLED_VALUES.build(wicaStreamId, jsonServerSentEventString );
          } )
          .doOnComplete( () -> logger.warn( "channel-value-poll flux with id: '{}' completed.", wicaStreamId ))
