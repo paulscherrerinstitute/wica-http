@@ -16,9 +16,14 @@
       "description": "The configuration for PSI's CA library when logging."
     },
     {
-      "name": "wica.channel-value-stash-buffer-size",
+      "name": "wica.channel-monitored-value-buffer-size",
       "type": "java.lang.Integer",
-      "description": "The number of values that can be stashed in the control system received value buffer before older values start getting thrown away."
+      "description": "The number of values that can be held in the control system monitored value buffer before older values start getting thrown away."
+    },
+    {
+      "name": "wica.channel-polled-value-buffer-size",
+      "type": "java.lang.Integer",
+      "description": "The number of values that can be held in the control system polled value buffer before older values start getting thrown away."
     },
     {
       "name": "wica.channel-get-timeout-interval-in-ms",
@@ -41,14 +46,14 @@
       "description": "The default timeout in milliseconds to be applied when putting a new value to a wica channel."
     },
     {
-      "name": "wica.serialize-nan-as-string",
-      "type": "java.lang.Boolean",
-      "description": "Whether strict JSON compliance should be used when serializing double NaN values (=true) or whether JSON5 serialization compliance is acceptable (=false)."
+      "name": "wica.stream-metadata-fields-of-interest",
+      "type": "java.lang.String",
+      "description": "The fields of interest that should be serialized when sending the channel metadata."
     },
     {
-      "name": "wica.serialize-infinity-as-string",
+      "name": "wica.stream-quote-numeric-strings",
       "type": "java.lang.Boolean",
-      "description": "Whether strict JSON compliance should be used when serializing double Infinity values (=true) or whether JSON5 serialization compliance is acceptable (=false)."
+      "description": "Whether strict JSON compliance should be used when serializing NaN and Infinity values (=true) or whether JSON5 serialization compliance is acceptable (=false)."
     },
     {
       "name": "wica.allowed-origins",
