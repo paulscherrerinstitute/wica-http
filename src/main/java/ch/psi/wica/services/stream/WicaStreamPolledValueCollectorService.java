@@ -40,7 +40,7 @@ public class WicaStreamPolledValueCollectorService
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaStreamPolledValueCollectorService( @Value( "${wica.channel-value-stash-buffer-size}") int bufferSize,
+   public WicaStreamPolledValueCollectorService( @Value( "${wica.channel-polled-value-buffer-size}") int bufferSize,
                                                  @Autowired WicaChannelValueFilteringService wicaChannelValueFilteringService )
    {
       this.wicaStreamPolledValueDataBuffer = new WicaStreamPolledValueDataBuffer( bufferSize );
