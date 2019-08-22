@@ -1,8 +1,9 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.infrastructure.channel;
+package ch.psi.wica.services.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.infrastructure.util.JsonStringFormatter;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
@@ -23,13 +24,13 @@ import java.util.concurrent.TimeUnit;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-class WicaChannelMetadataMapSerializerTest
+class WicaChannelMetadataMapSerializerServiceTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaChannelMetadataMapSerializerTest.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaChannelMetadataMapSerializerServiceTest.class );
 
    private WicaChannelMetadata unkMetadata;
    private WicaChannelMetadata strMetadata ;
@@ -78,7 +79,25 @@ class WicaChannelMetadataMapSerializerTest
                                                                WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealNanTypeChannel" ).build(), realNanMetadata,
                                                                WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealArrayTypeChannel" ).build(), realArrMetadata );
 
-      final var serializer = new WicaChannelMetadataMapSerializer( false );
+      final var serializer = new WicaChannelMetadataMapSerializerService("type;wsts;egu;prec;hopr;lopr;drvh;drvl;hihi;lolo;high;low", false );
+      final String jsonStr = serializer.serialize( map );
+      logger.info("JSON Metadata MAP serialisation like this: '{}'", JsonStringFormatter.prettyFormat(jsonStr ) );
+   }
+
+   @Test
+   void test_serializeTypeOnly()
+   {
+      final Map<WicaChannel,WicaChannelMetadata> map = Map.of( WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "UnknownTypeChannel" ).build(), unkMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "StringTypeChannel" ).build(), strMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "StringArrayType" ).build(), strArrMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "IntegerTypeChannel" ).build(), intMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "IntegerArrayTypeChannel" ).build(), intArrMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealTypeChannel" ).build(), realMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealInfTypeChannel" ).build(), realInfMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealNanTypeChannel" ).build(), realNanMetadata,
+                                                               WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealArrayTypeChannel" ).build(), realArrMetadata );
+
+      final var serializer = new WicaChannelMetadataMapSerializerService("type", false );
       final String jsonStr = serializer.serialize( map );
       logger.info("JSON Metadata MAP serialisation like this: '{}'", JsonStringFormatter.prettyFormat(jsonStr ) );
    }
@@ -97,8 +116,7 @@ class WicaChannelMetadataMapSerializerTest
                                                                 WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "realNanMetadataChannel" ).build(), realNanMetadata,
                                                                 WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "realInfMetadataChannel" ).build(), realInfMetadata );
 
-
-      final var serializer = new WicaChannelMetadataMapSerializer( false );
+      final var serializer = new WicaChannelMetadataMapSerializerService("type;wsts;egu;prec;hopr;lopr;drvh;drvl;hihi;lolo;high;low", false );
 
       final StopWatch stopwatch = StopWatch.createStarted();
       for ( int i= 0; i < times; i++ )
