@@ -1,8 +1,9 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.infrastructure.channel;
+package ch.psi.wica.services.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.infrastructure.util.JsonStringFormatter;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelValue;
@@ -26,13 +27,13 @@ import static java.lang.Double.POSITIVE_INFINITY;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-class WicaChannelValueMapSerializerTest
+class WicaChannelValueMapSerializerServiceTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaChannelValueMapSerializerTest.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaChannelValueMapSerializerServiceTest.class );
 
 
    private WicaChannelValue unconnValue;
@@ -73,17 +74,17 @@ class WicaChannelValueMapSerializerTest
    @Test
    void test_serialize()
    {
-      final Map<WicaChannel,List<WicaChannelValue>> map = Map.of( WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "UnconnChannel").build(), List.of(unconnValue ),
-                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "StringTypeChannel" ).build(), List.of(strValue ),
-                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "StringArrayType" ).build(), List.of(strArrValue ),
-                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "IntegerTypeChannel" ).build(), List.of(intValue ),
-                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "IntegerArrayTypeChannel" ).build(), List.of(intArrValue ),
-                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealTypeChannel" ).build(), List.of(realValue ),
-                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealInfTypeChannel" ).build(), List.of(realInfValue ),
-                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealNanTypeChannel" ).build(), List.of(realNanValue ),
-                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealArrayTypeChannel" ).build(), List.of(realArrValue  ) );
+      final Map<WicaChannel,List<WicaChannelValue>> map = Map.of(WicaChannelBuilder.create().withChannelNameAndDefaultProperties("UnconnChannel").build(), List.of(unconnValue ),
+                                                                 WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "StringTypeChannel" ).build(), List.of(strValue ),
+                                                                 WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "StringArrayType" ).build(), List.of(strArrValue ),
+                                                                 WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "IntegerTypeChannel" ).build(), List.of(intValue ),
+                                                                 WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "IntegerArrayTypeChannel" ).build(), List.of(intArrValue ),
+                                                                 WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealTypeChannel" ).build(), List.of(realValue ),
+                                                                 WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealInfTypeChannel" ).build(), List.of(realInfValue ),
+                                                                 WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealNanTypeChannel" ).build(), List.of(realNanValue ),
+                                                                 WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealArrayTypeChannel" ).build(), List.of(realArrValue  ) );
 
-      final var serializer = new WicaChannelValueMapSerializer( false );
+      final var serializer = new WicaChannelValueMapSerializerService(false );
       final String jsonStr = serializer.serialize( map );
       logger.info("JSON Value MAP serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat(jsonStr ) );
    }
@@ -103,7 +104,7 @@ class WicaChannelValueMapSerializerTest
                                                                   WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "RealArrayTypeChannel" ).build(), List.of(realArrValue  ) );
 
 
-      final var serializer = new WicaChannelValueMapSerializer( false );
+      final var serializer = new WicaChannelValueMapSerializerService(false );
 
       final StopWatch stopwatch = StopWatch.createStarted();
       for ( int i= 0; i < times; i++ )
