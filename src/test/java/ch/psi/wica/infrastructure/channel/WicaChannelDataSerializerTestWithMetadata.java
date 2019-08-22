@@ -55,9 +55,6 @@ class WicaChannelDataSerializerTestWithMetadata
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   @Value( "${spring.jackson.generator.quote-non-numeric-numbers}" )
-   private boolean special;
-
    @BeforeEach
    void setup()
    {
