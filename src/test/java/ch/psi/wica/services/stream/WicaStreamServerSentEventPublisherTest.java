@@ -12,6 +12,8 @@ import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamId;
 import ch.psi.wica.model.stream.WicaStreamProperties;
+import ch.psi.wica.services.channel.WicaChannelMetadataMapSerializerService;
+import ch.psi.wica.services.channel.WicaChannelValueMapSerializerService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,8 +21,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.codec.ServerSentEvent;
 
 import java.io.IOException;
@@ -60,6 +64,12 @@ class WicaStreamServerSentEventPublisherTest
 
    @MockBean
    private WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService;
+
+   @Autowired
+   private WicaChannelMetadataMapSerializerService wicaChannelMetadataMapSerializerService;
+
+   @Autowired
+   private WicaChannelValueMapSerializerService wicaChannelValueMapSerializerService;
 
    private final ObjectMapper jsonDecoder = new ObjectMapper();
 
@@ -115,9 +125,11 @@ class WicaStreamServerSentEventPublisherTest
             .build();
 
       objectUnderTest = new WicaStreamServerSentEventPublisher( wicaStream,
-         wicaStreamMetadataCollectorServiceMock,
-         wicaStreamMonitoredValueCollectorService,
-         wicaStreamPolledValueCollectorService );
+                                                                wicaStreamMetadataCollectorServiceMock,
+                                                                wicaStreamMonitoredValueCollectorService,
+                                                                wicaStreamPolledValueCollectorService,
+                                                                wicaChannelMetadataMapSerializerService,
+                                                                wicaChannelValueMapSerializerService );
    }
 
    @Test
