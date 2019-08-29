@@ -145,26 +145,26 @@ public class EpicsChannelMonitoringService implements AutoCloseable
 
       try
       {
-         logger.warn("'{}' - creating channel of type '{}'...", epicsChannelName, "generic");
+         logger.trace("'{}' - creating channel of type '{}'...", epicsChannelName, "generic");
          final Channel<Object> channel = caContext.createChannel(epicsChannelName.asString(), Object.class);
          channels.put(epicsChannelName, channel);
-         logger.warn("'{}' - channel created ok.", epicsChannelName);
+         logger.trace("'{}' - channel created ok.", epicsChannelName);
 
          // Synchronously add a connection listener before making any attempt to connect the channel.
          logger.trace("'{}' - adding connection listener... ", epicsChannelName);
          epicsChannelConnectionChangeSubscriber.subscribe( channel, (conn) -> {
             if ( conn )
             {
-               logger.warn("'{}' - connection state changed to CONNECTED.", epicsChannelName);
+               logger.trace("'{}' - connection state changed to CONNECTED.", epicsChannelName);
 
                // Synchronously obtain the channel's metadata.
                final var wicaChannelMetadata = epicsChannelMetadataGetter.get( channel );
-               logger.warn("'{}' - channel metadata obtained ok.", epicsChannelName);
+               logger.trace("'{}' - channel metadata obtained ok.", epicsChannelName);
                metadataChangeHandler.accept( wicaChannelMetadata );
 
                // Synchronously obtain the channel's initial value.
                final var wicaChannelValue = epicsChannelValueGetter.get(channel);
-               logger.warn("'{}' - channel value obtained ok.", epicsChannelName);
+               logger.trace("'{}' - channel value obtained ok.", epicsChannelName);
                valueChangeHandler.accept(wicaChannelValue);
 
                // Synchronously create a monitor which will notify all future value changes.
@@ -173,11 +173,11 @@ public class EpicsChannelMonitoringService implements AutoCloseable
             }
             connectionStateChangeHandler.accept( conn );
          } );
-         logger.warn("'{}' - connection listener added ok.", epicsChannelName);
+         logger.trace("'{}' - connection listener added ok.", epicsChannelName);
 
-         logger.warn("'{}' - connecting asynchronously to... ", epicsChannelName);
+         logger.trace("'{}' - connecting asynchronously to... ", epicsChannelName);
          channel.connectAsync()
-            .thenRunAsync(() -> logger.warn("'{}' - asynchronous connect completed ok.", epicsChannelName))
+            .thenRunAsync(() -> logger.trace("'{}' - asynchronous connect completed ok.", epicsChannelName))
             .exceptionally(( ex ) -> {
                logger.warn("'{}' - exception on channel, details were as follows: {}", this, ex.toString());
                return null;
