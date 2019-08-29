@@ -30,7 +30,7 @@ public class WicaChannelMetadataUpdateEvent
       final Logger logger = LoggerFactory.getLogger( WicaChannelMetadataUpdateEvent.class);
       this.wicaChannel = Validate.notNull( wicaChannel );
       this.wicaChannelMetadata = Validate.notNull( wicaChannelMetadata );
-      logger.info("Event created: '{}'.", this );
+      logger.trace("Event created: '{}'.", this );
    }
 
 /*- Class methods ------------------------------------------------------------*/
