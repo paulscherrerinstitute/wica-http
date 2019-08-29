@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/paulscherrerinstitute/cam_server.svg?branch=master)](https://travis-ci.org/datastreaming/cam_server) [![Build status](https://ci.appveyor.com/api/projects/status/0vyk18qxnqk2cmvx?svg=true)](https://ci.appveyor.com/project/Babicaa/cam-server)
+
 # Overview
 
 WICA stands for "Web Interface for Controls Applications". The idea is to provide web-based access to PSI's controls 
