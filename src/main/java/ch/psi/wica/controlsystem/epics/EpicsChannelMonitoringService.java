@@ -140,7 +140,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       Validate.validState( ! closed, "The monitor service was previously closed and can no longer be used." );
       Validate.validState( ! channels.containsKey( epicsChannelName ), "The channel name: '" + epicsChannelName.asString() + "' is already being monitored."  );
 
-      logger.warn("'{}' - starting to monitor... ", epicsChannelName);
+      logger.trace("'{}' - starting to monitor... ", epicsChannelName);
       channelsCreatedCount++;
 
       try

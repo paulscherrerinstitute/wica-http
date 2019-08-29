@@ -118,7 +118,7 @@ public class EpicsMonitoredValueRequesterService
       Validate.notNull( wicaChannel );
       final ControlSystemName controlSystemName = wicaChannel.getName().getControlSystemName();
 
-      appLogger.info( "EPICS channel subscribe: '{}'", controlSystemName.asString() );
+      appLogger.trace( "EPICS channel subscribe: '{}'", controlSystemName.asString() );
       logger.trace( "Subscribing to new control system channel named: '{}'", controlSystemName.asString() );
 
       // Define the handlers to be informed of interesting changes to the channel
