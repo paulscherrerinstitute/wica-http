@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/paulscherrerinstitute/cam_server.svg?branch=master)](https://travis-ci.org/datastreaming/cam_server) [![Build status](https://ci.appveyor.com/api/projects/status/0vyk18qxnqk2cmvx?svg=true)](https://ci.appveyor.com/project/Babicaa/cam-server)
+[![Build Status](https://travis-ci.org/paulscherrerinstitute/wica-stream.svg?branch=master)](https://travis-ci.org/datastreaming/wica-stream) 
 
 # Overview
 
