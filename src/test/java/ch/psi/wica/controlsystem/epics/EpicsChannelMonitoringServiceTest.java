@@ -6,6 +6,7 @@ package ch.psi.wica.controlsystem.epics;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
@@ -156,6 +157,10 @@ class EpicsChannelMonitoringServiceTest
       assertEquals(0, epicsChannelMonitoringService.getMonitorsConnectedCount());
    }
 
+   // TODO - Test disabled for now. Need way of starting EPICS server when performing tests as part of automatic build.
+   // By default this test is suppressed as it would create problems in the automatic
+   // build system. The test should be enabled as required during pre-production testing.
+   @Disabled
    @Test
    void testGetChannelConnectionCount() throws InterruptedException
    {
@@ -179,6 +184,10 @@ class EpicsChannelMonitoringServiceTest
       Mockito.verify( valueChangeHandlerMock, never() ).accept( any() );
    }
 
+   // TODO - Test disabled for now. Need way of starting EPICS server when performing tests as part of automatic build.
+   // By default this test is suppressed as it would create problems in the automatic
+   // build system. The test should be enabled as required during pre-production testing.
+   @Disabled
    @Test
    void testStartMonitoring_verifyInitialConnectBehaviour_NotificationSequence() throws InterruptedException
    {
@@ -203,6 +212,8 @@ class EpicsChannelMonitoringServiceTest
       // TODO: write this
    }
 
+   // TODO - Test disabled for now. Need way of starting EPICS server when performing tests as part of automatic build.
+   @Disabled
    @Test
    void testStopMonitoring_verifyConnectionCountChanges() throws InterruptedException
    {

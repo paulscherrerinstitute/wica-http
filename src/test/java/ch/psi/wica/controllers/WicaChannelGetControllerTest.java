@@ -88,7 +88,7 @@ class WicaChannelGetControllerTest
    }
 
    // By default this test is suppressed as it would create problems in the automatic
-   // build system. They test should be enabled as required during pre-production testing.
+   // build system. The test should be enabled as required during pre-production testing.
    @Disabled
    @Test
    void testGetRequest_HappyDay()
