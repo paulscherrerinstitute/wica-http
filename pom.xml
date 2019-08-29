@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ch.psi</groupId>
-    <artifactId>wica</artifactId>
-    <version>1.7.0-RELEASE</version>
+    <artifactId>wica-stream</artifactId>
+    <version>1.0.0-RELEASE</version>
     <packaging>jar</packaging>
 
-    <name>wica2</name>
+    <name>wica-stream</name>
     <description>Web Interface for EPICS Channel Access Protocol</description>
 
     <parent>
