@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/paulscherrerinstitute/wica-stream.svg?branch=master)](https://travis-ci.org/datastreaming/wica-stream) 
+[![Build Status](https://travis-ci.org/paulscherrerinstitute/wica-stream.svg?branch=master)](https://travis-ci.org/paulscherrerinstitute/wica-stream) 
 
 # Overview
 
