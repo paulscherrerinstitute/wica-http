@@ -87,7 +87,7 @@ public class WicaStreamMetadataCollectorService
       {
          Validate.notNull( wicaChannelMetadataUpdateEvent );
 
-         logger.info( "Received METADATA update event: {} ", wicaChannelMetadataUpdateEvent);
+         logger.trace( "Received METADATA update event: {} ", wicaChannelMetadataUpdateEvent);
 
          final WicaChannel wicaChannel = wicaChannelMetadataUpdateEvent.getWicaChannel();
          final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey(wicaChannel );
