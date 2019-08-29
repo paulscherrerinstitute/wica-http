@@ -5,9 +5,11 @@ package ch.psi.wica.controllers;
 
 import ch.psi.wica.controlsystem.epics.EpicsChannelMonitoringService;
 import ch.psi.wica.model.stream.WicaStreamId;
+import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -32,6 +35,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+// Need to rewire the service after each test since the epics
+// channel monitoring service will have been used an unknown
+// number of times before the test begins so we cannot know
+// the state that would be returned by getChannelsCreatedCount
+// and getChannelsDeleteCount.
+@DirtiesContext( classMode= DirtiesContext.ClassMode.BEFORE_CLASS )
 @SpringBootTest
 @AutoConfigureMockMvc
 class WicaStreamDeleteControllerTest
@@ -60,6 +69,8 @@ class WicaStreamDeleteControllerTest
    {
       epicsChannelListOk = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_ok.json") );
       WicaStreamId.resetAllocationSequencer();
+
+
    }
 
    @Test
@@ -85,6 +96,7 @@ class WicaStreamDeleteControllerTest
       // Send a DELETE request to delete the stream we just created.
       final RequestBuilder deleteRequest1 = MockMvcRequestBuilders.delete( "/ca/streams/0" );
       mockMvc.perform( deleteRequest1 ).andDo( print() ).andExpect( status().isOk() ).andReturn();
+
 
       // TODO: the following assertion is supressed because it relies on an EPICS server running.
       // assertEquals(0, epicsChannelMonitoringService.getChannelsActiveCount() );
