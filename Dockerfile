@@ -128,7 +128,7 @@ RUN apk update && \
 RUN mkdir log config lib
 
 # Populate the application directories as appropriate
-COPY ./target/${JAR_FILE} lib/jarfile.jar
+COPY ./target/wica-stream-1.0.0-RELEASE.jar lib/jarfile.jar
 COPY ./src/main/resources/config/keystore.jks config
 COPY ./src/main/resources/application-docker-run.properties config
 COPY src/main/resources/logback_config.xml config
