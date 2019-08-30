@@ -22,19 +22,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
-        <javadoc.home>/usr/lib/jvm/java-1.8-openjdk/bin/</javadoc.home>
-        <!--<javadoc.home>/Library/Java/JavaVirtualMachines/jdk-11.0.1.jdk/Contents/Home/bin/</javadoc.home>-->
+        <javadoc.home>/Library/Java/JavaVirtualMachines/jdk-11.0.1.jdk/Contents/Home/bin/</javadoc.home>
     </properties>
 
     <dependencies>
-
-        <!-- The definition below can be optionally enabled to trigger automatic -->
-        <!-- registration of this application with the SpringBoot Admin Server -->
-        <!--<dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-starter-client</artifactId>
-            <version>2.0.3</version>
-        </dependency> -->
 
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -227,15 +218,10 @@
 
     <distributionManagement>
         <repository>
-            <id>artifacts.psi.ch</id>
-            <name>artifacts.psi.ch-releases</name>
-            <url>https://artifacts.psi.ch/artifactory/libs-releases-local</url>
+            <id>bintray-paulscherrerinstitute-wica</id>
+            <name>paulscherrerinstitute-wica</name>
+            <url>https://api.bintray.com/maven/paulscherrerinstitute/wica/wica-stream;publish=1</url>
         </repository>
-        <snapshotRepository>
-            <id>artifacts.psi.ch</id>
-            <name>artifacts.psi.ch-snapshots</name>
-            <url>https://artifacts.psi.ch/artifactory/libs-snapshots-local</url>
-        </snapshotRepository>
     </distributionManagement>
 
     <repositories>
