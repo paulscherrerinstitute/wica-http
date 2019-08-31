@@ -2,7 +2,7 @@
 
 # Overview
 
-WICA stands for "Web Interface for Controls Applications". The idea is to provide web-based access to PSI's controls 
+WICA stands for *Web Interface for Controls Applications*. The idea is to provide web-based access to PSI's controls 
 infrastructure. 
 
 Currently this infrastructure is based on EPICS IOC's accessed by channel access protocol. Wica supports
