@@ -1,3 +1,11 @@
+
+FROM maven:3.5.2-jdk-8-alpine AS MAVEN_TOOL_CHAIN
+COPY pom.xml /tmp/
+COPY src /tmp/src/
+WORKDIR /tmp/
+RUN mvn package
+
+
 ###############################################################################
 # 1.0 Create a cutdown JDK image tailored to the needs of the application
 ###############################################################################
@@ -47,6 +55,9 @@ RUN ZULU_ARCH=zulu11.2.3-jdk11.0.1-linux_musl_x64.tar.gz && \
 #     tar xvf baseR3.14.12.7.tar.gz
 #
 # RUN cd base-3.14.12.7 ; make
+
+
+
 
 
 ################################################################################
@@ -126,6 +137,8 @@ RUN apk update && \
 
 # Create the directories needed by this application
 RUN mkdir log config lib
+
+RUN mvn package
 
 # Populate the application directories as appropriate
 COPY ./target/wica-stream-1.0.0-RELEASE.jar lib/jarfile.jar
