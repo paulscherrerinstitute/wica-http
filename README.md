@@ -4,8 +4,8 @@
 
 This is the Wica-HTTP component.
  
-WICA stands for Web Interface for Controls Applications. The basic idea is to provide a technology which supports the 
-streaming of live data from a distributed control system to update a user's web pages in real-time.
+WICA stands for *Web Interface for Controls Applications*. The basic idea is to support the streaming of live data 
+from a distributed control system to update a user's web pages in real-time.
  
 Wica comprises two main components:
 
@@ -18,7 +18,7 @@ Wica comprises two main components:
 
 Currently WICA interoperates with the EPICS Control Systems using its well established Channel Access (CA) protocol. 
 
-# Main Features
+# Wica-HTTP Main Features
 
 * Provides a backend gateway to the control system together with an out-of-the-box web server, that serves the 
 Wica-JS library and/or the users custom web pages.
