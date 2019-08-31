@@ -9,10 +9,10 @@ from a distributed control system to update a user's web pages in real-time.
  
 Wica comprises two main components:
 
-* Wica-HTTP - this is a backend HTTP server which receives incoming requests from the web and which generates 
+* **Wica-HTTP** - this is a backend HTTP server which receives incoming requests from the web and which generates 
   live data streams containing information for the control system points of interest.
 
-* Wica-JS - this is a frontend Javascript library which scans a user's web pages for HTML5 tags defining
+* **Wica-JS** - this is a frontend Javascript library which scans a user's web pages for HTML5 tags defining
   points of interest in the control system. The library then generates requests to the backend server to 
   obtain the necessary data and to update the user's web pages in real-time.
 
@@ -20,8 +20,8 @@ Currently WICA interoperates with the EPICS Control Systems using its well estab
 
 # Wica-HTTP Main Features
 
-* Provides a backend gateway to the control system together with an out-of-the-box web server, that serves the 
-Wica-JS library and/or the users custom web pages.
+* Provides a gateway to the backend control system. 
+* Provides an out-of-the-box web server, that serves the Wica-JS library and/or the users custom web pages.
 * Streams control system data using HTML5 Server-Sent-Event technology.
 * Supports control system Get and Set functionality.
 * Provides channel filtering (eg noise or rate limiting) and configurable numeric precision.
