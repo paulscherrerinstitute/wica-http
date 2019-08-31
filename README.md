@@ -32,45 +32,27 @@ Currently WICA interoperates with the EPICS Control Systems using its well estab
 
 # Getting Started
 
-## Get the Wica-HTTP fat Jar.
-
-## Adjust the configuration file to reflect your local conditions
-
-## Run the Server
-
+1. Get the Wica-HTTP fat Jar.
+1. Adjust the configuration file to reflect your local conditions
+1. Run the Server
+```
    java -p lib/jarfile.jar --add-modules ALL-DEFAULT -m jarfile [<keystore_password>]
+```
 
-## Check the server is running ok
+1. Check the server is running ok
 
    Use your browser to access the '/admin' endpoint.
    Example: navigate to the following URL
    
    http[s]://<wica_server_host>/admin
    
-## Check the connection to the backend control system is working 
+1. Check the connection to the backend control system is working 
   
    Read your favourite EPICS channel
    http[s]://wica.psi.ch/ca/channel/<pvName>
    
    
-   
-
-
-| __Property__       | __Description__                                                            |
-| :----------------- | :------------------------------------------------------------------------- |
-| daqMode            | Sets the Data Acquisition Mode. Can be monitoring or polling.              |
-| pollratio          | Sets the number of polling cycles before a sample is taken.                |
-| fields             | A semicolon delimited list defining the data fields that should be included when sending value information for this channel.|
-| prec               | Sets the number of digits after the decimal point to be used when sending numeric information. |
-| filter             | Sets the type of filtering to be used for this channel.                    |
-| n                  | Sets the the number of samples (latest value sampling filter only)         |
-| m                  | Sets the the cycle length (fixed cycle sampling filter only)               |
-| interval           | Sets the the filter sampling interval (rate limiting sampling filter only) |
-| deadband           | Sets the the filter deadband ( change filtering sampler only)              |
-
-For the latest information please consult the [JS](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica) 
-and [Javadoc](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/java) information which is built automatically 
-with every software release.
+  
 
 # Wica REST Service API 
 
