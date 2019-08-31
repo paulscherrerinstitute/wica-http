@@ -1,9 +1,9 @@
 
-FROM maven:3.5.2-jdk-8-alpine AS MAVEN_TOOL_CHAIN
+FROM maven:3.6.1-jdk-11-slim AS MAVEN_TOOL_CHAIN
 COPY pom.xml /tmp/
 COPY src /tmp/src/
 WORKDIR /tmp/
-RUN mvn package
+RUN mvn package -Dmaven.test.skip=true
 
 
 ###############################################################################
@@ -55,10 +55,6 @@ RUN ZULU_ARCH=zulu11.2.3-jdk11.0.1-linux_musl_x64.tar.gz && \
 #     tar xvf baseR3.14.12.7.tar.gz
 #
 # RUN cd base-3.14.12.7 ; make
-
-
-
-
 
 ################################################################################
 ## 3.0 Define the rest of our application
@@ -138,10 +134,9 @@ RUN apk update && \
 # Create the directories needed by this application
 RUN mkdir log config lib
 
-RUN mvn package
-
 # Populate the application directories as appropriate
-COPY ./target/wica-stream-1.0.0-RELEASE.jar lib/jarfile.jar
+# COPY ./target/wica-stream-1.0.0-RELEASE.jar lib/jarfile.jar
+COPY --from=MAVEN_TOOL_CHAIN /tmp/target/wica-stream-1.0.0-RELEASE.jar lib/jarfile.jar
 COPY ./src/main/resources/config/keystore.jks config
 COPY ./src/main/resources/application-docker-run.properties config
 COPY src/main/resources/logback_config.xml config
