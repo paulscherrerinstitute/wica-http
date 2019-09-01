@@ -1,3 +1,9 @@
+###############################################################################
+# Dockerfile to support insecure instance running on localhost, port 80
+###############################################################################
+
+## Run this files from the top level directory using:
+## 'docker build -f docker/Dockerfile.http .'
 
 FROM maven:3.6.1-jdk-11-slim AS MAVEN_TOOL_CHAIN
 WORKDIR /tmp/
@@ -76,8 +82,7 @@ WORKDIR /root
 # 3.0 Install any additional applications
 ###############################################################################
 
-RUN apk update && \
-    apk add --no-cache bash
+RUN apk update && apk add --no-cache bash
 
 ###############################################################################
 # 4.0 Set up the application project structure
@@ -88,7 +93,7 @@ RUN mkdir log config lib
 
 # Populate the application directories as appropriate
 COPY --from=MAVEN_TOOL_CHAIN /tmp/target/wica-stream-1.0.0-RELEASE.jar lib/jarfile.jar
-COPY ./src/main/resources/application-docker-run.properties config
+COPY ./src/main/resources/application.docker.http.properties config
 COPY ./src/main/resources/logback_config.xml config
 
 
@@ -107,8 +112,8 @@ VOLUME /root/web
 
 # Run the application on the Java 11 module path invoking the docker-run configuration profile
 # and passing the contents of the SSH Deploy Key.
-ENTRYPOINT exec java
+ENTRYPOINT exec java \
            -Dspring.config.location=config/application.docker.http.properties \
            -p lib/jarfile.jar \
            --add-modules ALL-DEFAULT \
-           -m jarfile
+           -m jarfile XXXX
