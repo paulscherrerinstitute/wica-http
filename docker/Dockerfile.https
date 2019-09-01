@@ -188,5 +188,3 @@ ENTRYPOINT exec java $JAVA_DBG_OPTS $JAVA_JMX_OPTS \
            --add-modules ALL-DEFAULT \
            -m jarfile \
            "$KEYSTORE_PASS"
-
-# java -Dfile.encoding=ISO8859-1 -Dspring.config.location=config/application-docker-run.properties  -p ~rees_s/jarfile.jar --add-modules ALL-DEFAULT  -m jarfile "!Wurenlingen2018$"
