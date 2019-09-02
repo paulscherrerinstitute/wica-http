@@ -1,8 +1,8 @@
 [![Build Status](https://travis-ci.org/paulscherrerinstitute/wica-stream.svg?branch=master)](https://travis-ci.org/paulscherrerinstitute/wica-stream) 
 
-# Wica-HTTP in a Nutshell
+# Wica-HTTP
 
-This is the Wica-HTTP component.
+This is the **Wica-HTTP** Git repository, one component of the PSI's WICA software suite. 
  
 WICA stands for *Web Interface for Controls Applications*. The basic idea is to support the streaming of live data 
 from a distributed control system to update a user's web pages in real-time.
@@ -52,7 +52,6 @@ Currently WICA interoperates with the EPICS Control Systems using its well estab
    http[s]://wica.psi.ch/ca/channel/<pvName>
    
    
-  
 
 # Wica REST Service API 
 
