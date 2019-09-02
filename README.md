@@ -20,7 +20,7 @@ Currently WICA interoperates with the EPICS Control Systems using its well estab
 
 # Main Features
 
-* Provides a gateway to the backend control system. 
+* Provides a gateway to the backend control system (currently EPICS).
 * Provides an out-of-the-box web server, that serves the Wica-JS library and/or the users custom web pages.
 * Streams control system data using HTML5 Server-Sent-Event technology.
 * Supports control system Get and Set functionality.
