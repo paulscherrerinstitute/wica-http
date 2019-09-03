@@ -92,8 +92,8 @@ RUN apk update && apk add --no-cache bash
 RUN mkdir log config lib
 
 # Populate the application directories as appropriate
-COPY --from=MAVEN_TOOL_CHAIN /tmp/target/wica-stream-1.0.0-RELEASE.jar lib/jarfile.jar
-COPY ./src/main/resources/application.docker.http.properties config
+COPY --from=MAVEN_TOOL_CHAIN /tmp/target/wica-stream-*.jar lib/jarfile.jar
+COPY ./src/main/resources/application-docker-http-run.properties config
 COPY ./src/main/resources/logback_config.xml config
 
 
