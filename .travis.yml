@@ -4,6 +4,6 @@ services:
   - docker
 
 before_install:
-  - docker build -f docker/Dockerfile.http .
+  - docker build -t paulscherrerinstitute/wica-stream:latest -f docker/Dockerfile.http .
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push paulscherrerinstitute/wica-stream:latest
