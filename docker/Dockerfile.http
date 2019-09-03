@@ -114,7 +114,7 @@ VOLUME /root/wica
 # Run the application on the Java 11 module path invoking the docker-run configuration profile
 # and passing the contents of the SSH Deploy Key.
 ENTRYPOINT exec java \
-           -Dspring.config.location=config/application.docker.http.properties \
+           -Dspring.config.location=config/application-docker-http-run.properties \
            -p lib/jarfile.jar \
            --add-modules ALL-DEFAULT \
            -m jarfile XXXX

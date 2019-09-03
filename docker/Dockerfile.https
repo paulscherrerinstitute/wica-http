@@ -141,7 +141,7 @@ RUN mkdir log config lib
 COPY --from=MAVEN_TOOL_CHAIN /tmp/target/wica-stream-1.0.0-RELEASE.jar lib/jarfile.jar
 COPY ./src/main/resources/config/keystore.jks config
 COPY ./src/main/resources/application-docker-run.properties config
-COPY src/main/resources/logback_config.xml config
+COPY ./src/main/resources/logback_config.xml config
 
 
 ###############################################################################
@@ -182,7 +182,7 @@ ENV JAVA_DBG_OPTS "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address
 # Here's looking at you HIPA !
 ENTRYPOINT exec java $JAVA_DBG_OPTS $JAVA_JMX_OPTS \
            -Dfile.encoding=ISO8859-1 \
-           -Dspring.config.location=config/application-docker-run.properties \
+           -Dspring.config.location=config/application-docker-https-run.properties \
            -p lib/jmuxutils.jar \
            -p lib/jarfile.jar \
            --add-modules ALL-DEFAULT \
