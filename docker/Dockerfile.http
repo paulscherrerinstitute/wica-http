@@ -104,6 +104,7 @@ COPY ./src/main/resources/logback_config.xml config
 VOLUME /root/log
 VOLUME /root/config
 VOLUME /root/web
+VOLUME /root/wica
 
 
 ###############################################################################
