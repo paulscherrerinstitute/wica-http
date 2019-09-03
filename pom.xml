@@ -128,12 +128,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                     <configuration>
-                        <profiles>
-                            <!-- <profile>macbook-test</profile> -->
-                        </profiles>
+                        <!-- Note: can optionally enable profile as shown below. -->
+                        <!-- <profiles> -->
+                        <!--     <profile>test</profile> -->
+                        <!-- </profiles> -->
                         <!-- Note: if you want to obtain the application separately then  -->
                         <!-- one can just use the exec classifier below. The uber jar will -->
-                        <!-- still be built, but it will have an '-exec' postfix -->
+                        <!-- still be built, but it will have an '-exec' postfix. -->
                         <!-- <classifier>exec</classifier> -->
                     </configuration>
                 <executions>
