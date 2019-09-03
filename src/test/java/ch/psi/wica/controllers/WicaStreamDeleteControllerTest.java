@@ -5,11 +5,9 @@ package ch.psi.wica.controllers;
 
 import ch.psi.wica.controlsystem.epics.EpicsChannelMonitoringService;
 import ch.psi.wica.model.stream.WicaStreamId;
-import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
