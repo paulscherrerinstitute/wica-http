@@ -7,27 +7,26 @@ services:
   - docker
 
 before_install:
-  - echo "LIFECYCLE STARTED - 'before_install'..."
-
-  - echo "LIFECYCLE COMPLETED - before_install."
+  - echo -n "*** LIFECYCLE STARTED - 'before_install' *****************************************************************"
+  - echo -n "*** LIFECYCLE COMPLETED - before_install *****************************************************************"
 
 install:
-  - echo "LIFECYCLE STARTED - 'install'..."
-  - echo "LIFECYCLE COMPLETED - 'install'."
+  - echo "*** LIFECYCLE STARTED - 'install' ***************************************************************************"
+  - echo "*** LIFECYCLE COMPLETED - 'install' *************************************************************************"
 
 before_script:
-  - echo "LIFECYCLE STARTED - 'before_script'..."
-  - echo "LIFECYCLE COMPLETED - 'before_script'."
+  - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
+  - mvn package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
 
 script:
-  - echo "LIFECYCLE STARTED - 'script'..."
-  - mvn deploy -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-  - echo "LIFECYCLE COMPLETED - 'script'."
-
-after_script:
-  - echo "LIFECYCLE STARTED - 'after_script'..."
+  - echo -n "*** LIFECYCLE STARTED - 'script' *************************************************************************"
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker build -f docker/Dockerfile.http .
   - docker push docker.io/paulscherrerinstitute/wica-stream
-  - echo "LIFECYCLE COMPLETED - 'after_script'."
+  - echo -n "LIFECYCLE COMPLETED - 'script' ***************************************************************************"
+
+after_script:
+  - echo -n "*** LIFECYCLE STARTED - 'after_script' *******************************************************************"
+  - echo -n "*** LIFECYCLE COMPLETED - 'after_script' *****************************************************************"
 
