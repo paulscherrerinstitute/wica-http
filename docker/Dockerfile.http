@@ -5,13 +5,13 @@
 ## Run this files from the top level directory using:
 ## 'docker build -f docker/Dockerfile.http .'
 
-FROM maven:3.6.1-jdk-11-slim AS MAVEN_TOOL_CHAIN
-WORKDIR /tmp/
-
-COPY ./pom.xml /tmp/
-COPY ./src /tmp/src/
-
-RUN mvn package -Dmaven.test.skip=true
+#FROM maven:3.6.1-jdk-11-slim AS MAVEN_TOOL_CHAIN
+#WORKDIR /tmp/
+#
+#COPY ./pom.xml /tmp/
+#COPY ./src /tmp/src/
+#
+#RUN mvn package -Dmaven.test.skip=true
 
 
 ###############################################################################
@@ -92,7 +92,9 @@ RUN apk update && apk add --no-cache bash
 RUN mkdir log config lib
 
 # Populate the application directories as appropriate
-COPY --from=MAVEN_TOOL_CHAIN /tmp/target/wica-stream-*.jar lib/jarfile.jar
+COPY ./target/wica-stream-1.0.0-RELEASE.jar lib/jarfile.jar
+
+#COPY --from=MAVEN_TOOL_CHAIN /tmp/target/wica-stream-*.jar lib/jarfile.jar
 COPY ./src/main/resources/application-docker-http-run.properties config
 COPY ./src/main/resources/logback_config.xml config
 

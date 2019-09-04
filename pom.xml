@@ -174,40 +174,43 @@
                     </tags>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>com.spotify</groupId>-->
-<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
-<!--                <version>1.4.3</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>default</id>-->
-<!--                        <goals>-->
-<!--                            <goal>build</goal>-->
-<!--                            <goal>push</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <repository>docker.psi.ch:5000/gfa-wica</repository>-->
-<!--                    <tag>${project.version}</tag>-->
-<!--                    &lt;!&ndash;<repository>docker.io/paulscherrerinstitute/gfa-wica</repository>&ndash;&gt;-->
-<!--                    &lt;!&ndash;<username>simondelabici</username>&ndash;&gt;-->
-<!--                    &lt;!&ndash;<password>YYYYY</password>&ndash;&gt;-->
-<!--                    <buildArgs>-->
-<!--                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>-->
-<!--                    </buildArgs>-->
-<!--                </configuration>-->
-<!--                &lt;!&ndash; this dependency was added to get rid of warnings that get emitted &ndash;&gt;-->
-<!--                &lt;!&ndash; when building for Java9. See this issue: &ndash;&gt;-->
-<!--                &lt;!&ndash; https://github.com/spotify/dockerfile-maven/issues/90 &ndash;&gt;-->
-<!--                <dependencies>-->
-<!--                    <dependency>-->
-<!--                        <groupId>javax.activation</groupId>-->
-<!--                        <artifactId>activation</artifactId>-->
-<!--                        <version>1.1.1</version>-->
-<!--                    </dependency>-->
-<!--                </dependencies>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.12</version>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <contextDirectory>.</contextDirectory>
+                    <tag>${project.version}</tag>
+                    <repository>paulscherrerinstitute/wica-stream</repository>
+                    <dockerfile>docker/Dockerfile.http</dockerfile>
+                    <!--<repository>docker.psi.ch:5000/gfa-wica</repository> -->
+                    <!--<repository>docker.io/paulscherrerinstitute/gfa-wica</repository>-->
+                    <!--<username>simondelabici</username>-->
+                    <!--<password>YYYYY</password>-->
+                    <buildArgs>
+                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                    </buildArgs>
+                </configuration>
+                <!-- this dependency was added to get rid of warnings that get emitted -->
+                <!-- when building for Java9. See this issue: -->
+                <!-- https://github.com/spotify/dockerfile-maven/issues/90 -->
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.activation</groupId>
+                        <artifactId>activation</artifactId>
+                        <version>1.1.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
