@@ -7,9 +7,23 @@ services:
   - docker
 
 before_install:
+  - echo "Lifecycle started - before_install."
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - echo "Lifecycle completed - before_install."
 
-deploy:
-  provider: script
-  script: mvn -DskipTests=true -Dmaven.javadoc.skip=true -B -V deploy
-  skip_cleanup: true
+install:
+  - echo "Lifecycle started - install."
+  - echo "Lifecycle completed - install."
+
+before_script:
+  - echo "Lifecycle started - before_script."
+  - echo "Lifecycle completed - before_script."
+
+script:
+  - echo "Lifecycle started - script"
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  - echo "Lifecycle completed - script"
+
+after_script:
+  - echo "Lifecycle started - after_script"
+
