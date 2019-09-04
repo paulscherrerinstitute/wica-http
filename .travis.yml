@@ -7,24 +7,27 @@ services:
   - docker
 
 before_install:
-  - echo "Lifecycle started - before_install..."
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - echo "Lifecycle completed - before_install."
+  - echo "LIFECYCLE STARTED - 'before_install'..."
+
+  - echo "LIFECYCLE COMPLETED - before_install."
 
 install:
-  - echo "Lifecycle started - install..."
-  - echo "Lifecycle completed - install."
+  - echo "LIFECYCLE STARTED - 'install'..."
+  - echo "LIFECYCLE COMPLETED - 'install'."
 
 before_script:
-  - echo "Lifecycle started - before_script..."
-  - echo "Lifecycle completed - before_script."
+  - echo "LIFECYCLE STARTED - 'before_script'..."
+  - echo "LIFECYCLE COMPLETED - 'before_script'."
 
 script:
-  - echo "Lifecycle started - script..."
+  - echo "LIFECYCLE STARTED - 'script'..."
   - mvn deploy -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-  - echo "Lifecycle completed - script."
+  - echo "LIFECYCLE COMPLETED - 'script'."
 
 after_script:
-  - echo "Lifecycle started - after_script..."
-  - echo "Lifecycle completed - after_script."
+  - echo "LIFECYCLE STARTED - 'after_script'..."
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build -f docker/Dockerfile.http .
+  - docker push docker.io/paulscherrerinstitute/wica-stream
+  - echo "LIFECYCLE COMPLETED - 'after_script'."
 
