@@ -143,7 +143,7 @@ data:2019-03-06T09:39:54.348562
 
 # Wica API Documentation
 
-The Wica API documentation (Javadoc) is available [here](https://github.com/paulscherrerinstitute/wica-http/tree/gh-pages)
+The Wica API documentation (Javadoc) is available [here](https://raw.githubusercontent.com/paulscherrerinstitute/wica-http/gh-pages/index.html)
 
 
 # Project Changes and Tagged Releases
