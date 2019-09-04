@@ -190,7 +190,7 @@
                 <configuration>
                     <contextDirectory>.</contextDirectory>
                     <tag>${project.version}</tag>
-                    <repository>paulscherrerinstitute/wica-stream</repository>
+                    <repository>docker.io/paulscherrerinstitute/wica-stream</repository>
                     <dockerfile>docker/Dockerfile.http</dockerfile>
                     <!--<repository>docker.psi.ch:5000/gfa-wica</repository> -->
                     <!--<repository>docker.io/paulscherrerinstitute/gfa-wica</repository>-->
