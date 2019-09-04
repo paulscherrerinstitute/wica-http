@@ -55,19 +55,26 @@ public class WicaStreamLifecycleService
 /*- Constructor --------------------------------------------------------------*/
 
    /**
-    * Creates a new instance that may be accessed concurrently by multiple
-    * threads.
     *
-    * @param wicaStreamPolledValueRequesterService reference to the service which
-    *     configures the underlying control system to start monitoring
-    *     the channels in this stream.
+    * @param wicaStreamConfigurationDecoder refernce to the service that can decode the JSON stream configuration.
     *
-    * @param wicaStreamMetadataCollectorService reference to the service
-    *     which collects metadata information for the stream.
+    * @param wicaStreamMonitoredValueRequesterService reference to the service used to request the monitored
+    *     *        values for the stream.
     *
-    * @param wicaStreamMonitoredValueCollectorService reference to the service
-    *     which collects the monitored values for the stream.
-
+    * @param wicaStreamPolledValueRequesterService reference to the service used to request the polled
+    *        values for the stream.
+    *
+    * @param wicaStreamMetadataCollectorService reference to the service which collects metadata information
+    *        for the stream.
+    *
+    * @param wicaStreamMonitoredValueCollectorService reference to the service which collects the monitored
+    *        values for the stream.
+    *
+    * @param wicaStreamPolledValueCollectorService reference to the service which collects the polled
+    *        values for the stream.
+    *
+    * @param wicaChannelMetadataMapSerializerService reference to the service that serializes the metadata map.
+    * @param wicaChannelValueMapSerializerService reference to the service that serializes the value map.
     */
    public WicaStreamLifecycleService( @Autowired WicaStreamConfigurationDecoder wicaStreamConfigurationDecoder,
                                       @Autowired WicaStreamMonitoredValueRequesterService wicaStreamMonitoredValueRequesterService,

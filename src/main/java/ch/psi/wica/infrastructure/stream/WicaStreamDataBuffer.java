@@ -34,6 +34,8 @@ abstract class WicaStreamDataBuffer<T extends WicaChannelData>
    /**
     * Constructs a new instance which is capable of holding a queue of received
     * data points up to the configured buffer size.
+    *
+    * @param bufferSize the buffer size.
     */
    WicaStreamDataBuffer( int bufferSize  )
    {

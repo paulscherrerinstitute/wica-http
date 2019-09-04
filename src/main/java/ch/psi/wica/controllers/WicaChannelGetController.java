@@ -95,6 +95,11 @@ class WicaChannelGetController implements StatisticsCollectable
     *     optional parameter is not provided then the configured default
     *     value will be used.
     *
+    * @param fieldsOfInterest the default fields of interest to be returned
+    *      when getting the current value of a wica channel. If this
+    *     optional parameter is not provided then the configured default
+    *     value will be used.
+    *
     * @param httpServletRequest contextual information for the request; used
     *     for statistics collection only.
     *

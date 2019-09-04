@@ -64,6 +64,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
     * Returns a new instance that will extract information from the EPICS channels
     * of interest using the supplied metadata and value getters.
     *
+    * @param epicsChannelConnectionChangeSubscriber the subscriber to connection changes.
     * @param epicsCaLibraryMonitorNotifierImpl the CA library monitor notifier configuration.
     * @param epicsCaLibraryDebugLevel the CA library debug level.
     * @param epicsChannelMetadataGetter the metadata publisher.

@@ -98,6 +98,7 @@ public class WicaStream
    /**
     * Returns the channel with the specified name (if present).
     *
+    * @param wicaChannelName the channel name.
     * @return optionally empty result.
     */
    public Optional<WicaChannel> getWicaChannel( String wicaChannelName )

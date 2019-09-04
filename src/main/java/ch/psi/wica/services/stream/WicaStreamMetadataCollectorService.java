@@ -62,6 +62,7 @@ public class WicaStreamMetadataCollectorService
     *
     * @param wicaStream the stream
     * @param since the time and date used for comparison.
+    * @return the map.
     */
    public Map<WicaChannel,WicaChannelMetadata> get( WicaStream wicaStream, LocalDateTime since )
    {
