@@ -21,7 +21,8 @@ install:
 
 before_script:
   - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
-  - mvn package -DskipTests=true -B -V
+  - mvn package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  - mvn javadoc:javadoc -B -V
   - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
 
 script:
