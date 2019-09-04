@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.org/paulscherrerinstitute/wica-stream.svg?branch=master)](https://travis-ci.org/paulscherrerinstitute/wica-stream) 
 
+:construction:
+Note: this README is still **under construction** and may contain incorrect or misleading information.
+
 # Wica-HTTP
 
 This is the Wica-HTTP Git repository, one component of the PSI's WICA software suite. 
