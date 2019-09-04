@@ -162,9 +162,9 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.0.1</version>
                 <configuration>
-                    <!--<additionalOptions>-html5</additionalOptions>-->
+                    <additionalOptions>-html5</additionalOptions>
                     <show>package</show>
-<!--                    <javadocExecutable>${javadoc.home}/javadoc</javadocExecutable>-->
+                    <javadocExecutable>javadoc</javadocExecutable>
                     <tags>
                         <tag>
                             <name>implNote.</name>
@@ -211,11 +211,6 @@
 <!--                    </dependency>-->
 <!--                </dependencies>-->
 <!--            </plugin>-->
-            <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.4.0.905</version>
-            </plugin>
         </plugins>
 
     </build>
