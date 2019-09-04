@@ -16,7 +16,7 @@ install:
 
 before_script:
   - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
-  - mvn package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  - mvn package -DskipTests=true -B -V
   - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
 
 script:
@@ -25,6 +25,15 @@ script:
   - docker build -t paulscherrerinstitute/wica-stream:latest -f docker/Dockerfile.http .
   - docker push paulscherrerinstitute/wica-stream:latest
   - echo -n "LIFECYCLE COMPLETED - 'script' ***************************************************************************"
+
+deploy:
+  provider: pages
+  local_dir: target/site/apidocs
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep_history: true
+  on:
+    branch: master
 
 after_script:
   - echo -n "*** LIFECYCLE STARTED - 'after_script' *******************************************************************"
