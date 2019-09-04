@@ -26,7 +26,7 @@ Currently WICA interoperates with the EPICS Control Systems using its well estab
 * Provides a gateway to the backend control system (currently EPICS).
 * Provides an out-of-the-box web server, that serves the Wica-JS library and/or the users custom web pages.
 * Streams control system data using HTML5 Server-Sent-Event technology.
-* Supports control system Get and Set functionality.
+* Supports basic control system Get and Set functionality.
 * Provides channel filtering (eg noise or rate limiting) and configurable numeric precision.
 * Implemented as Java 11, Spring Boot 2 application based on latest Spring reactive stack.
 * Runs either standalone (via fat jar) or in docker container (available on Docker Hub).
@@ -144,22 +144,12 @@ data:2019-03-06T09:39:54.348562
 :2019-03-06 09:39:54.348 - server heartbeat
 ```
 
-# Wica Javascript Client Library API
+# Wica API Documentation
 
-The Javascript client library contains a module named [client-api](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica/module-client-api.html)
-
-This is the start point for leveraging Wica functionality on the client side. Please consult the API documentation for further information.
-
-# Wica Automatic API Documentation
-
-The Wica frontend (JSdoc) and backend (Javadoc) API documentation is built automatically every time a new commit is
-pushed to the GitLab repository that hosts this project.
-
-  * [JS Frontend](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/js/wica) 
-  * [Javadoc Backend](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/java)
+The Wica API documentation (Javadoc) is available [here](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/java)
 
 
 # Project Changes and Tagged Releases
 
 * See the [CHANGELOG.md](CHANGELOG.md) file for further information.
-* See also the project's [Jira Kanban Board](https://jira.psi.ch/secure/RapidBoard.jspa?rapidView=1631)
+* See also the project's [Issue Board]().
