@@ -3,9 +3,9 @@
 :construction:
 Note: this README is still **under construction** and may contain incorrect or misleading information.
 
-# Wica-HTTP
+# Overview
 
-This is the Wica-HTTP Git repository, one component of the PSI's WICA software suite. 
+This is the Wica-HTTP Git repository, one component of PSI's WICA software suite. 
  
 WICA stands for *Web Interface for Controls Applications*. The basic idea is to support the streaming of live data 
 from a distributed control system to update a user's web pages in real-time.
@@ -55,10 +55,9 @@ Currently WICA interoperates with the EPICS Control Systems using its well estab
    http[s]://wica.psi.ch/ca/channel/<pvName>
    
    
+# HTTP Endpoints 
 
-# Wica REST Service API 
-
-On the Wica Backend Server the following endpoints are provided for leveraging the functionality of the system.
+The server supports the following endpoints.
 
 ### Download the Wica Javascript Client Library
 ```
@@ -66,7 +65,6 @@ GET /wica/wica.js
 ```
 
 ### Get the Value of a Channel
-
 ```
 GET /ca/channels/<channelName>[?timeout=XXX]
 
@@ -75,7 +73,6 @@ Returns JSON string representation of the value of the channel. For a channel wh
 ```
 
 ### Set the Value of a Channel
-
 ```
 PUT /ca/channels/<channelName>
 Content-Type: text/plain the new value
@@ -104,7 +101,7 @@ Returns an event stream.
 
 The returned event stream contains the following message types:
 
-__Channel Metadata Information__ (sent once)
+__Channel Metadata Information__ (sent on initial connection, then every time there is a change.)
 ```
 id:0
 event:ev-wica-channel-metadata
@@ -112,7 +109,7 @@ data:{"AMAKI1:IST:2":{"type":"REAL","egu":"A","prec":3,"hopr":72.000000,"lopr":-
 :2019-03-06 09:39:39.407 - initial channel metadata
 ```
 
-__Channel Initial Values__ (sent once)
+__Channel Initial Values__ (sent once, on initial cconnection)
 ```
 id:0
 event:ev-wica-channel-metadata
@@ -120,7 +117,7 @@ data:{"BMB1:STA:2":[{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"v
 :2019-03-06 09:39:39.518 - initial channel values
 ```
 
-__Channel Value Changes__ (sent periodically eg every 100ms)
+__Channel Monitored Values__ (sent periodically eg every 100ms)
 ```
 id:0
 event:ev-wica-channel-value
@@ -146,10 +143,10 @@ data:2019-03-06T09:39:54.348562
 
 # Wica API Documentation
 
-The Wica API documentation (Javadoc) is available [here](http://controls_highlevel_applications.gitpages.psi.ch/ch.psi.wica2/java)
+The Wica API documentation (Javadoc) is available [here](https://paulscherrerinstitute.github.io/wica-http/)
 
 
 # Project Changes and Tagged Releases
 
-* See the [CHANGELOG.md](CHANGELOG.md) file for further information.
-* See also the project's [Issue Board]().
+* See the [CHANGELOG](CHANGELOG.md) file for further information.
+* See also the project's [Issue Board](https://github.com/paulscherrerinstitute/wica-http/issues).
