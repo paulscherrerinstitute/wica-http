@@ -33,6 +33,10 @@ Currently WICA interoperates with the EPICS Control Systems using its well estab
 * Supports EPICS Channel Access communication using PSI's pure Java CA client library.
 * Monitors EPICS channels, or polls them at configurable rates.
 
+# Requirements
+
+The only requirement for running the Wica-HTTP server is Java 11 JRE.
+
 # Getting Started
 
 1. Get the Wica-HTTP fat Jar.
@@ -148,5 +152,5 @@ The Wica API documentation (Javadoc) is available [here](https://paulscherrerins
 
 # Project Changes and Tagged Releases
 
-* See the [CHANGELOG](CHANGELOG.md) file for further information.
+* See the [CHANGELOG](../CHANGELOG.md) file for further information.
 * See also the project's [Issue Board](https://github.com/paulscherrerinstitute/wica-http/issues).
