@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ch.psi</groupId>
-    <artifactId>wica-stream</artifactId>
+    <artifactId>wica-http</artifactId>
     <version>1.0.0-RELEASE</version>
     <packaging>jar</packaging>
 
-    <name>wica-stream</name>
-    <description>Web Interface for EPICS Channel Access Protocol</description>
+    <name>wica-http</name>
+    <description>WICA HTTP Server</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -22,7 +22,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
-        <javadoc.home>/Library/Java/JavaVirtualMachines/jdk-11.0.1.jdk/Contents/Home/bin/</javadoc.home>
     </properties>
 
     <dependencies>
@@ -65,12 +64,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework.boot</groupId>-->
-<!--                    <artifactId>spring-boot-starter-tomcat</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
+            <!-- Spring Boot enables Tomcat by default. This will need to be excluded if it is needed -->
+            <!-- to run the Wica-HTTP server with some other embedded container (eg Undertow, see below) -->
+            <!-- <exclusions> -->
+            <!--     <exclusion> -->
+            <!--         <groupId>org.springframework.boot</groupId> -->
+            <!--         <artifactId>spring-boot-starter-tomcat</artifactId> -->
+            <!--     </exclusion> -->
+            <!-- </exclusions> -->
         </dependency>
 
         <dependency>
@@ -78,10 +79,11 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-undertow</artifactId>-->
-<!--        </dependency>-->
+        <!-- Enable this dependency to run the Wica-HTTP server with the Undertow embedded container. -->
+        <!-- <dependency> -->
+        <!--     <groupId>org.springframework.boot</groupId> -->
+        <!--     <artifactId>spring-boot-starter-undertow</artifactId> -->
+        <!-- </dependency> -->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
