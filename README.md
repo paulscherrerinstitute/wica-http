@@ -154,5 +154,5 @@ The Wica API documentation (Javadoc) is available [here](https://paulscherrerins
 
 # Project Changes and Tagged Releases
 
-* See the [CHANGELOG](../CHANGELOG.md) file for further information.
+* See the [CHANGELOG](CHANGELOG.md) file for further information.
 * See also the project's [Issue Board](https://github.com/paulscherrerinstitute/wica-http/issues).
