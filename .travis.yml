@@ -39,6 +39,7 @@ script:
 # the Javadoc on the GitHub pages site.
 deploy:
   provider: releases
+  api_key: 7c3785d5cfb4fdd3b002d986968e2436e6892e3d
   file: target/wica-http-1.0.0-RELEASE.jar
   skip_cleanup: true
 
