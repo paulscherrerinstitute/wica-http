@@ -15,23 +15,28 @@ before_install:
   - echo -n "*** LIFECYCLE STARTED - 'before_install' *****************************************************************"
   - echo -n "*** LIFECYCLE COMPLETED - before_install *****************************************************************"
 
+# Note: 'Install' here means things into the Travis environment that are needed.
 install:
   - echo "*** LIFECYCLE STARTED - 'install' ***************************************************************************"
   - echo "*** LIFECYCLE COMPLETED - 'install' *************************************************************************"
 
+# Build the code then build the javadoc.
 before_script:
   - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
   - mvn package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
   - mvn javadoc:javadoc -B -V
   - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
 
+# Used here to upload the docker file to Docker Hub.
 script:
   - echo -n "*** LIFECYCLE STARTED - 'script' *************************************************************************"
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker build -t paulscherrerinstitute/wica-stream:latest -f docker/Dockerfile.http .
-  - docker push paulscherrerinstitute/wica-stream:latest
-  - echo -n "LIFECYCLE COMPLETED - 'script' ***************************************************************************"
+#  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+#  - docker build -t paulscherrerinstitute/wica-stream:latest -f docker/Dockerfile.http .
+#  - docker push paulscherrerinstitute/wica-stream:latest
+#  - echo -n "LIFECYCLE COMPLETED - 'script' ***************************************************************************"
 
+# The deploy phase is optional and runs after the script. Here we use it to publish
+# the Javadoc on the GitHub pages site.
 deploy:
   provider: pages
   local_dir: $TRAVIS_BUILD_DIR/target/site/apidocs
