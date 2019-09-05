@@ -39,10 +39,9 @@ script:
 # the Javadoc on the GitHub pages site.
 deploy:
   provider: releases
-  user: $GITHUB_USERNAME
-  password: $GITHUB_PASSWORD
-#  api_key: 7c3785d5cfb4fdd3b002d986968e2436e6892e3d
+  api_key: "XT3vj3emsuWbVNMyVtGl3iWhGw9muDKh2BzIi9RK28QYzMahY/V3ttmAO7le5hnSXvC+WKFvOZyABFrWVL9snpLDlNuaBho2B5h4tX/BHiX7mezM7ludXTk5LdLZa+ZhtGWeuzrb2GL4cifJ2KreNZZaqjN3R667fwU6S7FMtuo5r3qXxQ2gMebcZ8Gb4S3ISOD7eYwIAt+0pC4WSvXuj6kGjuyiDqe5ZxceUe8RzMIH16vlddWmYadxZgJzW5fpj3p62el6pyefokMJhhq9CjtNH2xISVhp4qsYqFL//uFqL5+26xn4NDZLsW45/lOp/uYXx1D2zL2766nqv53msLe1uNXo4Ey6TLgsle0KEo06wWuvKfuKbBSAPOqZyv7BL653pK1L+ywuoQPqMv2TmvftyhIzK3DRmYmoUfVbKVRti+oZnuLfRhsgpeefapBo9TzzDgizJEnCrUO6Ko844D9+SEtAedyGAvYQ4fLHAcuth1VpWwqLHQIQKlEKCf8kEY7ovvXyhJao31hrJOZT0psef4xDVkqXcg6cbaEAFrDIb0fXk0QT9kzPLZLpyT30T+tcUK4VzBJ0PGHy6J+FRv5YOgaYSLzl5HORoPbt2VfaPSBJW84E/Evnz50Nb6gdERgUDk1geg0bARoXWZ+a38B43oe0+YtySpVL2fqn9B0="
   file: target/wica-http-1.0.0-RELEASE.jar
+  draft: true
   skip_cleanup: true
 
 #  provider: pages
