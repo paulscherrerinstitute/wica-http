@@ -39,27 +39,36 @@ Currently WICA interoperates with the EPICS Control Systems using its well estab
 
 The only requirement for running the Wica-HTTP server is Java 11 JRE.
 
-# Getting Started
+# Usage
 
-1. Get the Wica-HTTP fat Jar.
-1. Adjust the configuration file to reflect your local conditions
-1. Run the Server
-```
-   java -p lib/jarfile.jar --add-modules ALL-DEFAULT -m jarfile [<keystore_password>]
-```
+## Running the server locally on localhost, port 8080
 
-1. Check the server is running ok
+   1. Get the release.
+        ```
+            wget https://github.com/paulscherrerinstitute/wica-http/releases/download/<release>/wica-http-<release>.jar
+        ```
 
-   Use your browser to access the '/admin' endpoint.
-   Example: navigate to the following URL
+   2. Run the server.
+        ```
+            java -jar wica-http-<release>.jar 
+        ```
+      
+   3. Check the server is running ok by navigating to the admin page.
    
-   http[s]://<wica_server_host>/admin
+        ```
+            http://localhost:8080/admin
+        ```
+      
+   4. Check the connection to the backend control system.
    
-1. Check the connection to the backend control system is working 
-  
-   Read your favourite EPICS channel
-   http[s]://wica.psi.ch/ca/channel/<pvName>
-   
+        ```
+            # Read your favourite EPICS channel which must be accessible on your local network.
+            http://localhost:8080/ca/channel/<pvName>
+        ```   
+
+## Running inside a docker container
+
+   Further details coming soon. :-)   
    
 # HTTP Endpoints 
 
