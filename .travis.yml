@@ -24,7 +24,7 @@ install:
 before_script:
   - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
   - mvn package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-  - mvn javadoc:javadoc -B -V
+#  - mvn javadoc:javadoc -B -V
   - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
 
 # Used here to upload the docker file to Docker Hub.
@@ -38,13 +38,18 @@ script:
 # The deploy phase is optional and runs after the script. Here we use it to publish
 # the Javadoc on the GitHub pages site.
 deploy:
-  provider: pages
-  local_dir: $TRAVIS_BUILD_DIR/target/site/apidocs
+  provider: releases
+  file: target/wica-http-1.0.0-RELEASE.jar
   skip_cleanup: true
-  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-  keep_history: true
-  on:
-    branch: master
+
+#  provider: pages
+#  local_dir: $TRAVIS_BUILD_DIR/target/site/apidocs
+#  skip_cleanup: true
+#  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+#  keep_history: true
+#  on:
+#    branch: master
+
 
 after_script:
   - echo -n "*** LIFECYCLE STARTED - 'after_script' *******************************************************************"
