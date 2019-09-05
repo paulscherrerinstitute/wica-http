@@ -22,6 +22,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
+        <!-- Use this definition to control which version of the Wica-JS library gets bundled into the Wica-HTTP fatJar. -->
+        <wica-js-release-jar>https://github.com/paulscherrerinstitute/wica-js/releases/download/1.0.0-rc.1/wica_js.zip</wica-js-release-jar>
     </properties>
 
     <dependencies>
@@ -125,7 +127,36 @@
     </dependencies>
 
     <build>
+
         <plugins>
+            <!-- This plugin downloads the Wica-JS library from the GitHub release area and unpacks -->
+            <!-- it into the target directory for later bundling inside the release fatJar.         -->
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.4.2</version>
+                <executions>
+                    <execution>
+                        <!-- the wget goal actually binds itself into the 'process-resources' phase by   -->
+                        <!-- default. It's overridden here to ensure that the wica-js asset is available -->
+                        <!-- before the package gets built.                                              -->
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>${wica-js-release-jar}</url>
+                            <unpack>true</unpack>
+                            <skipCache>true</skipCache>
+                            <!-- By unpacking the payload in the classes area this ensure that -->
+                            <!-- the release gets rebundled in the fatJar at a location where  -->
+                            <!-- the Spring Boot environment will search for it.               -->
+                            <outputDirectory>${project.build.directory}/classes/static</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -176,54 +207,19 @@
                     </tags>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>com.spotify</groupId>-->
-<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
-<!--                <version>1.4.12</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>default</id>-->
-<!--                        <goals>-->
-<!--                            <goal>build</goal>-->
-<!--                            <goal>push</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <contextDirectory>.</contextDirectory>-->
-<!--                    <tag>${project.version}</tag>-->
-<!--                    <repository>docker.io/paulscherrerinstitute/wica-stream</repository>-->
-<!--                    <dockerfile>docker/Dockerfile.http</dockerfile>-->
-<!--                    &lt;!&ndash;<repository>docker.psi.ch:5000/gfa-wica</repository> &ndash;&gt;-->
-<!--                    &lt;!&ndash;<repository>docker.io/paulscherrerinstitute/gfa-wica</repository>&ndash;&gt;-->
-<!--                    &lt;!&ndash;<username>simondelabici</username>&ndash;&gt;-->
-<!--                    &lt;!&ndash;<password>YYYYY</password>&ndash;&gt;-->
-<!--                    <buildArgs>-->
-<!--                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>-->
-<!--                    </buildArgs>-->
-<!--                </configuration>-->
-<!--                &lt;!&ndash; this dependency was added to get rid of warnings that get emitted &ndash;&gt;-->
-<!--                &lt;!&ndash; when building for Java9. See this issue: &ndash;&gt;-->
-<!--                &lt;!&ndash; https://github.com/spotify/dockerfile-maven/issues/90 &ndash;&gt;-->
-<!--                <dependencies>-->
-<!--                    <dependency>-->
-<!--                        <groupId>javax.activation</groupId>-->
-<!--                        <artifactId>activation</artifactId>-->
-<!--                        <version>1.1.1</version>-->
-<!--                    </dependency>-->
-<!--                </dependencies>-->
-<!--            </plugin>-->
         </plugins>
 
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>bintray-paulscherrerinstitute-wica</id>
-            <name>paulscherrerinstitute-wica</name>
-            <url>https://api.bintray.com/maven/paulscherrerinstitute/wica/wica-stream;publish=1</url>
-        </repository>
-    </distributionManagement>
+    <!-- <distributionManagement> -->
+    <!--     &lt;!&ndash; Note: releases could be uploaded to the PSI organisation's bintray area for -> -->
+    <!--     &lt;!&ndash; further dissemination on the internet. This mechanism is not currently used. &ndash;&gt; -->
+    <!--     <repository> -->
+    <!--         <id>bintray-paulscherrerinstitute-wica</id> -->
+    <!--         <name>paulscherrerinstitute-wica</name> -->
+    <!--         <url>https://api.bintray.com/maven/paulscherrerinstitute/wica/wica-stream;publish=1</url> -->
+    <!--     </repository> -->
+    <!-- </distributionManagement> -->
 
     <repositories>
         <repository>
