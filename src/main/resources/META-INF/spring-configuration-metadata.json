@@ -56,7 +56,12 @@
       "description": "Whether strict JSON compliance should be used when serializing NaN and Infinity values (=true) or whether JSON5 serialization compliance is acceptable (=false)."
     },
     {
-      "name": "wica.allowed-origins",
+      "name": "wica.cors_allow-credentials",
+      "type": "java.lang.Boolean",
+      "description": "Which origins must be present in the http request header in order for a request to be accepted."
+    },
+    {
+      "name": "wica.cors_allowed-origins",
       "type": "java.lang.String",
       "description": "Which origins must be present in the http request header in order for a request to be accepted."
     }
