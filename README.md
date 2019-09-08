@@ -37,8 +37,7 @@ Currently WICA interoperates with the EPICS Control Systems using its well estab
 
 # Requirements
 
-The only requirement for running the Wica-HTTP server is a Java 11 JRE.
-To leverage its functionality from a web browser
+The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
 
 # Getting Started
 
@@ -58,8 +57,8 @@ To leverage its functionality from a web browser
    1. [Optional]: Set up the EPICS Channel-Access environment variables
     
       These should be setup to to communicate with the process veriables on the backend IOC's that you 
-      want to make accessible. See the section below for the supported variables and their default 
-      values.
+      want to make accessible. See the section [below](#epics-channel-access-environment-variables) for 
+      a list of supported variables and their default values.
       
       Examples:
       ```
@@ -115,7 +114,7 @@ To leverage its functionality from a web browser
       in your local browser. This is done in various ways depending on your browser type (Chrome, Safari, 
       Firefox), browser version and platform (Linux, OSX, Windows). Google is your friend here.
  
-## Running inside a docker container
+## Running the server inside a docker container
 
    Further details coming soon. :-)   
 
@@ -181,9 +180,30 @@ Response code: 200; Time: 108ms; Content length: 30 bytes
 ### Set the Value of a Channel
 ```
 PUT /ca/channels/<channelName>
-Content-Type: text/plain the new value
+Content-Type: text/plain
 
 somevalue
+```
+
+Example:
+```
+{Request}
+PUT http://localhost:8080/ca/channel/wica:test:counter01
+Content-Type: text/plain
+
+999999
+
+{Response}
+PUT http://localhost:8080/ca/channel/wica:test:counter01
+
+HTTP/1.1 200 
+Content-Type: text/plain;charset=UTF-8
+Content-Length: 2
+Date: Sun, 08 Sep 2019 14:45:53 GMT
+
+OK
+
+Response code: 200; Time: 103ms; Content length: 2 bytes
 ```
 
 ### Create Wica Stream
@@ -196,6 +216,29 @@ Content-Type: application/json
      "props" : { "stream_propX": "XXX", "stream_propY": "YYY" } }
 
 Returns <streamId> a unique reference string that can be used when getting the stream (see below).
+```
+
+Example:
+```
+[Request]
+POST http://localhost:8080/ca/streams
+Content-Type: application/json
+
+{ "channels" : [ { "name": "wica:test:counter01", "props": { "daqmode": "poll", "pollint": "5000" } } ],
+  "props" : { "hbflux": "5000", "monflux": 1000, "pollflux": 2000 }
+}
+
+[Response]
+POST http://localhost:8080/ca/streams
+
+HTTP/1.1 200 
+Content-Type: text/plain;charset=UTF-8
+Content-Length: 1
+Date: Sun, 08 Sep 2019 14:54:22 GMT
+
+1
+
+Response code: 200; Time: 104ms; Content length: 1 bytes
 ```
 
 ### Subscribe to Wica Stream
