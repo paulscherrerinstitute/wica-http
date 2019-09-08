@@ -5,7 +5,7 @@ Note: this README is still **under construction** and may contain incorrect or m
 
 # Overview
 
-This is the **Wica-HTTP** Git repository, one component of PSI's WICA software suite. 
+This is the **Wica-HTTP** git repository, one component of PSI's WICA software suite. 
  
 WICA stands for *Web Interface for Controls Applications*. The basic idea is to support the streaming of live data 
 from a distributed control system to update a user's web pages in real-time.
