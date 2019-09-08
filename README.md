@@ -132,10 +132,9 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
         * **'data-wica-channel-connection-state'**
         * **'data-wica-channel-alarm-state'**
         
-      * now the hard part starts: writing web pages that leverage off the capabilities offered in this 
-        web environment.
+      * now the hard part starts: :wink:  writing web pages that leverage off the capabilities offered in this 
+        web environment. Good Luck ! :smile:
               
- 
 ## Running the server inside a docker container
 
    Further details coming soon. :-)   
