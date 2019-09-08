@@ -110,27 +110,31 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
       After reloading the page in the web browser (- don't forget, where necessary, to clear the cache -) 
       then the server should initiate communication with the backend control channels.
       
+       **IMPORTANT NOTE** 
+      
+      If you take the approach described above you will need to temporarily **disable the CORS security check** 
+      in your local browser. This is done in various ways depending on your browser type (Chrome, Safari, 
+      Firefox), browser version and platform (Linux, OSX, Windows). Google is your friend here.
+
    1. Possible Next Steps
       
       It's time to get serious with your browser's developer tools. Google Chrome seems to work well in
       this capacity.
       
-      * use the web browser's network analysis tool- to inspect the event stream  coming from the server.       
+      * use the web browser's network analysis tool - to inspect the event stream coming from the server.
+      
       * use the web browser's html element inspector to check the information that has been read from the 
         control system. The following attributes should now be present and updating in real-time.  
-        ** **'data-wica-stream-state'**
-        ** **'data-wica-channel-metadata'**
-        ** **'data-wica-channel-value-array'**
-        ** **'data-wica-channel-value-latest'**
-        ** **'data-wica-channel-connection-state'**
-        ** **'data-wica-channel-alarm-state'**
-          
-      **IMPORTANT NOTE** 
-      
-      If you take the approach described above you will need to temporarily **disable the CORS security check** 
-      in your local browser. This is done in various ways depending on your browser type (Chrome, Safari, 
-      Firefox), browser version and platform (Linux, OSX, Windows). Google is your friend here.
-      
+        * **'data-wica-stream-state'**
+        * **'data-wica-channel-metadata'**
+        * **'data-wica-channel-value-array'**
+        * **'data-wica-channel-value-latest'**
+        * **'data-wica-channel-connection-state'**
+        * **'data-wica-channel-alarm-state'**
+        
+      * now the hard part starts: writing web pages that leverage off the capabilities offered in this 
+        web environment.
+              
  
 ## Running the server inside a docker container
 
