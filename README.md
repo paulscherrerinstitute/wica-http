@@ -56,15 +56,14 @@ The only requirement for running the Wica-HTTP server is Java 11 JRE.
 
    2. [Optional]: Set up the EPICS Channel-Access environment variables
     
-      These should be set to to communicate with the process veriables on the backend IOC's that you 
-      want to make accessible.
-      
-      See the section heading below for the supported variables and their default values.
+      These should be setup to to communicate with the process veriables on the backend IOC's that you 
+      want to make accessible. See the section heading below for the supported variables and their 
+      default values.
       
       Examples:
       ```
-         export EPICA_CA_ADDR_LIST=IOC1:5064
-         export EPICA_CA_ADDR_LIST=<my_channel_access_gateway_server:5062
+      export EPICA_CA_ADDR_LIST=IOC1:5064
+      export EPICA_CA_ADDR_LIST=<my_channel_access_gateway_server:5062
       ```
   
    3. Run the server.
@@ -109,11 +108,11 @@ The only requirement for running the Wica-HTTP server is Java 11 JRE.
       If you reload the page from the browser then the server should initiate communication with your backend
       control channels.
       
-      **Important Note:** 
+      **IMPORTANT NOTE** 
       
-      if you take this approach described above you will need to temporarily **DISABLE THE CORS SECURITY 
-      CHECK** in your local browser. This is done in various ways depending on your browser (Chrome, 
-      Safari, Firefox) and platform (Linux, OSX, Windows).
+      If you take this approach described above you will need to temporarily **disable the CORS security check** 
+      in your local browser. This is done in various ways depending on your browser (Chrome, Safari, Firefox) and 
+      platform (Linux, OSX, Windows).
  
 ## Running inside a docker container
 
