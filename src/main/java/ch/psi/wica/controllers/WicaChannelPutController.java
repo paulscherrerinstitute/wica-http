@@ -46,7 +46,7 @@ class WicaChannelPutController implements StatisticsCollectable
 /*- Constructor --------------------------------------------------------------*/
 
    /**
-    * Constructs a new controller for handling channel GET requests.
+    * Constructs a new controller for handling channel PUT requests.
     *
     * @param defaultTimeoutInMillis the default timeout that will be used
     *        when putting data to the wica channel.
@@ -146,7 +146,7 @@ class WicaChannelPutController implements StatisticsCollectable
    }
 
 
-   /*- Private methods ----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
