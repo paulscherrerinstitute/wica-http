@@ -85,13 +85,13 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
 
    1. Run and connect to the internal test server.
    
-      The Wica-Http Server provides a very simple EPICS database at the following endpoint:
+      The Wica-Http Server provides a very simple EPICS test database at the following endpoint:
       ```
       http://localhost:8080/test/test.db
       ```   
       Download the DB file to your local filesystem and run it on your local network on your favourite 
-      (Soft ?) IOC. The Wica-Http Server provides an equally unimpressive ;-) web page to go with it at 
-      the following location:
+      (Soft ?) IOC. The Wica-Http Server provides an equally unsophisticated :wink: web page to go with 
+      it here:
       ```
       http://localhost:8080/test/test.html
       ```
