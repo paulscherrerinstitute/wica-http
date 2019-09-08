@@ -67,24 +67,24 @@ To leverage its functionality from a web browser
       export EPICA_CA_ADDR_LIST=<my_channel_access_gateway_server:5062
       ```
   
-   3. Run the server.
+   1. Run the server.
       ```
       java -jar wica-http-<rel>.jar 
       ```
       
-   4. Check the server is running ok by navigating to the admin page.
+   1. Check the server is running ok by navigating to the admin page.
       ```
       http://localhost:8080/admin
       ```
       
-   5. Check the connection to the backend control system.
+   1. Check the connection to the backend control system.
    
       Read your favourite EPICS channel (which must be accessible on the local network).
       ```
       http://localhost:8080/ca/channel/<pvName>
       ```   
 
-   6. Run the test server
+   1. Run the test server
    
       The Wica-Http Server provides a very simple EPICS database at the following endpoint:
       ```
@@ -100,7 +100,7 @@ To leverage its functionality from a web browser
       When you navigate to this page the server should connect to the database and the counters should start 
       incrementing. 
   
-   7. Start Developing
+   1. Start Developing
       
       If the previous step has worked successfully then you can save the page source of 'simple.html' to your 
       local filesystem and start to edit the html **wica-channel-name** attributes to reflect the process 
