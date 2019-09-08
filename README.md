@@ -54,7 +54,7 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
       wget https://github.com/paulscherrerinstitute/wica-http/releases/download/<rel>/wica-http-<rel>.jar
       ```
 
-   1. [Optional]: Set up the EPICS Channel-Access environment variables
+   1. [Optional]: Set up the EPICS Channel-Access environment variables.
     
       These should be setup to to communicate with the process veriables on the backend IOC's that you 
       want to make accessible. See the section [below](#epics-channel-access-environment-variables) for 
@@ -83,23 +83,23 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
       http://localhost:8080/ca/channel/<pvName>
       ```   
 
-   1. Run the test server
+   1. Run and connect to the internal test server.
    
       The Wica-Http Server provides a very simple EPICS database at the following endpoint:
       ```
-      http://localhost:8080/demo/simple.db
+      http://localhost:8080/test/test.db
       ```   
       Download the DB file to your local filesystem and run it on your local network on your favourite 
       (Soft ?) IOC. The Wica-Http Server provides an equally unimpressive ;-) web page to go with it at 
       the following location:
       ```
-      http://localhost:8080/demo/simple.html
+      http://localhost:8080/test/test.html
       ```
      
       When you navigate to this page the server should connect to the database and the counters should start 
       incrementing. 
   
-   1. Start Developing
+   1. Start Developing.
       
       If the previous step has worked successfully then you can save the page source of 'simple.html' to your 
       local filesystem and start to edit the html **wica-channel-name** attributes to reflect the process 
@@ -119,7 +119,7 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
    Further details coming soon. :-)   
 
 
-# EPICS Channel Access Environment Variables
+## EPICS Channel Access Environment Variables
 
 The Wica-Http server is currently (2019-09-07) configured to work with PSI's native Java implementation 
 of the [EPICS](https://epics-controls.org/) control system client side channel-access protocol. As such 
@@ -146,6 +146,16 @@ The server supports the following endpoints.
 ### Download the Wica Javascript Client Library
 ```
 GET /wica/wica.js
+```
+
+### Download the Wica Test HTML Page
+```
+GET /test/test.html
+```
+
+### Download the Wica Demo Database
+```
+GET /test/test.db
 ```
 
 ### Get the Value of a Channel
@@ -219,12 +229,12 @@ Returns <streamId> a unique reference string that can be used when getting the s
 
 Example Request:
 ```
-[Request]
 POST http://localhost:8080/ca/streams
 Content-Type: application/json
 
-{ "channels" : [ { "name": "wica:test:counter01", "props": { "daqmode": "poll", "pollint": "5000" } } ],
-  "props" : { "hbflux": "5000", "monflux": 1000, "pollflux": 2000 }
+{ "channels" : [ { "name": "wica:test:counter01", "props": { "daqmode": "monitor"  } },
+                 { "name": "wica:test:counter02", "props": { "daqmode": "poll", "pollint": "5000" } }],
+  "props" : { "prec": 2, "hbflux": "8000", "monflux": 1000, "pollflux": 2000 }
 }
 ```
 
@@ -235,11 +245,11 @@ POST http://localhost:8080/ca/streams
 HTTP/1.1 200 
 Content-Type: text/plain;charset=UTF-8
 Content-Length: 1
-Date: Sun, 08 Sep 2019 14:54:22 GMT
+Date: Sun, 08 Sep 2019 15:29:21 GMT
 
-1
+3
 
-Response code: 200; Time: 104ms; Content length: 1 bytes
+Response code: 200; Time: 51ms; Content length: 1 bytes
 ```
 
 ### Subscribe to Wica Stream
@@ -249,46 +259,45 @@ GET /ca/streams/<streamId>
 Returns an event stream.
 ```
 
+Example Request:
+```
+GET http://localhost:8080/ca/streams/3
+```
+
 The returned event stream contains the following message types:
 
 __Channel Metadata Information__ (sent on initial connection, then every time there is a change.)
+
+Example:
 ```
-id:0
+id:3
 event:ev-wica-channel-metadata
-data:{"AMAKI1:IST:2":{"type":"REAL","egu":"A","prec":3,"hopr":72.000000,"lopr":-72.000000,"drvh":72.000000,"drvl":-72.000000,"hihi":NaN,"lolo":NaN,"high":NaN,"low":NaN}, ...etc }
-:2019-03-06 09:39:39.407 - initial channel metadata
+data:{"wica:test:counter01":{"type":"REAL","egu":"","prec":0,"hopr":0.00,"lopr":0.00,"drvh":0.00,"drvl":0.00,"hihi":NaN,"lolo":NaN,"high":NaN,"low":NaN}}
+:2019-09-08 17:30:28.181 - channel metadata
 ```
 
-__Channel Initial Values__ (sent once, on initial cconnection)
+__Channel Monitored Values__ (sent periodically at user configured rate)
 ```
-id:0
-event:ev-wica-channel-metadata
-data:{"BMB1:STA:2":[{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Offen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Offen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Offen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Geschlossen","sevr":0},{"val":"Faehrt","sevr":0},{"val":"Offen","sevr":0}]}
-:2019-03-06 09:39:39.518 - initial channel values
-```
-
-__Channel Monitored Values__ (sent periodically eg every 100ms)
-```
-id:0
+id:3
 event:ev-wica-channel-value
-data:{"MMAC3:STR:2":[{"val":15.069581,"sevr":0}],"SMA1Y:IST:2":[{"val":-0.966167,"sevr":0}],"QMA2:IST:2":[{"val":102.363586,"sevr":0}],"QMA1:IST:2":[{"val":-91.472626,"sevr":0}],"QMA3:IST:2":[{"val":-97.093582,"sevr":0}]}
-:2019-03-06 09:39:54.526 - channel value changes
+data:{"wica:test:counter01":[{"sevr":"0","val":11042.00}]}
+:2019-09-08 17:30:29.085 - channel monitored values
 ```
 
-__Channel Polled Values__ (sent periodically eg every second)
+__Channel Polled Values__ (sent periodically at user configured rate)
 ```
-id:0
+id:3
 event:ev-wica-channel-value
-data:{"MMAC3:STR:2##2":[{"val":15.069581,"ts":"2019-03-06T09:39:54.527468"}],"CMJSEV:PWRF:2##2":[{"val":113.888885,"ts":"2019-03-06T09:39:54.527522"}],"EMJCYV:IST:2##2":[{"val":0.922709,"ts":"2019-03-06T09:39:54.527459"}]}
-:2019-03-06 09:39:54.528 - polled channel values
+data:{"wica:test:counter02":[{"sevr":"0","val":61077.00}]}
+:2019-09-08 17:30:34.077 - channel polled values
 ```
 
 __Channel Heartbeat__ (sent periodically eg every 15 seconds)
 ```
-id:0
+id:3
 event:ev-wica-server-heartbeat
-data:2019-03-06T09:39:54.348562
-:2019-03-06 09:39:54.348 - server heartbeat
+data:2019-09-08T17:30:36.078750
+:2019-09-08 17:30:36.078 - server heartbeat
 ```
 
 # Wica-HTTP API Documentation
