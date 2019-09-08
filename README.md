@@ -39,22 +39,25 @@ Currently WICA interoperates with the EPICS Control Systems using its well estab
 
 The only requirement for running the Wica-HTTP server is Java 11 JRE.
 
-# Usage
+# Getting Started
 
-## Running the server locally on localhost, port 8080
+## Running the server locally
 
    1. Get the release.
    
-      The release names (<release>)for this project follow the  [semantic versioning](https://semver.org/) naming convention
+      The release names for this project follow the  [semantic versioning](https://semver.org/) naming convention
       proposed on the GitHub site.
       
       Examples: 1.0.0, 1.1.0, 1.2.3.rc1, 1.2.3.rc2, 7.1.5.rc19
 
       ```
-         wget https://github.com/paulscherrerinstitute/wica-http/releases/download/<release>/wica-http-<release>.jar
+      wget https://github.com/paulscherrerinstitute/wica-http/releases/download/<release>/wica-http-<release>.jar
       ```
 
-   2. [Optional]: Set up the EPICS channel-access variables to communicate with the backend IOC's you want to make accessible.
+   2. [Optional]: Set up the EPICS Channel-Access environment variables
+    
+      These should be set to to communicate with the process veriables on the backend IOC's that you 
+      want to make accessible.
       
       See the section heading below for the supported variables and their default values.
       
