@@ -37,13 +37,14 @@ Currently WICA interoperates with the EPICS Control Systems using its well estab
 
 # Requirements
 
-The only requirement for running the Wica-HTTP server is Java 11 JRE.
+The only requirement for running the Wica-HTTP server is a Java 11 JRE.
+To leverage its functionality from a web browser
 
 # Getting Started
 
 ## Running the server locally
 
-   1. Get the release.
+   ### 1. Get the release.
    
       The release names for this project follow the  [semantic versioning](https://semver.org/) naming convention
       proposed on the GitHub site.
@@ -57,8 +58,8 @@ The only requirement for running the Wica-HTTP server is Java 11 JRE.
    2. [Optional]: Set up the EPICS Channel-Access environment variables
     
       These should be setup to to communicate with the process veriables on the backend IOC's that you 
-      want to make accessible. See the section heading below for the supported variables and their 
-      default values.
+      want to make accessible. See the section below for the supported variables and their default 
+      values.
       
       Examples:
       ```
@@ -78,7 +79,7 @@ The only requirement for running the Wica-HTTP server is Java 11 JRE.
       
    5. Check the connection to the backend control system.
    
-      Read your favourite EPICS channel (which must be accessible on your local network).
+      Read your favourite EPICS channel (which must be accessible on the local network).
       ```
       http://localhost:8080/ca/channel/<pvName>
       ```   
@@ -90,7 +91,7 @@ The only requirement for running the Wica-HTTP server is Java 11 JRE.
       http://localhost:8080/demo/simple.db
       ```   
       Download the DB file to your local filesystem and run it on your local network on your favourite 
-      (Soft ?) IOC. The Wica-Http Server provides an equally unimpressive (! :-) ) web page to go with it at 
+      (Soft ?) IOC. The Wica-Http Server provides an equally unimpressive ;-) web page to go with it at 
       the following location:
       ```
       http://localhost:8080/demo/simple.html
@@ -111,8 +112,8 @@ The only requirement for running the Wica-HTTP server is Java 11 JRE.
       **IMPORTANT NOTE** 
       
       If you take this approach described above you will need to temporarily **disable the CORS security check** 
-      in your local browser. This is done in various ways depending on your browser (Chrome, Safari, Firefox) and 
-      platform (Linux, OSX, Windows).
+      in your local browser. This is done in various ways depending on your browser type (Chrome, Safari, 
+      Firefox), browser version and platform (Linux, OSX, Windows). Google is your friend here.
  
 ## Running inside a docker container
 
@@ -139,7 +140,7 @@ For further information see the relevant section of the
 [EPICS Channel Access Reference Manual](https://epics.anl.gov/base/R3-14/12-docs/CAref.html) .  
    
    
-# HTTP Endpoints 
+# Server Endpoints 
 
 The server supports the following endpoints.
 
@@ -246,9 +247,9 @@ data:2019-03-06T09:39:54.348562
 :2019-03-06 09:39:54.348 - server heartbeat
 ```
 
-# Wica API Documentation
+# Wica-HTTP API Documentation
 
-The Wica API documentation (Javadoc) is available [here](https://paulscherrerinstitute.github.io/wica-http/)
+The API documentation (Javadoc) is available [here](https://paulscherrerinstitute.github.io/wica-http/)
 
 
 # Project Changes and Tagged Releases
