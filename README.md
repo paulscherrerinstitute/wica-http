@@ -148,14 +148,14 @@ The server supports the following endpoints.
 GET /wica/wica.js
 ```
 
-### Download the Wica Test HTML Page
-```
-GET /test/test.html
-```
-
-### Download the Wica Demo Database
+### Download the EPICS Test Database
 ```
 GET /test/test.db
+```
+
+### Return the EPICS Test Database HTML Page
+```
+GET /test/test.html
 ```
 
 ### Get the Value of a Channel
@@ -215,7 +215,7 @@ OK
 Response code: 200; Time: 103ms; Content length: 2 bytes
 ```
 
-### Create Wica Stream
+### Create a Wica Stream
 
 ```
 POST /ca/streams
@@ -252,7 +252,7 @@ Date: Sun, 08 Sep 2019 15:29:21 GMT
 Response code: 200; Time: 51ms; Content length: 1 bytes
 ```
 
-### Subscribe to Wica Stream
+### Subscribe to a Wica Stream
 ```
 GET /ca/streams/<streamId>
 
