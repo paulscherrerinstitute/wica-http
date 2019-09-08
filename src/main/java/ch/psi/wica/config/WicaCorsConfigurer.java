@@ -24,14 +24,17 @@ class WicaCorsConfigurer implements WebMvcConfigurer
 
    private final Logger logger = LoggerFactory.getLogger(WicaCorsConfigurer.class );
 
+   private final boolean allowCredentials;
    private final String allowedOrigins;
 
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaCorsConfigurer( @Value( "${wica.allowed-origins}" ) String allowedOrigins )
+   public WicaCorsConfigurer( @Value( "${wica.cors_allow-credentials}" ) Boolean allowCredentials,
+                              @Value( "${wica.cors_allowed-origins}" ) String allowedOrigins )
    {
+      this.allowCredentials = allowCredentials;
       this.allowedOrigins = allowedOrigins;
    }
 
@@ -42,10 +45,10 @@ class WicaCorsConfigurer implements WebMvcConfigurer
    @Override
    public void addCorsMappings( CorsRegistry registry )
    {
-      logger.info( "Configuring CORS...");
+      logger.info( "Configuring CORS... [allowCredentials='{}', allowedOrigins='{}']", allowCredentials, allowedOrigins );
       registry.addMapping("/**")
-               .allowedOrigins( this.allowedOrigins )
-               .allowCredentials( true );
+              .allowCredentials( this.allowCredentials )
+              .allowedOrigins( this.allowedOrigins );
       logger.info( "CORS configuration completed.");
    }
 
