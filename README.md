@@ -110,7 +110,7 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
       After reloading the page in the web browser (- don't forget, where necessary, to clear the cache -) 
       then the server should initiate communication with the backend control channels.
       
-      Possible Next Steps
+   1. Possible Next Steps
       
       It's time to get serious with your browser's developer tools. Google Chrome seems to work well in
       this capacity.
