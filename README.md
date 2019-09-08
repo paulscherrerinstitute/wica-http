@@ -103,16 +103,28 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
       
       If the previous step worked successfully then the system is ready for something more interesting. 
       
-      Save the page source of 'test.html' to your local filesystem and start to edit the html **'wica-channel-name'** 
-      attributes to reflect PV's of interest in your own EPICS control system environment.
+      Save the page source of 'test.html' to your local filesystem and start to edit the html 
+      **'data-wica-channel-name'** attributes to reflect PV's of interest in your own EPICS control 
+      system environment.
       
-      After reloading the page in the web browser (- don't forget, where necessary, to clear the cache -) then 
-      the server should initiate communication with the backend control channels.
+      After reloading the page in the web browser (- don't forget, where necessary, to clear the cache -) 
+      then the server should initiate communication with the backend control channels.
       
-      The way forward is then to use the browser's developer tools - Google Chrome seems to work well - to
-      inspect the event stream coming from the server and how this is reflected in the changing **'wica-XXX'** 
-      atributes that you should now see being updated in real-time.
+      Possible Next Steps
       
+      It's time to get serious with your browser's developer tools. Google Chrome seems to work well in
+      this capacity.
+      
+      * use the web browser's network analysis tool- to inspect the event stream  coming from the server.       
+      * use the web browser's html element inspector to check the information that has been read from the 
+        control system. The following attributes should now be present and updating in real-time.  
+        ** **'data-wica-stream-state'**
+        ** **'data-wica-channel-metadata'**
+        ** **'data-wica-channel-value-array'**
+        ** **'data-wica-channel-value-latest'**
+        ** **'data-wica-channel-connection-state'**
+        ** **'data-wica-channel-alarm-state'**
+          
       **IMPORTANT NOTE** 
       
       If you take the approach described above you will need to temporarily **disable the CORS security check** 
