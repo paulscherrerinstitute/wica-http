@@ -51,7 +51,7 @@ The only requirement for running the Wica-HTTP server is Java 11 JRE.
       Examples: 1.0.0, 1.1.0, 1.2.3.rc1, 1.2.3.rc2, 7.1.5.rc19
 
       ```
-      wget https://github.com/paulscherrerinstitute/wica-http/releases/download/<release>/wica-http-<release>.jar
+      wget https://github.com/paulscherrerinstitute/wica-http/releases/download/<rel>/wica-http-<rel>.jar
       ```
 
    2. [Optional]: Set up the EPICS Channel-Access environment variables
@@ -69,7 +69,7 @@ The only requirement for running the Wica-HTTP server is Java 11 JRE.
   
    3. Run the server.
       ```
-         java -jar wica-http-<release>.jar 
+         java -jar wica-http-<rel>.jar 
       ```
       
    4. Check the server is running ok by navigating to the admin page.
