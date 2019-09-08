@@ -101,18 +101,24 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
   
    1. Start Developing.
       
-      If the previous step has worked successfully then you can save the page source of 'simple.html' to your 
-      local filesystem and start to edit the html **wica-channel-name** attributes to reflect the process 
-      variable names in your own local control system environment.
+      If the previous step worked successfully then the system is ready for something more interesting. 
       
-      If you reload the page from the browser then the server should initiate communication with your backend
-      control channels.
+      Save the page source of 'test.html' to your local filesystem and start to edit the html **wica-channel-name** 
+      attributes to reflect PV's of interest in your own EPICS control system environment.
+      
+      After reloading the page in the web browser (- don't forget, where necessary, to clear the cache -) then 
+      the server should initiate communication with the backend control channels.
+      
+      The way forward is then to use the browser's developer tools - Google Chrome seems to work well - to
+      inspect the event stream coming from the server and how this is reflected in the changing 'wica-***' 
+      atributes that you will now see being updated in real-time.
       
       **IMPORTANT NOTE** 
       
-      If you take this approach described above you will need to temporarily **disable the CORS security check** 
+      If you take the approach described above you will need to temporarily **disable the CORS security check** 
       in your local browser. This is done in various ways depending on your browser type (Chrome, Safari, 
       Firefox), browser version and platform (Linux, OSX, Windows). Google is your friend here.
+      
  
 ## Running the server inside a docker container
 
