@@ -23,7 +23,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
         <!-- Use this definition to control which version of the Wica-JS library gets bundled into the Wica-HTTP fatJar. -->
-        <wica-js-release-jar>https://github.com/paulscherrerinstitute/wica-js/releases/download/1.0.0-rc.1/wica_js.zip</wica-js-release-jar>
+        <wica-js-release-jar>https://github.com/paulscherrerinstitute/wica-js/releases/download/1.0.0/wica_js.zip</wica-js-release-jar>
     </properties>
 
     <dependencies>
