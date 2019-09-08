@@ -69,32 +69,32 @@ The only requirement for running the Wica-HTTP server is Java 11 JRE.
   
    3. Run the server.
       ```
-         java -jar wica-http-<rel>.jar 
+      java -jar wica-http-<rel>.jar 
       ```
       
    4. Check the server is running ok by navigating to the admin page.
       ```
-         http://localhost:8080/admin
+      http://localhost:8080/admin
       ```
       
    5. Check the connection to the backend control system.
    
       Read your favourite EPICS channel (which must be accessible on your local network).
       ```
-         http://localhost:8080/ca/channel/<pvName>
+      http://localhost:8080/ca/channel/<pvName>
       ```   
 
    6. Run the test server
    
       The Wica-Http Server provides a very simple EPICS database at the following endpoint:
       ```
-         http://localhost:8080/demo/simple.db
+      http://localhost:8080/demo/simple.db
       ```   
       Download the DB file to your local filesystem and run it on your local network on your favourite 
       (Soft ?) IOC. The Wica-Http Server provides an equally unimpressive (! :-) ) web page to go with it at 
       the following location:
       ```
-         http://localhost:8080/demo/simple.html
+      http://localhost:8080/demo/simple.html
       ```
      
       When you navigate to this page the server should connect to the database and the counters should start 
