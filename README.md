@@ -103,15 +103,15 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
       
       If the previous step worked successfully then the system is ready for something more interesting. 
       
-      Save the page source of 'test.html' to your local filesystem and start to edit the html **wica-channel-name** 
+      Save the page source of 'test.html' to your local filesystem and start to edit the html **'wica-channel-name'** 
       attributes to reflect PV's of interest in your own EPICS control system environment.
       
       After reloading the page in the web browser (- don't forget, where necessary, to clear the cache -) then 
       the server should initiate communication with the backend control channels.
       
       The way forward is then to use the browser's developer tools - Google Chrome seems to work well - to
-      inspect the event stream coming from the server and how this is reflected in the changing 'wica-***' 
-      atributes that you will now see being updated in real-time.
+      inspect the event stream coming from the server and how this is reflected in the changing **'wica-XXX'** 
+      atributes that you should now see being updated in real-time.
       
       **IMPORTANT NOTE** 
       
