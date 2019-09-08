@@ -44,24 +44,11 @@ public class WicaApplication
 	/**
 	 * Application entry point
 	 *
-	 * @param args the command line arguments (which are not currently used).
+	 * @param args the command line arguments.
 	 */
 	public static void main( String[] args )
 	{
 		logger.info( " Wica Application is starting...");
-		if ( args.length != 1 )
-		{
-			logger.error( args.length > 1 ? "Too many arguments" : "Too few arguments" );
-			logger.info( "Usage: java  [{JVM_startup_args}] keystorePassword" );
-			return;
-		}
-
-		final String keystorePassword = args[ 0 ];
-
-		// The value set here will override any definitions in the application.properties file
-		System.setProperty( "server.ssl.key-store-password", keystorePassword );
-		logger.info( "The Keystore Password was provided and has been set." );
-
 		try
 		{
 			SpringApplication.run( WicaApplication.class, args );
