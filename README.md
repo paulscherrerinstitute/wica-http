@@ -184,16 +184,15 @@ Content-Type: text/plain
 
 somevalue
 ```
-
-Example:
+Example Request:
 ```
-{Request}
 PUT http://localhost:8080/ca/channel/wica:test:counter01
 Content-Type: text/plain
 
 999999
-
-{Response}
+```
+Example Response:
+```
 PUT http://localhost:8080/ca/channel/wica:test:counter01
 
 HTTP/1.1 200 
@@ -218,7 +217,7 @@ Content-Type: application/json
 Returns <streamId> a unique reference string that can be used when getting the stream (see below).
 ```
 
-Example:
+Example Request:
 ```
 [Request]
 POST http://localhost:8080/ca/streams
@@ -227,8 +226,10 @@ Content-Type: application/json
 { "channels" : [ { "name": "wica:test:counter01", "props": { "daqmode": "poll", "pollint": "5000" } } ],
   "props" : { "hbflux": "5000", "monflux": 1000, "pollflux": 2000 }
 }
+```
 
-[Response]
+Example Response:
+```
 POST http://localhost:8080/ca/streams
 
 HTTP/1.1 200 
