@@ -44,7 +44,7 @@ To leverage its functionality from a web browser
 
 ## Running the server locally
 
-   ### 1. Get the release.
+   1. Get the release.
    
       The release names for this project follow the  [semantic versioning](https://semver.org/) naming convention
       proposed on the GitHub site.
@@ -55,7 +55,7 @@ To leverage its functionality from a web browser
       wget https://github.com/paulscherrerinstitute/wica-http/releases/download/<rel>/wica-http-<rel>.jar
       ```
 
-   2. [Optional]: Set up the EPICS Channel-Access environment variables
+   1. [Optional]: Set up the EPICS Channel-Access environment variables
     
       These should be setup to to communicate with the process veriables on the backend IOC's that you 
       want to make accessible. See the section below for the supported variables and their default 
