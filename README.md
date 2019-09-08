@@ -44,31 +44,98 @@ The only requirement for running the Wica-HTTP server is Java 11 JRE.
 ## Running the server locally on localhost, port 8080
 
    1. Get the release.
-        ```
-            wget https://github.com/paulscherrerinstitute/wica-http/releases/download/<release>/wica-http-<release>.jar
-        ```
-
-   2. Run the server.
-        ```
-            java -jar wica-http-<release>.jar 
-        ```
-      
-   3. Check the server is running ok by navigating to the admin page.
    
-        ```
-            http://localhost:8080/admin
-        ```
+      The release names (<release>)for this project follow the  [semantic versioning](https://semver.org/) naming convention
+      proposed on the GitHub site.
       
-   4. Check the connection to the backend control system.
-   
-        ```
-            # Read your favourite EPICS channel which must be accessible on your local network.
-            http://localhost:8080/ca/channel/<pvName>
-        ```   
+      Examples: 1.0.0, 1.1.0, 1.2.3.rc1, 1.2.3.rc2, 7.1.5.rc19
 
+      ```
+         wget https://github.com/paulscherrerinstitute/wica-http/releases/download/<release>/wica-http-<release>.jar
+      ```
+
+   2. [Optional]: Set up the EPICS channel-access variables to communicate with the backend IOC's you want to make accessible.
+      
+      See the section heading below for the supported variables and their default values.
+      
+      Examples:
+      ```
+         export EPICA_CA_ADDR_LIST=IOC1:5064
+         export EPICA_CA_ADDR_LIST=<my_channel_access_gateway_server:5062
+      ```
+  
+   3. Run the server.
+      ```
+         java -jar wica-http-<release>.jar 
+      ```
+      
+   4. Check the server is running ok by navigating to the admin page.
+      ```
+         http://localhost:8080/admin
+      ```
+      
+   5. Check the connection to the backend control system.
+   
+      Read your favourite EPICS channel (which must be accessible on your local network).
+      ```
+         http://localhost:8080/ca/channel/<pvName>
+      ```   
+
+   6. Run the test server
+   
+      The Wica-Http Server provides a very simple EPICS database at the following endpoint:
+      ```
+         http://localhost:8080/demo/simple.db
+      ```   
+      Download the DB file to your local filesystem and run it on your local network on your favourite 
+      (Soft ?) IOC. The Wica-Http Server provides an equally unimpressive (! :-) ) web page to go with it at 
+      the following location:
+      ```
+         http://localhost:8080/demo/simple.html
+      ```
+     
+      When you navigate to this page the server should connect to the database and the counters should start 
+      incrementing. 
+  
+   7. Start Developing
+      
+      If the previous step has worked successfully then you can save the page source of 'simple.html' to your 
+      local filesystem and start to edit the html **wica-channel-name** attributes to reflect the process 
+      variable names in your own local control system environment.
+      
+      If you reload the page from the browser then the server should initiate communication with your backend
+      control channels.
+      
+      **Important Note:** 
+      
+      if you take this approach described above you will need to temporarily **DISABLE THE CORS SECURITY 
+      CHECK** in your local browser. This is done in various ways depending on your browser (Chrome, 
+      Safari, Firefox) and platform (Linux, OSX, Windows).
+ 
 ## Running inside a docker container
 
    Further details coming soon. :-)   
+
+
+# EPICS Channel Access Environment Variables
+
+The Wica-Http server is currently (2019-09-07) configured to work with PSI's native Java implementation 
+of the [EPICS](https://epics-controls.org/) control system client side channel-access protocol. As such 
+it respects the normal conventions with respect to environmental variables, including:
+
+| Property                | Default Value | Desciption |
+|-------------------------|---------------| ---------- |
+|EPICS_CA_ADDR_LIST       |(empty)        | Address list to use when searching for channels.  |
+|EPICS_CA_AUTO_ADDR_LIST  |true           | Automatically build up search address list.       |
+|EPICS_CA_CONN_TMO        |30.0           | Disconnect timeout detection interval in seconds. |
+|EPICS_CA_BEACON_PERIOD   |15.0           | Rate at which I'm alive beacons will be sent.     |
+|EPICS_CA_REPEATER_PORT   |5065           | Channel Access Repeater Listening Port.           |
+|EPICS_CA_SERVER_PORT     |5064           | Channel access server port.                       |
+|EPICS_CA_MAX_ARRAY_BYTES |1000000        | Maximum size in bytes of an array/waveform.       |
+   
+For further information see the relevant section of the 
+[EPICS Channel Access Reference Manual](https://epics.anl.gov/base/R3-14/12-docs/CAref.html) .  
+   
    
 # HTTP Endpoints 
 
@@ -80,11 +147,32 @@ GET /wica/wica.js
 ```
 
 ### Get the Value of a Channel
-```
-GET /ca/channels/<channelName>[?timeout=XXX]
 
-Returns JSON string representation of the value of the channel. For a channel whose underlying data source is EPICS the returned information looks like this:
-{"type":"STRING","conn":true,"val":"15.101","sevr":0,"stat":0,"ts":"2019-03-06T09:37:22.103198","wsts":"2019-03-06T09:37:22.103211","wsts-alt":1551865042103,"dsts-alt":1551865042103}
+Returns JSON string representation of the value of the channel. Optional parameters can be specified for:
+
+* the timeout in milliseconds.
+* the numeric scale to be used when returning a channel value.
+* the fields to be returned in the JSON representation. For an EPICS system these can be any of 'val', 'sevr', 'ts'.
+
+```
+GET /ca/channels/<channelName>[?timeout=XXX][&fieldsOfInterest=YYY;ZZZ][&numericScale=N]
+```
+
+Example:
+```
+GET http://localhost:8080/ca/channel/wica:test:counter01?timeout=50&fieldsOfInterest=val%3Bsevr&numericScale=4
+
+HTTP/1.1 200 
+Content-Type: application/json;charset=UTF-8
+Content-Length: 30
+Date: Sat, 07 Sep 2019 00:34:11 GMT
+
+{
+  "sevr": "0",
+  "val": 188200.0000
+}
+
+Response code: 200; Time: 108ms; Content length: 30 bytes
 ```
 
 ### Set the Value of a Channel
@@ -165,3 +253,7 @@ The Wica API documentation (Javadoc) is available [here](https://paulscherrerins
 
 * See the [CHANGELOG](CHANGELOG.md) file for further information.
 * See also the project's [Issue Board](https://github.com/paulscherrerinstitute/wica-http/issues).
+
+# Contact
+
+If you have questions please contact: 'simon.rees@psi.ch'.
