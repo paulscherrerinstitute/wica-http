@@ -174,7 +174,7 @@ GET /wica/wica.js
 GET /test/test.db
 ```
 
-### Return the EPICS Test Database HTML Page
+### Get the EPICS Test Database HTML Page
 ```
 GET /test/test.html
 ```
@@ -313,7 +313,7 @@ data:{"wica:test:counter02":[{"sevr":"0","val":61077.00}]}
 :2019-09-08 17:30:34.077 - channel polled values
 ```
 
-__Channel Heartbeat__ (sent periodically eg every 15 seconds)
+__Server Heartbeat__ (sent periodically eg every 15 seconds)
 ```
 id:3
 event:ev-wica-server-heartbeat
