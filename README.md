@@ -139,8 +139,42 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
 
    Further details coming soon. :-)   
 
+# Control System Abstractions
 
-## EPICS Channel Access Environment Variables
+Whilst currently (2019-09-15) the Wica-Http server supports only a single backend control system (EPICS) and 
+network protocol (Channel Access) its implementation is intended to be flexible enough to interoperate with 
+other control systems and/or protocols. To achieve this the server strives to create an API which offers 
+programming abstractions that are flexible enough to adapt to future needs. The main abstractions are as 
+follows:
+
+## Wica Channel
+
+The *WicaChannel* abstraction represents a readable or writable *control point* in the environment of the 
+backend control system. Each channel is associated with the following subtypes:
+* **WicaChannelName** - an abstraction which specifies the network protocol required to communicate with the 
+   control point, the name by which it is known to the control system, together with an instance specifier 
+   (required to ensure uniqueness).
+* **WicaChannelMetadata** - an abstraction representing the properties of the control point that are read out when 
+  it comes online but which thereafter remain unchanged. These include, typically, properties which describe the 
+  control point's underlying nature (for example the physical quantity that the control point represents, the 
+  expected operating limits, the values which correspond to error or warning condition etc. etc.)  
+* **WicaChannelValue** - an abstracting representing the properties of the control point which reflect its 
+  instantaneous state. These include, typically,  whether the channel is online or offline, the raw value and
+  timestamp obtained when the channel was last read out, and whether an alarm or warning condition exists.
+* **WicaChannelProperties** - an abstraction defining the configuration of the channel, including, typically,
+  whether the channel is to be monitored or polled, the numeric precision to be used when transferring data,
+  the details of any filtering that is to be applied.
+  
+## Wica Stream
+
+The *WicaStream* abstraction represents an immutable aggregation of Wica Channels which can be created and 
+subscribed to by HTTP operation on the server. Each WicaStream is associated with a **WicaStreamProperties** 
+object which define the behaviour of the stream and the default values for the properties of its underlying 
+Wica Channels.
+
+# EPICS Control System Support
+
+## EPICS support for Channel Access Environment Variables
 
 The Wica-Http server is currently (2019-09-07) configured to work with PSI's native Java implementation 
 of the [EPICS](https://epics-controls.org/) control system client side channel-access protocol. As such 
@@ -159,7 +193,29 @@ it respects the normal conventions with respect to environmental variables, incl
 For further information see the relevant section of the 
 [EPICS Channel Access Reference Manual](https://epics.anl.gov/base/R3-14/12-docs/CAref.html) .  
    
-   
+
+## EPICS support for Wica Channel Properties
+
+### WicaChannelMetadata
+
+| Property                |Desciption                                                                                       |
+|-------------------------|------------------------------------------------------------------------------------------------ |
+| type                    |One of: "UNKNOWN", STRING", "STRING_ARRAY", "INTEGER", "INTEGER_ARRAY", "DOUBLE", "DOUBLE_ARRAY" |
+| drvl,drvh               |Drive limits       |
+| lolo, hihi              |Error Limits       |
+| low, high               |Warning Limits     |
+| egu                     |Engineering Units  |
+
+### WicaChannelValue
+
+| Property                |Desciption                                                                                       |
+|-------------------------|------------------------------------------------------------------------------------------------ |
+| ts                      |One of: "UNKNOWN", STRING", "STRING_ARRAY", "INTEGER", "INTEGER_ARRAY", "DOUBLE", "DOUBLE_ARRAY" |
+| sevr                    |Drive limits       |
+| stat                    |Error Limits       |
+| val                     |Warning Limits     |
+
+
 # Server Endpoints 
 
 The server supports the following endpoints.
