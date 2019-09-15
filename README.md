@@ -142,10 +142,11 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
 # Control System Abstractions
 
 Whilst currently (2019-09-15) the Wica-Http server supports only a single backend control system (EPICS) and 
-network protocol (Channel Access) its implementation is intended to be flexible enough to interoperate with 
-other control systems and/or protocols. To achieve this the server strives to create an API which offers 
-programming abstractions that are flexible enough to adapt to future needs. The main abstractions are as 
-follows:
+network protocol (Channel Access) its implementation is intended to be flexible enough to interoperate in the
+future with other control systems and/or protocols. 
+
+To achieve this the server strives to create an API which offers programming abstractions that are flexible 
+enough to adapt to future needs. The main abstractions are as follows:
 
 ## Wica Channel
 
