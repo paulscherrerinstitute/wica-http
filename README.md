@@ -149,6 +149,28 @@ follows:
 
 ## Wica Channel
 
+The [WicaChannel](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannel.html) 
+abstraction provides an immutable data structure representing a readable or writable *control point* in the 
+environment of the backend control system. A channel contains:
+* [WicaChannelName](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannelName.html) - 
+   an abstraction which specifies the network protocol required to communicate with the control point, the name by 
+   which it is known to the control system, together with an instance specifier (required to ensure uniqueness).
+* [WicaChannelProperties](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannelProperties.html) - 
+  an abstraction defining the configuration of the channel, including, typically, whether the channel is to be monitored 
+  or polled, the numeric precision to be used when transferring data, the details of any filtering that is to be applied.
+  
+## Wica Stream
+
+The **WicaStream** abstraction represents an immutable aggregation of Wica Channels which can be created and 
+subscribed to by HTTP operations on the server. 
+
+Each **WicaStream** is associated with a **WicaStreamProperties** object which defines:
+ * things which affect the behaviour of the stream.
+ * things which determine the default property values which will be assigned to each of the stream's underlying 
+   Wica Channels.
+
+## Wica Channel Data
+
 The **WicaChannel** abstraction represents a readable or writable *control point* in the environment of the 
 backend control system. Each channel is associated with the following subtypes:
 * **WicaChannelName** - an abstraction which specifies the network protocol required to communicate with the 
@@ -164,16 +186,6 @@ backend control system. Each channel is associated with the following subtypes:
 * **WicaChannelProperties** - an abstraction defining the configuration of the channel, including, typically,
   whether the channel is to be monitored or polled, the numeric precision to be used when transferring data,
   the details of any filtering that is to be applied.
-  
-## Wica Stream
-
-The **WicaStream** abstraction represents an immutable aggregation of Wica Channels which can be created and 
-subscribed to by HTTP operations on the server. 
-
-Each **WicaStream** is associated with a **WicaStreamProperties** object which defines:
- * things which affect the behaviour of the stream.
- * things which determine the default property values which will be assigned to each of the stream's underlying 
-   Wica Channels.
 
 # EPICS Control System Support
 
