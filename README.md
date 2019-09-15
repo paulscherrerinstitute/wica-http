@@ -168,9 +168,12 @@ backend control system. Each channel is associated with the following subtypes:
 ## Wica Stream
 
 The **WicaStream** abstraction represents an immutable aggregation of Wica Channels which can be created and 
-subscribed to by HTTP operation on the server. Each WicaStream is associated with a **WicaStreamProperties** 
-object which define the behaviour of the stream and the default values for the properties of its underlying 
-Wica Channels.
+subscribed to by HTTP operations on the server. 
+
+Each **WicaStream** is associated with a **WicaStreamProperties** object which defines:
+ * things which affect the behaviour of the stream.
+ * things which determine the default property values which will be assigned to each of the stream's underlying 
+   Wica Channels.
 
 # EPICS Control System Support
 
