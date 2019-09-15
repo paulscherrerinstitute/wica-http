@@ -151,17 +151,17 @@ follows:
 
 The *WicaChannel* abstraction represents a readable or writable *control point* in the environment of the 
 backend control system. Each channel is associated with the following subtypes:
-* **WicaChannelName** - an abstraction which specifies the network protocol required to communicate with the 
+* *WicaChannelName* - an abstraction which specifies the network protocol required to communicate with the 
    control point, the name by which it is known to the control system, together with an instance specifier 
    (required to ensure uniqueness).
-* **WicaChannelMetadata** - an abstraction representing the properties of the control point that are read out when 
+* *WicaChannelMetadata* - an abstraction representing the properties of the control point that are read out when 
   it comes online but which thereafter remain unchanged. These include, typically, properties which describe the 
   control point's underlying nature (for example the physical quantity that the control point represents, the 
   expected operating limits, the values which correspond to error or warning condition etc. etc.)  
-* **WicaChannelValue** - an abstracting representing the properties of the control point which reflect its 
+* *WicaChannelValue* - an abstracting representing the properties of the control point which reflect its 
   instantaneous state. These include, typically,  whether the channel is online or offline, the raw value and
   timestamp obtained when the channel was last read out, and whether an alarm or warning condition exists.
-* **WicaChannelProperties** - an abstraction defining the configuration of the channel, including, typically,
+* *WicaChannelProperties* - an abstraction defining the configuration of the channel, including, typically,
   whether the channel is to be monitored or polled, the numeric precision to be used when transferring data,
   the details of any filtering that is to be applied.
   
