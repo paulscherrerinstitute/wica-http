@@ -15,7 +15,7 @@ before_install:
   - echo -n "*** LIFECYCLE STARTED - 'before_install' *****************************************************************"
   - echo -n "*** LIFECYCLE COMPLETED - before_install *****************************************************************"
 
-# Note: 'Install' here means things into the Travis environment that are needed.
+# Note: 'Install' here means bring things into the Travis environment that are needed for the build.
 install:
   - echo "*** LIFECYCLE STARTED - 'install' ***************************************************************************"
   - echo "*** LIFECYCLE COMPLETED - 'install' *************************************************************************"
@@ -23,8 +23,7 @@ install:
 # Build the code then build the javadoc.
 before_script:
   - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
-  - mvn package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-  - mvn javadoc:javadoc -B -V
+  - mvn clean package -DskipTests=true -Dmaven.javadoc.skip=false -B -V
   - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
 
 # Used here to upload the docker file to Docker Hub.
@@ -35,30 +34,28 @@ script:
 #  - docker push paulscherrerinstitute/wica-stream:latest
 #  - echo -n "LIFECYCLE COMPLETED - 'script' ***************************************************************************"
 
-# The deploy phase is optional and runs after the script. Here we use it to copy the
-# release into the GitHub releases area.
+# The deploy phase is optional and runs after the script.
 deploy:
-  provider: releases
-  api_key:
-    secure: "cDP3Oecwm+CoMajdf+EE8yHRXgTLjPVNISdnhYQ1pYmR7+wllgeO5nzJhgGBmu6hZQmvnzQBKBynGG65hd21QgYceis2am6MZojTOf3WqkKEnytLpBUJrNb/jJcpygQx04OSUC3Ev0EhasZEgYYMTNKsE1c4N/G9mPWkjwKmzeCrS7oHYY7rES5T6i7aoP0VNTJp5gMcRukKdejN6IvjeQFCjQn/dw68Unsmk6zDByEgvapl4BSfXMl3zMz0PjC3aNpR3G9iY7FByOmHjYLv4dAXaceJPnAoIbVCeH5yJ3GzkTV0xrB9n5jd6sM/AezNAS/1JaGv/pNhjXkIgw+GjO5uRaM2IPZl2VU6fh2kAKocxoICkoE4D2qsEUvd5hthQ1h515eMKPyXqTFxSzzY9CEtS39qgEB7NJj0fH1nRyFzwzel4UZ/wRqrNCQrY8s4e6yGrXm+9s+OhoEJVr1mtu2ou9Uxp4jMyb2zH1pCf63IAAENQpkwL2+5V7bUtCSC0HnrDruY4L/RrKvrMNxQzZbQr3wcdS8GNhGLx56s1ZFjnLrd3K8RJRo+LJiWxYuwaRMZd9YyANvMWiJg+2QrR2bVNiFs73vRBvzLMNDZcfh+cp3a2ztdjVsqvB+mVfYviM7DbIRIc91SOSoIeoTwPZw5QyfCzZ1jVKjUUN9q8mI="
-  file_glob: true
-  file: target/wica-http-*.jar
-  skip_cleanup: true
-  draft: false
-  on:
-    tags: true
-    repo: paulscherrerinstitute/wica-http
+  # Here we copy the release into the GitHub releases area.
+  - provider: releases
+    api_key:
+      secure: "cDP3Oecwm+CoMajdf+EE8yHRXgTLjPVNISdnhYQ1pYmR7+wllgeO5nzJhgGBmu6hZQmvnzQBKBynGG65hd21QgYceis2am6MZojTOf3WqkKEnytLpBUJrNb/jJcpygQx04OSUC3Ev0EhasZEgYYMTNKsE1c4N/G9mPWkjwKmzeCrS7oHYY7rES5T6i7aoP0VNTJp5gMcRukKdejN6IvjeQFCjQn/dw68Unsmk6zDByEgvapl4BSfXMl3zMz0PjC3aNpR3G9iY7FByOmHjYLv4dAXaceJPnAoIbVCeH5yJ3GzkTV0xrB9n5jd6sM/AezNAS/1JaGv/pNhjXkIgw+GjO5uRaM2IPZl2VU6fh2kAKocxoICkoE4D2qsEUvd5hthQ1h515eMKPyXqTFxSzzY9CEtS39qgEB7NJj0fH1nRyFzwzel4UZ/wRqrNCQrY8s4e6yGrXm+9s+OhoEJVr1mtu2ou9Uxp4jMyb2zH1pCf63IAAENQpkwL2+5V7bUtCSC0HnrDruY4L/RrKvrMNxQzZbQr3wcdS8GNhGLx56s1ZFjnLrd3K8RJRo+LJiWxYuwaRMZd9YyANvMWiJg+2QrR2bVNiFs73vRBvzLMNDZcfh+cp3a2ztdjVsqvB+mVfYviM7DbIRIc91SOSoIeoTwPZw5QyfCzZ1jVKjUUN9q8mI="
+    file_glob: true
+    file: target/wica-http-*.jar
+    skip_cleanup: true
+    draft: true
+    on:
+      tags: true
+      repo: paulscherrerinstitute/wica-http
 
-
-# Here we copy the Javadoc to the GitHub pages site.
-provider: pages
-  local_dir: $TRAVIS_BUILD_DIR/target/site/apidocs
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-  keep_history: true
-  on:
-    branch: master
-
+  # Here we copy the latest Javadoc to the GitHub pages site.
+  - provider: pages
+    local_dir: $TRAVIS_BUILD_DIR/target/site/apidocs
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+    keep_history: true
+    on:
+      branch: master
 
 after_script:
   - echo -n "*** LIFECYCLE STARTED - 'after_script' *******************************************************************"
