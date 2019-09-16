@@ -195,7 +195,6 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.1.1</version>
                 <configuration>
-                    <destDir>${project.version}</destDir>
                     <additionalOptions>-html5</additionalOptions>
                     <show>package</show>
                     <!-- required in some build environments -->
@@ -208,6 +207,26 @@
                         </tag>
                     </tags>
                 </configuration>
+                <executions>
+                    <execution>
+                        <!-- Build a version of the javadoc in a directory with this specific release number -->
+                        <id>javadoc-make-project-version</id>
+                        <phase>package</phase>
+                        <goals><goal>javadoc</goal></goals>
+                        <configuration>
+                            <destDir>latest</destDir>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- Additionally build a version of the javadoc in a directory called 'latest' -->
+                        <id>javadoc-make-latest</id>
+                        <phase>package</phase>
+                        <goals><goal>javadoc</goal></goals>
+                        <configuration>
+                            <destDir>${project.version}</destDir>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 
