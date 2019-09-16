@@ -13,6 +13,10 @@ import java.util.Objects;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Represents a readable or writable point of interest (or <i>control point</i>)
+ * available in the environment of the backend control system.
+ */
 @Immutable
 public class WicaChannel
 {

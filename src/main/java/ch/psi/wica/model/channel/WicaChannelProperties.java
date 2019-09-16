@@ -14,6 +14,12 @@ import java.util.Optional;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Provides properties that determine how to communicate with the backend
+ * control point (eg monitoring or polling), how to filter the data which is
+ * obtained and how to represent the information (eg numeric precision)
+ * when returning the data to the clients of the server.
+ */
 @Immutable
 public class WicaChannelProperties
 {
