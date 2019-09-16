@@ -11,9 +11,10 @@ import org.apache.commons.lang3.Validate;
 import java.time.LocalDateTime;
 
 /**
- * Represents the root of a hierarchy of objects which describe the state
- * of a Wica Channel. These include the types associated with the channel's
- * metadata and those associated with its instantaneous value.
+ * Represents the abstract root of a typed hierarchy of objects whose
+ * information is obtained from the underlying control system and which
+ * can be serialized as a JSON string for including as part of a <i>wica
+ * stream</i>.
  */
 @Immutable
 public abstract class WicaChannelData

@@ -7,9 +7,8 @@ package ch.psi.wica.model.channel;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Represents the <i>alarm status</i> of a wica channel, an integer value which
- * may have different meanings depending on the nature of the underlying
- * control system from which it's value is derived.
+ * Represents the <i>alarm status</i> of a wica channel, an abstraction whose
+ * integer value depends on the control system from which its value is derived.
  */
 public class WicaChannelAlarmStatus
 {

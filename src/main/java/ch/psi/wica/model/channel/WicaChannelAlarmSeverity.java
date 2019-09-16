@@ -6,9 +6,9 @@ package ch.psi.wica.model.channel;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Represents the <i>alarm severity</i> of a wica channel, an enumeration which
- * may have different meanings depending on the nature of the underlying
- * control system from which it's value is derived.
+ * Represents the <i>alarm severity</i> of a wica channel, an abstraction
+ * which specifies whether a wica channel is operating normally or is in
+ * an alarm or warning state.
  */
 public enum WicaChannelAlarmSeverity
 {

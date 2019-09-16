@@ -18,7 +18,7 @@ import java.util.Optional;
  * Represents the properties of a wica channel which include the data
  * acquisition mode, the parameters for any filters that may be applied,
  * and other the parameters which may affect its JSON serialised form
- * when sent down the wire as part of a Wica Stream.
+ * when sent down the wire as part of a wica stream.
  */
 @Immutable
 public class WicaChannelProperties
