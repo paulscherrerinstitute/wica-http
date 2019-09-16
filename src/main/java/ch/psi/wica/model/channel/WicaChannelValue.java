@@ -11,10 +11,11 @@ import java.time.LocalDateTime;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+
 /**
- * Represents the root of a typed hierarchy of objects which reflect a
- * control point's evolving, continuously changing, instantaneous state.
- *
+ * Represents the abstract root of a typed hierarchy of objects which reflect a
+ * control point's instantaneous state.
+ * <p>
  * These include, typically, whether the channel is online or offline, the
  * raw value and timestamp obtained when the channel was last read out, and
  * whether an alarm or warning condition exists.

@@ -15,14 +15,14 @@ import java.time.LocalDateTime;
  * Represents the abstract root of a typed hierarchy of objects which describe
  * the <i>characteristics</i>, or <i>basic nature</i> of a control point as
  * published by the control system.
- *
+ * <p>
  * These properties are obtained from the underlying control system and can
  * be serialized as a JSON string for including as part of a <i>wica stream</i>.
- *
+ * <p>
  * These properties typically do not change, or change only rarely, for
  * example after a control point has been brought back online following a
  * software update.
- *
+ * <p>
  * The set of metadata properties which a channel supports depends on
  * the type of control system from whose value it is derived. Examples
  * include a <i>units</i> string representing the physical quantity that
