@@ -13,19 +13,19 @@ import java.time.LocalDateTime;
 
 /**
  * Represents the abstract root of a hierarchy of objects which provide
- * a set of fields to describe a control point's general characteristics
- * or basic nature.
+ * fields to describe a control point's general characteristics or basic
+ * nature.
  * <p>
  * The metadata information is obtained by communication with the control
- * system of which the control point forms a part. Subsequently it is made
- * available for serialisation as a JSON string and for inclusion as part
+ * system hosting the control point. Subsequently the information is captured
+ * and made available for JSON string serialisation and for inclusion as part
  * of a <i>wica stream</i>.
  * <p>
  * The metadata information typically does not change, or changes only
  * very rarely, for example after a control point has been brought back
  * online following a software update.
  * <p>
- * The metadata fields that are concretely provided for each metadata object
+ * The set of fields that are provided for each metadata object
  * depend on the underlying control system.  Typical fields include:
  * <i>units</i> - a string representing the physical quantity that the
  * control point represents; the <i>numeric precision</i>; the allowed

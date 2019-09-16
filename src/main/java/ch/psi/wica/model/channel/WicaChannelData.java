@@ -11,10 +11,10 @@ import org.apache.commons.lang3.Validate;
 import java.time.LocalDateTime;
 
 /**
- * Represents the abstract root of a typed hierarchy of objects whose
- * information is obtained from the underlying control system and which
- * can be serialized as a JSON string for including as part of a <i>wica
- * stream</i>.
+ * Represents the abstract root of a hierarchy of objects which provide
+ * fields to describe a control point's general characteristics (ie its
+ * <i>metadata</i>) and/or fields to describe its evolving state (ie its
+ * <i>instantaneous value</i>.
  */
 @Immutable
 public abstract class WicaChannelData

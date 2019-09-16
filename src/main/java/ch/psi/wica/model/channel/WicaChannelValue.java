@@ -13,17 +13,18 @@ import java.time.LocalDateTime;
 
 /**
  * Represents the abstract root of a hierarchy of objects which provide
- * a set of fields to describe a control point's instantaneous state.
+ * fields to describe a control point's instantaneous state.
  * <p>
  * The value information typically changes often and is obtained by
- * continuous communication with the control system of which the control
- * point forms a part. Subsequently it is made available for serialisation
- * as a JSON string and for inclusion as part of a <i>wica stream</i>.
+ * continuous communication with the control system hosting the
+ * control point. Subsequently the information is captured and
+ * made available for JSON string serialisation and for inclusion
+ * as part of a <i>wica stream</i>.
  * <p>
- * The fields that are concretely provided for each control point
- * depend on the underlying control system.  Typical fields include:
- * whether the channel is <i>online</i> or <i>offline</i>, the
- * <i>raw value</i> and <i>timestamp</i> obtained when the channel
+ * The set of fields that are concretely provided for each control
+ * point depend on the underlying control system.  Typical fields
+ * include: whether the channel is <i>online</i> or <i>offline</i>,
+ * the <i>raw value</i> and <i>timestamp</i> obtained when the channel
  * was last read out, and whether an <i>alarm</i> or <i>warning</i>
  * condition exists.
  */
