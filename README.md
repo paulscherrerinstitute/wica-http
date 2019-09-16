@@ -406,7 +406,9 @@ data:2019-09-08T17:30:36.078750
 
 # Wica-HTTP API Documentation
 
-The API documentation for the **latest** release is always available [here](https://paulscherrerinstitute.github.io/wica-http/latest).
+The API documentation for the **latest development** release is always available [here](https://paulscherrerinstitute.github.io/wica-http/latest).
+
+The API documentation for the **latest stable** release is available [here](https://paulscherrerinstitute.github.io/wica-http/1.0.0).
 
 The API documentation for **previous releases** can be found as follows:
 ```
