@@ -159,8 +159,27 @@ A Wica channel contains:
   an abstraction which specifies the network protocol required to communicate with the control point, the name by 
   which it is known to the control system, together with an instance specifier (required to ensure uniqueness).
 * [WicaChannelProperties](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannelProperties.html) - 
-  an abstraction defining the configuration of the channel, including, typically, whether the channel is to be monitored 
+  an abstraction specifying the configuration of the channel, for example whether the
+  
+  
+  including, typically, whether the channel is to be monitored 
   or polled, the numeric precision to be used when transferring data, the details of any filtering that is to be applied.
+
+## Wica Channel Data
+
+The [WicaChannelData](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannelData.html) 
+abstraction provides an abstract class representing an atom of control system data read from or to be written to a 
+wica channel.
+
+* [WicaChannelMetadata](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannelMetadata.html) 
+  - an abstraction representing the properties of the control point that are read out when 
+  it comes online but which thereafter remain unchanged. These include, typically, properties which describe the 
+  control point's underlying nature (for example the physical quantity that the control point represents, the 
+  expected operating limits, the values which correspond to error or warning condition etc. etc.)  
+* [WicaChannelValue](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannelValue.html) 
+  - an abstraction representing the properties of the control point which reflect its 
+  instantaneous state. These include, typically,  whether the channel is online or offline, the raw value and
+  timestamp obtained when the channel was last read out, and whether an alarm or warning condition exists.
   
 ## Wica Stream
 
@@ -179,23 +198,6 @@ A Wica stream contains:
      * things which affect the behaviour of the stream.
      * things which determine the default property values which will be assigned to each of the stream's underlying Wica Channels.
 
-## Wica Channel Data
-
-The **WicaChannel** abstraction represents a readable or writable *control point* in the environment of the 
-backend control system. Each channel is associated with the following subtypes:
-* **WicaChannelName** - an abstraction which specifies the network protocol required to communicate with the 
-   control point, the name by which it is known to the control system, together with an instance specifier 
-   (required to ensure uniqueness).
-* **WicaChannelMetadata** - an abstraction representing the properties of the control point that are read out when 
-  it comes online but which thereafter remain unchanged. These include, typically, properties which describe the 
-  control point's underlying nature (for example the physical quantity that the control point represents, the 
-  expected operating limits, the values which correspond to error or warning condition etc. etc.)  
-* **WicaChannelValue** - an abstraction representing the properties of the control point which reflect its 
-  instantaneous state. These include, typically,  whether the channel is online or offline, the raw value and
-  timestamp obtained when the channel was last read out, and whether an alarm or warning condition exists.
-* **WicaChannelProperties** - an abstraction defining the configuration of the channel, including, typically,
-  whether the channel is to be monitored or polled, the numeric precision to be used when transferring data,
-  the details of any filtering that is to be applied.
 
 # EPICS Control System Support
 
@@ -404,8 +406,12 @@ data:2019-09-08T17:30:36.078750
 
 # Wica-HTTP API Documentation
 
-The API documentation (Javadoc) is available [here](https://paulscherrerinstitute.github.io/wica-http/)
+The API documentation for the **latest** release is always available [here](https://paulscherrerinstitute.github.io/wica-http/latest).
 
+The API documentation for **previous releases** can be found as follows:
+```
+https://paulscherrerinstitute.github.io/wica-http/<rel>
+```
 
 # Project Changes and Tagged Releases
 
