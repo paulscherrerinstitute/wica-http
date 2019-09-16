@@ -43,6 +43,7 @@ class WicaChannelMetadataTest
       var wicaChannelMetadata = WicaChannelMetadata.createIntegerInstance("abc", 1, 2, 3, 4, 5, 6 , 7, 8 );
       assertThat( wicaChannelMetadata.getWicaServerTimestamp().isBefore( LocalDateTime.now() ), is( true ) );
       assertThat( wicaChannelMetadata.getType(), is( WicaChannelType.INTEGER ) );
+      assertThat( wicaChannelMetadata.getUnits(), is( "abc") );
       assertThat( wicaChannelMetadata.getUpperDisplay(), is( 1) );
       assertThat( wicaChannelMetadata.getLowerDisplay(), is( 2) );
       assertThat( wicaChannelMetadata.getUpperControl(), is( 3) );
@@ -59,6 +60,7 @@ class WicaChannelMetadataTest
       var wicaChannelMetadata = WicaChannelMetadata.createIntegerArrayInstance("abc", 1, 2, 3, 4, 5, 6 , 7, 8 );
       assertThat( wicaChannelMetadata.getWicaServerTimestamp().isBefore( LocalDateTime.now() ), is( true ) );
       assertThat( wicaChannelMetadata.getType(), is( WicaChannelType.INTEGER_ARRAY ) );
+      assertThat( wicaChannelMetadata.getUnits(), is( "abc") );
       assertThat( wicaChannelMetadata.getUpperDisplay(), is( 1) );
       assertThat( wicaChannelMetadata.getLowerDisplay(), is( 2) );
       assertThat( wicaChannelMetadata.getUpperControl(), is( 3) );
@@ -75,6 +77,7 @@ class WicaChannelMetadataTest
       var wicaChannelMetadata = WicaChannelMetadata.createRealInstance("abc", 1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9 );
       assertThat( wicaChannelMetadata.getWicaServerTimestamp().isBefore( LocalDateTime.now() ), is( true ) );
       assertThat( wicaChannelMetadata.getType(), is( WicaChannelType.REAL ) );
+      assertThat( wicaChannelMetadata.getUnits(), is( "abc") );
       assertThat( wicaChannelMetadata.getPrecision(),    is( 1) );
       assertThat( wicaChannelMetadata.getUpperDisplay(), is( 2.2) );
       assertThat( wicaChannelMetadata.getLowerDisplay(), is( 3.3) );
@@ -92,6 +95,7 @@ class WicaChannelMetadataTest
       var wicaChannelMetadata = WicaChannelMetadata.createRealArrayInstance("abc", 1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9 );
       assertThat( wicaChannelMetadata.getWicaServerTimestamp().isBefore( LocalDateTime.now() ), is( true ) );
       assertThat( wicaChannelMetadata.getType(), is( WicaChannelType.REAL_ARRAY ) );
+      assertThat( wicaChannelMetadata.getUnits(), is( "abc") );
       assertThat( wicaChannelMetadata.getPrecision(),    is( 1) );
       assertThat( wicaChannelMetadata.getUpperDisplay(), is( 2.2) );
       assertThat( wicaChannelMetadata.getLowerDisplay(), is( 3.3) );
