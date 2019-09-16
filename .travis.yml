@@ -23,8 +23,7 @@ install:
 # Build the code then build the javadoc.
 before_script:
   - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
-  - mvn clean package -DskipTests=true -D maven.javadoc.skip=true -B -V
-  - mvn javadoc:javadoc -B -V
+  - mvn clean package -DskipTests=true -D maven.javadoc.skip=false -B -V
   - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
 
 # Used here to upload the docker file to Docker Hub.
