@@ -3,6 +3,7 @@ package ch.psi.wica.model.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,15 @@ import java.time.LocalDateTime;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Represents the root of a typed hierarchy of objects which reflect a
+ * control point's evolving, continuously changing, instantaneous state.
+ *
+ * These include, typically, whether the channel is online or offline, the
+ * raw value and timestamp obtained when the channel was last read out, and
+ * whether an alarm or warning condition exists.
+ */
+@Immutable
 public abstract class WicaChannelValue extends WicaChannelData
 {
 

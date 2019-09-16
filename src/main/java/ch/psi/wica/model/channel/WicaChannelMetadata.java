@@ -11,6 +11,17 @@ import java.time.LocalDateTime;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Represents the root of a typed hierarchy of objects which describe the
+ * static properties of a control point, ie those properties which may be
+ * readout when the channel comes online and which thereafter remain
+ * constant.
+ *
+ * Typically these properties describe the basic underlying nature of the
+ * control point, for example, the physical quantity that the control
+ * point represents, the allowed operating limits and/or the values which
+ * correspond to error or warning conditions.
+ */
 @Immutable
 public abstract class WicaChannelMetadata extends WicaChannelData
 {
