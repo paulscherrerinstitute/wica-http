@@ -5,17 +5,16 @@ package ch.psi.wica.model.channel;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
 import java.time.LocalDateTime;
 
 /**
- * Root of hierarchy of objects which can be serialized and sent down the
- * wire as a component of the Server Sent Event (SSE) stream.
+ * Represents the root of a hierarchy of objects which describe the state
+ * of a Wica Channel. These include the types associated with the channel's
+ * metadata and those associated with its instantaneous value.
  */
-
 @Immutable
 public abstract class WicaChannelData
 {

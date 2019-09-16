@@ -19,6 +19,12 @@ import java.util.regex.Pattern;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Represents the name of a Wica Channel which includes the control system
+ * protocol needed to communicate with it, the name by which the channel is
+ * known in the local control system and the instance specifier (required
+ * to ensure uniqueness).
+ */
 @Immutable
 public class WicaChannelName
 {

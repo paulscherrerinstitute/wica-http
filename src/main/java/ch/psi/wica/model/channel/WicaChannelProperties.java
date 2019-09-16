@@ -15,10 +15,10 @@ import java.util.Optional;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Provides properties that determine how to communicate with the backend
- * control point (eg monitoring or polling), how to filter the data which is
- * obtained and how to represent the information (eg numeric precision)
- * when returning the data to the clients of the server.
+ * Represents the properties of a Wica Channel which include the data
+ * acquisition mode, the parameters for any filters that may be applied,
+ * and other the parameters which may affect its JSON serialised form
+ * when sent down the wire as part of a Wica Stream.
  */
 @Immutable
 public class WicaChannelProperties
