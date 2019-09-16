@@ -15,7 +15,7 @@ import java.util.Optional;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Represents the properties of a Wica Channel which include the data
+ * Represents the properties of a wica channel which include the data
  * acquisition mode, the parameters for any filters that may be applied,
  * and other the parameters which may affect its JSON serialised form
  * when sent down the wire as part of a Wica Stream.

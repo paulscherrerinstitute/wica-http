@@ -9,7 +9,13 @@ package ch.psi.wica.model.channel;
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.app.WicaFilterType;
 import ch.psi.wica.model.stream.WicaStreamPropertiesDefaults;
+import net.jcip.annotations.Immutable;
 
+/**
+ * Represents the default wica channel property values that will be used
+ * if the property is not explicitly specified when creating the channel.
+ */
+@Immutable
 public class WicaChannelPropertiesDefaults
 {
 

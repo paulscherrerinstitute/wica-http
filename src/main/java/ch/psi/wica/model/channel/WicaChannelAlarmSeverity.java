@@ -6,7 +6,7 @@ package ch.psi.wica.model.channel;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Represents the *alarm severity* of a wica channel, an enumeration which
+ * Represents the <i>alarm severity</i> of a wica channel, an enumeration which
  * may have different meanings depending on the nature of the underlying
  * control system from which it's value is derived.
  */
