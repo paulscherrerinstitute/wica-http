@@ -1,0 +1,94 @@
+# WICA support for the EPICS Control System
+
+This document describes the Wica-HTTP Server support for the EPICS Control system.
+
+## Library Dependencies
+
+The Wica-HTTP server is currently (2019-09-07) configured to work with PSI's [native Java implementation](https://github.com/channelaccess/ca) 
+of the [EPICS Control System's](https://epics-controls.org/) client-side, channel-access protocol. 
+
+This library is bundled into the server's fatJar distribution so no special measures are required to install it.
+
+## Support for EPICS Channel Access Environment Variables
+
+The Wica-HTTP server respects the normal EPICS conventions with respect to environmental variables, including:
+
+| Property                | Default Value | Desciption |
+|-------------------------|---------------| ---------- |
+|EPICS_CA_ADDR_LIST       |(empty)        | Address list to use when searching for channels.  |
+|EPICS_CA_AUTO_ADDR_LIST  |true           | Automatically build up search address list.       |
+|EPICS_CA_CONN_TMO        |30.0           | Disconnect timeout detection interval in seconds. |
+|EPICS_CA_BEACON_PERIOD   |15.0           | Rate at which I'm alive beacons will be sent.     |
+|EPICS_CA_REPEATER_PORT   |5065           | Channel Access Repeater Listening Port.           |
+|EPICS_CA_SERVER_PORT     |5064           | Channel access server port.                       |
+|EPICS_CA_MAX_ARRAY_BYTES |1000000        | Maximum size in bytes of an array/waveform.       |
+   
+For further information see the relevant section of the 
+[EPICS Channel Access Reference Manual](https://epics.anl.gov/base/R3-14/12-docs/CAref.html) .  
+  
+## Support for EPICS Channel Names
+  
+Wica channel names are composed of three specifiers of the following form:
+```
+[ <protocol> ] + <csname> + [ '##' + <instance> ]
+
+Where:
+  <protocol> - is an optional specifier defining the network protocol.
+  <csname> - is a specifier defining the name of the control point as known to the host control system.
+  <instance> - is an optional specifier defining the instance. 
+```
+
+The protocol specifier for EPICS Channel Access is as follows:
+```
+ca://
+```
+
+The csname specifier accepts any characters that are valid for EPICS. According to Section 6.3.2 of the EPICS 
+Application Developer's Guide these include the following characters:
+```
+a-z A-Z 0-9 _ - : . [ ] < >
+```
+
+The instance specifier is only provided to ensure name-uniqueness in a wica stream where a control
+system channels is used multiple times.
+
+Examples:
+```
+   ca://abc:def
+   my_special_channel
+   my_channel##1
+   my_channel##2 
+```
+
+## Wica Channel Metadata - mapping to EPICS database fields
+
+The following metadata properties are supported for a wica channel whose underlying control system is EPICS: 
+
+|Property         |Desciption                                                                                       |
+|-----------------|------------------------------------------------------------------------------------------------ |
+| "type"          |One of: "UNKNOWN", STRING", "STRING_ARRAY", "INTEGER", "INTEGER_ARRAY", "DOUBLE", "DOUBLE_ARRAY" |
+| "lopr","hopr"   |Display limits     |
+| "drvl","drvh"   |Drive limits       |
+| "lolo", "hihi"  |Error Limits       |
+| "low", "high"   |Warning Limits     |
+| "egu"           |Engineering Units  |
+
+Note: the metadata property fields are initialised using information returned from the underlying EPICS channel 
+in response to a caget CTRL request. 
+
+
+## Wica Channel Value - mapping to EPICS database fields
+
+The following value properties are supported for a wica channel whose underlying control system is EPICS: 
+
+|Property |Desciption                                                            |
+|----------|-------------------------------------------------------------------- |
+| "val"    |The raw value which was obtained when last reading the channel.      |
+| "ts"     |The timestamp which was obtained when last reading the channel.      |
+| "sevr"   |The alarm severity which was obtained when last reading the channel. |
+| "stat"   |The alarm status which was obtained when last reading the channel.   |
+
+Note: the value property fields are initialised using information returned from the underlying EPICS 
+channel in response to a caget ALARM request. 
+
+Subsequently, dependant on the channel configuration, they are updated using channel access monitoring or polling.
