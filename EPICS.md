@@ -66,7 +66,7 @@ Examples:
 The following fields are available for describing the **metadata** of a wica channel whose underlying control system 
 is EPICS: 
 
-|Field            |Description                                                                                      |
+|Property/Field   |Description                                                                                      |
 |-----------------|------------------------------------------------------------------------------------------------ |
 | "type"          |One of: "UNKNOWN", STRING", "STRING_ARRAY", "INTEGER", "INTEGER_ARRAY", "DOUBLE", "DOUBLE_ARRAY" |
 | "lopr", "hopr"  |The display limits value which were obtained when the channel last came online.                  |
@@ -88,12 +88,12 @@ Additional Notes:
 The following fields are available for describing the **value** of a wica channel whose underlying control system 
 is EPICS: 
 
-|Field     |Description                                                                       |
-|----------|--------------------------------------------------------------------------------- |
-| "val"    |The raw value which was obtained when last reading the value of the channel.      |
-| "ts"     |The timestamp which was obtained when last reading the value of the channel.      |
-| "sevr"   |The alarm severity which was obtained when last reading the value of the channel. |
-| "stat"   |The alarm status which was obtained when last reading the value of the channel.   |
+|Property/Field |Description                                                                       |
+|---------------|--------------------------------------------------------------------------------- |
+| "val"         |The raw value which was obtained when last reading the value of the channel.      |
+| "ts"          |The timestamp which was obtained when last reading the value of the channel.      |
+| "sevr"        |The alarm severity which was obtained when last reading the value of the channel. |
+| "stat"        |The alarm status which was obtained when last reading the value of the channel.   |
 
 Additional Notes: 
   1. the value property fields are initialised using information returned from the underlying EPICS channel in 
