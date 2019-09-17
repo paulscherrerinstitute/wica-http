@@ -75,8 +75,7 @@ The following metadata properties are supported for a wica channel whose underly
 | "egu"           |Engineering Units  |
 
 Note: the metadata property fields are initialised using information returned from the underlying EPICS channel 
-in response to a caget CTRL request. 
-
+in response to a caget request for CTRL information. 
 
 ## Wica Channel Value - mapping to EPICS database fields
 
@@ -90,6 +89,6 @@ The following value properties are supported for a wica channel whose underlying
 | "stat"   |The alarm status which was obtained when last reading the channel.   |
 
 Note: the value property fields are initialised using information returned from the underlying EPICS 
-channel in response to a caget ALARM request. 
+channel in response to a caget request for alarm information. 
 
 Subsequently, dependant on the channel configuration, they are updated using channel access monitoring or polling.
