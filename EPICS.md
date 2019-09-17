@@ -76,10 +76,11 @@ is EPICS:
 | "egu"           |Engineering Units  |
 
 Additional Notes: 
-  * the metadata property fields are initialised using information returned from the underlying EPICS channel in 
-    response to a caget request for CTRL information. 
-  * not all fields will automatically be provided when serializing this information as part of a wica stream. The
-    server's Create Stream request provides control over what is actually delivered.
+  1. The metadata property fields are initialised using information returned from the underlying EPICS channel in 
+     response to a caget request for CTRL information. 
+  1. Not all fields will automatically be provided when serializing this information as part of a wica stream. The
+     server's [Create Stream](README.md#create-a-wica-stream) request provides control over the payload of 
+     what is actually delivered.
     
 ## Wica Channel Value - mapping to EPICS database fields
 
@@ -94,8 +95,9 @@ is EPICS:
 | "stat"   |The alarm status which was obtained when last reading the channel.   |
 
 Additional Notes: 
-  * the value property fields are initialised using information returned from the underlying EPICS channel in 
-    response to a caget request for alarm information. Subsequently, depending on the channel configuration, they 
-    are updated using channel-access poll or monitor operations (or when occasionally required, both).
-  * not all fields will automatically be provided when serializing this information as part of a wica stream. The
-    server's Create Stream request provides control over what is actually delivered.
+  1. the value property fields are initialised using information returned from the underlying EPICS channel in 
+     response to a caget request for alarm information. Subsequently, depending on the channel configuration, they 
+     are updated using channel-access poll or monitor operations (or when occasionally required, both).
+  1. Not all fields will automatically be provided when serializing this information as part of a wica stream. The
+     server's [Create Stream](README.md#create-a-wica-stream) request provides control over the payload of 
+     what is actually delivered.
