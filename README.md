@@ -59,7 +59,7 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
    1. [Optional]: Set up the EPICS Channel-Access environment variables.
     
       These should be setup to to communicate with the process veriables on the backend IOC's that you 
-      want to make accessible. See the section [below](#epics-channel-access-environment-variables) for 
+      want to make accessible. See the section [below](EPICS.md#support-for-epics-channel-access-environment-variables) for 
       a list of supported variables and their default values.
       
       Examples:
@@ -411,7 +411,7 @@ data:2019-09-08T17:30:36.078750
 
 The API documentation for the **latest development** release is always available [here](https://paulscherrerinstitute.github.io/wica-http/latest).
 
-The API documentation for the **latest stable** release is available [here](https://paulscherrerinstitute.github.io/wica-http/1.0.0).
+The API documentation for the **latest stable** release (**1.0.1**) is available [here](https://paulscherrerinstitute.github.io/wica-http/1.0.1).
 
 The API documentation for **previous releases** can be found as follows:
 ```
