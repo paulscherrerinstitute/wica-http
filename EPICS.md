@@ -1,13 +1,12 @@
 # WICA support for the EPICS Control System
 
-This document describes the Wica-HTTP Server support for the EPICS Control system.
-
 ## Library Dependencies
 
-The Wica-HTTP server is currently (2019-09-07) configured to work with PSI's [native Java implementation](https://github.com/channelaccess/ca) 
-of the [EPICS Control System's](https://epics-controls.org/) client-side, channel-access protocol. 
+The Wica-HTTP server is configured to work with PSI's native Java implementation of the [EPICS Control System's](https://epics-controls.org/) 
+client-side, channel-access protocol. 
 
-This library is bundled into the server's fatJar distribution so no special measures are required to install it.
+The GitHub project for that library is [here](https://github.com/channelaccess/ca), but since the library is
+bundled into the Wica-HTTP Server's fatJar distribution no special measures are required to install it.
 
 ## Support for EPICS Channel Access Environment Variables
 
