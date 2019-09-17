@@ -1,12 +1,14 @@
 # WICA support for the EPICS Control System
 
+This document describes the Wica-HTTP Server support for the EPICS Control system.
+
 ## Library Dependencies
 
 The Wica-HTTP server is configured to work with PSI's native Java implementation of the [EPICS Control System's](https://epics-controls.org/) 
 client-side, channel-access protocol. 
 
 The GitHub project for that library is [here](https://github.com/channelaccess/ca), but since the library is
-bundled into the Wica-HTTP Server's fatJar distribution no special measures are required to install it.
+bundled into the Wica-HTTP Server's fat jar distribution no special measures are required to install it.
 
 ## Support for EPICS Channel Access Environment Variables
 
@@ -27,7 +29,7 @@ For further information see the relevant section of the
   
 ## Support for EPICS Channel Names
   
-Wica channel names are composed of three specifiers of the following form:
+Wica channel names are made up of three specifiers of the following form:
 ```
 [ <protocol> ] + <csname> + [ '##' + <instance> ]
 
@@ -37,18 +39,18 @@ Where:
   <instance> - is an optional specifier defining the instance. 
 ```
 
-The protocol specifier for EPICS Channel Access is as follows:
+The *protocol* specifier for EPICS Channel Access is as follows:
 ```
 ca://
 ```
 
-The csname specifier accepts any characters that are valid for EPICS. According to Section 6.3.2 of the EPICS 
+The *csname* specifier accepts any characters that are valid for EPICS. According to Section 6.3.2 of the EPICS 
 Application Developer's Guide these include the following characters:
 ```
 a-z A-Z 0-9 _ - : . [ ] < >
 ```
 
-The instance specifier is only provided to ensure name-uniqueness in a wica stream where a control
+The *instance* specifier is only provided to ensure name-uniqueness in a wica stream where a control
 system channels is used multiple times.
 
 Examples:
