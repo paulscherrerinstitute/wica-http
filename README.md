@@ -220,24 +220,30 @@ For further information see the relevant section of the
   
 Wica channel names take the following form:
 ```
-[ <protocol> + '://' ] + <csname> + [ '##' +<instance> ]
+[ <protocol> ] + <csname> + [ '##' + <instance> ]
 
 Where:
-  <protocol> - is an optional component which specifies the network protocol that will be used 
-               when communicating with the host control system.
-  <csname> - refers to the name of the channel as it is known in the host control system.
-  <instance> - is an optional component which specifies the instance count, 0... 
+  <protocol> - is an optional component which specifies the network protocol.
+  <csname> - refers to the name of the channel as known in the host control system.
+  <instance> - is an optional component which specifies the instance count (0...). 
 ```
 
-The protocol name for EPICS Channel Access protocol is "ca".
+The protocol name for EPICS Channel Access protocol is **"ca://"**. 
+
+The csname component accepts any characters that are valid for EPICS. According to Section 6.3.2 of the EPICS 
+Application Developer's Guide these include the following characters:
+```
+a-z A-Z 0-9 _ - : . [ ] < >
+```
 
 Examples:
 ```
-
+   ca://abc:def
+   my_special_channel
+   my_channel##1
+   my_channel##2 
 ```
 
-
-    
 ## WicaChannelMetadata - mapping to EPICS database fields
 
 The following metadata properties are supported for a wica channel whose underlying control system is EPICS: 
