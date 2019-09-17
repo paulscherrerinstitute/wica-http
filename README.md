@@ -216,7 +216,7 @@ it respects the normal EPICS conventions with respect to environmental variables
 For further information see the relevant section of the 
 [EPICS Channel Access Reference Manual](https://epics.anl.gov/base/R3-14/12-docs/CAref.html) .  
   
-## Wica Channel Naming Conventions
+## Support for EPICS Channel Names
   
 Wica channel names are composed of three specifiers of the following form:
 ```
@@ -250,7 +250,7 @@ Examples:
    my_channel##2 
 ```
 
-## WicaChannelMetadata - mapping to EPICS database fields
+## Wica Channel Metadata - mapping to EPICS database fields
 
 The following metadata properties are supported for a wica channel whose underlying control system is EPICS: 
 
@@ -262,7 +262,7 @@ The following metadata properties are supported for a wica channel whose underly
 | "low", "high"   |Warning Limits     |
 | "egu"           |Engineering Units  |
 
-## WicaChannelValue - mapping to EPICS database fields
+## Wica Channel Value - mapping to EPICS database fields
 
 The following value properties are supported for a wica channel whose underlying control system is EPICS: 
 
