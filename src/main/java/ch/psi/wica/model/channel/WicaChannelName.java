@@ -145,6 +145,10 @@ public class WicaChannelName
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
+   /**
+    * Represents the <i>network protocol</i> that should be used when communicating
+    * with the control point.
+    */
    public enum Protocol
    {
       CA( "ca://" ),

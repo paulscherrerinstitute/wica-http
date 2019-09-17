@@ -9,8 +9,10 @@ import org.apache.commons.lang3.Validate;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Represents the type of a WicaChannel. This can potentially change every
- * time new channel metadata is received.
+ * Represents the wica channel's underlying type.
+ * <p>
+ * Note: the type can potentially change every time new channel metadata
+ * is received.
  */
 public enum WicaChannelType
 {
