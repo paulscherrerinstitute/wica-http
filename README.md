@@ -287,7 +287,7 @@ control system(s) to obtain the latest data for the control points (= wica chann
 The wica stream is composed of an infinite stream of HTML5-compliant Server Sent Events (SSE). The following
 event messages are supported:
 
-| SSE Event Message          | SSE Data Payload                                       | Periodicity                                                           | Description                                                |
+|SSE Event Message           |SSE Data Payload                                        |Periodicity                                                           | Description                                                |
 |----------------------------|------------------------------------------------------- |---------------------------------------------------------------------- | -----------------------------------------------------------|
 | "ev-wica-server-heartbeat" | JSON String containing server timestamp.               | Configurable                                                          | Used to inform the client that the channel is still alive. |
 | "ev-wica-channel-metadata" | JSON Object containing channel names and metadata.     | Configurable, but only sent for channels when they first come online. | Delivers the metadata for each channel in the stream.      | 
@@ -296,13 +296,13 @@ event messages are supported:
 
 The following configuration properties are supported:
 
-|Property     |Desciption                                                            |
-|-------------|-------------------------------------------------------------------- |
-| "hbflux"    |Defines the interval in milliseconds between successive SSE heartbeat messages  |
+|Property     |Description                                                                    |
+|-------------|------------------------------------------------------------------------------ |
+| "hbflux"    |Defines the interval in milliseconds between successive SSE heartbeat messages |
 | "metaflux"  |Defines the latency in milliseconds between successive SSE heartbeat messages  |
-| "monflux"   |The timestamp which was obtained when last reading the channel.      |
-| "pollflux"  |The alarm severity which was obtained when last reading the channel. |
-| "stat"   |The alarm status which was obtained when last reading the channel.   |
+| "monflux"   |The timestamp which was obtained when last reading the channel.                |
+| "pollflux"  |The alarm severity which was obtained when last reading the channel.           |
+| "stat"      |The alarm status which was obtained when last reading the channel.             |
 
 
 ```
