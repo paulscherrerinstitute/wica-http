@@ -15,10 +15,11 @@ import java.util.Optional;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Represents the properties of a wica channel which include the data
- * acquisition mode, the parameters for any filters that may be applied,
- * and other the parameters which may affect its JSON serialised form
- * when sent down the wire as part of a wica stream.
+ * Represents the configurable properties of a wica channel.
+ * <p>
+ * These properties may be extended over future software releases but typically
+ * include the channel's <i>data acquisition mode</i>, its <i>filtering</i>
+ * and <i>serialization</i> parameters.
  */
 @Immutable
 public class WicaChannelProperties

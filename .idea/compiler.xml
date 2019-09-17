@@ -9,6 +9,9 @@
         <module name="wica-http" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="wica-http" target="11" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

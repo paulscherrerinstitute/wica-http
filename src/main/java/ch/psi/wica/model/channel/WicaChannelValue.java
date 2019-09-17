@@ -125,6 +125,9 @@ public abstract class WicaChannelValue extends WicaChannelData
 
 /*- Nested Class: WicaChannelValueDisconnected -------------------------------*/
 
+   /**
+    * Represents the value of a channel in the disconnected state.
+    */
    public static class WicaChannelValueDisconnected extends WicaChannelValue
    {
       private final String val;
@@ -142,6 +145,9 @@ public abstract class WicaChannelValue extends WicaChannelData
 
 /*- Nested Class: WicaChannelValueConnected ----------------------------------*/
 
+   /**
+    * Represents the value of a channel in the connected state.
+    */
    public static abstract class WicaChannelValueConnected extends WicaChannelValue
    {
       private final WicaChannelType wicaChannelType;
@@ -178,6 +184,9 @@ public abstract class WicaChannelValue extends WicaChannelData
 
 /*- Nested Class: WicaChannelValueConnectedReal -----------------------------*/
 
+   /**
+    * Represents the value of a connected channel whose underlying type is REAL.
+    */
    public static class WicaChannelValueConnectedReal extends WicaChannelValueConnected
    {
       private final double value;
@@ -195,6 +204,9 @@ public abstract class WicaChannelValue extends WicaChannelData
 
 /*- Nested Class: WicaChannelValueConnectedRealArray ------------------------*/
 
+   /**
+    * Represents the value of a connected channel whose underlying type is REAL_ARRAY.
+    */
    public static class WicaChannelValueConnectedRealArray extends WicaChannelValueConnected
    {
       private final double[] value;
@@ -212,6 +224,9 @@ public abstract class WicaChannelValue extends WicaChannelData
 
 /*- Nested Class: WicaChannelValueConnectedInteger --------------------------*/
 
+   /**
+    * Represents the value of a connected channel whose underlying type is INTEGER.
+    */
    public static class WicaChannelValueConnectedInteger extends WicaChannelValueConnected
    {
       private final int value;
@@ -229,6 +244,9 @@ public abstract class WicaChannelValue extends WicaChannelData
 
 /*- Nested Class: WicaChannelValueConnectedIntegerArray ---------------------*/
 
+   /**
+    * Represents the value of a connected channel whose underlying type is INTEGER_ARRAY.
+    */
    public static class WicaChannelValueConnectedIntegerArray extends WicaChannelValueConnected
    {
       private final int[] value;
@@ -246,6 +264,9 @@ public abstract class WicaChannelValue extends WicaChannelData
 
 /*- Nested Class: WicaChannelValueConnectedString ---------------------------*/
 
+   /**
+    * Represents the value of a connected channel whose underlying type is STRING.
+    */
    public static class WicaChannelValueConnectedString extends WicaChannelValueConnected
    {
       private final String value;
@@ -263,6 +284,9 @@ public abstract class WicaChannelValue extends WicaChannelData
 
 /*- Nested Class: WicaChannelValueConnectedStringArray ----------------------*/
 
+   /**
+    * Represents the value of a connected channel whose underlying type is STRING_ARRAY.
+    */
    public static class WicaChannelValueConnectedStringArray extends WicaChannelValueConnected
    {
       private final String[] value;
