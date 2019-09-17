@@ -195,13 +195,13 @@ an abstraction specifying the configurable properties of the stream, including t
 behaviour, and things which determine the default property values that will be assigned to each of the stream's 
 underlying wica channels.
 
-# EPICS Control System Support
+# WICA support for the EPICS Control System
 
-## EPICS support for Channel Access Environment Variables
+## Support for EPICS Channel Access Environment Variables
 
 The Wica-Http server is currently (2019-09-07) configured to work with PSI's native Java implementation 
 of the [EPICS](https://epics-controls.org/) control system client side channel-access protocol. As such 
-it respects the normal conventions with respect to environmental variables, including:
+it respects the normal EPICS conventions with respect to environmental variables, including:
 
 | Property                | Default Value | Desciption |
 |-------------------------|---------------| ---------- |
@@ -216,7 +216,15 @@ it respects the normal conventions with respect to environmental variables, incl
 For further information see the relevant section of the 
 [EPICS Channel Access Reference Manual](https://epics.anl.gov/base/R3-14/12-docs/CAref.html) .  
   
-### EPICS support for WicaChannelMetadata 
+## WicaChannelName - support for EPICS
+  
+To specify that a wica channel's information source comes from the EPICS control system the
+following naming convention should be used:
+
+   ca://abc:def:##1
+
+    
+## WicaChannelMetadata - mapping to EPICS database fields
 
 The following metadata properties are supported for a wica channel whose underlying control system is EPICS: 
 
@@ -228,7 +236,7 @@ The following metadata properties are supported for a wica channel whose underly
 | "low", "high"   |Warning Limits     |
 | "egu"           |Engineering Units  |
 
-### EPICS support for WicaChannelValue 
+## WicaChannelValue - mapping to EPICS database fields
 
 The following value properties are supported for a wica channel whose underlying control system is EPICS: 
 
