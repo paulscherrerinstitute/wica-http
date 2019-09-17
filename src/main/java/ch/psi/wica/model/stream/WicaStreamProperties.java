@@ -13,6 +13,18 @@ import java.util.Optional;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Represents the configurable properties of a wica stream.
+ * <p>
+ * These include parameters for controlling the frequency at which
+ * the various fluxes (heartbeat, metadata, monitored and polled values)
+ * are sent down the wire to the end consumer.
+ * <p>
+ * Additionally the stream properties specify the default values that
+ * will be applied to the configuration of the individual wica channels
+ * that make up the stream, when they are not explicitly specified on
+ * the channels themselves.
+ */
 @Immutable
 public class WicaStreamProperties
 {

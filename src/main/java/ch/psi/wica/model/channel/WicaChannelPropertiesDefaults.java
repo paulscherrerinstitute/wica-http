@@ -12,8 +12,8 @@ import ch.psi.wica.model.stream.WicaStreamPropertiesDefaults;
 import net.jcip.annotations.Immutable;
 
 /**
- * Represents the default wica channel property values that will be used
- * if the property is not explicitly specified when creating the channel.
+ * Represents the property values that will be used if not explicitly specified
+ * in the configuration information provided when the channel is created.
  */
 @Immutable
 public class WicaChannelPropertiesDefaults

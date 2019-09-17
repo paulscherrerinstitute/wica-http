@@ -10,6 +10,10 @@ import net.jcip.annotations.Immutable;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Represents the property values that will be used if not explicitly specified
+ * in the configuration information provided when the stream is created.
+ */
 @Immutable
 public class WicaStreamPropertiesDefaults
 {

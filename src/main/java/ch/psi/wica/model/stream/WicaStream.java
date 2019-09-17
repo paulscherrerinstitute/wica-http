@@ -15,6 +15,10 @@ import java.util.Set;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Represents a collection of wica channels that are grouped together for the
+ * purpose of real-time monitoring.
+ */
 @Immutable
 public class WicaStream
 {
