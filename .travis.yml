@@ -43,7 +43,7 @@ deploy:
     file_glob: true
     file: target/wica-http-*.jar
     skip_cleanup: true
-    draft: true
+    draft: false
     on:
       tags: true
       repo: paulscherrerinstitute/wica-http
