@@ -139,65 +139,59 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
 
    Further details coming soon. :-)   
 
-# Control System Abstractions
+# High Level Terms and Concepts
 
 Whilst currently (2019-09-15) the Wica-Http server supports only a single backend control system (EPICS) and 
 network protocol (Channel Access) its implementation is intended to be flexible enough to interoperate in the
 future with other control systems and/or protocols. 
 
 To achieve this the server strives to create an API which offers programming abstractions that are flexible 
-enough to adapt to future needs. The main abstractions are as follows:
+enough to adapt to future needs, or at least which will not have to change radically. The main abstractions 
+are as follows:
 
 ## Wica Channel
 
 The [WicaChannel](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannel.html) 
-abstraction provides an immutable data structure representing a readable or writable *control point* in the 
-environment of the backend control system. 
+abstraction represents a readable or writable *control point* in the environment of the backend control system. 
 
 A Wica channel contains:
 * [WicaChannelName](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannelName.html) - 
   an abstraction which specifies the network protocol required to communicate with the control point, the name by 
   which it is known to the control system, together with an instance specifier (required to ensure uniqueness).
 * [WicaChannelProperties](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannelProperties.html) - 
-  an abstraction specifying the configuration of the channel, for example whether the
+  an abstraction specifying the configuration of the channel, for example whether it polls or monitors the underlying
+  control system, whether and/or how the data obtained from the control system should be filtered and how it should
+  be  *serialized* when returned to the end-user.
+
+## Wica Channel Metadata
+
+The [WicaChannelMetadata](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannelMetadata.html) 
+abstraction models the properties of the control point that are read out when it comes online but which thereafter 
+remain unchanged. These include, typically, properties which describe the control point's underlying nature (for 
+example the physical quantity that the control point represents, the expected operating limits, the values which 
+correspond to error or warning condition etc. etc.)
   
-  
-  including, typically, whether the channel is to be monitored 
-  or polled, the numeric precision to be used when transferring data, the details of any filtering that is to be applied.
-
-## Wica Channel Data
-
-The [WicaChannelData](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannelData.html) 
-abstraction provides an abstract class representing an atom of control system data read from or to be written to a 
-wica channel.
-
-* [WicaChannelMetadata](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannelMetadata.html) 
-  - an abstraction representing the properties of the control point that are read out when 
-  it comes online but which thereafter remain unchanged. These include, typically, properties which describe the 
-  control point's underlying nature (for example the physical quantity that the control point represents, the 
-  expected operating limits, the values which correspond to error or warning condition etc. etc.)  
-* [WicaChannelValue](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannelValue.html) 
-  - an abstraction representing the properties of the control point which reflect its 
-  instantaneous state. These include, typically,  whether the channel is online or offline, the raw value and
-  timestamp obtained when the channel was last read out, and whether an alarm or warning condition exists.
+* [WicaChannelValue](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/channel/WicaChannelValue.html)
+Represents the abstract root of a hierarchy of objects which provide fields to describe a control point's instantaneous 
+state. These include, typically,  whether the channel is *online* or *offline*, the *timestamp* and *raw value* 
+that was obtained when the channel was last read out, and whether an *alarm* or *warning* condition exists.
   
 ## Wica Stream
 
 The [WicaStream](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/stream/WicaStream.html) 
-abstraction provides an immutable data structure representing a collection of Wica Channels grouped together
-for the purpose of real-time monitoring. A Wica stream is created by an HTTP POST operation on the server.
-Thereafter, it can be subscribed to by an HTTP GET operation which returns a stream of Server-Sent-Event (SSE)
-messages reflecting the evolving state of the channels.
+abstraction represents a collection of wica channels that are grouped together for the purpose of real-time 
+monitoring. A Wica stream is created by an HTTP POST operation on the server. Thereafter, it can be subscribed 
+to by an HTTP GET operation which returns a stream of Server-Sent-Event (SSE) messages reflecting the evolving 
+state of the channels.
 
-A Wica stream contains:
-* [WicaStreamId](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/stream/WicaStreamId.html) - a
-   unique String allocated by the server when a new stream is created.
-* <Set<WicaChannel> the collection of Wica channels of interest.
+In addition to the set of wica channels which it owns a wica stream has associated with it:
+* a [WicaStreamId](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/stream/WicaStreamId.html) - 
+this is a unique handle allocated by the server when a new stream is created.
 * [WicaStreamProperties](https://paulscherrerinstitute.github.io/wica-http/ch/psi/wica/model/stream/WicaStreamProperties.html) 
-  an object which defines: 
-     * things which affect the behaviour of the stream.
-     * things which determine the default property values which will be assigned to each of the stream's underlying Wica Channels.
-
+this abstraction represents the configurable properties of the stream, including: 
+  * things which affect the stream's behaviour.
+  * things which determine the default property values which will be assigned to each of the stream's 
+  underlying wica channels.
 
 # EPICS Control System Support
 
