@@ -288,6 +288,7 @@ The wica stream is composed of an infinite stream of HTML5-compliant Server Sent
 event messages are supported:
 
 | SSE Event Message          | SSE Data Payload                                       | Periodicity                                                           | Description                                                |
+|----------------------------|------------------------------------------------------- |---------------------------------------------------------------------- | -----------------------------------------------------------|
 | "ev-wica-server-heartbeat" | JSON String containing server timestamp.               | Configurable                                                          | Used to inform the client that the channel is still alive. |
 | "ev-wica-channel-metadata" | JSON Object containing channel names and metadata.     | Configurable, but only sent for channels when they first come online. | Delivers the metadata for each channel in the stream.      | 
 | "ev-wica-channel-value"    | JSON Object containing channel names and their values. | Configurable, sent for channels which have new values (*)             | Delivers the new values for each channel in the stream.    |   
