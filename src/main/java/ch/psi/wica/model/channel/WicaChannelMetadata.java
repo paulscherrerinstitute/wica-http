@@ -107,6 +107,9 @@ public abstract class WicaChannelMetadata extends WicaChannelData
 
 /*- Nested Class: WicaChannelMetadataUnknown ---------------------------------*/
 
+   /**
+    * Represents the metadata for a channel whose type is not yet known.
+    */
    public static class WicaChannelMetadataUnknown extends WicaChannelMetadata
    {
       public WicaChannelMetadataUnknown()
@@ -118,6 +121,9 @@ public abstract class WicaChannelMetadata extends WicaChannelData
 
 /*- Nested Class: WicaChannelMetadataString ----------------------------------*/
 
+   /**
+    * Represents the metadata for a channel whose type is STRING.
+    */
    public static class WicaChannelMetadataString extends WicaChannelMetadata
    {
       public WicaChannelMetadataString()
@@ -129,6 +135,9 @@ public abstract class WicaChannelMetadata extends WicaChannelData
 
 /*- Nested Class: WicaChannelMetadataStringArray -----------------------------*/
 
+   /**
+    * Represents the metadata for a channel whose type is STRING_ARRAY.
+    */
    public static class WicaChannelMetadataStringArray extends WicaChannelMetadata
    {
       public WicaChannelMetadataStringArray()
@@ -140,6 +149,9 @@ public abstract class WicaChannelMetadata extends WicaChannelData
 
 /*- Nested Class: WicaChannelMetadataInteger ---------------------------------*/
 
+   /**
+    * Represents the metadata for a channel whose type is INTEGER.
+    */
    public static class WicaChannelMetadataInteger extends WicaChannelMetadata
    {
       private final String units;
@@ -244,6 +256,9 @@ public abstract class WicaChannelMetadata extends WicaChannelData
 
 /*- Nested Class: WicaChannelMetadataIntegerArray ----------------------------*/
 
+   /**
+    * Represents the metadata for a channel whose type is INTEGER_ARRAY.
+    */
    public static class WicaChannelMetadataIntegerArray extends WicaChannelMetadataInteger
    {
       WicaChannelMetadataIntegerArray( String units,
@@ -259,6 +274,9 @@ public abstract class WicaChannelMetadata extends WicaChannelData
 
 /*- Nested Class: WicaChannelMetadataReal ------------------------------------*/
 
+   /**
+    * Represents the metadata for a channel whose type is REAL.
+    */
    public static class WicaChannelMetadataReal extends WicaChannelMetadata
    {
       private final String units;
@@ -374,6 +392,9 @@ public abstract class WicaChannelMetadata extends WicaChannelData
 
 /*- Nested Class: WicaChannelMetadataRealArray -------------------------------*/
 
+   /**
+    * Represents the metadata for a channel whose type is REAL_ARRAY.
+    */
    public static class WicaChannelMetadataRealArray extends WicaChannelMetadataReal
    {
       WicaChannelMetadataRealArray( String units,
