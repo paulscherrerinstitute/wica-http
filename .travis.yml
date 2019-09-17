@@ -29,10 +29,10 @@ before_script:
 # Used here to upload the docker file to Docker Hub.
 script:
   - echo -n "*** LIFECYCLE STARTED - 'script' *************************************************************************"
-#  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-#  - docker build -t paulscherrerinstitute/wica-stream:latest -f docker/Dockerfile.http .
-#  - docker push paulscherrerinstitute/wica-stream:latest
-#  - echo -n "LIFECYCLE COMPLETED - 'script' ***************************************************************************"
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build -t paulscherrerinstitute/wica-http:1.0.1 -f docker/Dockerfile.https .
+  - docker push paulscherrerinstitute/wica-http:1.0.1
+  - echo -n "LIFECYCLE COMPLETED - 'script' ***************************************************************************"
 
 # The deploy phase is optional and runs after the script.
 deploy:
