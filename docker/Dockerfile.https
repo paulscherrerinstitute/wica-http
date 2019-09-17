@@ -1,11 +1,17 @@
+###############################################################################
+# Dockerfile to support secure instance running on localhost, port 443
+###############################################################################
 
-FROM maven:3.6.1-jdk-11-slim AS MAVEN_TOOL_CHAIN
-WORKDIR /tmp/
+## Run this files from the top level directory using:
+## 'docker build -f docker/Dockerfile.http .'
 
-COPY ./pom.xml /tmp/
-COPY ./src /tmp/src/
-
-RUN mvn package -Dmaven.test.skip=true
+#FROM maven:3.6.1-jdk-11-slim AS MAVEN_TOOL_CHAIN
+#WORKDIR /tmp/
+#
+#COPY ./pom.xml /tmp/
+#COPY ./src /tmp/src/
+#
+#RUN mvn package -Dmaven.test.skip=true
 
 
 ###############################################################################
@@ -29,7 +35,6 @@ RUN ZULU_ARCH=zulu11.2.3-jdk11.0.1-linux_musl_x64.tar.gz && \
 	mkdir -p ${MAN_DIR} && \
 	cd ${MAN_DIR} && find ${INSTALL_DIR}/${ZULU_DIR}/man/man1 -type f -name "*.1" -exec ln -s {} . \; && \
 	java -version
-
 
 ###############################################################################
 # 2.0 Get support for EPICS (if required)
@@ -77,7 +82,6 @@ ARG JAR_FILE
 #RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 #    apt-get install -y libreadline-dev
 
-
 # This port must be open for TCP and UDP when the connection
 # is via a channel access gateway.
 EXPOSE 5062
@@ -104,30 +108,17 @@ EXPOSE 443
 # in all log messages and is reported on the GUI.
 ENV TZ="Europe/Zurich"
 
-# Document the fact that this image will normally be run as root. The
-# fact that the deployment script may need to manipulate file ownership
-# and permissions forces this.
+# Document the fact that this image will normally be run as root.
 USER root
 
 # Set the working directory
 WORKDIR /root
 
-
 ###############################################################################
 # 4.0 Install any additional applications
 ###############################################################################
 
-# Add the dependencies of the deploy scripts, including python and git
-# Added basic vim editor to ease debugging (can be removed later in production).
-#RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-#    apt-get install -y openssh-client &&             \
-#    apt-get clean &&                                 \
-#    rm -rf /var/lib/apt/lists/* /tmp/*
-
-RUN apk update && \
-    apk add --no-cache bash && \
-    apk add --no-cache openssh-client
-
+RUN apk update && apk add --no-cache bash
 
 ###############################################################################
 # 5.0 Set up the application project structure
@@ -137,8 +128,7 @@ RUN apk update && \
 RUN mkdir log config lib
 
 # Populate the application directories as appropriate
-# COPY ./target/wica-stream-1.0.0-RELEASE.jar lib/jarfile.jar
-COPY --from=MAVEN_TOOL_CHAIN /tmp/target/wica-stream-1.0.0-RELEASE.jar lib/jarfile.jar
+COPY --from=MAVEN_TOOL_CHAIN /tmp/target/wica-http-1.0.1.jar lib/jarfile.jar
 COPY ./src/main/resources/config/keystore.jks config
 COPY ./src/main/resources/application-docker-run.properties config
 COPY ./src/main/resources/logback_config.xml config
@@ -148,10 +138,10 @@ COPY ./src/main/resources/logback_config.xml config
 # 6.0 Define the exposed volumes
 ###############################################################################
 
-VOLUME /root/.ssh
 VOLUME /root/log
 VOLUME /root/config
-
+VOLUME /root/static/web
+VOLUME /roor/static/wica
 
 ###############################################################################
 # 7.0 Uncomment the block below to add support for attaching a debugger
@@ -174,12 +164,13 @@ ENV JAVA_DBG_OPTS "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address
 ###############################################################################
 
 # Run the application on the Java 11 module path invoking the docker-run configuration profile
-# and passing the contents of the SSH Deploy Key.
+# and passing the keystore password.
+
 # Note the 'file.encoding' setting determines how the application reconstitutes
 # String information that has been sent down the wire. By choosing the ISO8859-1
 # character set this means we can cater for EPICS IOC DB files that are encoded
 # the old-school (ISO8859-1) way and which include special characters like 'mu'.
-# Here's looking at you HIPA !
+
 ENTRYPOINT exec java $JAVA_DBG_OPTS $JAVA_JMX_OPTS \
            -Dfile.encoding=ISO8859-1 \
            -Dspring.config.location=config/application-docker-https-run.properties \
@@ -187,4 +178,4 @@ ENTRYPOINT exec java $JAVA_DBG_OPTS $JAVA_JMX_OPTS \
            -p lib/jarfile.jar \
            --add-modules ALL-DEFAULT \
            -m jarfile \
-           "$KEYSTORE_PASS"
+           --server.ssl.key-store-password="$KEYSTORE_PASS"
