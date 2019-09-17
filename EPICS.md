@@ -79,10 +79,7 @@ is EPICS:
 Additional Notes: 
   1. The metadata property fields are initialised using information returned from the underlying EPICS channel in 
      response to a caget request for CTRL information. 
-  1. Not all fields will automatically be provided when serializing this information as part of a wica stream. The
-     server's [Create Stream](README.md#create-a-wica-stream) request provides control over the payload of 
-     what is actually delivered.
-    
+
 ## Wica Channel Value - mapping to EPICS database fields
 
 The following fields are available for describing the **value** of a wica channel whose underlying control system 

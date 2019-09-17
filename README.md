@@ -289,21 +289,39 @@ supported:
 
 |SSE Event Message           |SSE Data Payload                                                     |SSE Comment                               | Periodicity                                                               | Description                                                       |
 |----------------------------|-------------------------------------------------------------------- |------------------------------------------| ------------------------------------------------------------------------- | ------------------------------------------------------------------|
-| 'ev-wica-server-heartbeat' | JSON String containing server timestamp.                            | timestamp + '- server heartbeat'         | Configurable                                                              | Used to inform the client that the channel is still alive.        |
-| 'ev-wica-channel-metadata' | JSON Object containing channel names and metadata.                  | timestamp + '- channel metadata'         | Configurable, but only sent for channels when they first come online.     | Delivers the metadata for each channel in the stream.             | 
+| 'ev-wica-server-heartbeat' | JSON String containing server timestamp.                            | timestamp + '- server heartbeat'         | Configurable.                                                             | Used to inform the client that the channel is still alive.        |
+| 'ev-wica-channel-metadata' | JSON Object containing channel names and metadata.                  | timestamp + '- channel metadata'         | Configurable, but only sent for channels when they first come online.     | Delivers the new metadata for each channel in the stream.         | 
 | 'ev-wica-channel-value'    | JSON Object containing channel names and array of monitored values. | timestamp + '- channel monitored values' | Configurable, sent for channels which have received new monitored values. | Delivers the new values for each monitored channel in the stream. |   
 | 'ev-wica-channel-value'    | JSON Object containing channel names and array of polled values.    | timestamp + '- channel polled values'    | Configurable, sent for channels which have received new polled values.    | Delivers the new values for each polled channel in the stream.    |   
 
+Note: currently (2019-09-17) the periodicmetadata message is suppressed if none of the wica-channels have any new metadata.
 
-The following configuration properties are supported:
+The following configuration properties are supported on each wica-channel.
 
-|Property     |Description                                                                    |
-|-------------|------------------------------------------------------------------------------ |
-| "hbflux"    |Defines the interval in milliseconds between successive SSE heartbeat messages |
-| "metaflux"  |Defines the latency in milliseconds between successive SSE heartbeat messages  |
-| "monflux"   |The timestamp which was obtained when last reading the channel.                |
-| "pollflux"  |The alarm severity which was obtained when last reading the channel.           |
-| "stat"      |The alarm status which was obtained when last reading the channel.             |
+|Property     |Description                                                                                                      |
+|-------------|---------------------------------------------------------------------------------------------------------------- |
+| "daqmode"   |The data acquisition mode. Possible values: 'poll', 'monitor', 'poll-monitor', poll-and-monitor'.                |
+| "pollint"   |The polling interval in milliseconds for a channel whose data acquisition mode implies polling.                  |
+| "fields"    |Semicolon separated list specifying the fields which will be included in the 'ev-wica-channel-value' messages.   |
+| "filter"    |The channel filter type.  Possible values: 'all-value', 'rate-limiter', 'last-n', 'one-in-m', 'change-filterer'. |
+| "n"         |The value of the 'N' parameter for a last-n filter.                                                              |
+| "m"         |The value of the 'M' parameter for a one-in-m filter.                                                            |
+| "deadband"  |The value of the 'deadband' parameter for a change-filterer filter.                                              |
+| "interval"  |The value of the 'interval' parameter (in milliseconds) for a rate-limiter filter.                               |
+| "fields"    |Semicolon separated list specifying the fields which will be included in the 'ev-wica-channel-value' messages.   |
+
+
+The following configuration properties are supported on a wica stream:
+
+|Property     |Description                                                                                                    |
+|-------------|-------------------------------------------------------------------------------------------------------------- |
+| "hbflux"    |Defines the interval in milliseconds between successive SSE 'ev-wica-server-heartbeat' messages.               |
+| "metaflux"  |Defines the interval in milliseconds between successive SSE 'ev-wica-channel-metadata' messages.               |
+| "monflux"   |Defines the interval in milliseconds between successive SSE 'ev-wica-channel-value' monitor value messages.    |
+| "pollflux"  |Defines the interval in milliseconds between successive SSE 'ev-wica-channel-value' polled value messages.     |
+
+Note: additionally, **any of the channel properties may also be defined on a stream** to set the default value for the 
+channels on that stream.
 
 
 ```
