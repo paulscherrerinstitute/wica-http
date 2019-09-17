@@ -10,7 +10,6 @@ WORKDIR /tmp/
 #
 COPY ./pom.xml /tmp/
 COPY ./src /tmp/src/
-COPY ./docker /tmp/docker/
 #
 RUN mvn package -Dmaven.test.skip=true -Dmaven.javadoc.skip=false
 

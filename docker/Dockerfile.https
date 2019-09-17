@@ -10,7 +10,6 @@ WORKDIR /tmp/
 #
 COPY ./pom.xml /tmp/
 COPY ./src /tmp/src/
-COPY ./docker /tmp/docker/
 #
 RUN mvn package -Dmaven.test.skip=true -D maven.javadoc.skip=false
 
@@ -131,9 +130,8 @@ RUN mkdir log config lib
 # Populate the application directories as appropriate
 COPY --from=MAVEN_TOOL_CHAIN /tmp/target/wica-http-1.0.1.jar lib/jarfile.jar
 COPY ./src/main/resources/config/keystore.jks config
-COPY ./src/main/resources/logback_config.xml config
+COPY ./src/main/resources/CONFIG/logback_config.xml config
 COPY ./docker/application-docker-https-run.properties config
-
 
 ###############################################################################
 # 6.0 Define the exposed volumes
