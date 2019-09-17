@@ -197,7 +197,7 @@ underlying wica channels.
 
 # WICA support for the EPICS Control System
 
-## Support for EPICS Channel Access Environment Variables
+## EPICS Channel Access Environment Variables
 
 The Wica-Http server is currently (2019-09-07) configured to work with PSI's native Java implementation 
 of the [EPICS](https://epics-controls.org/) control system client side channel-access protocol. As such 
@@ -216,12 +216,26 @@ it respects the normal EPICS conventions with respect to environmental variables
 For further information see the relevant section of the 
 [EPICS Channel Access Reference Manual](https://epics.anl.gov/base/R3-14/12-docs/CAref.html) .  
   
-## WicaChannelName - support for EPICS
+## Wica Channel Naming Conventions
   
-To specify that a wica channel's information source comes from the EPICS control system the
-following naming convention should be used:
+Wica channel names take the following form:
+```
+[ <protocol> + '://' ] + <csname> + [ '##' +<instance> ]
 
-   ca://abc:def:##1
+Where:
+  <protocol> - is an optional component which specifies the network protocol that will be used 
+               when communicating with the host control system.
+  <csname> - refers to the name of the channel as it is known in the host control system.
+  <instance> - is an optional component which specifies the instance count, 0... 
+```
+
+The protocol name for EPICS Channel Access protocol is "ca".
+
+Examples:
+```
+
+```
+
 
     
 ## WicaChannelMetadata - mapping to EPICS database fields
