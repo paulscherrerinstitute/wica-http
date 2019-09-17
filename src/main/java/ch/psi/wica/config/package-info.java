@@ -1,4 +1,4 @@
 /**
- * Classes providing support for configuring aspects of this (Spring Boot) application.
+ * Classes providing support for the programmatic configuration of this Spring Boot application.
  */
 package ch.psi.wica.config;
