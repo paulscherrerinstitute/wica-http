@@ -287,12 +287,12 @@ control system(s) to obtain the latest data for the control points (= wica chann
 The wica stream is composed of an infinite stream of Server Sent Events (SSE). The following message types are 
 supported:
 
-|SSE Event Message           |SSE Data Payload                                        |SSE Comment                               | Periodicity                                                               | Description                                                       |
-|----------------------------|------------------------------------------------------- |------------------------------------------| ------------------------------------------------------------------------- | ------------------------------------------------------------------|
-| "ev-wica-server-heartbeat" | JSON String containing server timestamp.               | timestamp + "- server heartbeat"         | Configurable                                                              | Used to inform the client that the channel is still alive.        |
-| "ev-wica-channel-metadata" | JSON Object containing channel names and metadata.     | timestamp + "- channel metadata"         | Configurable, but only sent for channels when they first come online.     | Delivers the metadata for each channel in the stream.             | 
-| "ev-wica-channel-value"    | JSON Object containing channel names and their values. | timestamp + "- channel monitored values" | Configurable, sent for channels which have received new monitored values. | Delivers the new values for each monitored channel in the stream. |   
-| "ev-wica-channel-value"    | JSON Object containing channel names and their values. | timestamp + "- channel polled values"    | Configurable, sent for channels which have received new polled values.    | Delivers the new values for each polled channel in the stream.    |   
+|SSE Event Message           |SSE Data Payload                                                     |SSE Comment                               | Periodicity                                                               | Description                                                       |
+|----------------------------|-------------------------------------------------------------------- |------------------------------------------| ------------------------------------------------------------------------- | ------------------------------------------------------------------|
+| 'ev-wica-server-heartbeat' | JSON String containing server timestamp.                            | timestamp + '- server heartbeat'         | Configurable                                                              | Used to inform the client that the channel is still alive.        |
+| 'ev-wica-channel-metadata' | JSON Object containing channel names and metadata.                  | timestamp + '- channel metadata'         | Configurable, but only sent for channels when they first come online.     | Delivers the metadata for each channel in the stream.             | 
+| 'ev-wica-channel-value'    | JSON Object containing channel names and array of monitored values. | timestamp + '- channel monitored values' | Configurable, sent for channels which have received new monitored values. | Delivers the new values for each monitored channel in the stream. |   
+| 'ev-wica-channel-value'    | JSON Object containing channel names and array of polled values.    | timestamp + '- channel polled values'    | Configurable, sent for channels which have received new polled values.    | Delivers the new values for each polled channel in the stream.    |   
 
 
 The following configuration properties are supported:
