@@ -146,7 +146,7 @@ network protocol (Channel Access) its implementation is intended to be flexible 
 future with other control systems and/or protocols. 
 
 To achieve this the server strives to create an API which offers programming abstractions that are flexible 
-enough to adapt to future needs, or at least which will not have to change radically. The main abstractions 
+enough to adapt to future needs, or at least which will not have to change too radically. The main abstractions 
 are as follows:
 
 ## Wica Channel
@@ -159,9 +159,9 @@ A wica channel contains:
   an abstraction which specifies the network protocol required to communicate with the control point, the name by 
   which it is known to the control system, together with an instance specifier (required to ensure uniqueness).
 * [WicaChannelProperties](https://paulscherrerinstitute.github.io/wica-http/latest/ch/psi/wica/model/channel/WicaChannelProperties.html) - 
-  an abstraction specifying the configuration of the channel, for example whether it polls or monitors the underlying
-  control system, whether or how the data obtained from the control system should be *filtered* and how it should
-  be  *serialized* when returned to the end-user.
+  an abstraction specifying the configuration of the channel, for example whether it *polls* or *monitors* the 
+  underlying control system, whether or how the data obtained from the control system should be *filtered* and 
+  how it should be  *serialized* when returned to the end-user.
 
 ## Wica Channel Metadata
 
@@ -181,8 +181,9 @@ read out, and whether an *alarm* or *warning* condition exists.
 ## Wica Stream
 
 A [WicaStream](https://paulscherrerinstitute.github.io/wica-http/latest/ch/psi/wica/model/stream/WicaStream.html) 
-represents a collection of wica channels that are grouped together for the purpose of real-time monitoring. A 
-wica stream is created by an HTTP POST operation on the server. Thereafter, it can be subscribed to by an 
+represents a collection of wica channels that are grouped together for the purpose of real-time monitoring. 
+
+A wica stream is created by an HTTP POST operation on the server. Thereafter, it can be subscribed to by an 
 HTTP GET operation which returns a stream of Server-Sent-Event (SSE) messages reflecting the evolving state of 
 the channels.
 
@@ -190,7 +191,7 @@ In addition to the set of wica channels which it owns a wica stream has:
 * [WicaStreamId](https://paulscherrerinstitute.github.io/wica-http/latest/ch/psi/wica/model/stream/WicaStreamId.html) - 
 this is a unique handle allocated by the server when a new stream is created.
 * [WicaStreamProperties](https://paulscherrerinstitute.github.io/wica-http/latest/ch/psi/wica/model/stream/WicaStreamProperties.html) 
-an abstraction specifyinh the configurable properties of the stream, including things which affect the stream's 
+an abstraction specifying the configurable properties of the stream, including things which affect the stream's 
 behaviour, and things which determine the default property values that will be assigned to each of the stream's 
 underlying wica channels.
 
@@ -214,28 +215,29 @@ it respects the normal conventions with respect to environmental variables, incl
    
 For further information see the relevant section of the 
 [EPICS Channel Access Reference Manual](https://epics.anl.gov/base/R3-14/12-docs/CAref.html) .  
-   
+  
+### EPICS support for WicaChannelMetadata 
 
-## EPICS support for Wica Channel Properties
+The following metadata properties are supported for a wica channel whose underlying control system is EPICS: 
 
-### WicaChannelMetadata
+|Property         |Desciption                                                                                       |
+|-----------------|------------------------------------------------------------------------------------------------ |
+| "type"          |One of: "UNKNOWN", STRING", "STRING_ARRAY", "INTEGER", "INTEGER_ARRAY", "DOUBLE", "DOUBLE_ARRAY" |
+| "drvl","drvh"   |Drive limits       |
+| "lolo", "hihi"  |Error Limits       |
+| "low", "high"   |Warning Limits     |
+| "egu"           |Engineering Units  |
 
-| Property                |Desciption                                                                                       |
-|-------------------------|------------------------------------------------------------------------------------------------ |
-| type                    |One of: "UNKNOWN", STRING", "STRING_ARRAY", "INTEGER", "INTEGER_ARRAY", "DOUBLE", "DOUBLE_ARRAY" |
-| drvl,drvh               |Drive limits       |
-| lolo, hihi              |Error Limits       |
-| low, high               |Warning Limits     |
-| egu                     |Engineering Units  |
+### EPICS support for WicaChannelValue 
 
-### WicaChannelValue
+The following value properties are supported for a wica channel whose underlying control system is EPICS: 
 
-| Property                |Desciption                                                                                       |
-|-------------------------|------------------------------------------------------------------------------------------------ |
-| ts                      |One of: "UNKNOWN", STRING", "STRING_ARRAY", "INTEGER", "INTEGER_ARRAY", "DOUBLE", "DOUBLE_ARRAY" |
-| sevr                    |Drive limits       |
-| stat                    |Error Limits       |
-| val                     |Warning Limits     |
+|Property |Desciption                                                            |
+|----------|-------------------------------------------------------------------- |
+| "val"    |The raw value which was obtained when last reading the channel.      |
+| "ts"     |The timestamp which was obtained when last reading the channel.      |
+| "sevr"   |The alarm severity which was obtained when last reading the channel. |
+| "stat"   |The alarm status which was obtained when last reading the channel.   |
 
 
 # Server Endpoints 
