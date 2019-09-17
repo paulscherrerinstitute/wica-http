@@ -218,23 +218,29 @@ For further information see the relevant section of the
   
 ## Wica Channel Naming Conventions
   
-Wica channel names take the following form:
+Wica channel names are composed of three specifiers of the following form:
 ```
 [ <protocol> ] + <csname> + [ '##' + <instance> ]
 
 Where:
-  <protocol> - is an optional component which specifies the network protocol.
-  <csname> - refers to the name of the channel as known in the host control system.
-  <instance> - is an optional component which specifies the instance count (0...). 
+  <protocol> - is an optional specifier defining the network protocol.
+  <csname> - is a specifier defining the name of the control point as known to the host control system.
+  <instance> - is an optional specifier defining the instance. 
 ```
 
-The protocol name for EPICS Channel Access protocol is **"ca://"**. 
+The protocol specifier for EPICS Channel Access is as follows:
+```
+ca://
+```
 
-The csname component accepts any characters that are valid for EPICS. According to Section 6.3.2 of the EPICS 
+The csname specifier accepts any characters that are valid for EPICS. According to Section 6.3.2 of the EPICS 
 Application Developer's Guide these include the following characters:
 ```
 a-z A-Z 0-9 _ - : . [ ] < >
 ```
+
+The instance specifier is only provided to ensure name-uniqueness in a wica stream where a control
+system channels is used multiple times.
 
 Examples:
 ```
