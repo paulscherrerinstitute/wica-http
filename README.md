@@ -224,7 +224,7 @@ GET /test/test.html
 
 ### Get the Value of a Channel
 
-Returns JSON string representation of the value of the channel. Optional parameters can be specified for:
+Returns a JSON string representation of the value of the channel. Optional parameters can be specified for:
 
 * the timeout in milliseconds.
 * the numeric scale to be used when returning a channel value.
@@ -281,11 +281,10 @@ Response code: 200; Time: 103ms; Content length: 2 bytes
 
 ### Create a Wica Stream
 
-This request creates a new stream, allocates a new reference id, and initiates communication with the underlying 
-control system(s) to obtain the latest data for the control points (= wica channels) that the stream contains.
+Creates a new stream, allocating a new stream id, and initiating communication with the backend 
+control system(s) to obtain the latest data for the control points for the wica stream's channels.
 
-The wica stream is composed of an infinite stream of Server Sent Events (SSE). The following message types are 
-supported:
+The wica stream publishes a continuous stream of Server Sent Event (SSE) messages of the following types: 
 
 |SSE Event Message           |SSE Data Payload                                                     |SSE Comment                               | Periodicity                                                               | Description                                                       |
 |----------------------------|-------------------------------------------------------------------- |------------------------------------------| ------------------------------------------------------------------------- | ------------------------------------------------------------------|
@@ -294,7 +293,7 @@ supported:
 | 'ev-wica-channel-value'    | JSON Object containing channel names and array of monitored values. | timestamp + '- channel monitored values' | Configurable, sent for channels which have received new monitored values. | Delivers the new values for each monitored channel in the stream. |   
 | 'ev-wica-channel-value'    | JSON Object containing channel names and array of polled values.    | timestamp + '- channel polled values'    | Configurable, sent for channels which have received new polled values.    | Delivers the new values for each polled channel in the stream.    |   
 
-Note: currently (2019-09-17) the periodicmetadata message is suppressed if none of the wica-channels have any new metadata.
+Note: currently (2019-09-17) the metadata message type is suppressed if none of the wica-channels have any new metadata.
 
 The following configuration properties are supported on each wica-channel.
 
@@ -323,7 +322,6 @@ The following configuration properties are supported on a wica stream:
 Note: additionally, **any of the channel properties may also be defined on a stream** to set the default value for the 
 channels on that stream.
 
-
 ```
 POST /ca/streams
 Content-Type: application/json
@@ -333,13 +331,6 @@ Content-Type: application/json
 
 Returns <streamId> a unique reference string that can be used when getting the stream (see below).
 ```
-
-The event stream which is returned a sequence of HTML5-compliant Server-Sent-Event (SSE)
-messages. The following 
-
-
-
-
 
 Example Request:
 ```
