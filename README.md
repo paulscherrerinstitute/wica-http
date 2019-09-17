@@ -154,7 +154,7 @@ are as follows:
 A [WicaChannel](https://paulscherrerinstitute.github.io/wica-http/latest/ch/psi/wica/model/channel/WicaChannel.html) 
 represents a readable or writable *control point* in the environment of the backend control system. 
 
-A wica channel contains:
+A wica channel has:
 * [WicaChannelName](https://paulscherrerinstitute.github.io/wica-http/latest/ch/psi/wica/model/channel/WicaChannelName.html) - 
   an abstraction which specifies the network protocol required to communicate with the control point, the name by 
   which it is known to the control system, together with an instance specifier (required to ensure uniqueness).
@@ -197,7 +197,7 @@ underlying wica channels.
 
 # WICA support for the EPICS Control System
 
-## EPICS Channel Access Environment Variables
+## Support for EPICS Channel Access Environment Variables
 
 The Wica-Http server is currently (2019-09-07) configured to work with PSI's native Java implementation 
 of the [EPICS](https://epics-controls.org/) control system client side channel-access protocol. As such 
@@ -257,10 +257,15 @@ The following metadata properties are supported for a wica channel whose underly
 |Property         |Desciption                                                                                       |
 |-----------------|------------------------------------------------------------------------------------------------ |
 | "type"          |One of: "UNKNOWN", STRING", "STRING_ARRAY", "INTEGER", "INTEGER_ARRAY", "DOUBLE", "DOUBLE_ARRAY" |
+| "lopr","hopr"   |Display limits     |
 | "drvl","drvh"   |Drive limits       |
 | "lolo", "hihi"  |Error Limits       |
 | "low", "high"   |Warning Limits     |
 | "egu"           |Engineering Units  |
+
+Note: the metadata property fields are initialised using information returned from the underlying EPICS channel 
+in response to a caget CTRL request. 
+
 
 ## Wica Channel Value - mapping to EPICS database fields
 
@@ -273,6 +278,10 @@ The following value properties are supported for a wica channel whose underlying
 | "sevr"   |The alarm severity which was obtained when last reading the channel. |
 | "stat"   |The alarm status which was obtained when last reading the channel.   |
 
+Note: the value property fields are initialised using information returned from the underlying EPICS 
+channel in response to a caget ALARM request. 
+
+Subsequently, dependant on the channel configuration, they are updated using channel access monitoring or polling.
 
 # Server Endpoints 
 
@@ -352,6 +361,29 @@ Response code: 200; Time: 103ms; Content length: 2 bytes
 
 ### Create a Wica Stream
 
+This request creates a new stream, allocates a new reference id, and initiates communication with the underlying 
+control system(s) to obtain the latest data for the control points (= wica channels) that the stream contains.
+
+The wica stream is composed of an infinite stream of HTML5-compliant Server Sent Events (SSE). The following
+event messages are supported:
+
+| SSE Event Message          | SSE Data Payload                                       | Periodicity                                                           | Description                                                |
+| "ev-wica-server-heartbeat" | JSON String containing server timestamp.               | Configurable                                                          | Used to inform the client that the channel is still alive. |
+| "ev-wica-channel-metadata" | JSON Object containing channel names and metadata.     | Configurable, but only sent for channels when they first come online. | Delivers the metadata for each channel in the stream.      | 
+| "ev-wica-channel-value"    | JSON Object containing channel names and their values. | Configurable, sent for channels which have new values (*)             | Delivers the new values for each channel in the stream.    |   
+
+
+The following configuration properties are supported:
+
+|Property     |Desciption                                                            |
+|-------------|-------------------------------------------------------------------- |
+| "hbflux"    |Defines the interval in milliseconds between successive SSE heartbeat messages  |
+| "metaflux"  |Defines the latency in milliseconds between successive SSE heartbeat messages  |
+| "monflux"   |The timestamp which was obtained when last reading the channel.      |
+| "pollflux"  |The alarm severity which was obtained when last reading the channel. |
+| "stat"   |The alarm status which was obtained when last reading the channel.   |
+
+
 ```
 POST /ca/streams
 Content-Type: application/json
@@ -361,6 +393,13 @@ Content-Type: application/json
 
 Returns <streamId> a unique reference string that can be used when getting the stream (see below).
 ```
+
+The event stream which is returned a sequence of HTML5-compliant Server-Sent-Event (SSE)
+messages. The following 
+
+
+
+
 
 Example Request:
 ```
