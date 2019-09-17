@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 
 /**
  * Represents the abstract root of a hierarchy of objects which provide
- * fields to describe a control point's general characteristics (ie its
- * <i>metadata</i>) and/or fields to describe its evolving state (ie its
- * <i>instantaneous value</i>).
+ * fields to describe a control point's general characteristics (that is
+ * its <i>metadata</i>) and/or fields to describe its evolving state
+ * that is its <i>instantaneous value</i>).
  */
 @Immutable
 public abstract class WicaChannelData

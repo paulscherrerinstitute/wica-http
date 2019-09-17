@@ -21,10 +21,10 @@ import java.util.regex.Pattern;
 
 /**
  * Represents the name of a wica channel which comprises the name by
- * which it is known in the underlying control system (ie the <i>control system
- * name</i>), the means of communication (ie the <i>network protocol</i>), and
- * an <i>instance specifier</i> (required to ensure name uniqueness if a
- * control point is used multiple times).
+ * which it is known in the underlying control system (that is the <i>control
+ * system name</i>), the means of communicating with it (that is the
+ * <i>network protocol</i>), and an <i>instance specifier</i> (required to
+ * ensure name uniqueness if a control point is used multiple times).
  */
 @Immutable
 public class WicaChannelName

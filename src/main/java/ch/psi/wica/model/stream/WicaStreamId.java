@@ -3,14 +3,18 @@ package ch.psi.wica.model.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
-
 import java.util.Objects;
-
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Provides a unique handle for referring to a specific wica stream
+ * together with a means of automatic allocation.
+ */
+@ThreadSafe
 public class WicaStreamId
 {
 
