@@ -140,7 +140,36 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
               
 ## Running the server inside a docker container
 
-   Further details coming soon. :-)   
+   1. Get the release into your local docker environment.
+   
+      ```
+      docker pull paulscherrerinstitute/wica-http:<rel>.jar
+      ```
+
+      Example:
+      ```
+      docker pull paulscherrerinstitute/wica-http:1.0.1
+      ```
+
+   1. [Optional]: Set up the EPICS Channel-Access environment variables.
+    
+      These should be setup to to communicate with the process veriables on the backend IOC's that you 
+      want to make accessible. See the EPICS control control system support document 
+      [here](EPICS.md#support-for-epics-channel-access-environment-variables) for a list of supported 
+      variables and their default values.
+      
+      Examples:
+      ```
+      export EPICA_CA_ADDR_LIST=IOC1:5064
+      export EPICA_CA_ADDR_LIST=<my_channel_access_gateway_server:5062
+      ```
+  
+   1. Run the server.
+      ```
+      docker run -p 80:80 -p 5062:5062/udp -p 5062:5062/tcp -p 5064:5064/udp -p 5064:5064/tcp -p 5065:5065/udp \
+       -e EPICS_CA_ADDR_LIST=${EPICA_CA_ADDR_LIST} paulscherrerinstitute/wica-http:<rel>.jar
+      ```
+      
 
 # High Level Terms and Concepts
 
