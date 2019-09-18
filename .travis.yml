@@ -30,7 +30,7 @@ before_script:
 script:
   - echo -n "*** LIFECYCLE STARTED - 'script' *************************************************************************"
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker build -t paulscherrerinstitute/wica-http:1.0.2.rc1 -f docker/Dockerfile.https .
+  - docker build -t paulscherrerinstitute/wica-http:1.0.2.rc1 -f docker/Dockerfile.http .
   - docker push paulscherrerinstitute/wica-http:1.0.2.rc1
   - echo -n "LIFECYCLE COMPLETED - 'script' ***************************************************************************"
 
