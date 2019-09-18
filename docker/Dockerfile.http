@@ -95,13 +95,8 @@ EXPOSE 5064
 # CA repeater.
 EXPOSE 5065
 
-# The keystore password must be supplied as an argument to the Docker
-# run command. The keystore itself must be provided in the config
-# directory via an external mount.
-ENV KEYSTORE_PASS "XXXXXX"
-
 # Document the ports that will be exposed by the Spring Boot Application
-EXPOSE 443
+EXPOSE 80
 
 # Setup the container so that it defaults to the timezone of PSI. This can
 # always be overridden later. This step is important as the timezone is used
