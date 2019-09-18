@@ -30,8 +30,8 @@ before_script:
 script:
   - echo -n "*** LIFECYCLE STARTED - 'script' *************************************************************************"
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker build -t paulscherrerinstitute/wica-http:1.0.1 -f docker/Dockerfile.https .
-  - docker push paulscherrerinstitute/wica-http:1.0.1
+  - docker build -t paulscherrerinstitute/wica-http:1.0.2.rc1 -f docker/Dockerfile.https .
+  - docker push paulscherrerinstitute/wica-http:1.0.2.rc1
   - echo -n "LIFECYCLE COMPLETED - 'script' ***************************************************************************"
 
 # The deploy phase is optional and runs after the script.
@@ -43,7 +43,7 @@ deploy:
     file_glob: true
     file: target/wica-http-*.jar
     skip_cleanup: true
-    draft: false
+    draft: true
     on:
       tags: true
       repo: paulscherrerinstitute/wica-http
@@ -56,8 +56,6 @@ deploy:
     keep_history: true
     on:
       branch: master
-
-after_success:
 
 after_script:
   - echo -n "*** LIFECYCLE STARTED - 'after_script' *******************************************************************"

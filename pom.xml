@@ -5,7 +5,7 @@
 
     <groupId>ch.psi</groupId>
     <artifactId>wica-http</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2.rc1</version>
     <packaging>jar</packaging>
 
     <name>wica-http</name>
@@ -23,7 +23,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
         <!-- Use this definition to control which version of the Wica-JS library gets bundled into the Wica-HTTP fatJar. -->
-        <wica-js-release-jar>https://github.com/paulscherrerinstitute/wica-js/releases/download/1.0.0/wica-js-1.0.0.zip</wica-js-release-jar>
+        <wica-js-release-jar>https://github.com/paulscherrerinstitute/wica-js/releases/download/1.0.2.rc1/wica-js-1.0.2.rc1.zip</wica-js-release-jar>
     </properties>
 
     <dependencies>
