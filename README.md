@@ -74,6 +74,16 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
       java -jar wica-http-<rel>.jar 
       ```
       
+      Note: the Wica-HTTP Server is a Spring Boot application. The default configuration properties 
+      for the server are specified in the [application.properties](./src/main/resources/application.properties) 
+      file that is bundled into the jar distribution file. The default values can be overriden when starting 
+      up the server by specifying them on the command line.
+      
+      Example: to run the server on IP address 192.168.0.2, port 9999 you can start the server like this:
+      ```
+      java -jar wica-http-<rel>.jar --server.address=192.168.0.2 --server.port=9999
+      ```
+      
    1. Check the server is running ok by navigating to the admin page.
       ```
       http://localhost:8080/admin
