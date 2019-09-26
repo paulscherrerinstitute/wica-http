@@ -23,9 +23,13 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
         <!-- Use this definition to control which version of the Wica-JS library gets bundled into the Wica-HTTP fatJar. -->
-        <wica-js-release-jar>https://github.com/paulscherrerinstitute/wica-js/releases/download/1.0.2.rc1/wica-js-1.0.2.rc1.zip</wica-js-release-jar>
-    </properties>
+        <!-- This definition always gets the latest release -->
+        <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/latest/download/wica-js.zip</wica-js-release>
+        <!-- This definition can be used to get a specific release -->
+        <!-- <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/download/x.y.z/wica-js.zip</wica-js-release> -->
 
+    </properties>
+    https://github.com/paulscherrerinstitute/wica-js/releases/latest/wica-js.zip
     <dependencies>
 
         <dependency>
@@ -137,21 +141,21 @@
                 <version>1.4.2</version>
                 <executions>
                     <execution>
-                        <!-- the wget goal actually binds itself into the 'process-resources' phase by   -->
-                        <!-- default. It's overridden here to ensure that the wica-js asset is available -->
-                        <!-- before the package gets built.                                              -->
+                    <!-- the wget goal actually binds itself into the 'process-resources' phase by   -->
+                    <!-- default. It's overridden here to ensure that the wica-js asset is available -->
+                    <!-- before the package gets built.                                              -->
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>${wica-js-release-jar}</url>
+                            <url>${wica-js-release}</url>
                             <unpack>true</unpack>
                             <skipCache>true</skipCache>
                             <!-- By unpacking the payload in the classes area this ensure that -->
                             <!-- the release gets rebundled in the fatJar at a location where  -->
                             <!-- the Spring Boot environment will search for it.               -->
-                            <outputDirectory>${project.build.directory}/classes/static</outputDirectory>
+                            <outputDirectory>${project.build.directory}/classes/static/wica</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
