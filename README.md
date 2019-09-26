@@ -460,6 +460,9 @@ https://paulscherrerinstitute.github.io/wica-http/<rel>
 
 # Project Changes and Tagged Releases
 
+* Project releases are available in the [GitHub Release Area](https://github.com/paulscherrerinstitute/wica-http/releases) 
+and on [Docker Hub](https://cloud.docker.com/u/paulscherrerinstitute/repository/docker/paulscherrerinstitute/wica-http).
+
 * See the [CHANGELOG](CHANGELOG.md) file for further information.
 * See also the project's [Issue Board](https://github.com/paulscherrerinstitute/wica-http/issues).
 
