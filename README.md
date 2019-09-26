@@ -1,7 +1,7 @@
 # Overview [![Build Status](https://travis-ci.org/paulscherrerinstitute/wica-http.svg?branch=master)](https://travis-ci.org/paulscherrerinstitute/wica-http) 
 
 :construction:
-Note: this README is still **under construction** although hopefully, now, substantially correct. 
+Note: this README is still **under construction** (although hopefully, now, substantially correct). 
 
 Please send any revision suggestions to 'simon.rees@psi.ch'.
 
