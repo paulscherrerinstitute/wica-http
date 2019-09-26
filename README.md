@@ -451,12 +451,12 @@ data:2019-09-08T17:30:36.078750
 
 The API documentation for the **latest development** release is always available [here](https://paulscherrerinstitute.github.io/wica-http/latest).
 
-The API documentation for the **latest stable** release (**1.0.1**) is available [here](https://paulscherrerinstitute.github.io/wica-http/1.0.1).
-
 The API documentation for **previous releases** can be found as follows:
 ```
 https://paulscherrerinstitute.github.io/wica-http/<rel>
 ```
+(See the [GitHub Release Area](https://github.com/paulscherrerinstitute/wica-ttp/releases) to find which releases are
+available).
 
 # Project Changes and Tagged Releases
 
