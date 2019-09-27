@@ -30,6 +30,11 @@ jdk:
 services:
   - docker
 
+# Cace maven repository to speed up buils
+cache:
+  directories:
+    - $HOME/.m2
+    -
 # *******************************************
 # Build Lifecycle Handling Starts Here
 # *******************************************
@@ -73,7 +78,7 @@ deploy:
     github_token: $GITHUB_TOKEN              # Set in the settings page of your repository, as a secure variable
     keep_history: true                       # Retain previous versions of the documentation.
     on:
-      branch: master                         # Skip this deployment unless $TRAVIS_TAG is set.
+      tags: true                             # Skip this deployment unless $TRAVIS_TAG is set.
 
   # Log into Docker and run build
   - provider: script
