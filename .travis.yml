@@ -1,63 +1,91 @@
+###############################################################################
+# Travis file to support automatic build and deployment of Wica-JS Artifacts
+###############################################################################
+
+#
+# This build recipe should be set up to trigger every time new TAGGED commits
+# are pushed to the Wica-HTTP repository in the PSI Organisational Area on the
+# GitHub Server.
+#
+# Currently the build recipe supports the following actions:
+#
+# - Builds Wica-HTTP API documentation and transfers asset to GitHub Pages Area.
+# - Builds Wica-HTTP Release Bundle and transfers asset to GitHub Releases Area.
+# - Builds Wica-HTTP Docker Image and transfers asset to Docker Hub.
+#
+
+# *******************************************
+# Build Environment Configuration Starts Here
+# *******************************************
+
+# Only trigger this build recipe on tagged commits.
+if: tag IS present
+
 language: java
 
 jdk:
   - openjdk11
 
+# The Docker environment is required to run the Dockerfile and to push the release to Docker Hub.
 services:
   - docker
 
-addons:
-  apt:
-    packages:
-      - docker-ce
+# *******************************************
+# Build Lifecycle Handling Starts Here
+# *******************************************
 
-before_install:
-  - echo -n "*** LIFECYCLE STARTED - 'before_install' *****************************************************************"
-  - echo -n "*** LIFECYCLE COMPLETED - before_install *****************************************************************"
+# before_install:
+#  - echo -n "*** LIFECYCLE STARTED - 'before_install' *****************************************************************"
+#  - echo -n "*** LIFECYCLE COMPLETED - before_install *****************************************************************"
 
 # Note: 'Install' here means bring things into the Travis environment that are needed for the build.
-install:
-  - echo "*** LIFECYCLE STARTED - 'install' ***************************************************************************"
-  - echo "*** LIFECYCLE COMPLETED - 'install' *************************************************************************"
+# install:
+#  - echo "*** LIFECYCLE STARTED - 'install' ***************************************************************************"
+#  - echo "*** LIFECYCLE COMPLETED - 'install' *************************************************************************"
 
-# Build the code then build the javadoc.
-before_script:
-  - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
-  - mvn clean package -DskipTests=true -D maven.javadoc.skip=false -B -V
-  - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
+# before_script:
+#  - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
+#  - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
 
-# Used here to upload the docker file to Docker Hub.
 script:
   - echo -n "*** LIFECYCLE STARTED - 'script' *************************************************************************"
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker build -t paulscherrerinstitute/wica-http:1.0.2.rc1 -f docker/Dockerfile.http .
-  - docker push paulscherrerinstitute/wica-http:1.0.2.rc1
-  - echo -n "LIFECYCLE COMPLETED - 'script' ***************************************************************************"
+  - mvn clean package -DskipTests=true -D maven.javadoc.skip=false -B -V
+  - echo -n "*** LIFECYCLE COMPLETED - 'script' ***********************************************************************"
 
-# The deploy phase is optional and runs after the script.
+# The Travis Lifecycle 'deploy' phase is optional and runs after the Travis Lifecycle 'script' phase has completed.
 deploy:
-  # Here we copy the release into the GitHub releases area.
-  - provider: releases
-    api_key:
+  # Copy the Wics-JS release asset into the GitHub Releases Area.
+  - provider: releases                       # Travis GitHub Releases Provider.
+    skip_cleanup: true                       # Set to true in accordance with Travis GitHub Releases Provider docs.
+    api_key:                                 # See the Travis documnetation for how this key was created.
       secure: "cDP3Oecwm+CoMajdf+EE8yHRXgTLjPVNISdnhYQ1pYmR7+wllgeO5nzJhgGBmu6hZQmvnzQBKBynGG65hd21QgYceis2am6MZojTOf3WqkKEnytLpBUJrNb/jJcpygQx04OSUC3Ev0EhasZEgYYMTNKsE1c4N/G9mPWkjwKmzeCrS7oHYY7rES5T6i7aoP0VNTJp5gMcRukKdejN6IvjeQFCjQn/dw68Unsmk6zDByEgvapl4BSfXMl3zMz0PjC3aNpR3G9iY7FByOmHjYLv4dAXaceJPnAoIbVCeH5yJ3GzkTV0xrB9n5jd6sM/AezNAS/1JaGv/pNhjXkIgw+GjO5uRaM2IPZl2VU6fh2kAKocxoICkoE4D2qsEUvd5hthQ1h515eMKPyXqTFxSzzY9CEtS39qgEB7NJj0fH1nRyFzwzel4UZ/wRqrNCQrY8s4e6yGrXm+9s+OhoEJVr1mtu2ou9Uxp4jMyb2zH1pCf63IAAENQpkwL2+5V7bUtCSC0HnrDruY4L/RrKvrMNxQzZbQr3wcdS8GNhGLx56s1ZFjnLrd3K8RJRo+LJiWxYuwaRMZd9YyANvMWiJg+2QrR2bVNiFs73vRBvzLMNDZcfh+cp3a2ztdjVsqvB+mVfYviM7DbIRIc91SOSoIeoTwPZw5QyfCzZ1jVKjUUN9q8mI="
-    file_glob: true
-    file: target/wica-http-*.jar
-    skip_cleanup: true
-    draft: true
+    file_glob: true                          # Needed to transfer ALL *.jar assets
+    file: target/wica-http-*.jar             # The asset(s) to be deployed.
+    draft: false                             # Create a GitHub Regular Release not a GitHub Draft.
+    overwrite: true                          # Allow new releases to overwrite old ones.
     on:
-      tags: true
-      repo: paulscherrerinstitute/wica-http
+      tags: true                             # Skip this deployment unless $TRAVIS_TAG is set.
 
-  # Here we copy the latest Javadoc to the GitHub pages site.
-  - provider: pages
-    local_dir: $TRAVIS_BUILD_DIR/target/site/apidocs
-    skip_cleanup: true
-    github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-    keep_history: true
+  # Copy the Wics-HTTP JavaDoc documentation into the GitHub Pages Area.
+  - provider: pages                          # Travis GitHub Pages Provider.
+    local_dir: target/site/apidocs
+    skip_cleanup: true                       # Set to true in accordance with Travis GitHub Pages Provider docs.
+    github_token: $GITHUB_TOKEN              # Set in the settings page of your repository, as a secure variable
+    keep_history: true                       # Retain previous versions of the documentation.
     on:
-      branch: master
+      branch: master                         # Skip this deployment unless $TRAVIS_TAG is set.
 
-after_script:
-  - echo -n "*** LIFECYCLE STARTED - 'after_script' *******************************************************************"
-  - echo -n "*** LIFECYCLE COMPLETED - 'after_script' *****************************************************************"
+  # Log into Docker and run build
+  - provider: script
+    skip_cleanup: false
+    script:
+      echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin &&
+      docker build -t paulscherrerinstitute/wica-http:$TRAVIS_TAG -t paulscherrerinstitute/wica-js:latest -f docker/Dockerfile . &&
+      docker push paulscherrerinstitute/wica-js:$TRAVIS_TAG &&
+      docker push paulscherrerinstitute/wica-js:latest
+    on:
+      tags: true                              # Skip this deployment unless $TRAVIS_TAG is set.
 
+# after_script:
+#  - echo -n "*** LIFECYCLE STARTED - 'after_script' *******************************************************************"
+#  - echo -n "*** LIFECYCLE COMPLETED - 'after_script' *****************************************************************"
