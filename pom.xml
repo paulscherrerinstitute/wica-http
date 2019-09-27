@@ -217,6 +217,7 @@
                         <phase>package</phase>
                         <goals><goal>javadoc</goal></goals>
                         <configuration>
+                            <quiet>true</quiet>
                             <destDir>latest</destDir>
                         </configuration>
                     </execution>
