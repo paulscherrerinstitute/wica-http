@@ -34,7 +34,7 @@ services:
 cache:
   directories:
     - $HOME/.m2
-    -
+
 # *******************************************
 # Build Lifecycle Handling Starts Here
 # *******************************************
