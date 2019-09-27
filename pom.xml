@@ -5,7 +5,7 @@
 
     <groupId>ch.psi</groupId>
     <artifactId>wica-http</artifactId>
-    <version>1.0.2-rc1</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
     <name>wica-http</name>
@@ -24,9 +24,9 @@
         <java.version>11</java.version>
         <!-- Use this definition to control which version of the Wica-JS library gets bundled into the Wica-HTTP fatJar. -->
         <!-- This definition always gets the latest release -->
-        <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/latest/download/wica-js.zip</wica-js-release>
+        <!-- <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/latest/download/wica-js.zip</wica-js-release> -->
         <!-- This definition can be used to get a specific release -->
-        <!-- <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/download/x.y.z/wica-js.zip</wica-js-release> -->
+        <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/download/1.1.0/wica-js.zip</wica-js-release>
     </properties>
 
     <dependencies>
