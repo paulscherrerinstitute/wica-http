@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/paulscherrerinstitute/wica-http.svg?branch=master)](https://travis-ci.org/paulscherrerinstitute/wica-http) 
 
-
+:construction:
+Note: this README is still **under construction** although hopefully, now, substantially correct. 
 
 Please send any revision suggestions to 'simon.rees@psi.ch'.
 
@@ -49,7 +50,7 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
       The release names for this project follow the  [semantic versioning](https://semver.org/) naming convention
       proposed on the GitHub site.
       
-      Examples: 1.0.0, 1.1.0, 1.2.3-rc1, 1.2.3-rc2, 7.1.5-rc19
+      Examples: 1.0.0, 1.1.0, 1.2.3.rc1, 1.2.3.rc2, 7.1.5.rc19
 
       ```
       wget https://github.com/paulscherrerinstitute/wica-http/releases/download/<rel>/wica-http-<rel>.jar
@@ -464,10 +465,6 @@ and on [Docker Hub](https://cloud.docker.com/u/paulscherrerinstitute/repository/
 
 * See the [CHANGELOG](CHANGELOG.md) file for further information.
 * See also the project's [Issue Board](https://github.com/paulscherrerinstitute/wica-http/issues).
-
-# Developer Notes
-
-See the [Developer](DEVELOPER.md) document.
 
 # Contact
 
