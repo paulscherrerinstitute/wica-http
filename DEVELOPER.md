@@ -1,8 +1,30 @@
-# Overview
+# Wica-HTTP Developer Notes
 
-This page is a random collection of notes on various technical topics that influenced the design of the project.
+This page is a random collection of notes intended to assist software developers.
 
-# Notes on EPICS CA Testing
+## How to Make a New Software Release
+
+1. Use your favourite editor to set the version string in the 'pom.xml' file to the 
+   required release number. The release names for this project follow the 
+   [semantic versioning](https://semver.org/) naming convention proposed on the GitHub site. 
+         
+   Examples: 1.0.0, 1.1.0, 1.2.3-rc1, 1.2.3-rc2, 7.1.5-rc19
+   
+1. Update the [CHANGELOG](CHANGELOG.md) file to describe the new release.
+
+1. Commit locally (- **but don't yet push** -) the latest changes.
+    ```
+    git commit -m "my latest changes" .
+    ```
+
+1. Use the mvn 'release' target to create a tag and to push it to the GitHub Server.
+    ```
+    mvn run release
+    ```
+1. Verify that the Travis automatic build worked and/or that the expected artifiacts 
+   are available on GitHub and on Docker Hub sites.
+   
+## Notes on EPICS CA Testing
 
 Wica2 leverages off PSI's in-house commissioned Java Channel Access (ca) library. This is publicly available via 
 Github at [this](https://github.com/channelaccess/ca_matlab) location.
@@ -15,7 +37,7 @@ in the future be published on the project's [Github site](https://github.com/cha
 Following this test program the following design decisions have been made:
    * creating contexts is expensive. Therefore everything will be shared
  
-# Notes on browser simultaneous connection limits
+## Notes on browser simultaneous connection limits
 
 Tomcat:
 Default seems to be 6
@@ -31,11 +53,11 @@ HKEY_CURRENT_USER ->
 Software\Microsoft\Windows\CurrentVersion\Internet Settings ->
 MaxConnectionsPerServer
 
-# Notes on reactive streams back propagation
+## Notes on reactive streams back propagation
 
 See the unit tests
 
-# Notes on WICA Compression
+## Notes on WICA Compression
 
 This can be enabled in SpringBoot via the following settings:
 
@@ -59,10 +81,9 @@ Compression factor was 45.
 Current Status (2018-09-25): 
 -Compression is turned ON.
 
-# Notes on HTTP2
+## Notes on HTTP2
 
-This project explored the possibility of using "h2" (= http version 2) to deliver 
-the service.
+This project explored the possibility of using "h2" (= http version 2) to deliver the service.
 
 HowTo:
 1.  enable the feature in the application properties file.
@@ -84,7 +105,7 @@ Disadvantages:
 Current Status (2018-09-25):
 - For the moment this featured has been turned OFF and the WICA Server is using http v1.2.
 
-# Notes on Character Encoding Issue (ISO8859-1, UTF-8 etc)
+## Notes on Character Encoding Issue (ISO8859-1, UTF-8 etc)
   
 It was observed that the HIPA status units were not rendering the "µ" character
 properly.
@@ -110,7 +131,7 @@ to be encoded with UTF-8.
   by definitions in the html files.
 
 
-# Additional Note on Unit Tests
+## Additional Note on Unit Tests
 
 Note to run the unit tests you newd to start an epics IOC something like this:
 ~/base-3.14.12.7/bin/darwin-x86/softIoc -d epics_tests.db 
