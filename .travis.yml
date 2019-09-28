@@ -86,8 +86,8 @@ deploy:
     script:
       echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin &&
       docker build -t paulscherrerinstitute/wica-http:$TRAVIS_TAG -t paulscherrerinstitute/wica-js:latest -f docker/Dockerfile.http . &&
-      docker push paulscherrerinstitute/wica-js:$TRAVIS_TAG &&
-      docker push paulscherrerinstitute/wica-js:latest
+      docker push paulscherrerinstitute/wica-http:$TRAVIS_TAG &&
+      docker push paulscherrerinstitute/wica-ttp:latest
     on:
       tags: true                              # Skip this deployment unless $TRAVIS_TAG is set.
 
