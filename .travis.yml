@@ -85,9 +85,9 @@ deploy:
     skip_cleanup: false
     script:
       echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin &&
-      docker build -t paulscherrerinstitute/wica-http:$TRAVIS_TAG -t paulscherrerinstitute/wica-js:latest -f docker/Dockerfile.http . &&
+      docker build -t paulscherrerinstitute/wica-http:$TRAVIS_TAG -t paulscherrerinstitute/wica-http:latest -f docker/Dockerfile.http . &&
       docker push paulscherrerinstitute/wica-http:$TRAVIS_TAG &&
-      docker push paulscherrerinstitute/wica-ttp:latest
+      docker push paulscherrerinstitute/wica-http:latest
     on:
       tags: true                              # Skip this deployment unless $TRAVIS_TAG is set.
 
