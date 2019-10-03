@@ -5,17 +5,47 @@
 ## Run this files from the top level directory using:
 ## 'docker build -f docker/Dockerfile.http .'
 
+###############################################################################
+# 1.0 Get support for EPICS (if required)
+###############################################################################
+
+##
+## Enable the following block when EPICS is needed in the container for eg
+## debugging purposes.
+##
+FROM debian:stable-slim as build_epics
+
+WORKDIR /epics
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    apt-get install -y wget &&  \
+    apt-get install -y perl &&  \
+    apt-get install -y gcc &&  \
+    apt-get install -y make &&  \
+    apt-get install -y g++ &&  \
+    apt-get install -y libreadline-dev &&  \
+    rm -rf /var/lib/apt/lists/* /tmp/*
+
+RUN wget https://epics.anl.gov/download/base/baseR3.14.12.7.tar.gz && \
+    tar xvf baseR3.14.12.7.tar.gz
+
+RUN cd base-3.14.12.7 ; make
+
+###############################################################################
+# 2.0 Build and package the Wica-HTTP jar file
+###############################################################################
+
 FROM maven:3.6.1-jdk-11-slim AS MAVEN_TOOL_CHAIN
 WORKDIR /tmp/
-#
+
 COPY ./pom.xml /tmp/
 COPY ./src /tmp/src/
-#
+
 RUN mvn clean package -Dmaven.test.skip=true -Dmaven.javadoc.skip=false
 
 
 ###############################################################################
-# 1.0 Create a cutdown JDK image tailored to the needs of the application
+# 3.0 Create a cutdown JDK image tailored to the needs of the application
 ###############################################################################
 
 FROM alpine:3.7
@@ -36,35 +66,8 @@ RUN ZULU_ARCH=zulu11.2.3-jdk11.0.1-linux_musl_x64.tar.gz && \
 	cd ${MAN_DIR} && find ${INSTALL_DIR}/${ZULU_DIR}/man/man1 -type f -name "*.1" -exec ln -s {} . \; && \
 	java -version
 
-###############################################################################
-# 2.0 Get support for EPICS (if required)
-###############################################################################
-
-##
-## Enable the following block when EPICS is needed in the container for eg
-## debugging purposes.
-##
-## FROM debian:stable-slim as build_epics
-##
-## WORKDIR /epics
-##
-#
-# RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-#     apt-get install -y wget &&  \
-#     apt-get install -y perl &&  \
-#     apt-get install -y gcc &&  \
-#     apt-get install -y make &&  \
-#     apt-get install -y g++ &&  \
-#     apt-get install -y libreadline-dev &&  \
-#     rm -rf /var/lib/apt/lists/* /tmp/*
-#
-# RUN wget https://epics.anl.gov/download/base/baseR3.14.12.7.tar.gz && \
-#     tar xvf baseR3.14.12.7.tar.gz
-#
-# RUN cd base-3.14.12.7 ; make
-
 ################################################################################
-## 3.0 Define the rest of our application
+## 4.0 Define the rest of our application
 ################################################################################
 
 # This script takes one argument - the name of the jar file containing
@@ -75,12 +78,8 @@ ARG JAR_FILE
 ## Enable the following block when EPICS is needed in the container for eg
 ## debugging purposes.
 ##
-#
-#ENV EPICS_HOME=/epics
-#COPY --from=build_epics /epics/base-3.14.12.7/ $EPICS_HOME
-#
-#RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-#    apt-get install -y libreadline-dev
+ENV EPICS_HOME=/epics
+COPY --from=build_epics /epics/base-3.14.12.7/ $EPICS_HOME
 
 # This port must be open for TCP and UDP when the connection
 # is via a channel access gateway.
@@ -113,7 +112,7 @@ WORKDIR /root
 # 4.0 Install any additional applications
 ###############################################################################
 
-RUN apk update && apk add --no-cache bash
+RUN apk update && apk add --no-cache bash readline
 
 ###############################################################################
 # 5.0 Set up the application project structure

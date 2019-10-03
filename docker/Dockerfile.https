@@ -25,7 +25,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     apt-get install -y g++ &&  \
     apt-get install -y libreadline-dev &&  \
     rm -rf /var/lib/apt/lists/* /tmp/*
-#
+
 RUN wget https://epics.anl.gov/download/base/baseR3.14.12.7.tar.gz && \
     tar xvf baseR3.14.12.7.tar.gz
 
@@ -36,12 +36,11 @@ RUN cd base-3.14.12.7 ; make
 ###############################################################################
 
 FROM maven:3.6.1-jdk-11-slim AS MAVEN_TOOL_CHAIN
-
 WORKDIR /tmp/
-#
+
 COPY ./pom.xml /tmp/
 COPY ./src /tmp/src/
-#
+
 RUN mvn clean package -Dmaven.test.skip=true -Dmaven.javadoc.skip=false
 
 
@@ -66,7 +65,6 @@ RUN ZULU_ARCH=zulu11.2.3-jdk11.0.1-linux_musl_x64.tar.gz && \
 	mkdir -p ${MAN_DIR} && \
 	cd ${MAN_DIR} && find ${INSTALL_DIR}/${ZULU_DIR}/man/man1 -type f -name "*.1" -exec ln -s {} . \; && \
 	java -version
-
 
 ################################################################################
 ## 4.0 Define the rest of our application
