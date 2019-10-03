@@ -83,9 +83,6 @@ ARG JAR_FILE
 ENV EPICS_HOME=/epics
 COPY --from=build_epics /epics/base-3.14.12.7/ $EPICS_HOME
 
-#RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-#    apt-get install -y libreadline-dev
-
 # This port must be open for TCP and UDP when the connection
 # is via a channel access gateway.
 EXPOSE 5062
