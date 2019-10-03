@@ -6,15 +6,26 @@
 ## 'docker build -f docker/Dockerfile.http .'
 
 ###############################################################################
-# 1.0 Get support for EPICS (if required)
+# 1.0 Build and package the Wica-HTTP jar file
+###############################################################################
+
+FROM maven:3.6.1-jdk-11-slim AS MAVEN_TOOL_CHAIN
+WORKDIR /tmp/
+
+COPY ./pom.xml /tmp/
+COPY ./src /tmp/src/
+
+RUN mvn clean package -Dmaven.test.skip=true -Dmaven.javadoc.skip=false
+
+###############################################################################
+# 2.0 Get support for EPICS (if required)
 ###############################################################################
 
 ##
 ## Enable the following block when EPICS is needed in the container for eg
 ## debugging purposes.
 ##
-FROM debian:stable-slim as build_epics
-
+FROM debian:stable-slim as BUILD_EPICS
 WORKDIR /epics
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
@@ -31,40 +42,29 @@ RUN wget https://epics.anl.gov/download/base/baseR3.14.12.7.tar.gz && \
 
 RUN cd base-3.14.12.7 ; make
 
-###############################################################################
-# 2.0 Build and package the Wica-HTTP jar file
-###############################################################################
-
-FROM maven:3.6.1-jdk-11-slim AS MAVEN_TOOL_CHAIN
-WORKDIR /tmp/
-
-COPY ./pom.xml /tmp/
-COPY ./src /tmp/src/
-
-RUN mvn clean package -Dmaven.test.skip=true -Dmaven.javadoc.skip=false
-
 
 ###############################################################################
 # 3.0 Create a cutdown JDK image tailored to the needs of the application
 ###############################################################################
 
-FROM alpine:3.7
+FROM adoptopenjdk/openjdk11:debian-slim
 
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
-RUN ZULU_ARCH=zulu11.2.3-jdk11.0.1-linux_musl_x64.tar.gz && \
-    INSTALL_DIR=/usr/lib/jvm && \
-	BIN_DIR=/usr/bin && \
-	MAN_DIR=/usr/share/man/man1 && \
-	ZULU_DIR=$( basename ${ZULU_ARCH} .tar.gz ) && \
-	wget -q https://cdn.azul.com/zulu/bin/${ZULU_ARCH} && \
-	mkdir -p ${INSTALL_DIR} && \
-	tar -xf ./${ZULU_ARCH} -C ${INSTALL_DIR} && rm -f ${ZULU_ARCH} && \
-	cd ${BIN_DIR} && find ${INSTALL_DIR}/${ZULU_DIR}/bin -type f -perm -a=x -exec ln -s {} . \; && \
-	mkdir -p ${MAN_DIR} && \
-	cd ${MAN_DIR} && find ${INSTALL_DIR}/${ZULU_DIR}/man/man1 -type f -name "*.1" -exec ln -s {} . \; && \
-	java -version
+#FROM alpine:3.7
+#ENV LANG en_US.UTF-8
+#ENV LANGUAGE en_US:en
+#ENV LC_ALL en_US.UTF-8
+#RUN ZULU_ARCH=zulu11.2.3-jdk11.0.1-linux_musl_x64.tar.gz && \
+#    INSTALL_DIR=/usr/lib/jvm && \
+#	BIN_DIR=/usr/bin && \
+#	MAN_DIR=/usr/share/man/man1 && \
+#	ZULU_DIR=$( basename ${ZULU_ARCH} .tar.gz ) && \
+#	wget -q https://cdn.azul.com/zulu/bin/${ZULU_ARCH} && \
+#	mkdir -p ${INSTALL_DIR} && \
+#	tar -xf ./${ZULU_ARCH} -C ${INSTALL_DIR} && rm -f ${ZULU_ARCH} && \
+#	cd ${BIN_DIR} && find ${INSTALL_DIR}/${ZULU_DIR}/bin -type f -perm -a=x -exec ln -s {} . \; && \
+#	mkdir -p ${MAN_DIR} && \
+#	cd ${MAN_DIR} && find ${INSTALL_DIR}/${ZULU_DIR}/man/man1 -type f -name "*.1" -exec ln -s {} . \; && \
+#	java -version
 
 ################################################################################
 ## 4.0 Define the rest of our application
@@ -79,7 +79,7 @@ ARG JAR_FILE
 ## debugging purposes.
 ##
 ENV EPICS_HOME=/epics
-COPY --from=build_epics /epics/base-3.14.12.7/ $EPICS_HOME
+COPY --from=BUILD_EPICS /epics/base-3.14.12.7/ $EPICS_HOME
 
 # This port must be open for TCP and UDP when the connection
 # is via a channel access gateway.
@@ -109,13 +109,14 @@ USER root
 WORKDIR /root
 
 ###############################################################################
-# 4.0 Install any additional applications
+# 5.0 Install any additional applications
 ###############################################################################
 
-RUN apk update && apk add --no-cache bash readline
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    apt-get install -y libreadline-dev
 
 ###############################################################################
-# 5.0 Set up the application project structure
+# 6.0 Set up the application project structure
 ###############################################################################
 
 # Create the directories needed by this application
@@ -127,7 +128,7 @@ COPY ./src/main/resources/config/logback_config.xml config
 COPY ./docker/application-docker-http-run.properties config
 
 ###############################################################################
-# 6.0 Define the exposed volumes
+# 7.0 Define the exposed volumes
 ###############################################################################
 
 VOLUME /root/log
@@ -136,7 +137,7 @@ VOLUME /root/static/web
 VOLUME /roor/static/wica
 
 ###############################################################################
-# 7.0 Uncomment the block below to add support for attaching a debugger
+# 8.0 Uncomment the block below to add support for attaching a debugger
 ###############################################################################
 
 # Add support for remote debugging.
@@ -153,7 +154,7 @@ ENV JAVA_DBG_OPTS "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address
 
 
 ###############################################################################
-# 8.0 Define the ENTRYPOINT
+# 9.0 Define the ENTRYPOINT
 ###############################################################################
 
 # Run the application on the Java 11 module path invoking the docker-run configuration profile
