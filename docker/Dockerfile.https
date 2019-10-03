@@ -177,4 +177,5 @@ ENTRYPOINT exec java $JAVA_DBG_OPTS $JAVA_JMX_OPTS \
            -p lib/jarfile.jar \
            --add-modules ALL-DEFAULT \
            -m jarfile \
-           --server.ssl.key-store-password="$KEYSTORE_PASS"
+           --server.ssl.key-store-password="$KEYSTORE_PASS" \
+           --wica.epics-ca-library-debug-level=1
