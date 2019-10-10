@@ -5,7 +5,7 @@
 
     <groupId>ch.psi</groupId>
     <artifactId>wica-http</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <packaging>jar</packaging>
 
     <name>wica-http</name>
@@ -26,7 +26,7 @@
         <!-- This definition always gets the latest release -->
         <!-- <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/latest/download/wica-js.zip</wica-js-release> -->
         <!-- This definition can be used to get a specific release -->
-        <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/download/1.1.0/wica-js.zip</wica-js-release>
+        <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/download/1.1.1/wica-js.zip</wica-js-release>
     </properties>
 
     <dependencies>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>org.epics</groupId>
             <artifactId>ca</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.2</version>
         </dependency>
 
         <dependency>
@@ -246,7 +246,34 @@
     <!--     </repository> -->
     <!-- </distributionManagement> -->
 
+    <distributionManagement>
+        <repository>
+            <id>artifacts.psi.ch</id>
+            <name>artifacts.psi.ch-releases</name>
+            <url>https://artifacts.psi.ch/artifactory/libs-releases-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>artifacts.psi.ch</id>
+            <name>artifacts.psi.ch-snapshots</name>
+            <url>https://artifacts.psi.ch/artifactory/libs-snapshots-local</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://artifacts.psi.ch/artifactory/libs-releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>snapshots</id>
+            <url>https://artifacts.psi.ch/artifactory/libs-snapshots-local</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
         <repository>
             <id>spring-snapshots</id>
             <name>Spring Snapshots</name>
