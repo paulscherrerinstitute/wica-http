@@ -31,9 +31,9 @@ services:
   - docker
 
 # Cache maven repository to speed up builds.
-#cache:
-#  directories:
-#    - $HOME/.m2
+cache:
+  directories:
+    - $HOME/.m2
 
 # *******************************************
 # Build Lifecycle Handling Starts Here
