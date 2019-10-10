@@ -44,27 +44,10 @@ RUN cd base-3.14.12.7 ; make
 
 
 ###############################################################################
-# 3.0 Create a cutdown JDK image tailored to the needs of the application
+# 3.0 Obtain a container with a JDK implementation
 ###############################################################################
 
 FROM adoptopenjdk/openjdk11:debian-slim
-
-#FROM alpine:3.7
-#ENV LANG en_US.UTF-8
-#ENV LANGUAGE en_US:en
-#ENV LC_ALL en_US.UTF-8
-#RUN ZULU_ARCH=zulu11.2.3-jdk11.0.1-linux_musl_x64.tar.gz && \
-#    INSTALL_DIR=/usr/lib/jvm && \
-#	BIN_DIR=/usr/bin && \
-#	MAN_DIR=/usr/share/man/man1 && \
-#	ZULU_DIR=$( basename ${ZULU_ARCH} .tar.gz ) && \
-#	wget -q https://cdn.azul.com/zulu/bin/${ZULU_ARCH} && \
-#	mkdir -p ${INSTALL_DIR} && \
-#	tar -xf ./${ZULU_ARCH} -C ${INSTALL_DIR} && rm -f ${ZULU_ARCH} && \
-#	cd ${BIN_DIR} && find ${INSTALL_DIR}/${ZULU_DIR}/bin -type f -perm -a=x -exec ln -s {} . \; && \
-#	mkdir -p ${MAN_DIR} && \
-#	cd ${MAN_DIR} && find ${INSTALL_DIR}/${ZULU_DIR}/man/man1 -type f -name "*.1" -exec ln -s {} . \; && \
-#	java -version
 
 ################################################################################
 ## 4.0 Define the rest of our application
@@ -177,5 +160,4 @@ ENTRYPOINT exec java $JAVA_DBG_OPTS $JAVA_JMX_OPTS \
            -p lib/jarfile.jar \
            --add-modules ALL-DEFAULT \
            -m jarfile \
-           --server.ssl.key-store-password="$KEYSTORE_PASS" \
-           --wica.epics-ca-library-debug-level=1
+           --server.ssl.key-store-password="$KEYSTORE_PASS"
