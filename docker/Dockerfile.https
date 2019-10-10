@@ -123,7 +123,7 @@ COPY ./docker/application-docker-https-run.properties config
 VOLUME /root/log
 VOLUME /root/config
 VOLUME /root/static/web
-VOLUME /roor/static/wica
+VOLUME /root/static/wica
 
 ###############################################################################
 # 8.0 Uncomment the block below to add support for attaching a debugger
