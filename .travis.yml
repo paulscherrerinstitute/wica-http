@@ -31,9 +31,9 @@ services:
   - docker
 
 # Cache maven repository to speed up builds.
-cache:
-  directories:
-    - $HOME/.m2
+#cache:
+#  directories:
+#    - $HOME/.m2
 
 # *******************************************
 # Build Lifecycle Handling Starts Here
@@ -82,7 +82,7 @@ deploy:
 
   # Log into Docker and run build and push to Docker Hub.
   - provider: script
-    skip_cleanup: false
+    skip_cleanup: true
     script:
       echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin &&
       docker build -t paulscherrerinstitute/wica-http:$TRAVIS_TAG -t paulscherrerinstitute/wica-http:latest -f docker/Dockerfile.https . &&
