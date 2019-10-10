@@ -16,11 +16,11 @@ Wica comprises two main components:
   library then generates requests to the backend server to obtain the necessary data and to update the 
   user's web pages in real-time.
 
+Currently WICA interoperates with the EPICS Control Systems using its well established Channel Access (CA) protocol. 
+
 See also:
  * [A Simple Wica Webpage Example](https://github.com/paulscherrerinstitute/wica-js#a-simple-wica-webpage-example)
  * [How it Works](https://github.com/paulscherrerinstitute/wica-js#how-it-works)
-  
-Currently WICA interoperates with the EPICS Control Systems using its well established Channel Access (CA) protocol. 
 
 # Main Features
 
