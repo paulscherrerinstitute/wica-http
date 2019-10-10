@@ -59,7 +59,7 @@ script:
 
 # The Travis Lifecycle 'deploy' phase is optional and runs after the Travis Lifecycle 'script' phase has completed.
 deploy:
-  # Copy the Wics-HTTP release asset into the GitHub Releases Area.
+  # Copy the Wica-HTTP release asset into the GitHub Releases Area.
   - provider: releases                       # Travis GitHub Releases Provider.
     skip_cleanup: true                       # Set to true in accordance with Travis GitHub Releases Provider docs.
     api_key:                                 # See the Travis documentation for how this key was created.
@@ -71,7 +71,7 @@ deploy:
     on:
       tags: true                             # Skip this deployment unless $TRAVIS_TAG is set.
 
-  # Copy the Wics-HTTP JavaDoc documentation into the GitHub Pages Area.
+  # Copy the Wica-HTTP JavaDoc documentation into the GitHub Pages Area.
   - provider: pages                          # Travis GitHub Pages Provider.
     local_dir: target/site/apidocs
     skip_cleanup: true                       # Set to true in accordance with Travis GitHub Pages Provider docs.
