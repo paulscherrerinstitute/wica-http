@@ -1,6 +1,6 @@
 # Wica-HTTP Developer Notes
 
-This page is a random collection of notes intended to assist software developers.
+This page is a miscellaneous collection of notes intended to assist software developers.
 
 ## How to Make a New Software Release
 
@@ -21,7 +21,7 @@ This page is a random collection of notes intended to assist software developers
     ```
     mvn run release
     ```
-1. Verify that the Travis automatic build worked and/or that the expected artifiacts 
+1. Verify that the Travis automatic build worked and/or that the expected artifacts 
    are available on GitHub and on Docker Hub sites.
    
 ## Notes on EPICS CA Testing
