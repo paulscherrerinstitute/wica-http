@@ -29,4 +29,9 @@ This log describes the functionality of tagged versions within the repository.
    
   Test Status: Tests run: 279, Failures: 0, Errors: 0, Skipped: 8
    
+* [1.1.2] 
+  Development enhancement: added ability to override JAR file externally.
+  Now includes Wica-JS 1.1.2    
+  Test Status: Tests run: 279, Failures: 0, Errors: 0, Skipped: 8
+   
     
