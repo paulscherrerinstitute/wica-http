@@ -114,10 +114,20 @@ COPY ./docker/application-docker-http-run.properties config
 # 7.0 Define the exposed volumes
 ###############################################################################
 
-VOLUME /root/log
+# Provide support for configuring the application from an external file system.
 VOLUME /root/config
+
+# Provide support for writing log files to an external file system.
+VOLUME /root/log
+
+# Provide support for serving the Wica-HTTP jar file from an external file system.
+VOLUME /root/lib
+
+# Provide support for serving the Wica-JS library from an external file system.
+VOLUME /root/static/wica
+
+# Provide support for serving the web pages from an external file system.
 VOLUME /root/static/web
-VOLUME /roor/static/wica
 
 ###############################################################################
 # 8.0 Uncomment the block below to add support for attaching a debugger
