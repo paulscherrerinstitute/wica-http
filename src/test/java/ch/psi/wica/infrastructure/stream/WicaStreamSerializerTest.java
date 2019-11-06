@@ -55,7 +55,7 @@ class WicaStreamSerializerTest
       assertThat( resultStr, is( "{\"hbflux\":null,\"metaflux\":null,\"monflux\":null,\"pollflux\":null,\"daqmode\":null,\"pollint\":null,\"fields\":null,\"prec\":null,\"filter\":null,\"n\":null,\"m\":null,\"interval\":null,\"deadband\":null}" ) );
    }
    @Test
-   void testSerializeWicaStreamProperties_SelectedProperties_ProducesExpectedValues()
+   void testSerializeWicaStreamProperties_SelectedProperties1_ProducesExpectedValues()
    {
       final WicaStreamProperties inputProps = WicaStreamPropertiesBuilder
             .create()
@@ -65,6 +65,20 @@ class WicaStreamSerializerTest
             .build();
       final String resultStr = WicaStreamSerializer.writeToJson( inputProps );
       assertThat( resultStr, is( "{\"hbflux\":22,\"metaflux\":null,\"monflux\":null,\"pollflux\":null,\"daqmode\":null,\"pollint\":null,\"fields\":null,\"prec\":65,\"filter\":null,\"n\":null,\"m\":null,\"interval\":null,\"deadband\":14.3}" ) );
+   }
+
+   @Test
+   void testSerializeWicaStreamProperties_SelectedProperties2_ProducesExpectedValues()
+   {
+      final WicaStreamProperties inputProps = WicaStreamPropertiesBuilder
+              .create()
+              .withHeartbeatFluxInterval( 22 )
+              .withNumericPrecision( 65 )
+              .withFilterDeadband( 14.3 )
+              .withFilterType( WicaFilterType.AVERAGER )
+              .build();
+      final String resultStr = WicaStreamSerializer.writeToJson( inputProps );
+      assertThat( resultStr, is( "{\"hbflux\":22,\"metaflux\":null,\"monflux\":null,\"pollflux\":null,\"daqmode\":null,\"pollint\":null,\"fields\":null,\"prec\":65,\"filter\":\"averager\",\"n\":null,\"m\":null,\"interval\":null,\"deadband\":14.3}" ) );
    }
 
    /****************************************************************************************
@@ -113,7 +127,7 @@ class WicaStreamSerializerTest
    }
 
    @Test
-   void testDeserializeWicaStreamProperties_ConfiguredFieldValues_ProducesExpectedObject()
+   void testDeserializeWicaStreamProperties_ConfiguredFieldValues1_ProducesExpectedObject()
    {
       final String inputString = "{\"hbflux\":1,\"metaflux\":2,\"monflux\":3,\"pollflux\":4,\"daqmode\":\"poll\",\"pollint\":5,\"fields\":\"abc\",\"prec\":6,\"filter\":\"last-n\",\"n\":7,\"m\":8,\"interval\":9,\"deadband\":10.0}";
       final WicaStreamProperties props = WicaStreamSerializer.readFromJson( inputString, WicaStreamProperties.class );
@@ -141,6 +155,41 @@ class WicaStreamSerializerTest
       assertThat( props.getOptionalFieldsOfInterest().get(),                         is( "abc" ) );
       assertThat( props.getOptionalNumericPrecision().get(),                         is( 6 ) );
       assertThat( props.getOptionalFilterType().get(),                               is( WicaFilterType.LAST_N ) );
+      assertThat( props.getOptionalFilterNumSamples().get(),                         is( 7 ) );
+      assertThat( props.getOptionalFilterCycleLength().get(),                        is( 8 ) );
+      assertThat( props.getOptionalFilterSamplingIntervalInMillis().get(),           is( 9 ) );
+      assertThat( props.getOptionalFilterDeadband().get(),                           is( 10.0 ) );
+   }
+
+   @Test
+   void testDeserializeWicaStreamProperties_ConfiguredFieldValues2_ProducesExpectedObject()
+   {
+      final String inputString = "{\"hbflux\":1,\"metaflux\":2,\"monflux\":3,\"pollflux\":4,\"daqmode\":\"poll\",\"pollint\":5,\"fields\":\"abc\",\"prec\":6,\"filter\":\"averager\",\"n\":7,\"m\":8,\"interval\":9,\"deadband\":10.0}";
+      final WicaStreamProperties props = WicaStreamSerializer.readFromJson( inputString, WicaStreamProperties.class );
+
+      assertThat( props.getOptionalHeartbeatFluxIntervalInMillis().isPresent(),      is( true ) );
+      assertThat( props.getOptionalMetadataFluxIntervalInMillis().isPresent(),       is( true ) );
+      assertThat( props.getOptionalMonitoredValueFluxIntervalInMillis().isPresent(), is( true ) );
+      assertThat( props.getOptionalPolledValueFluxIntervalInMillis().isPresent(),    is( true ) );
+      assertThat( props.getOptionalDataAcquisitionMode().isPresent(),                is( true ) );
+      assertThat( props.getOptionalPollingIntervalInMillis().isPresent(),            is( true ) );
+      assertThat( props.getOptionalFieldsOfInterest().isPresent(),                   is( true ) );
+      assertThat( props.getOptionalNumericPrecision().isPresent(),                   is( true ) );
+      assertThat( props.getOptionalFilterType().isPresent(),                         is( true ) );
+      assertThat( props.getOptionalFilterNumSamples().isPresent(),                   is( true ) );
+      assertThat( props.getOptionalFilterCycleLength().isPresent(),                  is( true ) );
+      assertThat( props.getOptionalFilterSamplingIntervalInMillis().isPresent(),     is( true ) );
+      assertThat( props.getOptionalFilterDeadband().isPresent(),                     is( true ) );
+
+      assertThat( props.getOptionalHeartbeatFluxIntervalInMillis().get(),            is( 1 ) );
+      assertThat( props.getOptionalMetadataFluxIntervalInMillis().get(),             is( 2 ) );
+      assertThat( props.getOptionalMonitoredValueFluxIntervalInMillis().get(),       is( 3 ) );
+      assertThat( props.getOptionalPolledValueFluxIntervalInMillis().get(),          is( 4 ) );
+      assertThat( props.getOptionalDataAcquisitionMode().get(),                      is( WicaDataAcquisitionMode.POLL ) );
+      assertThat( props.getOptionalPollingIntervalInMillis().get(),                  is( 5 ) );
+      assertThat( props.getOptionalFieldsOfInterest().get(),                         is( "abc" ) );
+      assertThat( props.getOptionalNumericPrecision().get(),                         is( 6 ) );
+      assertThat( props.getOptionalFilterType().get(),                               is( WicaFilterType.AVERAGER ) );
       assertThat( props.getOptionalFilterNumSamples().get(),                         is( 7 ) );
       assertThat( props.getOptionalFilterCycleLength().get(),                        is( 8 ) );
       assertThat( props.getOptionalFilterSamplingIntervalInMillis().get(),           is( 9 ) );
