@@ -18,7 +18,8 @@ public enum WicaFilterType
    RATE_LIMITER    ("rate-limiter" ),
    LAST_N          ("last-n" ),
    ONE_IN_M        ("one-in-m" ),
-   CHANGE_FILTERER ("changes" );
+   CHANGE_FILTERER ("changes" ),
+   AVERAGER        ("averager" );
 
 /*- Private attributes -------------------------------------------------------*/
 
