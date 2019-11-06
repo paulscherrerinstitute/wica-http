@@ -122,6 +122,11 @@ public class WicaChannelValueFilteringService
             filter = new WicaChannelValueNoiseRejectionFilter( deadband );
             break;
 
+         case AVERAGER:
+            logger.trace("Creating channel value filter for MONITORED channels with filterType='averager'" );
+            filter = new WicaChannelValueAveragingFilter();
+            break;
+
          default:
             logger.warn("The filterType parameter was not recognised. Using default (last-n) filter.");
             final int defaultMaxNumberOfSamples = 1;
