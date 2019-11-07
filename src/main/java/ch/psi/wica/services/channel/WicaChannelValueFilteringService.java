@@ -123,8 +123,9 @@ public class WicaChannelValueFilteringService
             break;
 
          case AVERAGER:
-            logger.trace("Creating channel value filter for MONITORED channels with filterType='averager'" );
-            filter = new WicaChannelValueAveragingFilter();
+            final int averagerNumberOfSamples = wicaChannelProperties.getFilterNumSamples();
+            logger.trace("Creating channel value filter for MONITORED channels with filterType='averager', samples='{}'", averagerNumberOfSamples );
+            filter = new WicaChannelValueAveragingFilter( averagerNumberOfSamples );
             break;
 
          default:

@@ -37,7 +37,7 @@ class WicaChannelValueAveragingFilterTest
 
    private static Stream<Arguments> getStringArgs()
    {
-      filter = new WicaChannelValueAveragingFilter();
+      filter = new WicaChannelValueAveragingFilter( 2 );
 
       return Stream.of( Arguments.of( List.of(), List.of() ),
                         Arguments.of( List.of( "abc" ), List.of() ),
@@ -63,12 +63,12 @@ class WicaChannelValueAveragingFilterTest
 
    private static Stream<Arguments> getIntegerArgs()
    {
-      filter = new WicaChannelValueAveragingFilter();
+      filter = new WicaChannelValueAveragingFilter( 2 );
 
       return Stream.of( Arguments.of( List.of(), List.of() ),
-                        Arguments.of( List.of( 5 ), List.of( 5 ) ),
-                        Arguments.of( List.of( -1, 1 ), List.of( 0 ) ),
-                        Arguments.of( List.of( 1, 2, 3, 4, 5 ), List.of( 3 ) ) );
+                        Arguments.of( List.of( 5 ), List.of() ),
+                        Arguments.of( List.of( -1, 1 ), List.of( 2 ) ),
+                        Arguments.of( List.of( 1, 2, 3, 4, 5 ), List.of( 1, 3, 5 ) ) );
    }
 
    @ParameterizedTest
@@ -92,12 +92,12 @@ class WicaChannelValueAveragingFilterTest
 
    private static Stream<Arguments> getDoubleArgs()
    {
-      filter = new WicaChannelValueAveragingFilter();
+      filter = new WicaChannelValueAveragingFilter( 2 );
 
       return Stream.of( Arguments.of( List.of(), List.of() ),
-                        Arguments.of( List.of( 5.0 ), List.of( 5.0 ) ),
-                        Arguments.of( List.of( -1.0, 1.0 ), List.of( 0.0 ) ),
-                        Arguments.of( List.of( 1.0, 2.0, 3.0, 4.0, 5.0 ), List.of( 3.0 ) ) );
+                        Arguments.of( List.of( 5.0 ), List.of() ),
+                        Arguments.of( List.of( -1.0, 1.0 ), List.of( 2.0 ) ),
+                        Arguments.of( List.of( 1.0, 2.0, 3.0, 4.0, 5.0 ), List.of( 1.0, 2.5, 4.5 ) ) );
    }
 
    @ParameterizedTest
@@ -120,7 +120,7 @@ class WicaChannelValueAveragingFilterTest
 
    private static Stream<Arguments> getMixedTypeArgs()
    {
-      filter = new WicaChannelValueAveragingFilter();
+      filter = new WicaChannelValueAveragingFilter( 2 );
 
       return Stream.of( Arguments.of( List.of( WicaChannelValue.createChannelValueConnected( "abc" ),
                                                WicaChannelValue.createChannelValueConnected( 1 ),
