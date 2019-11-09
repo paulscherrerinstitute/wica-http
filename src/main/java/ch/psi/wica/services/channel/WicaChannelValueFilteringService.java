@@ -119,7 +119,7 @@ public class WicaChannelValueFilteringService
          case CHANGE_FILTERER:
             final double deadband = wicaChannelProperties.getFilterDeadband();
             logger.trace("Creating channel value filter for MONITORED channels with filterType='changes', deadband='{}'", deadband);
-            filter = new WicaChannelValueNoiseRejectionFilter( deadband );
+            filter = new WicaChannelValueChangeDetectingFilter( deadband );
             break;
 
          case AVERAGER:
