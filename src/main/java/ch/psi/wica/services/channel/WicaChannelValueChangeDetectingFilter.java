@@ -35,13 +35,13 @@ import java.util.List;
  *
  */
 @ThreadSafe
-class WicaChannelValueNoiseRejectionFilter implements WicaChannelValueFilter
+class WicaChannelValueChangeDetectingFilter implements WicaChannelValueFilter
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private static final Logger logger = LoggerFactory.getLogger( WicaChannelValueNoiseRejectionFilter.class);
+   private static final Logger logger = LoggerFactory.getLogger( WicaChannelValueChangeDetectingFilter.class);
 
    private final double deadband;
    private WicaChannelValue previousValue;
@@ -56,7 +56,7 @@ class WicaChannelValueNoiseRejectionFilter implements WicaChannelValueFilter
     *     occur in order for the new value to be transferred from the input list
     *     to the output list.
     */
-   WicaChannelValueNoiseRejectionFilter( double deadband )
+   WicaChannelValueChangeDetectingFilter(double deadband )
    {
       Validate.isTrue( deadband > 0 );
       this.deadband = deadband;
@@ -106,13 +106,12 @@ class WicaChannelValueNoiseRejectionFilter implements WicaChannelValueFilter
    @Override
    public String toString()
    {
-      return "WicaChannelValueNoiseRejectionFilter{" +
-            "deadband=" + deadband +
-            ", previousValue=" + previousValue +
-            '}';
+      return "WicaChannelValueChangeDetectingFilter{" +
+              "deadband=" + deadband +
+              '}';
    }
 
-   /*- Private methods ----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
 
    private boolean isChangeDetected( WicaChannelValue.WicaChannelValueConnected currentValue,
                                      WicaChannelValue.WicaChannelValueConnected previousValue )

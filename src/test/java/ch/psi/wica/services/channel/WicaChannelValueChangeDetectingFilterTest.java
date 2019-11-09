@@ -36,7 +36,7 @@ class WicaChannelValueChangeDetectingFilterTest
 
    private static Stream<Arguments> getStringArgs()
    {
-      filter = new WicaChannelValueNoiseRejectionFilter(1 );
+      filter = new WicaChannelValueChangeDetectingFilter(1 );
 
       return Stream.of( Arguments.of( List.of(), List.of() ),
                         Arguments.of( List.of( "abc" ), List.of( "abc") ),
@@ -62,7 +62,7 @@ class WicaChannelValueChangeDetectingFilterTest
 
    private static Stream<Arguments> getIntegerArgs()
    {
-      filter = new WicaChannelValueNoiseRejectionFilter(1 );
+      filter = new WicaChannelValueChangeDetectingFilter(1 );
 
       return Stream.of( Arguments.of( List.of(), List.of() ),
                         Arguments.of( List.of( 0 ), List.of( 0 ) ),
@@ -94,7 +94,7 @@ class WicaChannelValueChangeDetectingFilterTest
 
    private static Stream<Arguments> getDoubleArgs()
    {
-      filter = new WicaChannelValueNoiseRejectionFilter(1 );
+      filter = new WicaChannelValueChangeDetectingFilter(1 );
 
       return Stream.of( Arguments.of( List.of(), List.of() ),
                         Arguments.of( List.of( 5.0 ), List.of( 5.0 ) ),
@@ -125,7 +125,7 @@ class WicaChannelValueChangeDetectingFilterTest
 
    private static Stream<Arguments> getMultipleMapIntegerArgs()
    {
-      filter = new WicaChannelValueNoiseRejectionFilter(1 );
+      filter = new WicaChannelValueChangeDetectingFilter(1 );
       return Stream.of( Arguments.of( List.of( 0, 0, 0, 0 ), List.of( 0 ), List.of( 0, 3, 5 ), List.of( 3, 5 ) ),
                         Arguments.of( List.of( 0, 0, 0, 2 ), List.of( 0, 2 ), List.of( 0, 1, 4 ), List.of( 0, 4 ) ) );
    }
@@ -161,7 +161,7 @@ class WicaChannelValueChangeDetectingFilterTest
 
    private static Stream<Arguments> getMultipleMapMixedTypeArgs()
    {
-      filter = new WicaChannelValueNoiseRejectionFilter(1 );
+      filter = new WicaChannelValueChangeDetectingFilter(1 );
 
       return Stream.of( Arguments.of( List.of( 0, 0, 0, 0 ), List.of( 0 ), List.of( "abc", "def", "ghi" ), List.of( "abc", "def", "ghi" ) ),
                         Arguments.of( List.of( 5, 5, 0, 2, 0 ), List.of( 5, 0, 2, 0 ), List.of( "jkl" ), List.of( "jkl" ) ));
