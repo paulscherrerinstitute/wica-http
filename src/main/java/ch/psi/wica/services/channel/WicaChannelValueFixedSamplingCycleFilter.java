@@ -65,12 +65,11 @@ class WicaChannelValueFixedSamplingCycleFilter implements WicaChannelValueFilter
    public String toString()
    {
       return "WicaChannelValueFixedSamplingCycleFilter{" +
-            "samplingCycleLength=" + samplingCycleLength +
-            ", samplingCycleIndex=" + samplingCycleIndex +
-            '}';
+              "samplingCycleLength=" + samplingCycleLength +
+              '}';
    }
 
-/*- Private methods ----------------------------------------------------------*/
+   /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
