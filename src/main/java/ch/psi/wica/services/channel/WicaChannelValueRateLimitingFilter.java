@@ -74,9 +74,8 @@ class WicaChannelValueRateLimitingFilter implements WicaChannelValueFilter
    public String toString()
    {
       return "WicaChannelValueRateLimitingFilter{" +
-            "samplingInterval=" + samplingInterval +
-            ", lastSampleTimestamp=" + lastSampleTimestamp +
-            '}';
+              "samplingInterval=" + samplingInterval +
+              '}';
    }
 
 /*- Private methods ----------------------------------------------------------*/
