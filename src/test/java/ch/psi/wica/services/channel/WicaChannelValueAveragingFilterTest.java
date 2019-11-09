@@ -124,8 +124,11 @@ class WicaChannelValueAveragingFilterTest
 
       return Stream.of( Arguments.of( List.of( WicaChannelValue.createChannelValueConnected( "abc" ),
                                                WicaChannelValue.createChannelValueConnected( 1 ),
-                                               WicaChannelValue.createChannelValueConnected( 2.5 ) ),
-                                      List.of( WicaChannelValue.createChannelValueConnected( 1.75 ) ) ) );
+                                               WicaChannelValue.createChannelValueConnected( 2.5 ),
+                                               WicaChannelValue.createChannelValueDisconnected(),
+                                               WicaChannelValue.createChannelValueConnected( 99 ) ),
+                                      List.of( WicaChannelValue.createChannelValueConnected( 1.75 ),
+                                               WicaChannelValue.createChannelValueDisconnected() ) ) );
    }
 
    @ParameterizedTest
