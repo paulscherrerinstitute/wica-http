@@ -134,6 +134,29 @@ class WicaChannelValueFilteringServiceTest
       assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 3 ) ).getValue(), is(111 ) );
    }
 
+   @Test
+   void testFilterValues_AveragingFilter()
+   {
+      final var dblValue1 = WicaChannelValue.createChannelValueConnected( 1.0 );
+      final var dblValue2 = WicaChannelValue.createChannelValueConnected( 2.0 );
+      final var idblValue3 = WicaChannelValue.createChannelValueConnected( 3.0 );
+      final var dblValue4 = WicaChannelValue.createChannelValueConnected( 4.0 );
+
+      final var props =  WicaChannelPropertiesBuilder.create()
+              .withFilterType(WicaFilterType.AVERAGER )
+              .withFilterNumSamplesInAverage( 2 )
+              .build();
+
+      final List<WicaChannelValue> inputList = List.of( dblValue1, dblValue2, idblValue3, dblValue4 );
+      final List<WicaChannelValue> outputList = serviceUnderTest.filterValues( WicaChannelBuilder.create()
+              .withChannelNameAndProperties( "abc", props )
+              .build(), inputList );
+
+      assertThat( outputList.size(), is( 2 ) );
+      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedReal) outputList.get( 0 ) ).getValue(), is(1.5 ) );
+      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedReal) outputList.get( 1 ) ).getValue(), is(3.5 ) );
+   }
+
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

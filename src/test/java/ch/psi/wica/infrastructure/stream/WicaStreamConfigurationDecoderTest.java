@@ -263,7 +263,7 @@ class WicaStreamConfigurationDecoderTest
                break;
             case "MHC3:IST:2":
                assertThat(channel.getProperties().getFilterType(), is(WicaFilterType.AVERAGER ));
-               assertThat(channel.getProperties().getFilterNumSamplesInAverage(), is(11));
+               assertThat(channel.getProperties().getFilterNumSamplesInAverage(), is(11 ));
                break;
             default:
                fail();
