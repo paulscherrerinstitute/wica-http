@@ -68,9 +68,10 @@ class WicaStreamPropertiesBuilderTest
          .withFilterCycleLength( 5 )
          .withFilterDeadband( 6.0 )
          .withFilterNumSamples( 7 )
-         .withFilterSamplingIntervalInMillis( 8 )
-         .withPollingIntervalInMillis( 9 )
-         .withNumericPrecision( 10 )
+         .withFilterNumSamplesInAverage( 8 )
+         .withFilterSamplingIntervalInMillis( 9 )
+         .withPollingIntervalInMillis( 10 )
+         .withNumericPrecision( 11 )
          .build();
 
       assertThat( props.getDataAcquisitionMode(), is( WicaDataAcquisitionMode.POLL) );
@@ -83,9 +84,10 @@ class WicaStreamPropertiesBuilderTest
       assertThat( props.getFilterCycleLength(), is(5 ) );
       assertThat( props.getFilterDeadband(), is(6.0 ) );
       assertThat( props.getFilterNumSamples(), is(7 ) );
-      assertThat( props.getFilterSamplingIntervalInMillis(), is(8 ) );
-      assertThat( props.getPollingIntervalInMillis(), is(9 ) );
-      assertThat( props.getNumericPrecision(), is(10 ) );
+      assertThat( props.getFilterNumSamplesInAverage(), is(8 ) );
+      assertThat( props.getFilterSamplingIntervalInMillis(), is(9) );
+      assertThat( props.getPollingIntervalInMillis(), is(10 ) );
+      assertThat( props.getNumericPrecision(), is(11 ) );
    }
 
 

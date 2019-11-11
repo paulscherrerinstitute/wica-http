@@ -62,11 +62,11 @@ class WicaStreamConfigurationDecoderTest
 
       channels.forEach( c -> {
          if ( c.getName().equals(WicaChannelName.of("MHC1:IST:2" ) ) ) {
-            assertThat( c.getProperties().getFilterType(), is(WicaFilterType.CHANGE_FILTERER ) );
+            assertThat( c.getProperties().getFilterType(), is(WicaFilterType.CHANGE_DETECTOR) );
             assertThat( c.getProperties().getFilterDeadband(), is( 19.0) );
          }
          if ( c.getName().equals(WicaChannelName.of("MYC2:IST:2" ) ) ) {
-            assertThat( c.getProperties().getFilterType(), is( WicaFilterType.CHANGE_FILTERER ) );
+            assertThat( c.getProperties().getFilterType(), is( WicaFilterType.CHANGE_DETECTOR) );
             assertThat( c.getProperties().getFilterDeadband(), is(10.0 ) );
          }
          if ( c.getName().equals(WicaChannelName.of("MBC1:IST:2" ) ) ) {
@@ -245,23 +245,29 @@ class WicaStreamConfigurationDecoderTest
    {
       final String testString =
             "{  \"props\":    { \"n\" : 8 }," +
-               "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\", \"props\" : { \"n\" : 4} } ] }";
+               "\"channels\": [ { \"name\": \"MHC1:IST:2\" }, " +
+                    "           { \"name\": \"MHC2:IST:2\", \"props\" : { \"n\" : 4} }," +
+                    "           { \"name\": \"MHC3:IST:2\", \"props\" : { \"filter\": \"averager\", \"x\" : 11 } } ] }";
 
       final var stream = decoder.decode( testString );
-      assertThat( stream.getWicaChannels().size(), is( 2 ) );
+      assertThat( stream.getWicaChannels().size(), is( 3 ) );
       for (WicaChannel channel : stream.getWicaChannels() )
       {
-         if ( channel.getName().asString().equals( "MHC1:IST:2" ) )
+         switch (channel.getName().asString())
          {
-            assertThat( channel.getProperties().getFilterNumSamples(), is(  8 ) );
-         }
-         else if ( channel.getName().asString().equals( "MHC2:IST:2" ) )
-         {
-            assertThat( channel.getProperties().getFilterNumSamples(), is(  4 ) );
-         }
-         else
-         {
-            fail();
+            case "MHC1:IST:2":
+               assertThat(channel.getProperties().getFilterNumSamples(), is(8));
+               break;
+            case "MHC2:IST:2":
+               assertThat(channel.getProperties().getFilterNumSamples(), is(4));
+               break;
+            case "MHC3:IST:2":
+               assertThat(channel.getProperties().getFilterType(), is(WicaFilterType.AVERAGER ));
+               assertThat(channel.getProperties().getFilterNumSamplesInAverage(), is(11));
+               break;
+            default:
+               fail();
+               break;
          }
       }
    }

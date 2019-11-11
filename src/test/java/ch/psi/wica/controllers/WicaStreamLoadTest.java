@@ -405,7 +405,7 @@ class WicaStreamLoadTest
             .withChannelNameAndCombinedProperties("MMAC3:STR:2##2", WicaChannelPropertiesBuilder.create()
                .withDataAcquisitionMode(WicaDataAcquisitionMode.POLL_MONITOR)
                .withFieldsOfInterest( "val;ts" )
-               .withFilterType( WicaFilterType.CHANGE_FILTERER )
+               .withFilterType( WicaFilterType.CHANGE_DETECTOR)
                .withFilterDeadband( 5 )
                .build() )
             .withChannelNameAndCombinedProperties("EMJCYV:IST:2##2", WicaChannelPropertiesBuilder.create()

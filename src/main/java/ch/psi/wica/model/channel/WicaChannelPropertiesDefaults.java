@@ -53,6 +53,11 @@ public class WicaChannelPropertiesDefaults
    public static final int DEFAULT_FILTER_NUM_SAMPLES = WicaStreamPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES;
 
    /**
+    * Default value for the filter number-of-samples parameter (only relevant when the filter type is FilterType.AVERAGER).
+    */
+   public static final int DEFAULT_FILTER_NUM_SAMPLES_IN_AVERAGE = WicaStreamPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES_IN_AVERAGE;
+
+   /**
     * Default value for the filter cycle-length parameter (only relevant when the filter type is FilterType.ONE_IN_M).
     */
    public static final int DEFAULT_FILTER_CYCLE_LENGTH = WicaStreamPropertiesDefaults.DEFAULT_FILTER_CYCLE_LENGTH;
@@ -63,7 +68,7 @@ public class WicaChannelPropertiesDefaults
    public static final int DEFAULT_FILTER_SAMPLING_INTERVAL_IN_MILLIS = WicaStreamPropertiesDefaults.DEFAULT_FILTER_SAMPLING_INTERVAL_IN_MILLIS;
 
    /**
-    * Default value for the filter deadband parameter (only relevant when the filter type is FilterType.CHANGE_FILTERER).
+    * Default value for the filter deadband parameter (only relevant when the filter type is FilterType.CHANGE_DETECTOR).
     */
    public static final double DEFAULT_FILTER_DEADBAND = WicaStreamPropertiesDefaults.DEFAULT_FILTER_DEADBAND;
 

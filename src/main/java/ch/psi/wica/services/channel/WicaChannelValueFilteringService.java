@@ -116,7 +116,7 @@ public class WicaChannelValueFilteringService
             filter = new WicaChannelValueFixedSamplingCycleFilter( cycleLength );
             break;
 
-         case CHANGE_FILTERER:
+         case CHANGE_DETECTOR:
             final double deadband = wicaChannelProperties.getFilterDeadband();
             logger.trace("Creating channel value filter for MONITORED channels with filterType='changes', deadband='{}'", deadband);
             filter = new WicaChannelValueChangeDetectingFilter( deadband );

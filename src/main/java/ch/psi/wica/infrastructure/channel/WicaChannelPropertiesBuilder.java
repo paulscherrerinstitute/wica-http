@@ -28,6 +28,7 @@ public class WicaChannelPropertiesBuilder
    private Integer numericPrecision;
    private WicaFilterType filterType;
    private Integer filterNumSamples;
+   private Integer filterNumSamplesInAverage;
    private Integer filterCycleLength;
    private Integer filterSamplingIntervalInMillis;
    private Double filterDeadband;
@@ -56,6 +57,7 @@ public class WicaChannelPropertiesBuilder
       numericPrecision = WicaChannelPropertiesDefaults.DEFAULT_NUMERIC_PRECISION;
       filterType = WicaChannelPropertiesDefaults.DEFAULT_FILTER_TYPE;
       filterNumSamples = WicaChannelPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES;
+      filterNumSamplesInAverage = WicaChannelPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES_IN_AVERAGE;
       filterCycleLength = WicaChannelPropertiesDefaults.DEFAULT_FILTER_CYCLE_LENGTH;
       filterSamplingIntervalInMillis = WicaChannelPropertiesDefaults.DEFAULT_FILTER_SAMPLING_INTERVAL_IN_MILLIS;
       filterDeadband =  WicaChannelPropertiesDefaults.DEFAULT_FILTER_DEADBAND;
@@ -71,6 +73,7 @@ public class WicaChannelPropertiesBuilder
       wicaStreamProperties.getOptionalNumericPrecision().ifPresent(               o -> numericPrecision = o               );
       wicaStreamProperties.getOptionalFilterType().ifPresent(                     o -> filterType = o                     );
       wicaStreamProperties.getOptionalFilterNumSamples().ifPresent(               o -> filterNumSamples = o               );
+      wicaStreamProperties.getOptionalFilterNumSamplesInAverage().ifPresent(      o -> filterNumSamplesInAverage = o      );
       wicaStreamProperties.getOptionalFilterCycleLength().ifPresent(              o -> filterCycleLength = o              );
       wicaStreamProperties.getOptionalFilterSamplingIntervalInMillis().ifPresent( o -> filterSamplingIntervalInMillis = o );
       wicaStreamProperties.getOptionalFilterDeadband().ifPresent(                 o -> filterDeadband = o                 );
@@ -87,6 +90,7 @@ public class WicaChannelPropertiesBuilder
       wicaChannelProperties.getOptionalNumericPrecision().ifPresent(               o -> numericPrecision = o               );
       wicaChannelProperties.getOptionalFilterType().ifPresent(                     o -> filterType = o                     );
       wicaChannelProperties.getOptionalFilterNumSamples().ifPresent(               o -> filterNumSamples = o               );
+      wicaChannelProperties.getOptionalFilterNumSamplesInAverage().ifPresent(      o -> filterNumSamplesInAverage = o      );
       wicaChannelProperties.getOptionalFilterCycleLength().ifPresent(              o -> filterCycleLength = o              );
       wicaChannelProperties.getOptionalFilterSamplingIntervalInMillis().ifPresent( o -> filterSamplingIntervalInMillis = o );
       wicaChannelProperties.getOptionalFilterDeadband().ifPresent(                 o -> filterDeadband = o                 );
@@ -133,6 +137,13 @@ public class WicaChannelPropertiesBuilder
       return this;
    }
 
+   public WicaChannelPropertiesBuilder withFilterNumSamplesInAverage( int filterNumSamplesInAverage )
+   {
+      Validate.isTrue( filterNumSamplesInAverage >= 0,"The 'filterNumSamplesInAverage' argument was negative." );
+      this.filterNumSamplesInAverage = filterNumSamplesInAverage;
+      return this;
+   }
+
    public WicaChannelPropertiesBuilder withFilterCycleLength( int filterCycleLength )
    {
       Validate.isTrue( filterCycleLength >= 0,"The 'filterCycleLength' argument was negative." );
@@ -162,6 +173,7 @@ public class WicaChannelPropertiesBuilder
                                         numericPrecision,
                                         filterType,
                                         filterNumSamples,
+                                        filterNumSamplesInAverage,
                                         filterCycleLength,
                                         filterSamplingIntervalInMillis,
                                         filterDeadband );

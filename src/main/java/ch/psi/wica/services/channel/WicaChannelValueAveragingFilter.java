@@ -6,8 +6,6 @@ package ch.psi.wica.services.channel;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +16,7 @@ import java.util.List;
 
 /**
  * A filter that writes a new value to the output list based on the
- * average of the previous N samples provided.
+ * average of the previous X samples provided.
  *
  * The filter only operates on values for types WicaChannelType.REAL and
  * WicaChannelType.INTEGER. All other value types in the input list
@@ -46,8 +44,6 @@ class WicaChannelValueAveragingFilter implements WicaChannelValueFilter
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private static final Logger logger = LoggerFactory.getLogger( WicaChannelValueAveragingFilter.class);
-
    private final int numberOfSamplesInAverage;
 
    private double sum;
@@ -60,8 +56,8 @@ class WicaChannelValueAveragingFilter implements WicaChannelValueFilter
 /*- Constructor --------------------------------------------------------------*/
 
    /**
-    * Constructs a new instance that calculates its average based on
-    * the specified number of samples.
+    * Constructs a new instance that calculates its output based on
+    * the arithmetic mean of the specified number of samples.
     *
     * @param numberOfSamplesInAverage the number of samples to be used to
     *        calculate each output value.

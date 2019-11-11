@@ -52,7 +52,7 @@ class WicaStreamSerializerTest
    {
       final WicaStreamProperties inputProps = WicaStreamPropertiesBuilder.create().build();
       final String resultStr = WicaStreamSerializer.writeToJson( inputProps );
-      assertThat( resultStr, is( "{\"hbflux\":null,\"metaflux\":null,\"monflux\":null,\"pollflux\":null,\"daqmode\":null,\"pollint\":null,\"fields\":null,\"prec\":null,\"filter\":null,\"n\":null,\"m\":null,\"interval\":null,\"deadband\":null}" ) );
+      assertThat( resultStr, is( "{\"hbflux\":null,\"metaflux\":null,\"monflux\":null,\"pollflux\":null,\"daqmode\":null,\"pollint\":null,\"fields\":null,\"prec\":null,\"filter\":null,\"n\":null,\"x\":null,\"m\":null,\"interval\":null,\"deadband\":null}" ) );
    }
    @Test
    void testSerializeWicaStreamProperties_SelectedProperties1_ProducesExpectedValues()
@@ -64,7 +64,7 @@ class WicaStreamSerializerTest
             .withFilterDeadband( 14.3 )
             .build();
       final String resultStr = WicaStreamSerializer.writeToJson( inputProps );
-      assertThat( resultStr, is( "{\"hbflux\":22,\"metaflux\":null,\"monflux\":null,\"pollflux\":null,\"daqmode\":null,\"pollint\":null,\"fields\":null,\"prec\":65,\"filter\":null,\"n\":null,\"m\":null,\"interval\":null,\"deadband\":14.3}" ) );
+      assertThat( resultStr, is( "{\"hbflux\":22,\"metaflux\":null,\"monflux\":null,\"pollflux\":null,\"daqmode\":null,\"pollint\":null,\"fields\":null,\"prec\":65,\"filter\":null,\"n\":null,\"x\":null,\"m\":null,\"interval\":null,\"deadband\":14.3}" ) );
    }
 
    @Test
@@ -78,7 +78,7 @@ class WicaStreamSerializerTest
               .withFilterType( WicaFilterType.AVERAGER )
               .build();
       final String resultStr = WicaStreamSerializer.writeToJson( inputProps );
-      assertThat( resultStr, is( "{\"hbflux\":22,\"metaflux\":null,\"monflux\":null,\"pollflux\":null,\"daqmode\":null,\"pollint\":null,\"fields\":null,\"prec\":65,\"filter\":\"averager\",\"n\":null,\"m\":null,\"interval\":null,\"deadband\":14.3}" ) );
+      assertThat( resultStr, is( "{\"hbflux\":22,\"metaflux\":null,\"monflux\":null,\"pollflux\":null,\"daqmode\":null,\"pollint\":null,\"fields\":null,\"prec\":65,\"filter\":\"averager\",\"n\":null,\"x\":null,\"m\":null,\"interval\":null,\"deadband\":14.3}" ) );
    }
 
    /****************************************************************************************
@@ -199,7 +199,7 @@ class WicaStreamSerializerTest
    @Test
    void testDeserializeWicaStreamProperties_SparselyConfiguredFieldValues_ProducesExpectedObject()
    {
-      final String inputString = "{\"hbflux\":\"15\",\"daqmode\":\"poll\",\"pollint\":5,\"fields\":\"abc\",\"prec\":6,\"filter\":\"last-n\",\"n\":7,\"m\":8,\"interval\":9,\"deadband\":10.0}";
+      final String inputString = "{\"hbflux\":\"15\",\"daqmode\":\"poll\",\"pollint\":5,\"fields\":\"abc\",\"prec\":6,\"filter\":\"last-n\",\"n\":7,\"x\":8,\"m\":9,\"interval\":10,\"deadband\":11.0}";
       final WicaStreamProperties props = WicaStreamSerializer.readFromJson( inputString, WicaStreamProperties.class );
 
       assertThat( props.getOptionalHeartbeatFluxIntervalInMillis().isPresent(),      is( true ) );
@@ -213,6 +213,7 @@ class WicaStreamSerializerTest
       assertThat( props.getOptionalNumericPrecision().isPresent(),                   is( true ) );
       assertThat( props.getOptionalFilterType().isPresent(),                         is( true ) );
       assertThat( props.getOptionalFilterNumSamples().isPresent(),                   is( true ) );
+      assertThat( props.getOptionalFilterNumSamplesInAverage().isPresent(),          is( true ) );
       assertThat( props.getOptionalFilterCycleLength().isPresent(),                  is( true ) );
       assertThat( props.getOptionalFilterSamplingIntervalInMillis().isPresent(),     is( true ) );
       assertThat( props.getOptionalFilterDeadband().isPresent(),                     is( true ) );
@@ -224,9 +225,10 @@ class WicaStreamSerializerTest
       assertThat( props.getOptionalNumericPrecision().get(),                         is( 6 ) );
       assertThat( props.getOptionalFilterType().get(),                               is( WicaFilterType.LAST_N ) );
       assertThat( props.getOptionalFilterNumSamples().get(),                         is( 7 ) );
-      assertThat( props.getOptionalFilterCycleLength().get(),                        is( 8 ) );
-      assertThat( props.getOptionalFilterSamplingIntervalInMillis().get(),           is( 9 ) );
-      assertThat( props.getOptionalFilterDeadband().get(),                           is( 10.0 ) );
+      assertThat( props.getOptionalFilterNumSamplesInAverage().get(),                is( 8 ) );
+      assertThat( props.getOptionalFilterCycleLength().get(),                        is( 9 ) );
+      assertThat( props.getOptionalFilterSamplingIntervalInMillis().get(),           is( 10 ) );
+      assertThat( props.getOptionalFilterDeadband().get(),                           is( 11.0 ) );
    }
 
    @Test
@@ -282,7 +284,7 @@ class WicaStreamSerializerTest
    {
       final WicaChannelProperties inputProps = WicaChannelPropertiesBuilder.create().build();
       final String resultStr = WicaStreamSerializer.writeToJson( inputProps );
-      assertThat( resultStr, is( "{\"daqmode\":null,\"pollint\":null,\"fields\":null,\"prec\":null,\"filter\":null,\"n\":null,\"m\":null,\"interval\":null,\"deadband\":null}" ) );
+      assertThat( resultStr, is( "{\"daqmode\":null,\"pollint\":null,\"fields\":null,\"prec\":null,\"filter\":null,\"n\":null,\"x\":null,\"m\":null,\"interval\":null,\"deadband\":null}" ) );
    }
 
    @Test
@@ -305,7 +307,7 @@ class WicaStreamSerializerTest
    @Test
    void testDeserializeWicaChannelProperties_SparselyConfiguredFieldValues_ProducesExpectedObject()
    {
-      final String inputString = "{\"daqmode\":\"poll\",\"pollint\":5,\"fields\":\"abc\",\"prec\":6,\"filter\":\"last-n\",\"n\":7,\"m\":8,\"interval\":9,\"deadband\":10.0}";
+      final String inputString = "{\"daqmode\":\"poll\",\"pollint\":5,\"fields\":\"abc\",\"prec\":6,\"filter\":\"last-n\",\"n\":7,\"x\":8,\"m\":9,\"interval\":10,\"deadband\":11.0}";
       final WicaStreamProperties props = WicaStreamSerializer.readFromJson( inputString, WicaStreamProperties.class );
 
       assertThat( props.getOptionalDataAcquisitionMode().isPresent(),                is( true ) );
@@ -314,6 +316,7 @@ class WicaStreamSerializerTest
       assertThat( props.getOptionalNumericPrecision().isPresent(),                   is( true ) );
       assertThat( props.getOptionalFilterType().isPresent(),                         is( true ) );
       assertThat( props.getOptionalFilterNumSamples().isPresent(),                   is( true ) );
+      assertThat( props.getOptionalFilterNumSamplesInAverage().isPresent(),          is( true ) );
       assertThat( props.getOptionalFilterCycleLength().isPresent(),                  is( true ) );
       assertThat( props.getOptionalFilterSamplingIntervalInMillis().isPresent(),     is( true ) );
       assertThat( props.getOptionalFilterDeadband().isPresent(),                     is( true ) );
@@ -324,9 +327,10 @@ class WicaStreamSerializerTest
       assertThat( props.getOptionalNumericPrecision().get(),                         is( 6 ) );
       assertThat( props.getOptionalFilterType().get(),                               is( WicaFilterType.LAST_N ) );
       assertThat( props.getOptionalFilterNumSamples().get(),                         is( 7 ) );
-      assertThat( props.getOptionalFilterCycleLength().get(),                        is( 8 ) );
-      assertThat( props.getOptionalFilterSamplingIntervalInMillis().get(),           is( 9 ) );
-      assertThat( props.getOptionalFilterDeadband().get(),                           is( 10.0 ) );
+      assertThat( props.getOptionalFilterNumSamplesInAverage().get(),                is( 8 ) );
+      assertThat( props.getOptionalFilterCycleLength().get(),                        is( 9 ) );
+      assertThat( props.getOptionalFilterSamplingIntervalInMillis().get(),           is( 10 ) );
+      assertThat( props.getOptionalFilterDeadband().get(),                           is( 11.0 ) );
    }
 
    /****************************************************************************************
@@ -395,7 +399,7 @@ class WicaStreamSerializerTest
             .build();
 
       final String resultStr = WicaStreamSerializer.writeToJson( testChannel );
-      assertThat( resultStr, is( "{\"name\":\"CHAN-X\",\"props\":{\"daqmode\":null,\"pollint\":null,\"fields\":null,\"prec\":66,\"filter\":null,\"n\":null,\"m\":null,\"interval\":null,\"deadband\":null}}") );
+      assertThat( resultStr, is( "{\"name\":\"CHAN-X\",\"props\":{\"daqmode\":null,\"pollint\":null,\"fields\":null,\"prec\":66,\"filter\":null,\"n\":null,\"x\":null,\"m\":null,\"interval\":null,\"deadband\":null}}") );
    }
 
    /****************************************************************************************

@@ -134,7 +134,7 @@ class WicaChannelValueChangeDetectingFilter implements WicaChannelValueFilter
             final double changeAsDouble = currentValueAsDouble - previousValueAsDouble;
             if ( Math.abs( changeAsDouble ) > deadband )
             {
-               logger.info("Change significant. Previous Value: {}, CurrentValue: {}, Change: {} units", previousValueAsDouble, currentValueAsDouble, changeAsDouble );
+               logger.trace("Change significant. Previous Value: {}, CurrentValue: {}, Change: {} units", previousValueAsDouble, currentValueAsDouble, changeAsDouble );
                return true;
             }
             break;
@@ -145,7 +145,7 @@ class WicaChannelValueChangeDetectingFilter implements WicaChannelValueFilter
            final int changeAsInteger = currentValueAsInteger - previousValueAsInteger;
             if ( Math.abs( changeAsInteger) > deadband )
             {
-               logger.info("Change significant. Previous Value: {}, CurrentValue: {}, Change: {} units", previousValueAsInteger, currentValueAsInteger, changeAsInteger );
+               logger.trace("Change significant. Previous Value: {}, CurrentValue: {}, Change: {} units", previousValueAsInteger, currentValueAsInteger, changeAsInteger );
                return true;
             }
             break;

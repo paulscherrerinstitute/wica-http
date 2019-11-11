@@ -41,6 +41,7 @@ class WicaStreamPropertiesTest
       assertThat( objectUnderTest.getNumericPrecision(),                   is( WicaStreamPropertiesDefaults.DEFAULT_NUMERIC_PRECISION ) );
       assertThat( objectUnderTest.getFilterType(),                         is( WicaStreamPropertiesDefaults.DEFAULT_FILTER_TYPE ) );
       assertThat( objectUnderTest.getFilterNumSamples(),                   is( WicaStreamPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES ) );
+      assertThat( objectUnderTest.getFilterNumSamplesInAverage(),          is( WicaStreamPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES_IN_AVERAGE ) );
       assertThat( objectUnderTest.getFilterCycleLength(),                  is( WicaStreamPropertiesDefaults.DEFAULT_FILTER_CYCLE_LENGTH ) );
       assertThat( objectUnderTest.getFilterSamplingIntervalInMillis(),     is( WicaStreamPropertiesDefaults.DEFAULT_FILTER_SAMPLING_INTERVAL_IN_MILLIS) );
       assertThat( objectUnderTest.getFilterDeadband(),                     is( WicaStreamPropertiesDefaults.DEFAULT_FILTER_DEADBAND ) );
@@ -61,7 +62,8 @@ class WicaStreamPropertiesTest
                                                            13,
                                                            14,
                                                            15,
-                                                           16.0 );
+                                                           16,
+                                                           17.0 );
 
       assertThat( objectUnderTest.getHeartbeatFluxIntervalInMillis(),      is(20 ) );
       assertThat( objectUnderTest.getMetadataFluxIntervalInMillis(),       is(21 ) );
@@ -73,9 +75,10 @@ class WicaStreamPropertiesTest
       assertThat( objectUnderTest.getNumericPrecision(),                   is(12 ) );
       assertThat( objectUnderTest.getFilterType(),                         is( WicaFilterType.LAST_N) );
       assertThat( objectUnderTest.getFilterNumSamples(),                   is(13 ) );
-      assertThat( objectUnderTest.getFilterCycleLength(),                  is(14 ) );
-      assertThat( objectUnderTest.getFilterSamplingIntervalInMillis(),     is(15 ) );
-      assertThat( objectUnderTest.getFilterDeadband(),                     is(16.0 ) );
+      assertThat( objectUnderTest.getFilterNumSamplesInAverage(),          is(14 ) );
+      assertThat( objectUnderTest.getFilterCycleLength(),                  is(15 ) );
+      assertThat( objectUnderTest.getFilterSamplingIntervalInMillis(),     is(16 ) );
+      assertThat( objectUnderTest.getFilterDeadband(),                     is(17.0 ) );
 
       assertThat( objectUnderTest.getOptionalHeartbeatFluxIntervalInMillis().isPresent(),      is(true ) );
       assertThat( objectUnderTest.getOptionalMetadataFluxIntervalInMillis().isPresent(),       is(true ) );
@@ -87,6 +90,7 @@ class WicaStreamPropertiesTest
       assertThat( objectUnderTest.getOptionalNumericPrecision().isPresent(),                   is(true ) );
       assertThat( objectUnderTest.getOptionalFilterType().isPresent(),                         is(true ) );
       assertThat( objectUnderTest.getOptionalFilterNumSamples().isPresent(),                   is(true ) );
+      assertThat( objectUnderTest.getOptionalFilterNumSamplesInAverage().isPresent(),          is(true ) );
       assertThat( objectUnderTest.getOptionalFilterCycleLength().isPresent(),                  is(true ) );
       assertThat( objectUnderTest.getOptionalFilterSamplingIntervalInMillis().isPresent(),     is(true ) );
       assertThat( objectUnderTest.getOptionalFilterDeadband().isPresent(),                     is(true ) );
@@ -101,19 +105,20 @@ class WicaStreamPropertiesTest
       assertThat( objectUnderTest.getOptionalNumericPrecision().get(),                   is(12 ) );
       assertThat( objectUnderTest.getOptionalFilterType().get(),                         is( WicaFilterType.LAST_N) );
       assertThat( objectUnderTest.getOptionalFilterNumSamples().get(),                   is(13 ) );
-      assertThat( objectUnderTest.getOptionalFilterCycleLength().get(),                  is(14 ) );
-      assertThat( objectUnderTest.getOptionalFilterSamplingIntervalInMillis().get(),     is(15 ) );
-      assertThat( objectUnderTest.getOptionalFilterDeadband().get(),                     is(16.0 ) );
+      assertThat( objectUnderTest.getOptionalFilterNumSamplesInAverage().get(),          is(14 ) );
+      assertThat( objectUnderTest.getOptionalFilterCycleLength().get(),                  is(15 ) );
+      assertThat( objectUnderTest.getOptionalFilterSamplingIntervalInMillis().get(),     is(16 ) );
+      assertThat( objectUnderTest.getOptionalFilterDeadband().get(),                     is(17.0 ) );
    }
 
    @Test
    void testConstructorWithNullValues()
    {
-      final var objectUnderTest = new WicaStreamProperties(null,null,
-                                                           null,null,
-                                                           null,null,null,
-                                                           null,null,null,
-                                                           null,null, null );
+      final var objectUnderTest = new WicaStreamProperties(null, null,
+                                                           null, null,
+                                                           null, null, null,
+                                                           null, null, null, null,
+                                                           null, null, null );
 
       var ex01 = assertThrows( IllegalArgumentException.class, objectUnderTest::getHeartbeatFluxIntervalInMillis );
       var ex02 = assertThrows( IllegalArgumentException.class, objectUnderTest::getMetadataFluxIntervalInMillis );
@@ -125,9 +130,10 @@ class WicaStreamPropertiesTest
       var ex08 = assertThrows( IllegalArgumentException.class, objectUnderTest::getNumericPrecision );
       var ex09 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterType );
       var ex10 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterNumSamples );
-      var ex11 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterCycleLength );
-      var ex12 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterSamplingIntervalInMillis );
-      var ex13 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterDeadband );
+      var ex11 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterNumSamplesInAverage );
+      var ex12 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterCycleLength );
+      var ex13 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterSamplingIntervalInMillis );
+      var ex14 = assertThrows( IllegalArgumentException.class, objectUnderTest::getFilterDeadband );
 
       assertThat( ex01.getMessage(), is("The heartbeat flux interval for this stream was not specified." ) );
       assertThat( ex02.getMessage(), is("The metadata flux interval for this stream was not specified." ) );
@@ -139,9 +145,10 @@ class WicaStreamPropertiesTest
       assertThat( ex08.getMessage(), is("The numeric precision for this stream was not specified." ) );
       assertThat( ex09.getMessage(), is("The filter type for this stream was not specified." ) );
       assertThat( ex10.getMessage(), is("The number of samples for this stream's LAST_N filter was not specified." ) );
-      assertThat( ex11.getMessage(), is("The cycle length for this stream's ONE_IN_M filter was not specified." ) );
-      assertThat( ex12.getMessage(), is("The sampling interval for this stream's RATE_LIMITER filter was not specified." ) );
-      assertThat( ex13.getMessage(), is("The deadband for this stream's CHANGE_FILTERER was not specified." ) );
+      assertThat( ex11.getMessage(), is("The number of samples for this stream's AVERAGER filter was not specified." ) );
+      assertThat( ex12.getMessage(), is("The cycle length for this stream's ONE_IN_M filter was not specified." ) );
+      assertThat( ex13.getMessage(), is("The sampling interval for this stream's RATE_LIMITER filter was not specified." ) );
+      assertThat( ex14.getMessage(), is("The deadband for this stream's CHANGE_DETECTOR filter was not specified." ) );
    }
 
    @Test

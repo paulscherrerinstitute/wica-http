@@ -128,7 +128,7 @@ public class WicaStreamSerializer
    /**
     * WicaStreamPropertiesSerializerMixin
     */
-   @JsonPropertyOrder( { "hbflux", "metaflux", "monflux", "pollflux", "daqmode", "pollint", "fields", "prec", "filter", "n", "m", "interval", "deadband" } )
+   @JsonPropertyOrder( { "hbflux", "metaflux", "monflux", "pollflux", "daqmode", "pollint", "fields", "prec", "filter", "n", "x", "m", "interval", "deadband" } )
    @JsonInclude( JsonInclude.Include.NON_DEFAULT )
    public static abstract class WicaStreamPropertiesSerializerMixin extends WicaStreamProperties
    {
@@ -142,6 +142,7 @@ public class WicaStreamSerializer
       @Override public abstract @JsonProperty( "prec"     ) Optional<Integer> getOptionalNumericPrecision();
       @Override public abstract @JsonProperty( "filter"   ) Optional<WicaFilterType> getOptionalFilterType();
       @Override public abstract @JsonProperty( "n"        ) Optional<Integer> getOptionalFilterNumSamples();
+      @Override public abstract @JsonProperty( "x"        ) Optional<Integer> getOptionalFilterNumSamplesInAverage();
       @Override public abstract @JsonProperty( "m"        ) Optional<Integer> getOptionalFilterCycleLength();
       @Override public abstract @JsonProperty( "interval" ) Optional<Integer> getOptionalFilterSamplingIntervalInMillis();
       @Override public abstract @JsonProperty( "deadband" ) Optional<Double> getOptionalFilterDeadband();
@@ -166,18 +167,19 @@ public class WicaStreamSerializer
    // Note: Include.NON_DEFAULT is selected so that serializer will only send the values
    // that are different from the defaults.
    @JsonInclude( value = JsonInclude.Include.NON_DEFAULT)
-   @JsonPropertyOrder( { "daqmode", "pollint", "fields", "prec", "filter", "n", "m", "interval", "deadband" } )
+   @JsonPropertyOrder( { "daqmode", "pollint", "fields", "prec", "filter", "n", "x", "m", "interval", "deadband" } )
    public static abstract class WicaChannelPropertiesSerializerMixin extends WicaChannelProperties
    {
       @Override public abstract @JsonProperty( "daqmode"  ) Optional<WicaDataAcquisitionMode> getOptionalDataAcquisitionMode();
       @Override public abstract @JsonProperty( "pollint"  ) Optional<Integer> getOptionalPollingIntervalInMillis();
+      @Override public abstract @JsonProperty( "fields"   ) Optional<String> getOptionalFieldsOfInterest();
       @Override public abstract @JsonProperty( "prec"     ) Optional<Integer> getOptionalNumericPrecision();
       @Override public abstract @JsonProperty( "filter"   ) Optional<WicaFilterType> getOptionalFilterType();
       @Override public abstract @JsonProperty( "n"        ) Optional<Integer> getOptionalFilterNumSamples();
+      @Override public abstract @JsonProperty( "x"        ) Optional<Integer> getOptionalFilterNumSamplesInAverage();
       @Override public abstract @JsonProperty( "m"        ) Optional<Integer> getOptionalFilterCycleLength();
       @Override public abstract @JsonProperty( "interval" ) Optional<Integer> getOptionalFilterSamplingIntervalInMillis();
       @Override public abstract @JsonProperty( "deadband" ) Optional<Double> getOptionalFilterDeadband();
-      @Override public abstract @JsonProperty( "fields"   ) Optional<String> getOptionalFieldsOfInterest();
    }
    
 /*- Nested Classes: Deserializers --------------------------------------------*/
@@ -212,6 +214,7 @@ public class WicaStreamSerializer
                                                     @JsonProperty( "prec"      ) Integer numericPrecision,
                                                     @JsonProperty( "filter"    ) WicaFilterType filterType,
                                                     @JsonProperty( "n"         ) Integer filterNumSamples,
+                                                    @JsonProperty( "x"         ) Integer filterNumSamplesInAverage,
                                                     @JsonProperty( "m"         ) Integer filterCycleLength,
                                                     @JsonProperty( "interval"  ) Integer filterSamplingIntervalInMillis,
                                                     @JsonProperty( "deadband"  ) Double filterDeadband ) {}
@@ -242,6 +245,7 @@ public class WicaStreamSerializer
                                                      @JsonProperty( "prec"     ) Integer numericPrecision,
                                                      @JsonProperty( "filter"   ) WicaFilterType filterType,
                                                      @JsonProperty( "n"        ) Integer filterNumSamples,
+                                                     @JsonProperty( "x"        ) Integer filterNumSamplesInAverage,
                                                      @JsonProperty( "m"        ) Integer filterCycleLength,
                                                      @JsonProperty( "interval" ) Integer filterSamplingIntervalInMillis,
                                                      @JsonProperty( "deadband" ) Double filterDeadband ) {}
@@ -272,6 +276,7 @@ public class WicaStreamSerializer
                optEqualsDefaultValue( props.getOptionalNumericPrecision(),                   WicaStreamPropertiesDefaults.DEFAULT_NUMERIC_PRECISION                       ) &&
                optEqualsDefaultValue( props.getOptionalFilterType(),                         WicaStreamPropertiesDefaults.DEFAULT_FILTER_TYPE                             ) &&
                optEqualsDefaultValue( props.getOptionalFilterNumSamples(),                   WicaStreamPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES                      ) &&
+               optEqualsDefaultValue( props.getOptionalFilterNumSamplesInAverage(),          WicaStreamPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES_IN_AVERAGE           ) &&
                optEqualsDefaultValue( props.getOptionalFilterCycleLength(),                  WicaStreamPropertiesDefaults.DEFAULT_FILTER_CYCLE_LENGTH                     ) &&
                optEqualsDefaultValue( props.getOptionalFilterSamplingIntervalInMillis(),     WicaStreamPropertiesDefaults.DEFAULT_FILTER_SAMPLING_INTERVAL_IN_MILLIS      ) &&
                optEqualsDefaultValue( props.getOptionalFilterDeadband(),                     WicaStreamPropertiesDefaults.DEFAULT_FILTER_DEADBAND                         );

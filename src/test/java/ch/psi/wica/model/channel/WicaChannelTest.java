@@ -47,7 +47,8 @@ class WicaChannelTest
                                                       13,
                                                       14,
                                                       15,
-                                                      16.0 );
+                                                      16,
+                                                      17.0 );
 
 
       final WicaChannel objectUnderTest =  new WicaChannel( testName, testProps );

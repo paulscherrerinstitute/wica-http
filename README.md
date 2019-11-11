@@ -335,17 +335,18 @@ Note: currently (2019-09-17) the metadata message type is suppressed if none of 
 
 The following configuration properties are supported on each wica-channel.
 
-|Property     |Description                                                                                                      |
-|-------------|---------------------------------------------------------------------------------------------------------------- |
-| "daqmode"   |The data acquisition mode. Possible values: 'poll', 'monitor', 'poll-monitor', poll-and-monitor'.                |
-| "pollint"   |The polling interval in milliseconds for a channel whose data acquisition mode implies polling.                  |
-| "fields"    |Semicolon separated list specifying the fields which will be included in the 'ev-wica-channel-value' messages.   |
-| "filter"    |The channel filter type.  Possible values: 'all-value', 'rate-limiter', 'last-n', 'one-in-m', 'change-filterer'. |
-| "n"         |The value of the 'N' parameter for a last-n filter.                                                              |
-| "m"         |The value of the 'M' parameter for a one-in-m filter.                                                            |
-| "deadband"  |The value of the 'deadband' parameter for a change-filterer filter.                                              |
-| "interval"  |The value of the 'interval' parameter (in milliseconds) for a rate-limiter filter.                               |
-| "fields"    |Semicolon separated list specifying the fields which will be included in the 'ev-wica-channel-value' messages.   |
+|Property     |Description                                                                                                                  |
+|-------------|---------------------------------------------------------------------------------------------------------------------------- |
+| "daqmode"   |The data acquisition mode. Possible values: 'poll', 'monitor', 'poll-monitor', poll-and-monitor'.                            |
+| "pollint"   |The polling interval in milliseconds for a channel whose data acquisition mode implies polling.                              |
+| "fields"    |Semicolon separated list specifying the fields which will be included in the 'ev-wica-channel-value' messages.               |
+| "filter"    |The channel filter type.  Possible values: 'all-value', 'rate-limiter', 'last-n', 'one-in-m', 'change-detector', 'averager'. |
+| "n"         |The value of the 'N' parameter for a last-n filter.                                                                          |
+| "m"         |The value of the 'M' parameter for a one-in-m filter.                                                                        |
+| "x"         |The value of the 'X' parameter for an averager filter.                                                                       |
+| "deadband"  |The value of the 'deadband' parameter for a change-detector filter.                                                          |
+| "interval"  |The value of the 'interval' parameter (in milliseconds) for a rate-limiter filter.                                           |
+| "fields"    |Semicolon separated list specifying the fields which will be included in the 'ev-wica-channel-value' messages.               |
 
 
 The following configuration properties are supported on a wica stream:

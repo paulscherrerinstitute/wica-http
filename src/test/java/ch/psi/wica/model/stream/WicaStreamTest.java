@@ -52,7 +52,8 @@ class WicaStreamTest
                                                      13,
                                                      14,
                                                      15,
-                                                     16.0 );
+                                                     16,
+                                                     17.0 );
 
       final WicaStream objectUnderTest =  new WicaStream( testId, testProps, Set.of() );
       assertThat( objectUnderTest.getWicaStreamId(), is( testId ) );

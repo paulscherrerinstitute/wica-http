@@ -133,7 +133,7 @@ public class WicaStreamConfigurationDecoder
          }
          else
          {
-            wicaStreamBuilder = wicaStreamBuilder.withChannelNameAndStreamProperties(wicaChannelName);
+            wicaStreamBuilder = wicaStreamBuilder.withChannelNameAndStreamProperties( wicaChannelName );
          }
       }
 

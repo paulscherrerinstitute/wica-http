@@ -42,6 +42,7 @@ public class WicaStreamProperties
    private final Integer pollingIntervalInMillis;
    private final Integer numericPrecision;
    private final Integer filterNumSamples;
+   private final Integer filterNumSamplesInAverage;
    private final Integer filterCycleLength;
    private final Integer filterSamplingIntervalInMillis;
    private final Double filterDeadband;
@@ -62,6 +63,7 @@ public class WicaStreamProperties
       this.numericPrecision                   = WicaStreamPropertiesDefaults.DEFAULT_NUMERIC_PRECISION;
       this.filterType                         = WicaStreamPropertiesDefaults.DEFAULT_FILTER_TYPE;
       this.filterNumSamples                   = WicaStreamPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES;
+      this.filterNumSamplesInAverage          = WicaStreamPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES_IN_AVERAGE;
       this.filterCycleLength                  = WicaStreamPropertiesDefaults.DEFAULT_FILTER_CYCLE_LENGTH;
       this.filterSamplingIntervalInMillis     = WicaStreamPropertiesDefaults.DEFAULT_FILTER_SAMPLING_INTERVAL_IN_MILLIS;
       this.filterDeadband                     = WicaStreamPropertiesDefaults.DEFAULT_FILTER_DEADBAND;
@@ -81,6 +83,7 @@ public class WicaStreamProperties
                                 Integer numericPrecision,
                                 WicaFilterType filterType,
                                 Integer filterNumSamples,
+                                Integer filterNumSamplesInAverage,
                                 Integer filterCycleLength,
                                 Integer filterSamplingIntervalInMillis,
                                 Double filterDeadband )
@@ -94,6 +97,7 @@ public class WicaStreamProperties
       this.numericPrecision                   = numericPrecision;
       this.filterType                         = filterType;
       this.filterNumSamples                   = filterNumSamples;
+      this.filterNumSamplesInAverage          = filterNumSamplesInAverage;
       this.filterCycleLength                  = filterCycleLength;
       this.filterSamplingIntervalInMillis     = filterSamplingIntervalInMillis;
       this.filterDeadband                     = filterDeadband;
@@ -123,6 +127,7 @@ public class WicaStreamProperties
                                 Integer numericPrecision,
                                 WicaFilterType filterType,
                                 Integer filterNumSamples,
+                                Integer filterNumSamplesInAverage,
                                 Integer filterCycleLength,
                                 Integer filterSamplingIntervalInMillis,
                                 Double filterDeadband )
@@ -136,6 +141,7 @@ public class WicaStreamProperties
       this.numericPrecision                   = numericPrecision;
       this.filterType                         = filterType;
       this.filterNumSamples                   = filterNumSamples;
+      this.filterNumSamplesInAverage          = filterNumSamplesInAverage;
       this.filterCycleLength                  = filterCycleLength;
       this.filterSamplingIntervalInMillis     = filterSamplingIntervalInMillis;
       this.filterDeadband                     = filterDeadband;
@@ -256,6 +262,16 @@ public class WicaStreamProperties
       return getOptionalFilterNumSamples().orElseThrow( () -> new IllegalArgumentException( "The number of samples for this stream's LAST_N filter was not specified." ) );
    }
 
+   public Optional<Integer> getOptionalFilterNumSamplesInAverage()
+   {
+      return Optional.ofNullable( filterNumSamplesInAverage );
+   }
+
+   public int getFilterNumSamplesInAverage()
+   {
+      return getOptionalFilterNumSamplesInAverage().orElseThrow( () -> new IllegalArgumentException( "The number of samples for this stream's AVERAGER filter was not specified." ) );
+   }
+
    public Optional<Double> getOptionalFilterDeadband()
    {
       return Optional.ofNullable( filterDeadband );
@@ -263,7 +279,7 @@ public class WicaStreamProperties
 
    public double getFilterDeadband()
    {
-      return getOptionalFilterDeadband().orElseThrow( () -> new IllegalArgumentException( "The deadband for this stream's CHANGE_FILTERER was not specified." ) );
+      return getOptionalFilterDeadband().orElseThrow( () -> new IllegalArgumentException( "The deadband for this stream's CHANGE_DETECTOR filter was not specified." ) );
    }
 
    public Optional<Integer> getOptionalFilterSamplingIntervalInMillis()
@@ -292,6 +308,7 @@ public class WicaStreamProperties
             Objects.equals(pollingIntervalInMillis, that.pollingIntervalInMillis) &&
             Objects.equals(numericPrecision, that.numericPrecision) &&
             Objects.equals(filterNumSamples, that.filterNumSamples) &&
+            Objects.equals(filterNumSamplesInAverage, that.filterNumSamplesInAverage) &&
             Objects.equals(filterCycleLength, that.filterCycleLength) &&
             Objects.equals(filterSamplingIntervalInMillis, that.filterSamplingIntervalInMillis) &&
             Objects.equals(filterDeadband, that.filterDeadband) &&

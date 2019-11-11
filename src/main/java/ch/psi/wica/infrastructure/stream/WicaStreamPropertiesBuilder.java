@@ -28,6 +28,7 @@ public class WicaStreamPropertiesBuilder
    private Integer numericPrecision;
    private WicaFilterType filterType;
    private Integer filterNumSamples;
+   private Integer filterNumSamplesInAverage;
    private Integer filterCycleLength;
    private Integer filterSamplingIntervalInMillis;
    private Double filterDeadband;
@@ -62,6 +63,7 @@ public class WicaStreamPropertiesBuilder
       numericPrecision = WicaStreamPropertiesDefaults.DEFAULT_NUMERIC_PRECISION;
       filterType = WicaStreamPropertiesDefaults.DEFAULT_FILTER_TYPE;
       filterNumSamples = WicaStreamPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES;
+      filterNumSamplesInAverage = WicaStreamPropertiesDefaults.DEFAULT_FILTER_NUM_SAMPLES_IN_AVERAGE;
       filterCycleLength = WicaStreamPropertiesDefaults.DEFAULT_FILTER_CYCLE_LENGTH;
       filterSamplingIntervalInMillis = WicaStreamPropertiesDefaults.DEFAULT_FILTER_SAMPLING_INTERVAL_IN_MILLIS;
       filterDeadband =  WicaStreamPropertiesDefaults.DEFAULT_FILTER_DEADBAND;
@@ -82,6 +84,7 @@ public class WicaStreamPropertiesBuilder
       wicaStreamProperties.getOptionalNumericPrecision().ifPresent(                    o -> numericPrecision = o                   );
       wicaStreamProperties.getOptionalFilterType().ifPresent(                          o -> filterType = o                         );
       wicaStreamProperties.getOptionalFilterNumSamples().ifPresent(                    o -> filterNumSamples = o                   );
+      wicaStreamProperties.getOptionalFilterNumSamplesInAverage().ifPresent(           o -> filterNumSamplesInAverage = o          );
       wicaStreamProperties.getOptionalFilterCycleLength().ifPresent(                   o -> filterCycleLength = o                  );
       wicaStreamProperties.getOptionalFilterSamplingIntervalInMillis().ifPresent(      o -> filterSamplingIntervalInMillis = o     );
       wicaStreamProperties.getOptionalFilterDeadband().ifPresent(                      o -> filterDeadband = o                     );
@@ -148,6 +151,12 @@ public class WicaStreamPropertiesBuilder
       return this;
    }
 
+   public WicaStreamPropertiesBuilder withFilterNumSamplesInAverage( int filterNumSamplesInAverage )
+   {
+      this.filterNumSamplesInAverage = filterNumSamplesInAverage;
+      return this;
+   }
+
    public WicaStreamPropertiesBuilder withFilterCycleLength( int filterCycleLength )
    {
       this.filterCycleLength = filterCycleLength;
@@ -178,6 +187,7 @@ public class WicaStreamPropertiesBuilder
                                        numericPrecision,
                                        filterType,
                                        filterNumSamples,
+                                       filterNumSamplesInAverage,
                                        filterCycleLength,
                                        filterSamplingIntervalInMillis,
                                        filterDeadband );
