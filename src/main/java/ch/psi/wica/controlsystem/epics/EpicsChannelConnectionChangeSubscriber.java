@@ -64,15 +64,15 @@ class EpicsChannelConnectionChangeSubscriber
       // Obtain the control system name for logging purposes.
       final ControlSystemName controlSystemName = ControlSystemName.of(channel.getName());
 
-      logger.trace("'{}' - adding connection change handler...", controlSystemName );
+      logger.info("'{}' - adding connection change handler...", controlSystemName );
       channel.addConnectionListener(( chan, isConnected ) -> {
 
-         logger.trace("'{}' - publishing new connection state: '{}'", controlSystemName, isConnected );
+         logger.info("'{}' - publishing new connection state: '{}'", controlSystemName, isConnected );
          connectionChangeHandler.accept( isConnected );
          logger.trace("'{}' - published new connection state ok.", controlSystemName );
       });
 
-      logger.trace("'{}' - connection change handler added.", controlSystemName );
+      logger.info("'{}' - connection change handler added.", controlSystemName );
 
       // Validate postconditions
       Validate.isTrue( channel.getConnectionState() == ConnectionState.NEVER_CONNECTED, "Programming Error: The channel was not in the expected state (NEVER_CONNECTED)" );
