@@ -133,7 +133,7 @@ public class WicaStreamPolledValueRequesterService
       {
          final int currentInterestCount = pollerInterestMap.get(storageKey );
          final int newInterestCount = currentInterestCount + 1;
-         logger.info( "Increasing interest level in control system channel named: '{}' to {}", controlSystemName, newInterestCount );
+         logger.info( "Increasing interest level in polled control system channel named: '{}' to {}", controlSystemName, newInterestCount );
          pollerInterestMap.put(storageKey, newInterestCount );
       }
       // If the channel is NOT already being polled start polling it.
@@ -179,7 +179,7 @@ public class WicaStreamPolledValueRequesterService
       if ( currentInterestCount > 1 )
       {
          final int newInterestCount = currentInterestCount - 1;
-         logger.info( "Reducing poller interest level in control system channel named: '{}' to {}" , controlSystemName.asString(), newInterestCount );
+         logger.info( "Reducing interest level in polled control system channel named: '{}' to {}" , controlSystemName.asString(), newInterestCount );
          pollerInterestMap.put(storageKey, newInterestCount );
       }
       else

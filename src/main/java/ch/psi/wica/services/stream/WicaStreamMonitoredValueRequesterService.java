@@ -124,7 +124,7 @@ public class WicaStreamMonitoredValueRequesterService
     */
    private void startMonitoringChannel( WicaChannel wicaChannel )
    {
-      logger.trace( "Request to start monitoring wica channel: '{}'", wicaChannel);
+      logger.info( "Request to start monitoring wica channel: '{}'", wicaChannel);
 
       Validate.notNull( wicaChannel );
       final var storageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
@@ -135,13 +135,13 @@ public class WicaStreamMonitoredValueRequesterService
       {
          final int currentInterestCount = monitorInterestMap.get(storageKey );
          final int newInterestCount = currentInterestCount + 1;
-         logger.trace( "Increasing interest level in control system channel named: '{}' to {}", controlSystemName, newInterestCount );
+         logger.info( "Increasing interest level in monitored control system channel named: '{}' to {}", controlSystemName, newInterestCount );
          monitorInterestMap.put(storageKey, newInterestCount );
       }
       // If the channel is NOT already being monitored start monitoring it.
       else
       {
-         logger.trace( "Starting monitoring on control system channel named: '{}'", controlSystemName.asString() );
+         logger.info( "Starting monitoring on control system channel named: '{}'", controlSystemName.asString() );
 
          // Set the initial state for the value and metadata stashes.
          applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent( wicaChannel, WicaChannelMetadata.createUnknownInstance()  ));
@@ -168,7 +168,7 @@ public class WicaStreamMonitoredValueRequesterService
     */
    private void stopMonitoringChannel( WicaChannel wicaChannel )
    {
-      logger.trace( "Request to stop monitoring wica channel: '{}'", wicaChannel );
+      logger.info( "Request to stop monitoring wica channel: '{}'", wicaChannel );
 
       Validate.notNull( wicaChannel );
       final var storageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
@@ -181,12 +181,12 @@ public class WicaStreamMonitoredValueRequesterService
       if ( currentInterestCount > 1 )
       {
          final int newInterestCount = currentInterestCount - 1;
-         logger.trace( "Reducing interest level in control system channel named: '{}' to {}" , controlSystemName.asString(), newInterestCount );
+         logger.info( "Reducing interest level in monitored control system channel named: '{}' to {}" , controlSystemName.asString(), newInterestCount );
          monitorInterestMap.put( storageKey, newInterestCount );
       }
       else
       {
-         logger.trace( "Stopping monitoring on control system channel named: '{}'", controlSystemName.asString() );
+         logger.info( "Stopping monitoring on control system channel named: '{}'", controlSystemName.asString() );
          monitorInterestMap.remove( storageKey );
          applicationEventPublisher.publishEvent( new WicaChannelStopMonitoringEvent( wicaChannel ) );
       }
