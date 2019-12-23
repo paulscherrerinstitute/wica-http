@@ -5,7 +5,6 @@ package ch.psi.wica.controllers;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.app.StatisticsCollectable;
-import ch.psi.wica.model.app.StatisticsCollector;
 import ch.psi.wica.model.stream.WicaStreamId;
 import ch.psi.wica.services.stream.WicaStreamLifecycleService;
 import org.apache.commons.lang3.Validate;
@@ -40,7 +39,7 @@ class WicaStreamGetController implements StatisticsCollectable
    private final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
    private final Logger logger = LoggerFactory.getLogger(WicaStreamGetController.class );
    private final WicaStreamLifecycleService wicaStreamLifecycleService;
-   private final StatisticsCollector statisticsCollector = new StatisticsCollector();
+   private final ControllerStatisticsCollector statisticsCollector = new ControllerStatisticsCollector();
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -160,7 +159,7 @@ class WicaStreamGetController implements StatisticsCollectable
 /*- Package-level methods ----------------------------------------------------*/
 
    @Override
-   public StatisticsCollector getStatistics()
+   public ControllerStatisticsCollector getStatistics()
    {
       return statisticsCollector;
    }

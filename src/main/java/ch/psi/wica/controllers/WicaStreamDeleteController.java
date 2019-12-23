@@ -5,7 +5,6 @@ package ch.psi.wica.controllers;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.app.StatisticsCollectable;
-import ch.psi.wica.model.app.StatisticsCollector;
 import ch.psi.wica.model.stream.WicaStreamId;
 import ch.psi.wica.services.stream.WicaStreamLifecycleService;
 import org.apache.commons.lang3.Validate;
@@ -38,7 +37,7 @@ class WicaStreamDeleteController  implements StatisticsCollectable
    private final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
    private final Logger logger = LoggerFactory.getLogger(WicaStreamDeleteController.class );
    private final WicaStreamLifecycleService wicaStreamLifecycleService;
-   private final StatisticsCollector statisticsCollector = new StatisticsCollector();
+   private final ControllerStatisticsCollector statisticsCollector = new ControllerStatisticsCollector();
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -98,6 +97,8 @@ class WicaStreamDeleteController  implements StatisticsCollectable
       {
          final String errorMessage = "WICA SERVER: The stream ID was empty/null.";
          logger.warn( "DELETE: Rejected request because '{}'.", errorMessage  );
+         statisticsCollector.incrementErrors();
+         statisticsCollector.incrementReplies();
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
@@ -108,6 +109,8 @@ class WicaStreamDeleteController  implements StatisticsCollectable
       {
          final String errorMessage = "WICA SERVER: The stream ID was blank.";
          logger.warn( "DELETE: Rejected request because '{}'.", errorMessage  );
+         statisticsCollector.incrementErrors();
+         statisticsCollector.incrementReplies();
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
@@ -117,6 +120,8 @@ class WicaStreamDeleteController  implements StatisticsCollectable
       {
          final String errorMessage = "WICA SERVER: The stream ID '" + optStreamId.get() + "' was not recognised.";
          logger.warn( "DELETE: Rejected request because {}", errorMessage  );
+         statisticsCollector.incrementErrors();
+         statisticsCollector.incrementReplies();
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
@@ -138,11 +143,13 @@ class WicaStreamDeleteController  implements StatisticsCollectable
             errorMessage = "WICA SERVER: " + ex.getMessage();
          }
          logger.warn( "DELETE: Rejected request because '{}'.", errorMessage  );
+         statisticsCollector.incrementReplies();
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
       logger.trace( "DELETE: deleted stream with id: '{}'" , optStreamId.get()  );
       appLogger.info( "DELETE: deleted stream with id: '{}' following request from client with IP: '{}'", wicaStreamId, httpServletRequest.getRemoteHost() );
+      statisticsCollector.incrementReplies();
       return new ResponseEntity<>(  optStreamId.get() , HttpStatus.OK );
    }
 
@@ -150,6 +157,7 @@ class WicaStreamDeleteController  implements StatisticsCollectable
    @ExceptionHandler( Exception.class )
    public void handleException( Exception ex)
    {
+      statisticsCollector.incrementErrors();
       logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
    }
 
@@ -157,7 +165,7 @@ class WicaStreamDeleteController  implements StatisticsCollectable
 /*- Package-level methods ----------------------------------------------------*/
 
    @Override
-   public StatisticsCollector getStatistics()
+   public ControllerStatisticsCollector getStatistics()
    {
       return statisticsCollector;
    }

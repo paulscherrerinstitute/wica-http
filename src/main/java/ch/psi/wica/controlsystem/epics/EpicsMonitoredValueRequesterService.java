@@ -3,15 +3,11 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.WicaChannelMetadataUpdateEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelMonitoredValueUpdateEvent;
 import ch.psi.wica.controlsystem.event.WicaChannelStartMonitoringEvent;
 import ch.psi.wica.controlsystem.event.WicaChannelStopMonitoringEvent;
 import ch.psi.wica.model.app.ControlSystemName;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
 import ch.psi.wica.model.channel.WicaChannelName;
-import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -19,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-
-import java.util.function.Consumer;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -45,16 +39,13 @@ public class EpicsMonitoredValueRequesterService
    private final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
    private final Logger logger = LoggerFactory.getLogger(EpicsMonitoredValueRequesterService.class );
 
-   private final ApplicationEventPublisher applicationEventPublisher;
    private final EpicsChannelMonitoringService epicsChannelMonitoringService;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   EpicsMonitoredValueRequesterService( ApplicationEventPublisher applicationEventPublisher,
-                                        EpicsChannelMonitoringService epicsChannelMonitoringService )
+   EpicsMonitoredValueRequesterService( EpicsChannelMonitoringService epicsChannelMonitoringService )
    {
-      this.applicationEventPublisher = Validate.notNull( applicationEventPublisher );
       this.epicsChannelMonitoringService = Validate.notNull (epicsChannelMonitoringService);
    }
 
@@ -121,13 +112,8 @@ public class EpicsMonitoredValueRequesterService
       appLogger.trace( "EPICS channel subscribe: '{}'", controlSystemName.asString() );
       logger.trace( "Subscribing to new control system channel named: '{}'", controlSystemName.asString() );
 
-      // Define the handlers to be informed of interesting changes to the channel
-      final Consumer<Boolean> stateChangedHandler = b -> handleConnectionStateChanged( wicaChannel, b );
-      final Consumer<WicaChannelValue> valueChangedHandler = v -> handleMonitoredValueChanged( wicaChannel, v );
-      final Consumer<WicaChannelMetadata> metadataChangedHandler = v -> handleMetadataChanged( wicaChannel, v );
-
       // Now start monitoring
-      epicsChannelMonitoringService.startMonitoring( EpicsChannelName.of( controlSystemName ), stateChangedHandler, metadataChangedHandler, valueChangedHandler );
+      epicsChannelMonitoringService.startMonitoring( wicaChannel );
    }
 
    /**
@@ -143,60 +129,9 @@ public class EpicsMonitoredValueRequesterService
       appLogger.info( "EPICS channel unsubscribe: '{}'", controlSystemName.asString() );
       logger.trace( "Unsubscribing from control system channel named: '{}'", controlSystemName.asString() );
 
-      epicsChannelMonitoringService.stopMonitoring( EpicsChannelName.of( controlSystemName ) );
+      epicsChannelMonitoringService.stopMonitoring( wicaChannel );
    }
 
-   /**
-    * Handles a connection state change published by the EPICS channel monitor.
-    *
-    * @param wicaChannel the name of the channel whose connection state has changed.
-    * @param isConnected the new connection state.
-    */
-   private void handleConnectionStateChanged( WicaChannel wicaChannel, Boolean isConnected )
-   {
-      Validate.notNull( wicaChannel, "The 'controlSystemName' argument was null" );
-      Validate.notNull( isConnected, "The 'isConnected' argument was null"  );
-
-      logger.trace("'{}' - connection state changed to '{}'.", wicaChannel, isConnected);
-
-      if ( ! isConnected )
-      {
-         logger.trace("'{}' - value changed to DISCONNECTED to indicate the connection was lost.", wicaChannel);
-         final WicaChannelValue disconnectedValue = WicaChannelValue.createChannelValueDisconnected();
-
-         applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( wicaChannel, disconnectedValue ) );
-      }
-   }
-
-   /**
-    * Handles a metadata change published by the EPICS channel monitor.
-    *
-    * @param wicaChannel the name of the channel whose metadata has changed.
-    * @param wicaChannelMetadata the metadata
-    */
-   private void handleMetadataChanged( WicaChannel wicaChannel, WicaChannelMetadata wicaChannelMetadata )
-   {
-      Validate.notNull( wicaChannel, "The 'wicaChannel' argument was null");
-      Validate.notNull( wicaChannelMetadata, "The 'wicaChannelMetadata' argument was null");
-
-      logger.trace("'{}' - metadata changed to: '{}'", wicaChannel, wicaChannelMetadata);
-      applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent( wicaChannel, wicaChannelMetadata ) );
-   }
-
-   /**
-    * Handles a value change published by the EPICS channel monitor.
-    *
-    * @param wicaChannel the name of the channel whose value has changed.
-    * @param wicaChannelValue the new value.
-    */
-   private void handleMonitoredValueChanged( WicaChannel wicaChannel, WicaChannelValue wicaChannelValue )
-   {
-      Validate.notNull( wicaChannel, "The 'wicaChannel' argument was null");
-      Validate.notNull( wicaChannelValue, "The 'wicaChannelValue' argument was null");
-
-      logger.trace("'{}' - value changed to: '{}'", wicaChannel, wicaChannelValue );
-      applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( wicaChannel, wicaChannelValue ) );
-   }
 
 /*- Nested Classes -----------------------------------------------------------*/
 

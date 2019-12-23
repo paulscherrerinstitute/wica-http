@@ -8,7 +8,6 @@ import ch.psi.wica.controlsystem.epics.EpicsChannelGetAndPutService;
 import ch.psi.wica.controlsystem.epics.EpicsChannelName;
 import ch.psi.wica.infrastructure.channel.WicaChannelDataSerializerBuilder;
 import ch.psi.wica.model.app.StatisticsCollectable;
-import ch.psi.wica.model.app.StatisticsCollector;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +43,7 @@ class WicaChannelGetController implements StatisticsCollectable
    private final int defaultNumericScale;
    private final String defaultFieldsOfInterest;
 
-   private final StatisticsCollector statisticsCollector = new StatisticsCollector();
+   private final ControllerStatisticsCollector statisticsCollector = new ControllerStatisticsCollector();
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -143,19 +142,21 @@ class WicaChannelGetController implements StatisticsCollectable
             .build();
 
       logger.info( "'{}' - OK: Returning wica channel value.", channelName );
+      statisticsCollector.incrementReplies();
       return new ResponseEntity<>( serializer.writeToJson( wicaChannelValue ), HttpStatus.OK );
    }
 
    @ExceptionHandler( Exception.class )
    public void handleException( Exception ex)
    {
+      statisticsCollector.incrementErrors();
       logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
    }
 
 /*- Package-level methods ----------------------------------------------------*/
 
    @Override
-   public StatisticsCollector getStatistics()
+   public ControllerStatisticsCollector getStatistics()
    {
       return statisticsCollector;
    }

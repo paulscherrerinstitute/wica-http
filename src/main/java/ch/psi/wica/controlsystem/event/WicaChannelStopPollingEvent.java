@@ -3,7 +3,6 @@ package ch.psi.wica.controlsystem.event;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.channel.WicaChannel;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -20,7 +19,6 @@ public class WicaChannelStopPollingEvent
 /*- Private attributes -------------------------------------------------------*/
 
    private final WicaChannel wicaChannel;
-   private final WicaDataAcquisitionMode wicaDataAcquisitionMode;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -32,7 +30,6 @@ public class WicaChannelStopPollingEvent
       Validate.notNull( wicaChannel );
       Validate.isTrue( wicaChannel.getProperties().getDataAcquisitionMode().doesPolling() );
       this.wicaChannel = wicaChannel;
-      this.wicaDataAcquisitionMode = wicaChannel.getProperties().getDataAcquisitionMode();
 
       logger.trace("Event created: '{}'.", this );
    }
@@ -45,19 +42,16 @@ public class WicaChannelStopPollingEvent
       return wicaChannel;
    }
 
-   public WicaDataAcquisitionMode getWicaDataAcquisitionMode()
-   {
-      return wicaDataAcquisitionMode;
-   }
-
    @Override
    public String toString()
    {
       return "WicaChannelStopPollingEvent{" +
-         "wicaChannel=" + wicaChannel +
-         ", wicaDataAcquisitionMode=" + wicaDataAcquisitionMode +
-      '}';
-}
+            "wicaChannel=" + wicaChannel +
+            ", wicaDataAcquisitionMode=" + wicaChannel.getProperties().getDataAcquisitionMode() +
+            ", pollingIntervalInMillis=" + wicaChannel.getProperties().getPollingIntervalInMillis() +
+            '}';
+   }
+
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

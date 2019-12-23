@@ -32,7 +32,7 @@ class EpicsChannelMetadataGetter
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(EpicsChannelMetadataGetter.class );
+   private final Logger logger = LoggerFactory.getLogger( EpicsChannelMetadataGetter.class );
    private final WicaChannelMetadataBuilder wicaChannelMetadataBuilder;
 
 

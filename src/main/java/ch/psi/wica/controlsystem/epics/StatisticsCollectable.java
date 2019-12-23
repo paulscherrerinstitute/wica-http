@@ -1,11 +1,9 @@
 /*- Package Declaration ------------------------------------------------------*/
 
-package ch.psi.wica.model.app;
+package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 /*- Interface Declaration ----------------------------------------------------*/
-
-import ch.psi.wica.controllers.ControllerStatisticsCollector;
 
 public interface StatisticsCollectable
 {
@@ -20,9 +18,7 @@ public interface StatisticsCollectable
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   ControllerStatisticsCollector getStatistics();
-   void resetStatistics();
-
+   StatisticsCollector getStatistics();
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

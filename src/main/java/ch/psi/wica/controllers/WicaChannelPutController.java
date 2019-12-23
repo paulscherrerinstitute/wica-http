@@ -7,7 +7,6 @@ package ch.psi.wica.controllers;
 import ch.psi.wica.controlsystem.epics.EpicsChannelGetAndPutService;
 import ch.psi.wica.controlsystem.epics.EpicsChannelName;
 import ch.psi.wica.model.app.StatisticsCollectable;
-import ch.psi.wica.model.app.StatisticsCollector;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +38,7 @@ class WicaChannelPutController implements StatisticsCollectable
    private final Logger logger = LoggerFactory.getLogger( WicaChannelPutController.class );
    private final EpicsChannelGetAndPutService epicsChannelGetAndPutService;
    private final int defaultTimeoutInMillis;
-   private final StatisticsCollector statisticsCollector = new StatisticsCollector();
+   private final ControllerStatisticsCollector statisticsCollector = new ControllerStatisticsCollector();
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -116,17 +115,21 @@ class WicaChannelPutController implements StatisticsCollectable
       {
          final String errorMessage = "a timeout occurred (channel = '" + channelName + "', value = '" + channelValue + "').";
          logger.warn( "PUT: Rejected request because {}", errorMessage  );
+         statisticsCollector.incrementErrors();
+         statisticsCollector.incrementReplies();
          return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
       // Handle the normal situation.
       logger.info( "'{}' - OK: PUT channel request.", channelName );
+      statisticsCollector.incrementReplies();
       return new ResponseEntity<>("OK", HttpStatus.OK );
    }
 
    @ExceptionHandler( Exception.class )
    public void handleException( Exception ex)
    {
+      statisticsCollector.incrementErrors();
       logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
    }
 
@@ -134,7 +137,7 @@ class WicaChannelPutController implements StatisticsCollectable
 /*- Package-level methods ----------------------------------------------------*/
 
    @Override
-   public StatisticsCollector getStatistics()
+   public ControllerStatisticsCollector getStatistics()
    {
       return statisticsCollector;
    }

@@ -4,7 +4,7 @@ package ch.psi.wica.services.stream;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.controlsystem.event.WicaChannelMonitoredValueUpdateEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelPollMonitorEvent;
+import ch.psi.wica.controlsystem.event.WicaChannelPolledMonitorValueUpdateEvent;
 import ch.psi.wica.controlsystem.event.WicaChannelPolledValueUpdateEvent;
 import ch.psi.wica.infrastructure.channel.WicaChannelValueTimestampRewriter;
 import ch.psi.wica.infrastructure.stream.WicaStreamMonitoredValueDataBuffer;
@@ -87,13 +87,13 @@ public class WicaStreamMonitoredValueCollectorService
    {
       Validate.notNull( event );
       final WicaChannel wicaChannel = event.getWicaChannel();
-      final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey(wicaChannel );
+      final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
       final WicaChannelValue wicaChannelValue = event.getWicaChannelValue();
       wicaStreamMonitoredValueDataBuffer.saveDataPoint( wicaDataBufferStorageKey, wicaChannelValue );
    }
 
    @EventListener
-   public void handleWicaChannelPollMonitorEvent( WicaChannelPollMonitorEvent event)
+   public void handleWicaChannelPolledMonitorValueUpdateEvent( WicaChannelPolledMonitorValueUpdateEvent event)
    {
       Validate.notNull( event );
       final WicaChannel wicaChannel = event.getWicaChannel();

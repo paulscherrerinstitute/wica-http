@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-public class WicaChannelPollMonitorEvent
+public class WicaChannelPolledMonitorValueUpdateEvent
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -22,9 +22,9 @@ public class WicaChannelPollMonitorEvent
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelPollMonitorEvent( WicaChannel wicaChannel )
+   public WicaChannelPolledMonitorValueUpdateEvent( WicaChannel wicaChannel )
    {
-      final Logger logger = LoggerFactory.getLogger( WicaChannelPollMonitorEvent.class);
+      final Logger logger = LoggerFactory.getLogger( WicaChannelPolledMonitorValueUpdateEvent.class);
       this.wicaChannel = wicaChannel;
       logger.trace("Event created: '{}'.", this );
 

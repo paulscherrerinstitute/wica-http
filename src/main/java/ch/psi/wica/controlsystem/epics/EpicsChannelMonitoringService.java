@@ -4,12 +4,11 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelMetadata;
+import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
-import org.epics.ca.ConnectionState;
 import org.epics.ca.Context;
 import org.epics.ca.Monitor;
 import org.epics.ca.data.Timestamped;
@@ -19,21 +18,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * A service for establishing a channel access monitor on a single EPICS
- * channel and for notifying service consumers of any received changes
- * of value or changes to the state of the underlying connection.
+ * A service which establishes EPICS CA monitors on user-specified channels of
+ * interest, subsequently publishing changes in the channel's value or connection
+ * state to interested consumers within the application.
  *
  * @implNote.
- * The current implementation creates a single Context per class instance.
- * The context is disposed of when the service instance is closed.
+ * The current implementation uses PSI's CA EPICS client library to create a
+ * single shared EPICS CA Context per class instance. The EPICS CA context and
+ * all associated resources are disposed of when the service instance is closed.
  */
 @Service
 @ThreadSafe
@@ -43,40 +43,42 @@ public class EpicsChannelMonitoringService implements AutoCloseable
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private boolean closed = false;
-   private int channelsCreatedCount;
-   private int channelsDeletedCount;
-
-   private final Map<EpicsChannelName,Channel> channels = new HashMap<>();
-   private final Map<EpicsChannelName,Monitor> monitors = new HashMap<>();
-
    private final Logger logger = LoggerFactory.getLogger(EpicsChannelMonitoringService.class );
+   private final EpicsChannelMonitoringServiceStatisticsCollector statisticsCollector = new EpicsChannelMonitoringServiceStatisticsCollector();
+
+   private final Map<EpicsChannelName,Channel<?>> channels;
+   private final Map<EpicsChannelName,Monitor<?>> monitors;
+
    private final Context caContext;
    private final EpicsChannelConnectionChangeSubscriber epicsChannelConnectionChangeSubscriber;
    private final EpicsChannelMetadataGetter epicsChannelMetadataGetter;
    private final EpicsChannelValueGetter epicsChannelValueGetter;
    private final EpicsChannelValueChangeSubscriber epicsChannelValueChangeSubscriber;
+   private final EpicsEventPublisher epicsEventPublisher;
+
+   private boolean closed = false;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    /**
-    * Returns a new instance that will extract information from the EPICS channels
-    * of interest using the supplied metadata and value getters.
+    * Returns a new instance.
     *
-    * @param epicsChannelConnectionChangeSubscriber the subscriber to connection changes.
     * @param epicsCaLibraryMonitorNotifierImpl the CA library monitor notifier configuration.
     * @param epicsCaLibraryDebugLevel the CA library debug level.
-    * @param epicsChannelMetadataGetter the metadata publisher.
-    * @param epicsChannelValueGetter the metadata publisher.
-    * @param epicsChannelValueChangeSubscriber the value publisher.
+    * @param epicsChannelMetadataGetter an object which can be used to get the channel metadata.
+    * @param epicsChannelValueGetter an object which can be used to get the channel value.
+    * @param epicsChannelConnectionChangeSubscriber an object which can be used to subscribe to connection state changes.
+    * @param epicsChannelValueChangeSubscriber an object which can be used to subscribe to value changes.
+    * @param epicsEventPublisher an object which publishes events of interest to consumers within the application.
     */
    public EpicsChannelMonitoringService( @Value( "${wica.epics-ca-library-monitor-notifier-impl}") String  epicsCaLibraryMonitorNotifierImpl,
                                          @Value( "${wica.epics-ca-library-debug-level}") int epicsCaLibraryDebugLevel,
-                                         @Autowired EpicsChannelConnectionChangeSubscriber epicsChannelConnectionChangeSubscriber,
                                          @Autowired EpicsChannelMetadataGetter epicsChannelMetadataGetter,
                                          @Autowired EpicsChannelValueGetter epicsChannelValueGetter,
-                                         @Autowired EpicsChannelValueChangeSubscriber epicsChannelValueChangeSubscriber )
+                                         @Autowired EpicsChannelConnectionChangeSubscriber epicsChannelConnectionChangeSubscriber,
+                                         @Autowired EpicsChannelValueChangeSubscriber epicsChannelValueChangeSubscriber,
+                                         @Autowired EpicsEventPublisher epicsEventPublisher )
    {
       logger.debug( "'{}' - constructing new EpicsChannelMonitorService instance...", this );
 
@@ -84,7 +86,13 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       this.epicsChannelMetadataGetter = Validate.notNull( epicsChannelMetadataGetter );
       this.epicsChannelValueGetter = Validate.notNull( epicsChannelValueGetter );
       this.epicsChannelValueChangeSubscriber = Validate.notNull( epicsChannelValueChangeSubscriber );
+      this.epicsEventPublisher = Validate.notNull( epicsEventPublisher );
 
+      channels = new ConcurrentHashMap<>();
+      monitors = new ConcurrentHashMap<>();
+
+      statisticsCollector.setChannelMapTracker( channels );
+      statisticsCollector.setMonitorMapTracker( monitors );
 
       // Setup a context that uses the monitor notification policy and debug
       // message log level defined in the configuration file.
@@ -99,86 +107,85 @@ public class EpicsChannelMonitoringService implements AutoCloseable
 /*- Public methods -----------------------------------------------------------*/
 
    /**
-    * Starts monitoring the specified EPICS channel and sets up a plan whereby
-    * future changes to the state of the underlying channel will be informed to
-    * the supplied connection-state-change and value-change handlers.
+    * Starts monitoring the EPICS control system channel associated with the
+    * specified Wica Channel. Sets up a mechanism whereby future changes to the
+    * channel's connection state or value are published using the configured
+    * EPICS Event Publisher.
     *
     * The creation of the underlying EPICS monitor is performed asynchronously
     * so the invocation of this method does NOT incur the cost of a network
     * round trip.
     *
-    * The supplied channel may or may not be available when this method is invoked.
-    * The connection-state-change handler will receive it's first message when the
-    * connection to the remote IOC is eventually established. Subsequently, the
-    * value-change handler will receive notification of the initial value of the
-    * channel.
+    * The EPICS channel may or may not be online when this method is invoked.
+    * The connection-state-change event will be published when the connection to
+    * the remote IOC is eventually established. Subsequently, the value-change
+    * event will be published to provide the latest value of the channel.
     *
-    * The supplied handlers will be potentially called back on multiple threads.
+    * The current implementation is based on the assumption that higher layers
+    * within the application will ensure that the information obtained from a
+    * single EPICS channel monitor is shared across the entire application.
+    * It is, therefore, the responsibility of the caller to ensure that monitoring
+    * should not already have been established on the targeted EPICS channel.
+    * This precondition is actively enforced and violations will result in an
+    * IllegalStateException being thrown.
     *
-    * It is the responsibility of the caller to ensure that monitoring should
-    * not already have been established on the targeted EPICS channel. Should
-    * this precondition be violated an IllegalStateException will be thrown.
-    *
-    * @param epicsChannelName the name of the channel to be monitored.
-    * @param connectionStateChangeHandler the handler to be informed of changes
-    *        to the channel's connection state.
-    * @param metadataChangeHandler the handler to be informed of metadata changes.
-    * @param valueChangeHandler the handler to be informed of value changes.
-    * @throws NullPointerException if any of the input arguments were null.
+    * @param wicaChannel the channel to be monitored.
+    * @throws NullPointerException if the 'wicaChannel' argument was null.
     * @throws IllegalStateException if this monitor service was previously closed.
-    * @throws IllegalStateException if the channel to be monitored is already
-    *     being monitored.
+    * @throws IllegalStateException if the EPICS channel to be monitored is already
+    * being monitored.
     */
-    void startMonitoring( EpicsChannelName epicsChannelName,
-                          Consumer<Boolean> connectionStateChangeHandler,
-                          Consumer<WicaChannelMetadata> metadataChangeHandler,
-                          Consumer<WicaChannelValue> valueChangeHandler )
+    void startMonitoring( WicaChannel wicaChannel )
    {
-      Validate.notNull( epicsChannelName);
-      Validate.notNull( connectionStateChangeHandler );
-      Validate.notNull( metadataChangeHandler );
-      Validate.notNull( valueChangeHandler );
+      Validate.notNull( wicaChannel );
       Validate.validState( ! closed, "The monitor service was previously closed and can no longer be used." );
+
+      final EpicsChannelName epicsChannelName = EpicsChannelName.of( wicaChannel.getName().getControlSystemName() );
+
       Validate.validState( ! channels.containsKey( epicsChannelName ), "The channel name: '" + epicsChannelName.asString() + "' is already being monitored."  );
+      statisticsCollector.incrementStartRequests();
 
       logger.trace("'{}' - starting to monitor... ", epicsChannelName);
-      channelsCreatedCount++;
 
       try
       {
          logger.trace("'{}' - creating channel of type '{}'...", epicsChannelName, "generic");
-         final Channel<Object> channel = caContext.createChannel(epicsChannelName.asString(), Object.class);
-         channels.put(epicsChannelName, channel);
+         final Channel<Object> channel = caContext.createChannel( epicsChannelName.asString(), Object.class);
+         channels.put( epicsChannelName, channel);
          logger.trace("'{}' - channel created ok.", epicsChannelName);
 
          // Synchronously add a connection listener before making any attempt to connect the channel.
-         logger.trace("'{}' - adding connection listener... ", epicsChannelName);
+         logger.trace("'{}' - adding connection listener... ", epicsChannelName );
          epicsChannelConnectionChangeSubscriber.subscribe( channel, (conn) -> {
             if ( conn )
             {
-               logger.trace("'{}' - connection state changed to CONNECTED.", epicsChannelName);
+               logger.trace("'{}' - connection state changed to CONNECTED.", epicsChannelName );
 
                // Synchronously obtain the channel's metadata.
                final var wicaChannelMetadata = epicsChannelMetadataGetter.get( channel );
-               logger.trace("'{}' - channel metadata obtained ok.", epicsChannelName);
-               metadataChangeHandler.accept( wicaChannelMetadata );
+               logger.trace("'{}' - channel metadata obtained ok.", epicsChannelName );
+               epicsEventPublisher.publishMetadataChanged( wicaChannel, wicaChannelMetadata );
 
                // Synchronously obtain the channel's initial value.
                final var wicaChannelValue = epicsChannelValueGetter.get(channel);
                logger.trace("'{}' - channel value obtained ok.", epicsChannelName);
-               valueChangeHandler.accept(wicaChannelValue);
+               epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, wicaChannelValue );
 
                // Synchronously create a monitor which will notify all future value changes.
-               final Monitor<Timestamped<Object>> monitor = epicsChannelValueChangeSubscriber.subscribe(channel, valueChangeHandler);
-               monitors.put(epicsChannelName, monitor);
+               final Consumer<WicaChannelValue> valueChangedHandler = v -> epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, v );
+               final Monitor<Timestamped<Object>> monitor = epicsChannelValueChangeSubscriber.subscribe(channel, valueChangedHandler );
+               monitors.put( epicsChannelName, monitor);
             }
-            connectionStateChangeHandler.accept( conn );
+            else
+            {
+               logger.trace("'{}' - connection state changed to DISCONNECTED.", epicsChannelName );
+            }
+            epicsEventPublisher.publishConnectionStateChanged( wicaChannel, conn );
          } );
          logger.trace("'{}' - connection listener added ok.", epicsChannelName);
-
          logger.trace("'{}' - connecting asynchronously to... ", epicsChannelName);
          channel.connectAsync()
-            .thenRunAsync(() -> logger.trace("'{}' - asynchronous connect completed ok.", epicsChannelName))
+            .thenRunAsync(() -> logger.trace("'{}' - asynchronous connect completed ok.", epicsChannelName ))
             .exceptionally(( ex ) -> {
                logger.warn("'{}' - exception on channel, details were as follows: {}", this, ex.toString());
                return null;
@@ -191,25 +198,29 @@ public class EpicsChannelMonitoringService implements AutoCloseable
    }
 
    /**
-    * Stop monitoring the specified channel.
+    * Stops monitoring the EPICS control system channel associated with the
+    * specified Wica Channel.
     *
     * It is the responsibility of the caller to ensure that monitoring should
     * already have been established on the targeted EPICS channel. Should
     * this precondition be violated an IllegalStateException will be thrown.
     *
-    * @param epicsChannelName the channel which is no longer of interest.
+    * @param wicaChannel the channel which is no longer of interest.
+    * @throws NullPointerException if the 'wicaChannel' argument was null.
     * @throws IllegalStateException if this monitor service was previously closed.
     * @throws IllegalStateException if the channel whose monitoring to be stopped
     *     was not already being monitored.
     */
-   void stopMonitoring( EpicsChannelName epicsChannelName )
+   void stopMonitoring( WicaChannel wicaChannel )
    {
-      Validate.notNull( epicsChannelName );
+      Validate.notNull( wicaChannel );
       Validate.validState( ! closed, "The monitor service was previously closed and can no longer be used." );
-      Validate.validState( channels.containsKey( epicsChannelName ), "The channel name: '" + epicsChannelName.asString() + "' was not recognised."  );
-      channelsDeletedCount++;
+      statisticsCollector.incrementStopRequests();
 
-      logger.trace("'{}' - stopping monitoring on... ", epicsChannelName);
+      final EpicsChannelName epicsChannelName= EpicsChannelName.of( wicaChannel.getName().getControlSystemName() );
+      Validate.validState( channels.containsKey( epicsChannelName ), "The channel name: '" + epicsChannelName.asString() + "' was not recognised."  );
+
+      logger.trace("'{}' - stopping monitoring on.", epicsChannelName);
       channels.get( epicsChannelName ).close();
       channels.remove( epicsChannelName );
 
@@ -242,56 +253,10 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       logger.debug( "'{}' - resources disposed ok.", this );
    }
 
-   /**
-    * Returns the count of active channels.
-    *
-    * @return the count
-    */
-   public long getChannelsActiveCount()
+   public EpicsChannelMonitoringServiceStatisticsCollector getStatistics()
    {
-      return channels.size();
+      return statisticsCollector;
    }
-
-   /**
-    * Returns the count of channels known to this class instance which are
-    * connected to the underlying data source.
-    *
-    * A channel is "connected" asynchronously, every time a previous call to the
-    * startMonitoring method has subsequently resulted in a successful transaction
-    * with the underlying CA data source. If a channel is available online this
-    * will occur (typically) within a few milliseconds. If not it may not take
-    * seconds/minutes/hours/weeks/days.
-    *
-    * @return the count
-    */
-   public long getChannelsConnectedCount()
-   {
-      return channels.values()
-                     .stream()
-                     .filter( c -> c.getConnectionState() == ConnectionState.CONNECTED )
-                     .count();
-   }
-
-   public int getChannelsCreatedCount()
-   {
-      return channelsCreatedCount;
-   }
-
-   public int getChannelsDeletedCount()
-   {
-      return channelsDeletedCount;
-   }
-
-   /**
-    * Returns the count of monitors established by this class.
-    *
-    * @return the count
-    */
-   public long getMonitorsConnectedCount()
-   {
-      return monitors.size();
-   }
-
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

@@ -4,15 +4,13 @@ package ch.psi.wica.services.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.WicaChannelPollMonitorEvent;
+import ch.psi.wica.controlsystem.event.WicaChannelPolledMonitorValueUpdateEvent;
 import ch.psi.wica.controlsystem.event.WicaChannelStartPollingEvent;
 import ch.psi.wica.controlsystem.event.WicaChannelStopPollingEvent;
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.channel.WicaChannel;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -37,10 +35,8 @@ public class WicaChannelPollMonitorService
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(WicaChannelPollMonitorService.class );
-
    private final ApplicationEventPublisher applicationEventPublisher;
-   private final Map<WicaChannel, ScheduledFuture> channelExecutorMap = new ConcurrentHashMap<>();
+   private final Map<WicaChannel, ScheduledFuture<?>> channelExecutorMap = new ConcurrentHashMap<>();
    private final ScheduledExecutorService executor;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -63,10 +59,10 @@ public class WicaChannelPollMonitorService
       // Note: this service only handles the indirect, local, polling of a monitor which should
       // already have been established on the remote IOC. All other requests will be  silently ignored.
       final WicaChannel wicaChannel = wicaChannelStartPollingEvent.get();
-      final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannelStartPollingEvent.getWicaDataAcquisitionMode();
+      final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannel.getProperties().getDataAcquisitionMode();
       if ( wicaDataAcquisitionMode.doesMonitorPolling() )
       {
-         final int pollingIntervalInMillis = wicaChannelStartPollingEvent.getPollingIntervalInMillis();
+         final int pollingIntervalInMillis = wicaChannel.getProperties().getPollingIntervalInMillis();
          startPolling(wicaChannel, pollingIntervalInMillis);
       }
    }
@@ -79,7 +75,7 @@ public class WicaChannelPollMonitorService
       // Note: this service only handles the indirect, local, polling of a monitor which should
       // already have been established on the remote IOC. All other requests will be  silently ignored.
       final WicaChannel wicaChannel = wicaChannelStopPollingEvent.get();
-      final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannelStopPollingEvent.getWicaDataAcquisitionMode();
+      final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannel.getProperties().getDataAcquisitionMode();
       if ( wicaDataAcquisitionMode.doesMonitorPolling() )
       {
          stopPolling(wicaChannel);
@@ -90,7 +86,7 @@ public class WicaChannelPollMonitorService
 
    private void startPolling( WicaChannel wicaChannel, int pollingIntervalInMillis )
    {
-      final ScheduledFuture scheduledFuture = executor.scheduleAtFixedRate(() -> applicationEventPublisher.publishEvent( new WicaChannelPollMonitorEvent( wicaChannel ) ), pollingIntervalInMillis, pollingIntervalInMillis, TimeUnit.MILLISECONDS );
+      final ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(() -> applicationEventPublisher.publishEvent( new WicaChannelPolledMonitorValueUpdateEvent(wicaChannel ) ), pollingIntervalInMillis, pollingIntervalInMillis, TimeUnit.MILLISECONDS );
 
       this.channelExecutorMap.put( wicaChannel, scheduledFuture );
    }

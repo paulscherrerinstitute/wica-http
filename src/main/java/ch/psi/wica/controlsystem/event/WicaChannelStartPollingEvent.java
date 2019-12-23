@@ -20,8 +20,6 @@ public class WicaChannelStartPollingEvent
 /*- Private attributes -------------------------------------------------------*/
 
    private final WicaChannel wicaChannel;
-   private final WicaDataAcquisitionMode wicaDataAcquisitionMode;
-   private final int pollingIntervalInMillis;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -30,15 +28,11 @@ public class WicaChannelStartPollingEvent
    public WicaChannelStartPollingEvent( WicaChannel wicaChannel )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelStartPollingEvent.class);
-
       Validate.notNull( wicaChannel );
       Validate.isTrue( wicaChannel.getProperties().getDataAcquisitionMode().doesPolling() );
       Validate.isTrue(  wicaChannel.getProperties().getPollingIntervalInMillis() > 0 );
 
       this.wicaChannel = wicaChannel;
-      this.wicaDataAcquisitionMode = wicaChannel.getProperties().getDataAcquisitionMode();
-      this.pollingIntervalInMillis = wicaChannel.getProperties().getPollingIntervalInMillis();
-
       logger.trace("Event created: '{}'.", this );
    }
 
@@ -50,23 +44,13 @@ public class WicaChannelStartPollingEvent
       return wicaChannel;
    }
 
-   public WicaDataAcquisitionMode getWicaDataAcquisitionMode()
-   {
-      return wicaDataAcquisitionMode;
-   }
-
-   public int getPollingIntervalInMillis()
-   {
-      return pollingIntervalInMillis;
-   }
-
    @Override
    public String toString()
    {
       return "WicaChannelStartPollingEvent{" +
          "wicaChannel=" + wicaChannel +
-         ", wicaDataAcquisitionMode=" + wicaDataAcquisitionMode +
-         ", pollingIntervalInMillis=" + pollingIntervalInMillis +
+         ", wicaDataAcquisitionMode=" + wicaChannel.getProperties().getDataAcquisitionMode() +
+         ", pollingIntervalInMillis=" + wicaChannel.getProperties().getPollingIntervalInMillis() +
       '}';
    }
 

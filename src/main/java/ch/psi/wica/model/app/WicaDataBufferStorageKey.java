@@ -40,9 +40,9 @@ public class WicaDataBufferStorageKey
 
       // Optimisation Note:
       // The storage key for polling a channel is based on the channel's name, the
-      // channel's polling interval and the type of polling mode (network-based or
-      // monitor based). This means that resources can be shared between different
-      // subscribers when/if these parameters are aligned.
+      // channel's polling interval and the polling mode (network-based or monitor based).
+      // This means that resources can be shared between different subscribers when/if
+      // these parameters are aligned.
       final int hashCode = (Objects.hash( wicaChannel.getName(),
                                           wicaChannel.getProperties().getOptionalPollingIntervalInMillis(),
                                           wicaChannel.getProperties().getDataAcquisitionMode() ) );

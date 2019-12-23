@@ -5,7 +5,6 @@ package ch.psi.wica.controllers;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.app.StatisticsCollectable;
-import ch.psi.wica.model.app.StatisticsCollector;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.services.stream.WicaStreamLifecycleService;
 import org.apache.commons.lang3.Validate;
@@ -39,7 +38,7 @@ class WicaStreamCreateController implements StatisticsCollectable
    private final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
    private final Logger logger = LoggerFactory.getLogger( WicaStreamCreateController.class );
    private final WicaStreamLifecycleService wicaStreamLifecycleService;
-   private final StatisticsCollector statisticsCollector = new StatisticsCollector();
+   private final ControllerStatisticsCollector statisticsCollector = new ControllerStatisticsCollector();
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -105,6 +104,8 @@ class WicaStreamCreateController implements StatisticsCollectable
       {
          final String errorMessage = "WICA SERVER: The stream configuration string was empty/null.";
          logger.warn( "POST: Rejected request because '{}'.", errorMessage  );
+         statisticsCollector.incrementErrors();
+         statisticsCollector.incrementReplies();
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
@@ -116,6 +117,8 @@ class WicaStreamCreateController implements StatisticsCollectable
       {
          final String errorMessage = "WICA SERVER: The stream configuration string was blank.";
          logger.warn( "POST: Rejected request because '{}'.", errorMessage  );
+         statisticsCollector.incrementErrors();
+         statisticsCollector.incrementReplies();
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
@@ -138,18 +141,22 @@ class WicaStreamCreateController implements StatisticsCollectable
             errorMessage = "WICA SERVER: " + ex.getMessage();
          }
          logger.warn( "POST: Rejected request because '{}'.", errorMessage  );
+         statisticsCollector.incrementErrors();
+         statisticsCollector.incrementReplies();
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
       appLogger.info( "POST: allocated stream with id: '{}' following request from client with IP: '{}'", wicaStream.getWicaStreamId(), httpServletRequest.getRemoteHost() );
       logger.trace( "POST: allocated stream with id: '{}'" , wicaStream.getWicaStreamId() );
 
+      statisticsCollector.incrementReplies();
       return new ResponseEntity<>( wicaStream.getWicaStreamId().asString(), HttpStatus.OK );
    }
 
    @ExceptionHandler( Exception.class )
    public void handleException( Exception ex)
    {
+      statisticsCollector.incrementErrors();
       logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
    }
 
@@ -157,7 +164,7 @@ class WicaStreamCreateController implements StatisticsCollectable
 /*- Package-level methods ----------------------------------------------------*/
 
    @Override
-   public StatisticsCollector getStatistics()
+   public ControllerStatisticsCollector getStatistics()
    {
       return statisticsCollector;
    }

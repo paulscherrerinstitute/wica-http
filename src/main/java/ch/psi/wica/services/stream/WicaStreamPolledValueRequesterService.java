@@ -128,15 +128,16 @@ public class WicaStreamPolledValueRequesterService
       final var storageKey = WicaDataBufferStorageKey.getPolledValueStorageKey( wicaChannel );
       final var controlSystemName = wicaChannel.getName().getControlSystemName();
 
-      // If the channel is already being polled increment the interest count.
-      if ( pollerInterestMap.containsKey(storageKey ) )
+      // If a channel with these polling parameters already exists simply increment the interest count.
+      if ( pollerInterestMap.containsKey( storageKey ) )
       {
-         final int currentInterestCount = pollerInterestMap.get(storageKey );
+         final int currentInterestCount = pollerInterestMap.get( storageKey );
          final int newInterestCount = currentInterestCount + 1;
          logger.info( "Increasing interest level in polled control system channel named: '{}' to {}", controlSystemName, newInterestCount );
          pollerInterestMap.put(storageKey, newInterestCount );
       }
-      // If the channel is NOT already being polled start polling it.
+      // If a channel with these polling parameters DOES NOT exist then start polling it using
+      // the prescribed parameters.
       else
       {
          logger.info( "Starting polling control system channel named: '{}'", controlSystemName.asString() );

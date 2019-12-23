@@ -1,6 +1,6 @@
 /*- Package Declaration ------------------------------------------------------*/
 
-package ch.psi.wica.model.app;
+package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /*- Class Declaration --------------------------------------------------------*/
 
 @ThreadSafe
-public class StatisticsCollector
+public class ControllerStatisticsCollector
 {
 
    /*- Public attributes --------------------------------------------------------*/
@@ -37,33 +37,26 @@ public class StatisticsCollector
    {
       return String.valueOf(requests.get());
    }
-
    public String getReplies()
    {
       return String.valueOf(replies.get());
    }
-
    public String getErrors()
    {
       return String.valueOf(errors.get());
    }
-
-
    public void incrementRequests()
    {
       requests.incrementAndGet();
    }
-
    public void incrementReplies()
    {
       replies.incrementAndGet();
    }
-
    public void incrementErrors()
    {
       errors.incrementAndGet();
    }
-
    public List<String> getClients()
    {
       return clients;
@@ -80,6 +73,11 @@ public class StatisticsCollector
       replies.set( 0 );
       errors.set( 0 );
       clients.clear();
+   }
+
+   public String getSummary()
+   {
+      return getRequests() + "/"  + getReplies() + "/" + getErrors();
    }
 
 /*- Private methods ----------------------------------------------------------*/

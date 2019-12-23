@@ -8,6 +8,8 @@ import ch.psi.wica.model.stream.WicaStreamId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,15 +91,15 @@ class WicaStreamDeleteControllerTest
 
       final MvcResult postRequestResult = mockMvc.perform( postRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
       logger.info( "Returned data was: '{}'", postRequestResult.getResponse().getContentAsString() );
-      assertEquals(2, epicsChannelMonitoringService.getChannelsActiveCount() );
+      assertThat(epicsChannelMonitoringService.getStatistics().getConnectedChannelCount(), is( "2") );
 
       // Send a DELETE request to delete the stream we just created.
       final RequestBuilder deleteRequest1 = MockMvcRequestBuilders.delete( "/ca/streams/0" );
       mockMvc.perform( deleteRequest1 ).andDo( print() ).andExpect( status().isOk() ).andReturn();
 
-      assertEquals(0, epicsChannelMonitoringService.getChannelsActiveCount() );
-      assertEquals(2, epicsChannelMonitoringService.getChannelsCreatedCount() );
-      assertEquals(2, epicsChannelMonitoringService.getChannelsDeletedCount() );
+      assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "0") );
+      assertThat( epicsChannelMonitoringService.getStatistics().getStartRequests(), is( "2" ) );
+      assertThat( epicsChannelMonitoringService.getStatistics().getStopRequests(), is( "2") );
 
       // Send a further DELETE request to delete the stream we created before. This time it should be rejected.
       final RequestBuilder deleteRequest2 = MockMvcRequestBuilders.delete( "/ca/streams/0" );

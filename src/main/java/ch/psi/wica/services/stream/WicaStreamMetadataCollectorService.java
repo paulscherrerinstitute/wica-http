@@ -81,10 +81,10 @@ public class WicaStreamMetadataCollectorService
 /*- Nested Classes -----------------------------------------------------------*/
 
    @Component
-   public class ChannelValueUpdateListener
+   public class ChannelMetadataUpdateListener
    {
       @EventListener
-      public void handleWicaChannelValueUpdateEvent( WicaChannelMetadataUpdateEvent wicaChannelMetadataUpdateEvent )
+      public void handleWicaChannelMetadataUpdateEvent( WicaChannelMetadataUpdateEvent wicaChannelMetadataUpdateEvent )
       {
          Validate.notNull( wicaChannelMetadataUpdateEvent );
 
