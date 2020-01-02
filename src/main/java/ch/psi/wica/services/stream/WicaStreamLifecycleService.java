@@ -6,6 +6,7 @@ package ch.psi.wica.services.stream;
 /*- Class Declaration --------------------------------------------------------*/
 
 import ch.psi.wica.infrastructure.stream.WicaStreamConfigurationDecoder;
+import ch.psi.wica.model.app.StatisticsCollectionService;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamId;
 import ch.psi.wica.services.channel.WicaChannelMetadataMapSerializerService;
@@ -24,7 +25,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @ThreadSafe
@@ -46,9 +46,7 @@ public class WicaStreamLifecycleService
    private final WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService;
    private final WicaChannelMetadataMapSerializerService wicaChannelMetadataMapSerializerService;
    private final WicaChannelValueMapSerializerService wicaChannelValueMapSerializerService;
-
-   private final AtomicInteger streamsCreated;
-   private final AtomicInteger streamsDeleted;
+   private final WicaStreamLifecycleStatistics wicaStreamLifecycleStatistics;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -83,7 +81,8 @@ public class WicaStreamLifecycleService
                                       @Autowired WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService,
                                       @Autowired WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService,
                                       @Autowired WicaChannelMetadataMapSerializerService wicaChannelMetadataMapSerializerService,
-                                      @Autowired WicaChannelValueMapSerializerService wicaChannelValueMapSerializerService
+                                      @Autowired WicaChannelValueMapSerializerService wicaChannelValueMapSerializerService,
+                                      @Autowired StatisticsCollectionService statisticsCollectionService
    )
    {
       this.wicaStreamConfigurationDecoder = wicaStreamConfigurationDecoder;
@@ -95,8 +94,8 @@ public class WicaStreamLifecycleService
       this.wicaChannelMetadataMapSerializerService = wicaChannelMetadataMapSerializerService;
       this.wicaChannelValueMapSerializerService = wicaChannelValueMapSerializerService;
 
-      this.streamsCreated = new AtomicInteger( 0 );
-      this.streamsDeleted = new AtomicInteger( 0 );
+      this.wicaStreamLifecycleStatistics = new WicaStreamLifecycleStatistics("STREAM:" );
+      statisticsCollectionService.addCollectable( wicaStreamLifecycleStatistics );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -161,7 +160,7 @@ public class WicaStreamLifecycleService
          wicaStreamPublisherMap.put( wicaStream.getWicaStreamId(), wicaStreamServerSentEventPublisher );
 
          // Lastly increase the count of created streams.
-         streamsCreated.incrementAndGet();
+         wicaStreamLifecycleStatistics.incrementStreamsCreated();
 
          // Return a reference to the newly created stream.
          return wicaStream;
@@ -198,7 +197,7 @@ public class WicaStreamLifecycleService
          wicaStreamPublisherMap.remove( wicaStreamId );
 
          // Lastly increase the count of deleted streams.
-         streamsDeleted.incrementAndGet();
+         wicaStreamLifecycleStatistics.incrementStreamsDeleted();
       }
    }
 
@@ -224,28 +223,6 @@ public class WicaStreamLifecycleService
    {
       Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null." );
       return wicaStreamPublisherMap.containsKey( wicaStreamId );
-   }
-
-   /**
-    * Returns a count of the number of streams which have been created
-    * since the server started running.
-    *
-    * @return the count.
-    */
-   public int getStreamsCreated()
-   {
-      return streamsCreated.get();
-   }
-
-   /**
-    * Returns a count of the number of streams which have been deleted
-    * since the server started running.
-    *
-    * @return the count.
-    */
-   public int getStreamsDeleted()
-   {
-      return streamsDeleted.get();
    }
 
 /*- Private methods ----------------------------------------------------------*/

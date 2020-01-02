@@ -7,7 +7,7 @@ package ch.psi.wica.controllers;
 import ch.psi.wica.controlsystem.epics.EpicsChannelGetAndPutService;
 import ch.psi.wica.controlsystem.epics.EpicsChannelName;
 import ch.psi.wica.infrastructure.channel.WicaChannelDataSerializerBuilder;
-import ch.psi.wica.model.app.StatisticsCollectable;
+import ch.psi.wica.model.app.StatisticsCollectionService;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  */
 @RestController
 @RequestMapping( "/ca/channel")
-class WicaChannelGetController implements StatisticsCollectable
+class WicaChannelGetController
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -43,7 +43,7 @@ class WicaChannelGetController implements StatisticsCollectable
    private final int defaultNumericScale;
    private final String defaultFieldsOfInterest;
 
-   private final ControllerStatisticsCollector statisticsCollector = new ControllerStatisticsCollector();
+   private final ControllerStatistics statisticsCollector;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -63,7 +63,8 @@ class WicaChannelGetController implements StatisticsCollectable
    private WicaChannelGetController( @Value( "${wica.channel-get-timeout-interval-in-ms}") int defaultTimeoutInMillis,
                                      @Value( "${wica.channel-get-numeric-scale}") int defaultNumericScale,
                                      @Value( "${wica.channel-get-fields-of-interest}") String defaultFieldsOfInterest,
-                                     @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService
+                                     @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService,
+                                     @Autowired StatisticsCollectionService statisticsCollectionService
    )
    {
       Validate.isTrue( defaultTimeoutInMillis > 0 );
@@ -74,6 +75,9 @@ class WicaChannelGetController implements StatisticsCollectable
       this.defaultNumericScale = defaultNumericScale;
       this.defaultFieldsOfInterest = defaultFieldsOfInterest;
       this.epicsChannelGetAndPutService = epicsChannelGetAndPutService;
+
+      this.statisticsCollector = new ControllerStatistics("Wica Channel Get Controller" );
+      statisticsCollectionService.addCollectable( statisticsCollector );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -124,7 +128,7 @@ class WicaChannelGetController implements StatisticsCollectable
 
       // Update the usage statistics for this controller.
       statisticsCollector.incrementRequests();
-      statisticsCollector.addClient( httpServletRequest.getRemoteHost() );
+      statisticsCollector.addClientIpAddr(httpServletRequest.getRemoteHost() );
 
       // Assign default values when not explicitly provided.
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
@@ -151,20 +155,6 @@ class WicaChannelGetController implements StatisticsCollectable
    {
       statisticsCollector.incrementErrors();
       logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
-   }
-
-/*- Package-level methods ----------------------------------------------------*/
-
-   @Override
-   public ControllerStatisticsCollector getStatistics()
-   {
-      return statisticsCollector;
-   }
-
-   @Override
-   public void resetStatistics()
-   {
-      statisticsCollector.reset();
    }
 
 /*- Private methods ----------------------------------------------------------*/

@@ -4,9 +4,11 @@ package ch.psi.wica;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.app.StatisticsCollectionService;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,7 +17,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
 import javax.annotation.PreDestroy;
-import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 
@@ -35,8 +36,6 @@ public class WicaApplication
 
    private static final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
 	private static final Logger logger = LoggerFactory.getLogger( WicaApplication.class );
-	private static final LocalDateTime serverStartTime = LocalDateTime.now();
-
 	private final boolean testLoggingOnStartup;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -49,6 +48,7 @@ public class WicaApplication
 	public static void main( String[] args )
 	{
 		logger.info( " Wica Application is starting...");
+
 		try
 		{
 			SpringApplication.run( WicaApplication.class, args );
@@ -104,20 +104,14 @@ public class WicaApplication
 
 /*- Constructor --------------------------------------------------------------*/
 
-	public WicaApplication( @Value("${wica.test-logging-on-startup}") boolean testLoggingOnStartup )
+	public WicaApplication( @Value("${wica.test-logging-on-startup}") boolean testLoggingOnStartup, @Autowired StatisticsCollectionService statisticsCollectionService )
 	{
 		this.testLoggingOnStartup = testLoggingOnStartup;
+		statisticsCollectionService.addCollectable( new ServerStatistics() );
 	}
 
 
 /*- Class methods ------------------------------------------------------------*/
-
-	public static LocalDateTime getServerStartTime()
-	{
-		return serverStartTime;
-	}
-
-
 /*- Public methods -----------------------------------------------------------*/
 /*- Package-level methods ----------------------------------------------------*/
 

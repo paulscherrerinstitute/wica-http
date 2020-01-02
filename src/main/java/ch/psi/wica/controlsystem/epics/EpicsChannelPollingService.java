@@ -4,6 +4,7 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.app.StatisticsCollectionService;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
@@ -36,7 +37,7 @@ public class EpicsChannelPollingService implements AutoCloseable
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger(EpicsChannelMonitoringService.class );
-   private final EpicsChannelPollingServiceStatisticsCollector statisticsCollector = new EpicsChannelPollingServiceStatisticsCollector();
+   private final EpicsChannelPollingServiceStatistics statisticsCollector;
 
    private final EpicsChannelGetAndPutService epicsChannelGetAndPutService;
    private final ScheduledExecutorService executor;
@@ -58,16 +59,19 @@ public class EpicsChannelPollingService implements AutoCloseable
     */
    public EpicsChannelPollingService( @Value( "${wica.channel-get-timeout-interval-in-ms}") int timeoutInMillis,
                                       @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService,
-                                      @Autowired EpicsEventPublisher epicsEventPublisher )
+                                      @Autowired EpicsEventPublisher epicsEventPublisher,
+                                      @Autowired StatisticsCollectionService statisticsCollectionService
+                                      )
    {
       logger.debug( "'{}' - constructing new EpicsChannelPollingService instance...", this );
 
       this.timeoutInMillis = timeoutInMillis;
       this.epicsChannelGetAndPutService = Validate.notNull( epicsChannelGetAndPutService );
       this.epicsEventPublisher = Validate.notNull( epicsEventPublisher );
+      this.channelExecutorMap = new ConcurrentHashMap<>();
 
-      channelExecutorMap = new ConcurrentHashMap<>();
-      statisticsCollector.setExecutorMapTracker( channelExecutorMap );
+      this.statisticsCollector = new EpicsChannelPollingServiceStatistics(channelExecutorMap );
+      statisticsCollectionService.addCollectable( statisticsCollector );
 
       this.executor = Executors.newSingleThreadScheduledExecutor();
       logger.debug( "'{}' - service instance constructed ok.", this );
@@ -165,7 +169,7 @@ public class EpicsChannelPollingService implements AutoCloseable
       logger.debug( "'{}' - resources disposed ok.", this );
    }
 
-   public EpicsChannelPollingServiceStatisticsCollector getStatistics()
+   public EpicsChannelPollingServiceStatistics getStatistics()
    {
       return statisticsCollector;
    }

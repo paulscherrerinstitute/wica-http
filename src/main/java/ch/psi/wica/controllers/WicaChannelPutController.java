@@ -6,7 +6,7 @@ package ch.psi.wica.controllers;
 
 import ch.psi.wica.controlsystem.epics.EpicsChannelGetAndPutService;
 import ch.psi.wica.controlsystem.epics.EpicsChannelName;
-import ch.psi.wica.model.app.StatisticsCollectable;
+import ch.psi.wica.model.app.StatisticsCollectionService;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 @RestController
 @RequestMapping( "/ca/channel")
-class WicaChannelPutController implements StatisticsCollectable
+class WicaChannelPutController
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -38,7 +38,7 @@ class WicaChannelPutController implements StatisticsCollectable
    private final Logger logger = LoggerFactory.getLogger( WicaChannelPutController.class );
    private final EpicsChannelGetAndPutService epicsChannelGetAndPutService;
    private final int defaultTimeoutInMillis;
-   private final ControllerStatisticsCollector statisticsCollector = new ControllerStatisticsCollector();
+   private final ControllerStatistics statisticsCollector;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -54,7 +54,8 @@ class WicaChannelPutController implements StatisticsCollectable
     *        to put values to a wica channel.
     */
    private WicaChannelPutController( @Value( "${wica.channel-get-timeout-interval-in-ms}") int defaultTimeoutInMillis,
-                                     @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService
+                                     @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService,
+                                     @Autowired StatisticsCollectionService statisticsCollectionService
    )
    {
       Validate.isTrue( defaultTimeoutInMillis > 0 );
@@ -62,6 +63,9 @@ class WicaChannelPutController implements StatisticsCollectable
 
       this.defaultTimeoutInMillis = defaultTimeoutInMillis;
       this.epicsChannelGetAndPutService = Validate.notNull(epicsChannelGetAndPutService);
+
+      this.statisticsCollector = new ControllerStatistics("Wica Channel Put Controller" );
+      statisticsCollectionService.addCollectable( statisticsCollector );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -105,7 +109,7 @@ class WicaChannelPutController implements StatisticsCollectable
 
       // Update the usage statistics for this controller.
       statisticsCollector.incrementRequests();
-      statisticsCollector.addClient( httpServletRequest.getRemoteHost() );
+      statisticsCollector.addClientIpAddr(httpServletRequest.getRemoteHost() );
 
       // Assign default values when not explicitly provided.
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
@@ -132,22 +136,6 @@ class WicaChannelPutController implements StatisticsCollectable
       statisticsCollector.incrementErrors();
       logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
    }
-
-
-/*- Package-level methods ----------------------------------------------------*/
-
-   @Override
-   public ControllerStatisticsCollector getStatistics()
-   {
-      return statisticsCollector;
-   }
-
-   @Override
-   public void resetStatistics()
-   {
-      statisticsCollector.reset();
-   }
-
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

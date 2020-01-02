@@ -4,7 +4,7 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.app.StatisticsCollectable;
+import ch.psi.wica.model.app.StatisticsCollectionService;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.services.stream.WicaStreamLifecycleService;
 import org.apache.commons.lang3.Validate;
@@ -29,7 +29,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping( "/ca/streams")
-class WicaStreamCreateController implements StatisticsCollectable
+class WicaStreamCreateController
 {
 
 /*- Public attributes --------------------------------------------------------*/
@@ -38,7 +38,7 @@ class WicaStreamCreateController implements StatisticsCollectable
    private final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
    private final Logger logger = LoggerFactory.getLogger( WicaStreamCreateController.class );
    private final WicaStreamLifecycleService wicaStreamLifecycleService;
-   private final ControllerStatisticsCollector statisticsCollector = new ControllerStatisticsCollector();
+   private final ControllerStatistics statisticsCollector;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -50,9 +50,13 @@ class WicaStreamCreateController implements StatisticsCollectable
     * @param wicaStreamLifecycleService reference to the service object which can be used
     *        to create the reactive stream.
     */
-   public WicaStreamCreateController( @Autowired WicaStreamLifecycleService wicaStreamLifecycleService )
+   public WicaStreamCreateController( @Autowired WicaStreamLifecycleService wicaStreamLifecycleService,
+                                      @Autowired StatisticsCollectionService statisticsCollectionService )
    {
       this.wicaStreamLifecycleService = Validate.notNull(wicaStreamLifecycleService);
+
+      this.statisticsCollector = new ControllerStatistics("Wica Stream Create Controller" );
+      statisticsCollectionService.addCollectable( statisticsCollector );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -93,7 +97,7 @@ class WicaStreamCreateController implements StatisticsCollectable
 
       // Update the usage statistics for this controller.
       statisticsCollector.incrementRequests();
-      statisticsCollector.addClient( httpServletRequest.getRemoteHost() );
+      statisticsCollector.addClientIpAddr(httpServletRequest.getRemoteHost() );
 
       // Note: by NOT insisting that the RequestBody is provided we can process
       // its absence within this method and provide the appropriate handling.
@@ -159,22 +163,6 @@ class WicaStreamCreateController implements StatisticsCollectable
       statisticsCollector.incrementErrors();
       logger.warn( "Exception handler was called with exception '{}'", ex.toString() );
    }
-
-
-/*- Package-level methods ----------------------------------------------------*/
-
-   @Override
-   public ControllerStatisticsCollector getStatistics()
-   {
-      return statisticsCollector;
-   }
-
-   @Override
-   public void resetStatistics()
-   {
-      statisticsCollector.reset();
-   }
-
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

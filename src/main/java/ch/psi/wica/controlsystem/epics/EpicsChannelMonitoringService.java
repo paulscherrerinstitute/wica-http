@@ -4,6 +4,7 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.app.StatisticsCollectionService;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.ThreadSafe;
@@ -44,7 +45,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger(EpicsChannelMonitoringService.class );
-   private final EpicsChannelMonitoringServiceStatisticsCollector statisticsCollector = new EpicsChannelMonitoringServiceStatisticsCollector();
+   private final EpicsChannelMonitoringServiceStatistics statisticsCollector;
 
    private final Map<EpicsChannelName,Channel<?>> channels;
    private final Map<EpicsChannelName,Monitor<?>> monitors;
@@ -78,7 +79,9 @@ public class EpicsChannelMonitoringService implements AutoCloseable
                                          @Autowired EpicsChannelValueGetter epicsChannelValueGetter,
                                          @Autowired EpicsChannelConnectionChangeSubscriber epicsChannelConnectionChangeSubscriber,
                                          @Autowired EpicsChannelValueChangeSubscriber epicsChannelValueChangeSubscriber,
-                                         @Autowired EpicsEventPublisher epicsEventPublisher )
+                                         @Autowired EpicsEventPublisher epicsEventPublisher,
+                                         @Autowired StatisticsCollectionService statisticsCollectionService
+                                         )
    {
       logger.debug( "'{}' - constructing new EpicsChannelMonitorService instance...", this );
 
@@ -91,8 +94,8 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       channels = new ConcurrentHashMap<>();
       monitors = new ConcurrentHashMap<>();
 
-      statisticsCollector.setChannelMapTracker( channels );
-      statisticsCollector.setMonitorMapTracker( monitors );
+      this.statisticsCollector = new EpicsChannelMonitoringServiceStatistics( channels, monitors );
+      statisticsCollectionService.addCollectable( statisticsCollector );
 
       // Setup a context that uses the monitor notification policy and debug
       // message log level defined in the configuration file.
@@ -132,8 +135,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
     * @param wicaChannel the channel to be monitored.
     * @throws NullPointerException if the 'wicaChannel' argument was null.
     * @throws IllegalStateException if this monitor service was previously closed.
-    * @throws IllegalStateException if the EPICS channel to be monitored is already
-    * being monitored.
+    * @throws IllegalStateException if the EPICS channel to be monitored is already being monitored.
     */
     void startMonitoring( WicaChannel wicaChannel )
    {
@@ -253,7 +255,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       logger.debug( "'{}' - resources disposed ok.", this );
    }
 
-   public EpicsChannelMonitoringServiceStatisticsCollector getStatistics()
+   public EpicsChannelMonitoringServiceStatistics getStatistics()
    {
       return statisticsCollector;
    }
