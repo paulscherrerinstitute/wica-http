@@ -27,7 +27,7 @@ public class ControllerStatistics implements StatisticsCollectable
 
    private final String statisticsHeader;
 
-   private final List<String> clientIpAddrList = Collections.synchronizedList(new ArrayList<>());
+   private final List<String> clientIpAddrList = Collections.synchronizedList( new ArrayList<>());
    private final AtomicInteger requests = new AtomicInteger(0);
    private final AtomicInteger replies = new AtomicInteger(0);
    private final AtomicInteger errors = new AtomicInteger(0);

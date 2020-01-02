@@ -85,7 +85,31 @@ public class EpicsChannelMonitoringServiceStatistics implements StatisticsCollec
             .collect( Collectors.toUnmodifiableList() );
    }
 
-   /*- Package-access methods ---------------------------------------------------*/
+   public String getStartRequests()
+   {
+      return String.valueOf( startRequests.get());
+   }
+   public String getStopRequests()
+   {
+      return String.valueOf( stopRequests.get());
+   }
+
+   public String getTotalChannelCount()
+   {
+      return String.valueOf( channelMap.keySet().size() );
+   }
+
+   public String getConnectedChannelCount()
+   {
+      return String.valueOf( channelMap.values().stream().filter( channel -> channel.getConnectionState() == ConnectionState.CONNECTED ).count() );
+   }
+
+   public String getTotalMonitorCount()
+   {
+      return String.valueOf( monitorMap.keySet().size() );
+   }
+
+/*- Package-access methods ---------------------------------------------------*/
 
    void incrementStartRequests()
    {
@@ -98,32 +122,6 @@ public class EpicsChannelMonitoringServiceStatistics implements StatisticsCollec
 
 
 /*- Private methods ----------------------------------------------------------*/
-
-   private String getStartRequests()
-   {
-      return String.valueOf( startRequests.get());
-   }
-   private String getStopRequests()
-   {
-      return String.valueOf( stopRequests.get());
-   }
-
-   private String getTotalChannelCount()
-   {
-      return String.valueOf( channelMap.keySet().size() );
-   }
-
-   private String getConnectedChannelCount()
-   {
-      return String.valueOf( channelMap.values().stream().filter( channel -> channel.getConnectionState() == ConnectionState.CONNECTED ).count() );
-   }
-
-   private String getTotalMonitorCount()
-   {
-      return String.valueOf( monitorMap.keySet().size() );
-   }
-
-
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

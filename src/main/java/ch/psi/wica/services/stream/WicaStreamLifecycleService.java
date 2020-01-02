@@ -146,7 +146,7 @@ public class WicaStreamLifecycleService
          wicaStreamMonitoredValueRequesterService.startMonitoring( wicaStream );
          wicaStreamPolledValueRequesterService.startPolling( wicaStream );
          final long startMonitoringTimeInMicroseconds = startMonitoringTimer.getTime(TimeUnit.MICROSECONDS );
-         logger.info("Stream monitoring took: '{}' us.,", startMonitoringTimeInMicroseconds);
+         logger.info("Stream monitoring took: '{}' us.", startMonitoringTimeInMicroseconds);
 
          // Create a new publisher and add it to the map of recognized publishers.
          // Note:publication will not begin until there is at least one active subscriber.

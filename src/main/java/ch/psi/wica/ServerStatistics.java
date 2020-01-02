@@ -23,6 +23,8 @@ public class ServerStatistics implements StatisticsCollectable
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
+   private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
    private final LocalDateTime serverStartTime;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -36,13 +38,25 @@ public class ServerStatistics implements StatisticsCollectable
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   public String getTimeAndDateNow()
+   {
+      return LocalDateTime.now().format( FORMATTER );
+   }
+
+   public String getServerStartTime()
+   {
+      return serverStartTime.format( FORMATTER );
+   }
+
+   public long getUpTimeInSeconds()
+   {
+      return Duration.between( serverStartTime , LocalDateTime.now() ).getSeconds();
+   }
+
    @Override
    public List<StatisticsEntry> getEntries()
    {
-      final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-      final String formattedTimeAndDateNow =  LocalDateTime.now().format(formatter );
-      final String formattedServerStartTime = serverStartTime.format( formatter );
-      final long serverUpTimeInSeconds= Duration.between( serverStartTime , LocalDateTime.now() ).getSeconds();
+      final long serverUpTimeInSeconds = getUpTimeInSeconds();
       final String formattedServerUpTime = String.format( "%d days, %02d hours, %02d minutes, %02d seconds",
                                                           ( serverUpTimeInSeconds / 86400 ),        // days
                                                           ( serverUpTimeInSeconds % 86400 ) / 3600, // hours
@@ -51,8 +65,8 @@ public class ServerStatistics implements StatisticsCollectable
 
       return List.of(
             new StatisticsHeader( "SERVER:" ),
-            new StatisticsItem( "Time Now", formattedTimeAndDateNow ),
-            new StatisticsItem( "Server Started", formattedServerStartTime ),
+            new StatisticsItem( "Time Now", getTimeAndDateNow() ),
+            new StatisticsItem( "Server Started", getServerStartTime() ),
             new StatisticsItem( "Server Uptime", formattedServerUpTime )
       );
    }

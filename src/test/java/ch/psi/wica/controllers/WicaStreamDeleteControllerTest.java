@@ -69,8 +69,6 @@ class WicaStreamDeleteControllerTest
    {
       epicsChannelListOk = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_ok.json") );
       WicaStreamId.resetAllocationSequencer();
-
-
    }
 
    @Test
@@ -91,7 +89,7 @@ class WicaStreamDeleteControllerTest
 
       final MvcResult postRequestResult = mockMvc.perform( postRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
       logger.info( "Returned data was: '{}'", postRequestResult.getResponse().getContentAsString() );
-      assertThat(epicsChannelMonitoringService.getStatistics().getConnectedChannelCount(), is( "2") );
+      assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "2") );
 
       // Send a DELETE request to delete the stream we just created.
       final RequestBuilder deleteRequest1 = MockMvcRequestBuilders.delete( "/ca/streams/0" );

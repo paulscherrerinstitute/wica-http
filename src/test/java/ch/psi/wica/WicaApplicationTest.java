@@ -47,8 +47,7 @@ class WicaApplicationTest
       logger.info( "Hello !" );
        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
        assertNotNull( formatter );
-       assertNotNull( WicaApplication.getServerStartTime() );
-       WicaApplication.getServerStartTime().format( formatter );
+       assertNotNull( wicaApplication.getStatistics().getServerStartTime() );
    }
 
    @CsvSource( { "DEBUG,10",
