@@ -52,6 +52,9 @@ class WicaChannelPutController
 
     * @param epicsChannelGetAndPutService reference to the service object which can be used
     *        to put values to a wica channel.
+    *
+    * @param statisticsCollectionService an object which will collect the statistics associated
+    *        with this class instance.
     */
    private WicaChannelPutController( @Value( "${wica.channel-get-timeout-interval-in-ms}") int defaultTimeoutInMillis,
                                      @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService,

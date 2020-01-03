@@ -72,6 +72,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
     * @param epicsChannelConnectionChangeSubscriber an object which can be used to subscribe to connection state changes.
     * @param epicsChannelValueChangeSubscriber an object which can be used to subscribe to value changes.
     * @param epicsEventPublisher an object which publishes events of interest to consumers within the application.
+    * @param statisticsCollectionService an object which will collect the statistics associated with this class instance.
     */
    public EpicsChannelMonitoringService( @Value( "${wica.epics-ca-library-monitor-notifier-impl}") String  epicsCaLibraryMonitorNotifierImpl,
                                          @Value( "${wica.epics-ca-library-debug-level}") int epicsCaLibraryDebugLevel,

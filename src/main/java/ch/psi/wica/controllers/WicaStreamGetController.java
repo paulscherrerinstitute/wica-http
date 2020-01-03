@@ -50,6 +50,8 @@ class WicaStreamGetController
     *
     * @param wicaStreamLifecycleService reference to the service object which can be used
     *        to fetch the reactive streams.
+    * @param statisticsCollectionService an object which will collect the statistics
+    *        associated with this class instance.
     */
    public WicaStreamGetController( @Autowired WicaStreamLifecycleService wicaStreamLifecycleService,
                                    @Autowired StatisticsCollectionService statisticsCollectionService)

@@ -70,7 +70,8 @@ public class WicaStreamLifecycleService
     *
     * @param wicaStreamPolledValueCollectorService reference to the service which collects the polled
     *        values for the stream.
-    *
+    * @param statisticsCollectionService an object which will collect the statistics associated with
+    *        this class instance.
     * @param wicaChannelMetadataMapSerializerService reference to the service that serializes the metadata map.
     * @param wicaChannelValueMapSerializerService reference to the service that serializes the value map.
     */

@@ -49,6 +49,8 @@ class WicaStreamCreateController
     *
     * @param wicaStreamLifecycleService reference to the service object which can be used
     *        to create the reactive stream.
+    * @param statisticsCollectionService an object which will collect the statistics
+    *        associated with this class instance.
     */
    public WicaStreamCreateController( @Autowired WicaStreamLifecycleService wicaStreamLifecycleService,
                                       @Autowired StatisticsCollectionService statisticsCollectionService )

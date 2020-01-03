@@ -59,6 +59,8 @@ class WicaChannelGetController
     *
     * @param epicsChannelGetAndPutService reference to the service object which can be used
     *        to get values to or from a wica channel.
+    * @param statisticsCollectionService an object which will collect the statistics
+    *        associated with this class instance.
     */
    private WicaChannelGetController( @Value( "${wica.channel-get-timeout-interval-in-ms}") int defaultTimeoutInMillis,
                                      @Value( "${wica.channel-get-numeric-scale}") int defaultNumericScale,

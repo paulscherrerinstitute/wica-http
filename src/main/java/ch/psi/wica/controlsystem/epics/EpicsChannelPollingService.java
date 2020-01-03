@@ -56,6 +56,7 @@ public class EpicsChannelPollingService implements AutoCloseable
     * @param timeoutInMillis the timeout for each poll operation.
     * @param epicsChannelGetAndPutService the service which will be used for polling.
     * @param epicsEventPublisher an object which publishes events of interest to consumers within the application.
+    * @param statisticsCollectionService an object which will collect the statistics associated with this class instance.
     */
    public EpicsChannelPollingService( @Value( "${wica.channel-get-timeout-interval-in-ms}") int timeoutInMillis,
                                       @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService,
