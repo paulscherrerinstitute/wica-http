@@ -38,7 +38,7 @@ cache:
 
 before_install:
   - echo -n "*** LIFECYCLE STARTED - 'before_install' *****************************************************************"
-  - sudo apt-get -y install octokit
+  - sudo apt-get -y install ruby-octokit
   - echo -n "*** LIFECYCLE COMPLETED - before_install *****************************************************************"
 
 # Note: 'Install' here means bring things into the Travis environment that are needed for the build.
