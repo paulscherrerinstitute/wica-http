@@ -39,7 +39,7 @@ cache:
 before_install:
   - echo -n "*** LIFECYCLE STARTED - 'before_install' *****************************************************************"
 #  - sudo apt-get -y install ruby-octokit 4.8.0-1
-  - gem install octokit
+  - gem install 'faraday:<0.16'
   - echo -n "*** LIFECYCLE COMPLETED - before_install *****************************************************************"
 
 # Note: 'Install' here means bring things into the Travis environment that are needed for the build.
