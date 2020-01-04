@@ -19,8 +19,8 @@
 # *******************************************
 
 # Only trigger this build recipe on tagged commits.
-if:
-  env(TRAVIS_TAG) IS present
+#if:
+#  env(TRAVIS_TAG) IS present
 
 language: java
 
@@ -77,7 +77,7 @@ deploy:
   - provider: pages                          # Travis GitHub Pages Provider.
     local_dir: target/site/apidocs
     skip_cleanup: true                       # Set to true in accordance with Travis GitHub Pages Provider docs.
-    github_token: "$GITHUB_TOKEN"            # Set in the settings page of your repository, as a secure variable
+#    github_token: "$GITHUB_TOKEN"            # Set in the settings page of your repository, as a secure variable
     keep_history: true                       # Retain previous versions of the documentation.
     on:
       tags: true                             # Skip this deployment unless $TRAVIS_TAG is set.
