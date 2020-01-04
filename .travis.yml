@@ -80,7 +80,7 @@ deploy:
     keep_history: true                       # Retain previous versions of the documentation.
     on:
       tags: true                             # Skip this deployment unless $TRAVIS_TAG is set.
-
+#
   # Log into Docker and run build and push to Docker Hub.
   #- provider: script
   #  skip_cleanup: true
