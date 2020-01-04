@@ -38,22 +38,20 @@ cache:
 # Build Lifecycle Handling Starts Here
 # *******************************************
 
-# before_install:
-#  - echo -n "*** LIFECYCLE STARTED - 'before_install' *****************************************************************"
-#  - echo -n "*** LIFECYCLE COMPLETED - before_install *****************************************************************"
+ before_install:
+  - echo -n "*** LIFECYCLE STARTED - 'before_install' *****************************************************************"
+  - sudo apt-get install octokit
+  - echo -n "*** LIFECYCLE COMPLETED - before_install *****************************************************************"
 
 # Note: 'Install' here means bring things into the Travis environment that are needed for the build.
 # install:
 #  - echo "*** LIFECYCLE STARTED - 'install' ***************************************************************************"
 #  - echo "*** LIFECYCLE COMPLETED - 'install' *************************************************************************"
 
-# before_script:
-#  - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
-#  - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
+ before_script:
+  - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
+  - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
 
-octokit:
-  - 4.15.0
-  -
 script:
   - echo -n "*** LIFECYCLE STARTED - 'script' *************************************************************************"
   - mvn clean package -DskipTests=true -D maven.javadoc.skip=false -B -V
