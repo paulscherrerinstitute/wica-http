@@ -61,16 +61,16 @@ script:
 # The Travis Lifecycle 'deploy' phase is optional and runs after the Travis Lifecycle 'script' phase has completed.
 deploy:
   # Copy the Wica-HTTP release asset into the GitHub Releases Area.
-  - provider: releases                       # Travis GitHub Releases Provider.
-    cleanup: false                            # Set to false in accordance with Travis GitHub Releases Provider docs (V2).
+#  - provider: releases                       # Travis GitHub Releases Provider.
+#    cleanup: false                            # Set to false in accordance with Travis GitHub Releases Provider docs (V2).
 #    edge: true
-    api_key: "$GITHUB_TOKEN"
-    file_glob: true                          # Needed to transfer ALL *.jar assets
-    file: target/wica-http-*.jar             # The asset(s) to be deployed.
-    draft: false                             # Create a GitHub Regular Release not a GitHub Draft.
-    overwrite: true                          # Allow new releases to overwrite old ones.
-    on:
-      tags: true                             # Skip this deployment unless $TRAVIS_TAG is set.
+#    token: "$GITHUB_TOKEN"
+#    file_glob: true                          # Needed to transfer ALL *.jar assets
+#    file: target/wica-http-*.jar             # The asset(s) to be deployed.
+#    draft: false                             # Create a GitHub Regular Release not a GitHub Draft.
+#    overwrite: true                          # Allow new releases to overwrite old ones.
+#    on:
+#      tags: true                             # Skip this deployment unless $TRAVIS_TAG is set.
 
   # Copy the Wica-HTTP JavaDoc documentation into the GitHub Pages Area.
   - provider: pages                          # Travis GitHub Pages Provider.
