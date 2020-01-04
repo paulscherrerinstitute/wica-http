@@ -64,7 +64,7 @@ deploy:
   - provider: releases                       # Travis GitHub Releases Provider.
     cleanup: false                            # Set to false in accordance with Travis GitHub Releases Provider docs (V2).
 #    edge: true
-    token: "$GITHUB_TOKEN"
+    api_key: "$GITHUB_TOKEN"
     file_glob: true                          # Needed to transfer ALL *.jar assets
     file: target/wica-http-*.jar             # The asset(s) to be deployed.
     draft: false                             # Create a GitHub Regular Release not a GitHub Draft.
