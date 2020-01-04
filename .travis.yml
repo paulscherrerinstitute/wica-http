@@ -19,7 +19,7 @@
 # *******************************************
 
 # Only trigger this build recipe on tagged commits.
-if: tag IS present
+# if: tag IS present
 
 language: java
 
