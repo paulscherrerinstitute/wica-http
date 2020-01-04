@@ -33,7 +33,7 @@ services:
 # Cache maven repository to speed up builds.
 cache:
   directories:
-    - $HOME/.m2
+    - "$HOME/.m2"
 
 # *******************************************
 # Build Lifecycle Handling Starts Here
