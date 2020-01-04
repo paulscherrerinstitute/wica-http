@@ -19,7 +19,8 @@
 # *******************************************
 
 # Only trigger this build recipe on tagged commits.
-# if: tag IS present
+if:
+  env(TRAVIS_TAG) IS present
 
 language: java
 
