@@ -51,6 +51,9 @@ cache:
 #  - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
 #  - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
 
+octokit:
+  - 4.15.0
+  -
 script:
   - echo -n "*** LIFECYCLE STARTED - 'script' *************************************************************************"
   - mvn clean package -DskipTests=true -D maven.javadoc.skip=false -B -V
