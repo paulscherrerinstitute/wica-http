@@ -22,12 +22,10 @@ os: linux
 
 language: java
 
-jdk:
-  - openjdk11
+jdk: openjdk11
 
 # The Docker environment is required to run the Dockerfile and to push the release to Docker Hub.
-services:
-  - docker
+services: docker
 
 # Cache maven repository to speed up builds.
 cache:
@@ -38,19 +36,19 @@ cache:
 # Build Lifecycle Handling Starts Here
 # *******************************************
 
- before_install:
+before_install:
   - echo -n "*** LIFECYCLE STARTED - 'before_install' *****************************************************************"
-  - sudo apt-get install octokit
+  - sudo apt-get -y install octokit
   - echo -n "*** LIFECYCLE COMPLETED - before_install *****************************************************************"
 
 # Note: 'Install' here means bring things into the Travis environment that are needed for the build.
-# install:
-#  - echo "*** LIFECYCLE STARTED - 'install' ***************************************************************************"
-#  - echo "*** LIFECYCLE COMPLETED - 'install' *************************************************************************"
+install:
+  - echo "*** LIFECYCLE STARTED - 'install' ***************************************************************************"
+  - echo "*** LIFECYCLE COMPLETED - 'install' *************************************************************************"
 
- before_script:
-  - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
-  - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
+# before_script:
+#  - echo -n "*** LIFECYCLE STARTED - 'before_script' ******************************************************************"
+#  - echo -n "*** LIFECYCLE COMPLETED - 'before_script' ****************************************************************"
 
 script:
   - echo -n "*** LIFECYCLE STARTED - 'script' *************************************************************************"
