@@ -60,6 +60,8 @@ deploy:
   - provider: releases                       # Travis GitHub Releases Provider.
     skip_cleanup: true                       # Set to true in accordance with Travis GitHub Releases Provider docs.
     edge: true
+    api_key:
+      secure: "$GITHUB_TOKEN"
 #    api_key:                                 # See the Travis documentation for how this key was created.
 #      secure: "cDP3Oecwm+CoMajdf+EE8yHRXgTLjPVNISdnhYQ1pYmR7+wllgeO5nzJhgGBmu6hZQmvnzQBKBynGG65hd21QgYceis2am6MZojTOf3WqkKEnytLpBUJrNb/jJcpygQx04OSUC3Ev0EhasZEgYYMTNKsE1c4N/G9mPWkjwKmzeCrS7oHYY7rES5T6i7aoP0VNTJp5gMcRukKdejN6IvjeQFCjQn/dw68Unsmk6zDByEgvapl4BSfXMl3zMz0PjC3aNpR3G9iY7FByOmHjYLv4dAXaceJPnAoIbVCeH5yJ3GzkTV0xrB9n5jd6sM/AezNAS/1JaGv/pNhjXkIgw+GjO5uRaM2IPZl2VU6fh2kAKocxoICkoE4D2qsEUvd5hthQ1h515eMKPyXqTFxSzzY9CEtS39qgEB7NJj0fH1nRyFzwzel4UZ/wRqrNCQrY8s4e6yGrXm+9s+OhoEJVr1mtu2ou9Uxp4jMyb2zH1pCf63IAAENQpkwL2+5V7bUtCSC0HnrDruY4L/RrKvrMNxQzZbQr3wcdS8GNhGLx56s1ZFjnLrd3K8RJRo+LJiWxYuwaRMZd9YyANvMWiJg+2QrR2bVNiFs73vRBvzLMNDZcfh+cp3a2ztdjVsqvB+mVfYviM7DbIRIc91SOSoIeoTwPZw5QyfCzZ1jVKjUUN9q8mI="
     file_glob: true                          # Needed to transfer ALL *.jar assets
