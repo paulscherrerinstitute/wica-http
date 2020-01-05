@@ -45,8 +45,8 @@ public class WicaStreamLifecycleStatistics implements StatisticsCollectable
    {
       return List.of(
             new StatisticsHeader( statisticsHeader ),
-            new StatisticsItem("WICA Streams Created", getStreamsCreated() ),
-            new StatisticsItem("WICA Streams Deleted", getStreamsDeleted() )
+            new StatisticsItem("- Streams Created", getStreamsCreated() ),
+            new StatisticsItem("- Streams Deleted", getStreamsDeleted() )
       );
    }
 

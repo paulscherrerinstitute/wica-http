@@ -65,9 +65,9 @@ public class ServerStatistics implements StatisticsCollectable
 
       return List.of(
             new StatisticsHeader( "SERVER:" ),
-            new StatisticsItem( "Time Now", getTimeAndDateNow() ),
-            new StatisticsItem( "Server Started", getServerStartTime() ),
-            new StatisticsItem( "Server Uptime", formattedServerUpTime )
+            new StatisticsItem( "- Time Now", getTimeAndDateNow() ),
+            new StatisticsItem( "- Server Started", getServerStartTime() ),
+            new StatisticsItem( "- Server Uptime", formattedServerUpTime )
       );
    }
 

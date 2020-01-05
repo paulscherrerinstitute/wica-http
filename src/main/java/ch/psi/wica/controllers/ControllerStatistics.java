@@ -50,10 +50,10 @@ public class ControllerStatistics implements StatisticsCollectable
    {
       return List.of(
             new StatisticsHeader( statisticsHeader ),
-            new StatisticsItem("Requests", getRequests() ),
-            new StatisticsItem("Replies", getReplies() ),
-            new StatisticsItem("Errors", getErrors() ),
-            new StatisticsItem("Clients", getClientIpAddrList() )
+            new StatisticsItem("- Requests", getRequests() ),
+            new StatisticsItem("- Replies", getReplies() ),
+            new StatisticsItem("- Errors", getErrors() ),
+            new StatisticsItem("- Clients", getClientIpAddrList() )
       );
    }
 
