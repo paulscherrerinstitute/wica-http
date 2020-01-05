@@ -41,7 +41,7 @@ cache:
 before_install:
   - echo -n "*** LIFECYCLE STARTED - 'before_install' *****************************************************************"
 #  - sudo apt-get -y install ruby-octokit 4.8.0-1
-  - gem install 'faraday:<0.16'
+#  - gem install 'faraday:<0.16'
   - echo -n "*** LIFECYCLE COMPLETED - before_install *****************************************************************"
 
 # Note: 'Install' here means bring things into the Travis environment that are needed for the build.
@@ -61,27 +61,29 @@ script:
 # The Travis Lifecycle 'deploy' phase is optional and runs after the Travis Lifecycle 'script' phase has completed.
 deploy:
   # Copy the Wica-HTTP release asset into the GitHub Releases Area.
-#  - provider: releases                       # Travis GitHub Releases Provider.
-#    cleanup: false                            # Set to false in accordance with Travis GitHub Releases Provider docs (V2).
-#    edge: true
+  - provider: releases                       # Travis GitHub Releases Provider.
+    cleanup: false                            # Set to false in accordance with Travis GitHub Releases Provider docs (V2).
+    edge: true
 #    token: "$GITHUB_TOKEN"
-#    file_glob: true                          # Needed to transfer ALL *.jar assets
-#    file: target/wica-http-*.jar             # The asset(s) to be deployed.
-#    draft: false                             # Create a GitHub Regular Release not a GitHub Draft.
-#    overwrite: true                          # Allow new releases to overwrite old ones.
-#    on:
-#      tags: true                             # Skip this deployment unless $TRAVIS_TAG is set.
-
-  # Copy the Wica-HTTP JavaDoc documentation into the GitHub Pages Area.
-  - provider: pages                          # Travis GitHub Pages Provider.
-    local_dir: target/site/apidocs
-    cleanup: false                           # Set to false in accordance with Travis GitHub Pages Provider docs (V2).
     token:                                   # Set in the settings page of your repository, as a secure variable
-      secure: oqRTcNeUkIves3CCGKQJdKZ9Y3jxm8vZpWo0DP1QP1Q1Cd1ERknzUSkmGTw1Q/9uZMpeim5FHUQVHwmM/a44/AzCvmL4v9otvLMzisV5mOsd6x3f8C34my42ihNTtEpiabNNHebCq9XtGujo3MCxQm24fI9yL2on+Nq1kjsB/Ecco767WwLDa7mWoFIb+1KP9jp1xGBInJA81lZ1nlRZPxz6lIa9vbsZRQ2xDTdxxqGUclEhTBjJh7yMMs+ZM09KTKOYoMX623PVAEIGwHQp8HILHykN3ezB8BD4iUztvbPxRzDSuLQ5Xz1WoeQ2qwR6ZejNPdfE9GyiDbXM8mWmmnRb5LAUJnX+9LFZVpErn+5hcCoGoTZvtE0lcjUQZ/RrPJBzT/G1GAL3tPn8Ixy9PqxTsgQDDJU0+2TNvz8wfLp7o8xb9d8ChexEDz69c0ERM7jTjCne76qpOiQN4sOrM5DkBFaWTzEhk3h5ZQNA7TO15WB97HYXGYjxze7wLjG0xdoAloRdXu0N6mUyHAktQzzfL5QoN2scr0iZ6H5OkPfREjXE+GJTtrUTjvUwA1dq6IUh7CVPnwYTGDPnWdnlF7jw7aUteB3UmKcyazSltex5K0HqpbHo4lzK6PwBNvhqjoq7drD86J+1rIj9nPPBiLZtx2lZqExNTE9JcAahCr4=
-    keep_history: true                       # Retain previous versions of the documentation.
+      secure: "oqRTcNeUkIves3CCGKQJdKZ9Y3jxm8vZpWo0DP1QP1Q1Cd1ERknzUSkmGTw1Q/9uZMpeim5FHUQVHwmM/a44/AzCvmL4v9otvLMzisV5mOsd6x3f8C34my42ihNTtEpiabNNHebCq9XtGujo3MCxQm24fI9yL2on+Nq1kjsB/Ecco767WwLDa7mWoFIb+1KP9jp1xGBInJA81lZ1nlRZPxz6lIa9vbsZRQ2xDTdxxqGUclEhTBjJh7yMMs+ZM09KTKOYoMX623PVAEIGwHQp8HILHykN3ezB8BD4iUztvbPxRzDSuLQ5Xz1WoeQ2qwR6ZejNPdfE9GyiDbXM8mWmmnRb5LAUJnX+9LFZVpErn+5hcCoGoTZvtE0lcjUQZ/RrPJBzT/G1GAL3tPn8Ixy9PqxTsgQDDJU0+2TNvz8wfLp7o8xb9d8ChexEDz69c0ERM7jTjCne76qpOiQN4sOrM5DkBFaWTzEhk3h5ZQNA7TO15WB97HYXGYjxze7wLjG0xdoAloRdXu0N6mUyHAktQzzfL5QoN2scr0iZ6H5OkPfREjXE+GJTtrUTjvUwA1dq6IUh7CVPnwYTGDPnWdnlF7jw7aUteB3UmKcyazSltex5K0HqpbHo4lzK6PwBNvhqjoq7drD86J+1rIj9nPPBiLZtx2lZqExNTE9JcAahCr4="
+    file_glob: true                          # Needed to transfer ALL *.jar assets
+    file: target/wica-http-*.jar             # The asset(s) to be deployed.
+    draft: false                             # Create a GitHub Regular Release not a GitHub Draft.
+    overwrite: true                          # Allow new releases to overwrite old ones.
     on:
       tags: true                             # Skip this deployment unless $TRAVIS_TAG is set.
-#
+
+  # Copy the Wica-HTTP JavaDoc documentation into the GitHub Pages Area.
+#  - provider: pages                          # Travis GitHub Pages Provider.
+#    local_dir: target/site/apidocs
+#    cleanup: false                           # Set to false in accordance with Travis GitHub Pages Provider docs (V2).
+#    token:                                   # Set in the settings page of your repository, as a secure variable
+#      secure: "oqRTcNeUkIves3CCGKQJdKZ9Y3jxm8vZpWo0DP1QP1Q1Cd1ERknzUSkmGTw1Q/9uZMpeim5FHUQVHwmM/a44/AzCvmL4v9otvLMzisV5mOsd6x3f8C34my42ihNTtEpiabNNHebCq9XtGujo3MCxQm24fI9yL2on+Nq1kjsB/Ecco767WwLDa7mWoFIb+1KP9jp1xGBInJA81lZ1nlRZPxz6lIa9vbsZRQ2xDTdxxqGUclEhTBjJh7yMMs+ZM09KTKOYoMX623PVAEIGwHQp8HILHykN3ezB8BD4iUztvbPxRzDSuLQ5Xz1WoeQ2qwR6ZejNPdfE9GyiDbXM8mWmmnRb5LAUJnX+9LFZVpErn+5hcCoGoTZvtE0lcjUQZ/RrPJBzT/G1GAL3tPn8Ixy9PqxTsgQDDJU0+2TNvz8wfLp7o8xb9d8ChexEDz69c0ERM7jTjCne76qpOiQN4sOrM5DkBFaWTzEhk3h5ZQNA7TO15WB97HYXGYjxze7wLjG0xdoAloRdXu0N6mUyHAktQzzfL5QoN2scr0iZ6H5OkPfREjXE+GJTtrUTjvUwA1dq6IUh7CVPnwYTGDPnWdnlF7jw7aUteB3UmKcyazSltex5K0HqpbHo4lzK6PwBNvhqjoq7drD86J+1rIj9nPPBiLZtx2lZqExNTE9JcAahCr4="
+#    keep_history: true                       # Retain previous versions of the documentation.
+#    on:
+#      tags: true                             # Skip this deployment unless $TRAVIS_TAG is set.
+##
   # Log into Docker and run build and push to Docker Hub.
   #- provider: script
   #  skip_cleanup: true
@@ -96,5 +98,3 @@ deploy:
 # after_script:
 #  - echo -n "*** LIFECYCLE STARTED - 'after_script' *******************************************************************"
 #  - echo -n "*** LIFECYCLE COMPLETED - 'after_script' *****************************************************************"
-env:
-  global:
