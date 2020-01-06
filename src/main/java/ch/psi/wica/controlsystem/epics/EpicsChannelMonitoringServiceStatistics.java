@@ -54,11 +54,15 @@ public class EpicsChannelMonitoringServiceStatistics implements StatisticsCollec
                                       new StatisticsItem("- Stop Monitor Requests", getStopRequests() ),
                                       new StatisticsItem("- EPICS Channels: Total", getTotalChannelCount() ),
                                       new StatisticsItem("- EPICS Channels: Connected", getConnectedChannelCount() ),
+                                      new StatisticsItem("- EPICS Channels: Not Connected", getNotConnectedChannelCount() ),
+                                      new StatisticsItem("- EPICS Channels: Never Connected", getNeverConnectedChannelCount() ),
+                                      new StatisticsItem("- EPICS Channels: Disconnected", getDisconnectedChannelCount() ),
+                                      new StatisticsItem("- EPICS Channels: Closed", getClosedChannelCount() ),
                                       new StatisticsItem("- EPICS Monitors: Total", getTotalMonitorCount() ) ) );
    }
 
    @Override
-   public void clearEntries()
+   public void reset()
    {
       startRequests.set( 0 );
       stopRequests.set( 0 );
@@ -100,6 +104,26 @@ public class EpicsChannelMonitoringServiceStatistics implements StatisticsCollec
    public String getConnectedChannelCount()
    {
       return String.valueOf( channelMap.values().stream().filter( channel -> channel.getConnectionState() == ConnectionState.CONNECTED ).count() );
+   }
+
+   public String getNotConnectedChannelCount()
+   {
+      return String.valueOf( channelMap.values().stream().filter( channel -> channel.getConnectionState() != ConnectionState.CONNECTED ).count() );
+   }
+
+   public String getNeverConnectedChannelCount()
+   {
+      return String.valueOf( channelMap.values().stream().filter( channel -> channel.getConnectionState() == ConnectionState.NEVER_CONNECTED ).count() );
+   }
+
+   public String getDisconnectedChannelCount()
+   {
+      return String.valueOf( channelMap.values().stream().filter( channel -> channel.getConnectionState() == ConnectionState.DISCONNECTED ).count() );
+   }
+
+   public String getClosedChannelCount()
+   {
+      return String.valueOf( channelMap.values().stream().filter( channel -> channel.getConnectionState() == ConnectionState.CLOSED ).count() );
    }
 
    public String getTotalMonitorCount()

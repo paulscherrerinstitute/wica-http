@@ -69,7 +69,7 @@ public class ServerStatistics implements StatisticsCollectable
    }
 
    @Override
-   public void clearEntries()
+   public void reset()
    {
       // Nothing to do here
    }

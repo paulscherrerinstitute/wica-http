@@ -49,10 +49,10 @@ public class WicaStreamLifecycleStatistics implements StatisticsCollectable
    }
 
    @Override
-   public void clearEntries()
+   public void reset()
    {
-      streamsCreated.set(0 );
-      streamsDeleted.set(0 );
+      streamsCreated.set( 0 );
+      streamsDeleted.set( 0 );
    }
 
 /*- Package-access methods ---------------------------------------------------*/

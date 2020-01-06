@@ -20,7 +20,7 @@ public interface StatisticsCollectable
 /*- Public methods -----------------------------------------------------------*/
 
    Statistics get();
-   void clearEntries();
+   void reset();
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

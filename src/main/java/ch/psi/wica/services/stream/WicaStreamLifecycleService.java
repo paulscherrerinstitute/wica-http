@@ -95,7 +95,7 @@ public class WicaStreamLifecycleService
       this.wicaChannelMetadataMapSerializerService = wicaChannelMetadataMapSerializerService;
       this.wicaChannelValueMapSerializerService = wicaChannelValueMapSerializerService;
 
-      this.wicaStreamLifecycleStatistics = new WicaStreamLifecycleStatistics("WICA STREAM LIFECYCLE SERVICE:" );
+      this.wicaStreamLifecycleStatistics = new WicaStreamLifecycleStatistics("WICA STREAM LIFECYCLE SERVICE" );
       statisticsCollectionService.addCollectable( wicaStreamLifecycleStatistics );
    }
 

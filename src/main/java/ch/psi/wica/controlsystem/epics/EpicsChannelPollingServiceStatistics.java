@@ -53,7 +53,7 @@ public class EpicsChannelPollingServiceStatistics implements StatisticsCollectab
    }
 
    @Override
-   public void clearEntries()
+   public void reset()
    {
       startRequests.set( 0 );
       stopRequests.set( 0 );

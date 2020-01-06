@@ -56,7 +56,7 @@ public class ControllerStatistics implements StatisticsCollectable
    }
 
    @Override
-   public void clearEntries()
+   public void reset()
    {
       requests.set( 0 );
       replies.set( 0 );
