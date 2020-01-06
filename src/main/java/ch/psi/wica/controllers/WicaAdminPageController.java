@@ -71,15 +71,22 @@ class WicaAdminPageController
 
       final Map<String,String> serverStatisticsMap = new LinkedHashMap<>();
       final List<StatisticsCollectable.StatisticsEntry> entries = statisticsCollectionService.getEntries();
-      entries.forEach( e -> {
-         if ( e instanceof StatisticsCollectable.StatisticsHeader ) {
-            serverStatisticsMap.put( ((StatisticsCollectable.StatisticsHeader) e).getHeader(), "" );
+
+      int lineNummber = 0;
+      for ( StatisticsCollectable.StatisticsEntry entry : entries )
+      {
+         if ( entry instanceof StatisticsCollectable.StatisticsHeader ) {
+            serverStatisticsMap.put( lineNummber + ". ", "" );
+            lineNummber++;
+            serverStatisticsMap.put( lineNummber + ". " +((StatisticsCollectable.StatisticsHeader) entry).getHeader(), "" );
+            lineNummber++;
          }
 
-         if ( e instanceof StatisticsCollectable.StatisticsItem ) {
-            serverStatisticsMap.put( ((StatisticsCollectable.StatisticsItem) e).getItem(), ((StatisticsCollectable.StatisticsItem) e).getValue() );
+         if ( entry instanceof StatisticsCollectable.StatisticsItem ) {
+            serverStatisticsMap.put( lineNummber + ". " + ((StatisticsCollectable.StatisticsItem) entry).getItem(), ((StatisticsCollectable.StatisticsItem) entry).getValue() );
+            lineNummber++;
          }
-      } );
+      }
 
       viewModel.addAttribute("serverStatisticsMap", serverStatisticsMap );
 
@@ -109,7 +116,6 @@ class WicaAdminPageController
       final List<String> channelNames = epicsChannelPollingService.getStatistics().getChannelNames();
       return new ResponseEntity<>( channelNames, HttpStatus.OK );
    }
-
 
    @PutMapping( value="/statistics" )
    public void resetStatistics()
