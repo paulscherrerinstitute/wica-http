@@ -41,12 +41,10 @@ public class WicaStreamLifecycleStatistics implements StatisticsCollectable
 /*- Public methods -----------------------------------------------------------*/
 
    @Override
-   public List<StatisticsEntry> getEntries()
+   public Statistics get()
    {
-      return List.of(
-            new StatisticsHeader( statisticsHeader ),
-            new StatisticsItem("- Streams Created", getStreamsCreated() ),
-            new StatisticsItem("- Streams Deleted", getStreamsDeleted() )
+      return new Statistics( statisticsHeader, List.of( new StatisticsItem("- Streams Created", getStreamsCreated() ),
+                                                        new StatisticsItem("- Streams Deleted", getStreamsDeleted() ) )
       );
    }
 

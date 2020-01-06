@@ -57,7 +57,7 @@ class WicaStreamGetController
                                    @Autowired StatisticsCollectionService statisticsCollectionService)
    {
       this.wicaStreamLifecycleService = Validate.notNull(wicaStreamLifecycleService);
-      this.statisticsCollector = new ControllerStatistics("WICA STREAM GET CONTROLLER:" );
+      this.statisticsCollector = new ControllerStatistics("WICA STREAM GET CONTROLLER" );
       statisticsCollectionService.addCollectable( statisticsCollector );
    }
 

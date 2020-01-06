@@ -42,16 +42,14 @@ public class EpicsChannelPollingServiceStatistics implements StatisticsCollectab
 /*- Public methods -----------------------------------------------------------*/
 
    @Override
-   public List<StatisticsCollectable.StatisticsEntry> getEntries()
+   public Statistics get()
    {
-      return List.of(
-            new StatisticsCollectable.StatisticsHeader("EPICS POLLING SERVICE:" ),
-            new StatisticsCollectable.StatisticsItem("- Start Polling Requests", getStartRequests() ),
-            new StatisticsCollectable.StatisticsItem("- Stop Polling Requests", getStopRequests() ),
-            new StatisticsCollectable.StatisticsItem("- EPICS Pollers: Total", getTotalPollerCount() ),
-            new StatisticsCollectable.StatisticsItem("- EPICS Pollers: Cancelled", getCancelledPollerCount() ),
-            new StatisticsCollectable.StatisticsItem("- EPICS Pollers: Completed", getCompletedPollerCount() )
-      );
+      return new Statistics( "EPICS POLLING SERVICE",
+                             List.of( new StatisticsItem("- Start Polling Requests", getStartRequests() ),
+                                      new StatisticsItem("- Stop Polling Requests", getStopRequests() ),
+                                      new StatisticsItem("- EPICS Pollers: Total", getTotalPollerCount() ),
+                                      new StatisticsItem("- EPICS Pollers: Cancelled", getCancelledPollerCount() ),
+                                      new StatisticsItem("- EPICS Pollers: Completed", getCompletedPollerCount() ) ) );
    }
 
    @Override

@@ -47,16 +47,14 @@ public class EpicsChannelMonitoringServiceStatistics implements StatisticsCollec
 /*- Public methods -----------------------------------------------------------*/
 
    @Override
-   public List<StatisticsEntry> getEntries()
+   public Statistics get()
    {
-      return List.of(
-         new StatisticsHeader( "EPICS MONITORING SERVICE:" ),
-         new StatisticsItem("- Start Monitor Requests", getStartRequests() ),
-         new StatisticsItem("- Stop Monitor Requests", getStopRequests() ),
-         new StatisticsItem("- EPICS Channels: Total", getTotalChannelCount() ),
-         new StatisticsItem("- EPICS Channels: Connected", getConnectedChannelCount() ),
-         new StatisticsItem("- EPICS Monitors: Total", getTotalMonitorCount() )
-      );
+      return new Statistics( "EPICS MONITORING SERVICE",
+                             List.of( new StatisticsItem("- Start Monitor Requests", getStartRequests() ),
+                                      new StatisticsItem("- Stop Monitor Requests", getStopRequests() ),
+                                      new StatisticsItem("- EPICS Channels: Total", getTotalChannelCount() ),
+                                      new StatisticsItem("- EPICS Channels: Connected", getConnectedChannelCount() ),
+                                      new StatisticsItem("- EPICS Monitors: Total", getTotalMonitorCount() ) ) );
    }
 
    @Override

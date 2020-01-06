@@ -67,7 +67,7 @@ class WicaChannelPutController
       this.defaultTimeoutInMillis = defaultTimeoutInMillis;
       this.epicsChannelGetAndPutService = Validate.notNull(epicsChannelGetAndPutService);
 
-      this.statisticsCollector = new ControllerStatistics("WICA CHANNEL PUT CONTROLLER:" );
+      this.statisticsCollector = new ControllerStatistics("WICA CHANNEL PUT CONTROLLER" );
       statisticsCollectionService.addCollectable( statisticsCollector );
    }
 

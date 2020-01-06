@@ -20,9 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -69,26 +67,9 @@ class WicaAdminPageController
    {
       logger.trace("Received status GET /admin request" );
 
-      final Map<String,String> serverStatisticsMap = new LinkedHashMap<>();
-      final List<StatisticsCollectable.StatisticsEntry> entries = statisticsCollectionService.getEntries();
+      final List<StatisticsCollectable.Statistics> statisticsList = statisticsCollectionService.collect();
 
-      int lineNummber = 0;
-      for ( StatisticsCollectable.StatisticsEntry entry : entries )
-      {
-         if ( entry instanceof StatisticsCollectable.StatisticsHeader ) {
-            serverStatisticsMap.put( lineNummber + ". ", "" );
-            lineNummber++;
-            serverStatisticsMap.put( lineNummber + ". " +((StatisticsCollectable.StatisticsHeader) entry).getHeader(), "" );
-            lineNummber++;
-         }
-
-         if ( entry instanceof StatisticsCollectable.StatisticsItem ) {
-            serverStatisticsMap.put( lineNummber + ". " + ((StatisticsCollectable.StatisticsItem) entry).getItem(), ((StatisticsCollectable.StatisticsItem) entry).getValue() );
-            lineNummber++;
-         }
-      }
-
-      viewModel.addAttribute("serverStatisticsMap", serverStatisticsMap );
+      viewModel.addAttribute("statisticsList", statisticsList );
 
       // Return reference to the template. Spring Boot will do the rest !
       final String templateFileName = "AdminPage";

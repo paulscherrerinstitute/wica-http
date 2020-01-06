@@ -33,14 +33,11 @@ public class StatisticsCollectionService
       collectables.add( statisticsCollectable );
    }
 
-   public List<StatisticsCollectable.StatisticsEntry> getEntries()
+   public List<StatisticsCollectable.Statistics> collect()
    {
-      final List<StatisticsCollectable.StatisticsEntry> entries = collectables.stream()
-            .map(StatisticsCollectable::getEntries)
-            .flatMap(Collection::stream)
-            .collect(Collectors.toUnmodifiableList() );
-
-      return entries;
+      return collectables.stream()
+                         .map( StatisticsCollectable::get )
+                         .collect( Collectors.toUnmodifiableList() );
    }
 
    public void resetStatistics()

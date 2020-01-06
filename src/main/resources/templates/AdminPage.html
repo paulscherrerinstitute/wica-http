@@ -30,12 +30,16 @@
     <h1>Wica Server Admin Page</h1>
 
     <h2>System Information</h2>
-    <table>
-        <tr th:each="mapEntry: ${serverStatisticsMap}">
-            <td th:text="${mapEntry.key}"></td>
-            <td th:text="${mapEntry.value}"></td>
-        </tr>
-    </table>
+
+    <div th:each="statisticsCategory: ${statisticsList}">
+        <h3 th:text="${statisticsCategory.getHeader()}"></h3>
+        <table>
+            <tr th:each="statisticsItem: ${statisticsCategory.getEntries()}">
+                <td th:text="${statisticsItem.key}"></td>
+                <td th:text="${statisticsItem.value}"></td>
+            </tr>
+        </table>
+    </div>
 
 </body>
 </html>

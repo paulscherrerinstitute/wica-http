@@ -78,7 +78,7 @@ class WicaChannelGetController
       this.defaultFieldsOfInterest = defaultFieldsOfInterest;
       this.epicsChannelGetAndPutService = epicsChannelGetAndPutService;
 
-      this.statisticsCollector = new ControllerStatistics("WICA CHANNEL GET CONTROLLER:" );
+      this.statisticsCollector = new ControllerStatistics("WICA CHANNEL GET CONTROLLER" );
       statisticsCollectionService.addCollectable( statisticsCollector );
    }
 

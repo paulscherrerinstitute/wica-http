@@ -4,6 +4,7 @@ package ch.psi.wica.model.app;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -18,21 +19,21 @@ public interface StatisticsCollectable
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   List<StatisticsEntry> getEntries();
+   Statistics get();
    void clearEntries();
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
-   class StatisticsEntry {}
-
-   class StatisticsHeader extends StatisticsEntry
+   class Statistics
    {
       private final String header;
+      private final List<StatisticsItem> entries;
 
-      public StatisticsHeader( String header )
+      public Statistics( String header, List<StatisticsItem> entries )
       {
          this.header = header;
+         this.entries = List.copyOf( entries );
       }
 
       public String getHeader()
@@ -40,26 +41,26 @@ public interface StatisticsCollectable
          return header;
       }
 
-      public String toString()
+      public List<StatisticsItem> getEntries()
       {
-         return getHeader();
+         return entries;
       }
    }
 
-   class StatisticsItem extends StatisticsEntry
+   class StatisticsItem
    {
-      private final String item;
+      private final String key;
       private final String value;
 
-      public StatisticsItem( String item, String value )
+      public StatisticsItem( String key, String value )
       {
-         this.item = item;
+         this.key = key;
          this.value = value;
       }
 
-      public String getItem()
+      public String getKey()
       {
-         return item;
+         return key;
       }
 
       public String getValue()
@@ -69,7 +70,7 @@ public interface StatisticsCollectable
 
       public String toString()
       {
-         return "- " + getItem() + ":" + getValue();
+         return "- " + getKey() + ":" + getValue();
       }
    }
 

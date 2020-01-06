@@ -54,7 +54,7 @@ public class ServerStatistics implements StatisticsCollectable
    }
 
    @Override
-   public List<StatisticsEntry> getEntries()
+   public Statistics get()
    {
       final long serverUpTimeInSeconds = getUpTimeInSeconds();
       final String formattedServerUpTime = String.format( "%d days, %02d hours, %02d minutes, %02d seconds",
@@ -63,12 +63,9 @@ public class ServerStatistics implements StatisticsCollectable
                                                           ( serverUpTimeInSeconds % 3600  )  / 60,  // minutes
                                                           ( serverUpTimeInSeconds % 60    ) );      // seconds
 
-      return List.of(
-            new StatisticsHeader( "SERVER:" ),
-            new StatisticsItem( "- Time Now", getTimeAndDateNow() ),
-            new StatisticsItem( "- Server Started", getServerStartTime() ),
-            new StatisticsItem( "- Server Uptime", formattedServerUpTime )
-      );
+      return new Statistics( "SERVER", List.of( new StatisticsItem( "- Time Now", getTimeAndDateNow() ),
+                                                        new StatisticsItem( "- Server Started", getServerStartTime() ),
+                                                        new StatisticsItem( "- Server Uptime", formattedServerUpTime ) ) );
    }
 
    @Override

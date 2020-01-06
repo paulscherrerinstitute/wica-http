@@ -56,7 +56,7 @@ class WicaStreamDeleteController
    {
       this.wicaStreamLifecycleService = Validate.notNull(wicaStreamLifecycleService);
 
-      this.statisticsCollector = new ControllerStatistics("WICA STREAM DELETE CONTROLLER:" );
+      this.statisticsCollector = new ControllerStatistics("WICA STREAM DELETE CONTROLLER" );
       statisticsCollectionService.addCollectable( statisticsCollector );
    }
 

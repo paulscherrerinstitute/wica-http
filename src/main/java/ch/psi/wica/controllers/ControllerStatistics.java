@@ -46,15 +46,13 @@ public class ControllerStatistics implements StatisticsCollectable
 /*- Public methods -----------------------------------------------------------*/
 
    @Override
-   public List<StatisticsEntry> getEntries()
+   public Statistics get()
    {
-      return List.of(
-            new StatisticsHeader( statisticsHeader ),
-            new StatisticsItem("- Requests", getRequests() ),
-            new StatisticsItem("- Replies", getReplies() ),
-            new StatisticsItem("- Errors", getErrors() ),
-            new StatisticsItem("- Clients", getClientIpAddrList() )
-      );
+      return new Statistics( statisticsHeader, List.of( new StatisticsItem("- Requests", getRequests() ),
+                                                        new StatisticsItem("- Replies", getReplies() ),
+                                                        new StatisticsItem("- Errors", getErrors() ),
+                                                        new StatisticsItem("- Clients", getClientIpAddrList() )
+      ) );
    }
 
    @Override
@@ -106,6 +104,7 @@ public class ControllerStatistics implements StatisticsCollectable
    {
       final List<String> clients = clientIpAddrList.stream()
             .map( this::getFormattedHostNameFromIP )
+            .distinct()
             .collect( Collectors.toList() );
 
       return clients.toString();
