@@ -181,7 +181,11 @@ public class EpicsChannelPollingService implements AutoCloseable
    private WicaChannelValue doPoll( WicaChannelName wicaChannelName )
    {
       final EpicsChannelName epicsChannelName = EpicsChannelName.of( wicaChannelName.getControlSystemName() );
-      return epicsChannelGetAndPutService.get( epicsChannelName, timeoutInMillis, TimeUnit.MILLISECONDS );
+      statisticsCollector.incrementPollCycleCount();
+
+      var result = epicsChannelGetAndPutService.get( epicsChannelName, timeoutInMillis, TimeUnit.MILLISECONDS );
+      statisticsCollector.updatePollingResult( result.isConnected() );
+      return result;
    }
 
 /*- Nested Classes -----------------------------------------------------------*/

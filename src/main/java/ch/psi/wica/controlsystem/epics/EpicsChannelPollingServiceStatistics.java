@@ -28,6 +28,10 @@ public class EpicsChannelPollingServiceStatistics implements StatisticsCollectab
 
    private final AtomicInteger startRequests = new AtomicInteger(0);
    private final AtomicInteger stopRequests = new AtomicInteger(0);
+   private final AtomicInteger pollCycleCount = new AtomicInteger(0);
+   private final AtomicInteger pollSuccessCount = new AtomicInteger(0);
+   private final AtomicInteger pollFailureCount = new AtomicInteger(0);
+
    private final Map<WicaChannelName, ScheduledFuture<?>> executorMap;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -49,7 +53,11 @@ public class EpicsChannelPollingServiceStatistics implements StatisticsCollectab
                                       new StatisticsItem("- Stop Polling Requests", getStopRequests() ),
                                       new StatisticsItem("- EPICS Pollers: Total", getTotalPollerCount() ),
                                       new StatisticsItem("- EPICS Pollers: Cancelled", getCancelledPollerCount() ),
-                                      new StatisticsItem("- EPICS Pollers: Completed", getCompletedPollerCount() ) ) );
+                                      new StatisticsItem("- EPICS Pollers: Completed", getCompletedPollerCount() ),
+                                      new StatisticsItem("- Polling Cycle: Total Count", getPollCycleCount() ),
+                                      new StatisticsItem("- Polling Cycle: Success Count", getPollSuccessCount() ),
+                                      new StatisticsItem("- Polling Cycle: Failure Count", getPollFailureCount() ) )
+                             );
    }
 
    @Override
@@ -57,6 +65,9 @@ public class EpicsChannelPollingServiceStatistics implements StatisticsCollectab
    {
       startRequests.set( 0 );
       stopRequests.set( 0 );
+      pollCycleCount.set( 0 );
+      pollSuccessCount.set( 0 );
+      pollFailureCount.set( 0 );
    }
 
    public List<String> getChannelNames()
@@ -77,6 +88,23 @@ public class EpicsChannelPollingServiceStatistics implements StatisticsCollectab
    void incrementStopRequests()
    {
       stopRequests.incrementAndGet();
+   }
+
+   void incrementPollCycleCount()
+   {
+      pollCycleCount.incrementAndGet();
+   }
+
+   void updatePollingResult( boolean success )
+   {
+      if ( success )
+      {
+         pollSuccessCount.incrementAndGet();
+      }
+      else
+      {
+         pollFailureCount.incrementAndGet();
+      }
    }
 
 /*- Private methods ----------------------------------------------------------*/
@@ -105,6 +133,22 @@ public class EpicsChannelPollingServiceStatistics implements StatisticsCollectab
       return String.valueOf( executorMap.values().stream().filter( Future::isCancelled).count() );
    }
 
-/*- Nested Classes -----------------------------------------------------------*/
+   private String getPollCycleCount()
+   {
+      return String.valueOf( pollCycleCount );
+   }
+
+   private String getPollSuccessCount()
+   {
+      return String.valueOf( pollSuccessCount );
+   }
+
+   private String getPollFailureCount()
+   {
+      return String.valueOf( pollFailureCount );
+   }
+
+
+   /*- Nested Classes -----------------------------------------------------------*/
 
 }
