@@ -54,9 +54,9 @@ public class EpicsChannelPollingServiceStatistics implements StatisticsCollectab
                                       new StatisticsItem("- EPICS Pollers: Total", getTotalPollerCount() ),
                                       new StatisticsItem("- EPICS Pollers: Cancelled", getCancelledPollerCount() ),
                                       new StatisticsItem("- EPICS Pollers: Completed", getCompletedPollerCount() ),
-                                      new StatisticsItem("- Polling Cycle: Total Count", getPollCycleCount() ),
-                                      new StatisticsItem("- Polling Cycle: Success Count", getPollSuccessCount() ),
-                                      new StatisticsItem("- Polling Cycle: Failure Count", getPollFailureCount() ) )
+                                      new StatisticsItem("- EPICS Pollers: Polling Cycle: Total Count", getPollCycleCount() ),
+                                      new StatisticsItem("- EPICS Pollers: Polling Cycle: Success Count", getPollSuccessCount() ),
+                                      new StatisticsItem("- EPICS Pollers: Polling Cycle: Failure Count", getPollFailureCount() ) )
                              );
    }
 
