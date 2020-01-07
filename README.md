@@ -245,6 +245,11 @@ See [this document](EPICS.md) for further information.
 
 The server supports the following endpoints.
 
+### Access the Server Administration Page
+```
+GET /admin
+```
+
 ### Download the Wica Javascript Client Library
 ```
 GET /wica/wica.js
