@@ -29,6 +29,7 @@ public class EpicsChannelMonitoringServiceStatistics implements StatisticsCollec
 
    private final AtomicInteger startRequests = new AtomicInteger(0);
    private final AtomicInteger stopRequests = new AtomicInteger(0);
+   private final AtomicInteger monitorUpdateCount = new AtomicInteger(0);
 
    private final Map<EpicsChannelName, Channel<?>> channelMap;
    private final Map<EpicsChannelName, Monitor<?>> monitorMap;
@@ -58,7 +59,8 @@ public class EpicsChannelMonitoringServiceStatistics implements StatisticsCollec
                                       new StatisticsItem("- EPICS Channels: Never Connected", getNeverConnectedChannelCount() ),
                                       new StatisticsItem("- EPICS Channels: Disconnected", getDisconnectedChannelCount() ),
                                       new StatisticsItem("- EPICS Channels: Closed", getClosedChannelCount() ),
-                                      new StatisticsItem("- EPICS Monitors: Total", getTotalMonitorCount() ) ) );
+                                      new StatisticsItem("- EPICS Monitors: Total", getTotalMonitorCount() ),
+                                      new StatisticsItem("- EPICS Monitors: Updates", getMonitorUpdateCount() ) ) );
    }
 
    @Override
@@ -66,6 +68,7 @@ public class EpicsChannelMonitoringServiceStatistics implements StatisticsCollec
    {
       startRequests.set( 0 );
       stopRequests.set( 0 );
+      monitorUpdateCount.set( 0 );
    }
 
    public List<String> getChannelNames()
@@ -131,17 +134,27 @@ public class EpicsChannelMonitoringServiceStatistics implements StatisticsCollec
       return String.valueOf( monitorMap.keySet().size() );
    }
 
+   public String getMonitorUpdateCount()
+   {
+      return String.valueOf( monitorUpdateCount.get() );
+   }
+
 /*- Package-access methods ---------------------------------------------------*/
 
    void incrementStartRequests()
    {
       startRequests.incrementAndGet();
    }
+
    void incrementStopRequests()
    {
       stopRequests.incrementAndGet();
    }
 
+   void incrementMonitorUpdateCount()
+   {
+      monitorUpdateCount.incrementAndGet();
+   }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

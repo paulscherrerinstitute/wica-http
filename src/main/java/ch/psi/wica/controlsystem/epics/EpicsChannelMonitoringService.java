@@ -175,7 +175,10 @@ public class EpicsChannelMonitoringService implements AutoCloseable
                epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, wicaChannelValue );
 
                // Synchronously create a monitor which will notify all future value changes.
-               final Consumer<WicaChannelValue> valueChangedHandler = v -> epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, v );
+               final Consumer<WicaChannelValue> valueChangedHandler = v -> {
+                  epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, v );
+                  statisticsCollector.incrementMonitorUpdateCount();
+               };
                final Monitor<Timestamped<Object>> monitor = epicsChannelValueChangeSubscriber.subscribe(channel, valueChangedHandler );
                monitors.put( epicsChannelName, monitor);
             }
