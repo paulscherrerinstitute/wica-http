@@ -16,10 +16,17 @@
         table {
             width: 50%;
         }
-        td, th {
-            width: 50%;
+        td {
             text-align: left;
             padding-right: 15px;
+        }
+
+        .key {
+           width: 25%;
+        }
+
+        .value {
+            width: 75%;
         }
 
     </style>
@@ -36,8 +43,8 @@
         <h3 th:text="${statisticsCategory.getHeader()}"></h3>
         <table>
             <tr th:each="statisticsItem: ${statisticsCategory.getEntries()}">
-                <td th:text="${statisticsItem.key}"></td>
-                <td th:text="${statisticsItem.value}"></td>
+                <td class="key" th:text="${statisticsItem.key}"></td>
+                <td class="value" th:text="${statisticsItem.value}"></td>
             </tr>
         </table>
     </div>
