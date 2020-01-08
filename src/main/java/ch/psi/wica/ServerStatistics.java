@@ -38,21 +38,6 @@ public class ServerStatistics implements StatisticsCollectable
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public String getTimeAndDateNow()
-   {
-      return LocalDateTime.now().format( FORMATTER );
-   }
-
-   public String getServerStartTime()
-   {
-      return serverStartTime.format( FORMATTER );
-   }
-
-   public long getUpTimeInSeconds()
-   {
-      return Duration.between( serverStartTime , LocalDateTime.now() ).getSeconds();
-   }
-
    @Override
    public Statistics get()
    {
@@ -74,7 +59,24 @@ public class ServerStatistics implements StatisticsCollectable
       // Nothing to do here
    }
 
+
 /*- Private methods ----------------------------------------------------------*/
+
+   private String getTimeAndDateNow()
+{
+   return LocalDateTime.now().format( FORMATTER );
+}
+
+   private String getServerStartTime()
+   {
+      return serverStartTime.format( FORMATTER );
+   }
+
+   private long getUpTimeInSeconds()
+   {
+      return Duration.between( serverStartTime , LocalDateTime.now() ).getSeconds();
+   }
+
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

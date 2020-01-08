@@ -4,7 +4,7 @@ package ch.psi.wica;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.epics.EpicsChannelMonitoringServiceStatistics;
+import ch.psi.wica.config.ConfigurationStatistics;
 import ch.psi.wica.model.app.StatisticsCollectionService;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
@@ -38,7 +38,6 @@ public class WicaApplication
    private static final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
 	private static final Logger logger = LoggerFactory.getLogger( WicaApplication.class );
 	private final boolean testLoggingOnStartup;
-
 	private final ServerStatistics serverStatistics;
 
 /*- Main ---------------------------------------------------------------------*/
@@ -107,11 +106,14 @@ public class WicaApplication
 
 /*- Constructor --------------------------------------------------------------*/
 
-	public WicaApplication( @Value("${wica.test-logging-on-startup}") boolean testLoggingOnStartup, @Autowired StatisticsCollectionService statisticsCollectionService )
+	public WicaApplication( @Value("${wica.test-logging-on-startup}") boolean testLoggingOnStartup,
+									@Autowired ConfigurationStatistics configurationStatistics,
+									@Autowired StatisticsCollectionService statisticsCollectionService )
 	{
 		this.testLoggingOnStartup = testLoggingOnStartup;
 		this.serverStatistics = new ServerStatistics();
 		statisticsCollectionService.addCollectable( serverStatistics );
+		statisticsCollectionService.addCollectable( configurationStatistics );
 	}
 
 
