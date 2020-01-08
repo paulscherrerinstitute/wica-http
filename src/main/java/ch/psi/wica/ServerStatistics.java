@@ -60,23 +60,22 @@ public class ServerStatistics implements StatisticsCollectable
    }
 
 
-/*- Private methods ----------------------------------------------------------*/
+/*- Package-level methods ----------------------------------------------------*/
 
-   private String getTimeAndDateNow()
+   String getTimeAndDateNow()
 {
    return LocalDateTime.now().format( FORMATTER );
 }
-
-   private String getServerStartTime()
+   String getServerStartTime()
    {
       return serverStartTime.format( FORMATTER );
    }
-
-   private long getUpTimeInSeconds()
+   long getUpTimeInSeconds()
    {
       return Duration.between( serverStartTime , LocalDateTime.now() ).getSeconds();
    }
 
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
