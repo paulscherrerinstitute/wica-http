@@ -88,7 +88,7 @@ public class ConfigurationStatistics implements StatisticsCollectable
                                                                       new StatisticsItem( "- wica.channel-put-timeout-interval-in-ms",     channelPutTimeoutIntervalInMs ),
                                                                       new StatisticsItem( "- wica.stream-quote-numeric-strings",           streamQuoteNumericStrings ),
                                                                       new StatisticsItem( "- wica.stream-metadata-fields-of-interest",     streamMetadataFieldsOfInterest ),
-                                                                      new StatisticsItem( "- wica.cors-allow_credentials",                 corsAllowCredentials ),
+                                                                      new StatisticsItem( "- wica.cors-allow-credentials",                 corsAllowCredentials ),
                                                                       new StatisticsItem( "- wica.cors-allowed-origins",                   corsAllowedOrigins ) ) );
    }
 
