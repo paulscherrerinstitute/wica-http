@@ -102,6 +102,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       // message log level defined in the configuration file.
       System.setProperty( "CA_MONITOR_NOTIFIER_IMPL", epicsCaLibraryMonitorNotifierImpl );
       System.setProperty( "CA_DEBUG", String.valueOf( epicsCaLibraryDebugLevel ) );
+      System.setProperty( "LeaderFollowersThreadPool.thread_pool_size", "50" );
 
       //System.setProperty( "EPICS_CA_ADDR_LIST", "192.168.0.46:5064" );
       //System.setProperty( "EPICS_CA_ADDR_LIST", "129.129.145.206:5064" );
