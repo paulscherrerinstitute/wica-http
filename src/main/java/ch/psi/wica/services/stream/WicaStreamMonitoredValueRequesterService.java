@@ -131,7 +131,7 @@ public class WicaStreamMonitoredValueRequesterService
       final var controlSystemName = wicaChannel.getName().getControlSystemName();
 
       // If the channel is already being monitored increment the interest count.
-      if ( monitorInterestMap.containsKey(storageKey ) )
+      if ( monitorInterestMap.containsKey( storageKey ) )
       {
          final int currentInterestCount = monitorInterestMap.get(storageKey );
          final int newInterestCount = currentInterestCount + 1;
