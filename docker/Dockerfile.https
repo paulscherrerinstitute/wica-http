@@ -148,8 +148,8 @@ ENV JAVA_DBG_OPTS "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address
 # This works on both OpenJDK 11 and Azul JDK 11
 # Note: this is hardcoded in the configuration to work on the development server
 # 'gfa-wica-dev.psi.ch'. For other servers this config will need adjusting.
-# EXPOSE 9010
-# ENV JAVA_JMX_OPTS  "-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=gfa-wica-dev.psi.ch -Dcom.sun.management.jmxremote.rmi.port=9010"
+EXPOSE 9010
+ENV JAVA_JMX_OPTS  "-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=gfa-wica-dev.psi.ch -Dcom.sun.management.jmxremote.rmi.port=9010"
 
 ###############################################################################
 # 9.0 Define the ENTRYPOINT
