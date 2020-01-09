@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -92,6 +94,8 @@ class EpicsChannelMetadataGetter
       logger.trace( "'{}' - getting first value...", controlSystemName);
       final Object firstGetObject = channel.get();
 
+      getNativeType( channel );
+
       // Decode the channel type.
       final WicaChannelType wicaChannelType;
       try
@@ -141,6 +145,13 @@ class EpicsChannelMetadataGetter
       {
          throw new IllegalStateException( "Programming Error: the channel was in an unexpected connection state: '" + connectionState + "'." );
       }
+   }
+
+   private WicaChannelType getNativeType( Channel<Object> channel )
+   {
+      final Map<String,Object> props = channel.getProperties();
+
+      return null;
    }
 
 /*- Nested Classes -----------------------------------------------------------*/
