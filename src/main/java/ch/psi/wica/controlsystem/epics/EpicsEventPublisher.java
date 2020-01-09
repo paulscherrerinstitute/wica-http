@@ -72,8 +72,9 @@ public class EpicsEventPublisher
       Validate.notNull( wicaChannel, "The 'wicaChannel' argument was null");
       Validate.notNull( wicaChannelMetadata, "The 'wicaChannelMetadata' argument was null");
 
-      logger.trace("'{}' - metadata changed to: '{}'", wicaChannel, wicaChannelMetadata);
+      logger.trace("'{}' - metadata changed.", wicaChannel );
       applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent(wicaChannel, wicaChannelMetadata ) );
+      logger.trace("'{}' - metadata  published ok", wicaChannel );
    }
 
    /**
@@ -87,8 +88,9 @@ public class EpicsEventPublisher
       Validate.notNull( wicaChannel, "The 'wicaChannel' argument was null");
       Validate.notNull( wicaChannelValue, "The 'wicaChannelValue' argument was null");
 
-      logger.trace("'{}' - value changed to: '{}'", wicaChannel, wicaChannelValue );
+      logger.trace("'{}' - value changed.", wicaChannel );
       applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( wicaChannel, wicaChannelValue ) );
+      logger.trace("'{}' - value  published ok", wicaChannel );
    }
 
    /**
