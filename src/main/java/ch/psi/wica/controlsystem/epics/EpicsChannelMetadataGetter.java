@@ -58,8 +58,8 @@ class EpicsChannelMetadataGetter
 
    /**
     * Queries the supplied EPICS channel to return a WicaChannelMetadata object
-    * which encapsulates the properties of the channel remain relatively fixed
-    * (eg alarm limits, control limits, precision, engineering units... etc).
+    * which encapsulates the properties of the channel which remain relatively
+    * fixed (eg alarm limits, control limits, precision, engineering units... etc).
     *
     * This method operates synchronously and incurs the cost of a network
     * round trip to obtain the information fom the remote data source.
