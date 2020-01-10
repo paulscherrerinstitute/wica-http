@@ -299,10 +299,10 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       // STEP 2: Obtain and publish the channel's initial value.
       // -----------------------------------------------------------
 
-      final var wicaChannelValue = epicsChannelValueGetter.get(epicsChannel);
-      logger.info("'{}' - channel value obtained ok.", epicsChannelName);
-      epicsEventPublisher.publishMonitoredValueChanged(wicaChannel, wicaChannelValue);
-      logger.info("'{}' - channel value published ok.", epicsChannelName);
+//      final var wicaChannelValue = epicsChannelValueGetter.get(epicsChannel);
+//      logger.info("'{}' - channel value obtained ok.", epicsChannelName);
+//      epicsEventPublisher.publishMonitoredValueChanged(wicaChannel, wicaChannelValue);
+//      logger.info("'{}' - channel value published ok.", epicsChannelName);
 
       // -----------------------------------------------------------
       // STEP 3: Establish or re-establish a monitor on the channel.
