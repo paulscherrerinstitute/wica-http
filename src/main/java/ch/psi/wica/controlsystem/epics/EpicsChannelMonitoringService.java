@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -102,7 +103,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       // message log level defined in the configuration file.
       System.setProperty( "CA_MONITOR_NOTIFIER_IMPL", epicsCaLibraryMonitorNotifierImpl );
       System.setProperty( "CA_DEBUG", String.valueOf( epicsCaLibraryDebugLevel ) );
-      System.setProperty( "LeaderFollowersThreadPool.thread_pool_size", "50" );
+      //System.setProperty( "LeaderFollowersThreadPool.thread_pool_size", "50" );
 
       //System.setProperty( "EPICS_CA_ADDR_LIST", "192.168.0.46:5064" );
       //System.setProperty( "EPICS_CA_ADDR_LIST", "129.129.145.206:5064" );
@@ -169,25 +170,31 @@ public class EpicsChannelMonitoringService implements AutoCloseable
             {
                logger.info("'{}' - connection state changed to CONNECTED.", epicsChannelName );
 
-//               // Synchronously obtain the channel's metadata.
-//               final var wicaChannelMetadata = epicsChannelMetadataGetter.get( channel );
-//               logger.info("'{}' - channel metadata obtained ok.", epicsChannelName );
-//               epicsEventPublisher.publishMetadataChanged( wicaChannel, wicaChannelMetadata );
-//
-//               // Synchronously obtain the channel's initial value.
-//               final var wicaChannelValue = epicsChannelValueGetter.get(channel);
-//               logger.info("'{}' - channel value obtained ok.", epicsChannelName);
-//               epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, wicaChannelValue );
-//
-//               // Synchronously create a monitor which will notify all future value changes.
-//               final Consumer<WicaChannelValue> valueChangedHandler = v -> {
-//                  epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, v );
-//                  statisticsCollector.incrementMonitorUpdateCount();
-//               };
-//               logger.info("'{}' - subscribing for monitor updates.", epicsChannelName );
-//               final Monitor<Timestamped<Object>> monitor = epicsChannelValueChangeSubscriber.subscribe(channel, valueChangedHandler );
-//               logger.info("'{}' - subscribed ok.", epicsChannelName );
-//               monitors.put( epicsChannelName, monitor);
+               // The processing below needs to be scheduled every time a channel comes online.
+               // This could be for any of the following reasons:
+               //
+               // a) this EPICS monitoring service has been requested to start monitoring a new
+               //    EPICS channel and the channel has just connected for the very first time.
+               // b) the IOC hosting the channel has just come online following a loss of network
+               //    connectivity. In this case monitors that were already established on the
+               //    IOC will be intact.
+               // c) the IOC hosting the channel has just come online following a reboot. In
+               //    this case monitors that were already established on the IOC will be lost.
+
+               // Note the CA current (1.2.2) implementation of the CA library seems to callback the
+               // connection state changed listener only on a SINGLE thread. Therefore, delays in the
+               // handler processing will be serialized and would potentially result in a performance
+               // bottleneck unless steps are taken to mitigate this. The implementation below
+               // makes use of Spring Boot's Async processing facility to ensure that the required
+               // steps are perfromed asynchronously using a predefined thread pool.
+               try
+               {
+                  handleChannelComesOnline( wicaChannel, channel );
+               }
+               catch( RuntimeException ex)
+               {
+                  logger.error("'{}' - exception when reestablishing channel connection, details were as follows: {}", this, ex.toString() );
+               }
             }
             else
             {
@@ -196,32 +203,10 @@ public class EpicsChannelMonitoringService implements AutoCloseable
             epicsEventPublisher.publishConnectionStateChanged( wicaChannel, conn );
          } );
          logger.info("'{}' - connection listener added ok.", epicsChannelName);
+
          logger.info("'{}' - connecting asynchronously to... ", epicsChannelName);
          channel.connectAsync()
-            .thenRunAsync( () -> {
-               logger.info("'{}' - asynchronous connect completed ok.", epicsChannelName );
-
-               // Synchronously obtain the channel's metadata.
-               final var wicaChannelMetadata = epicsChannelMetadataGetter.get( channel );
-               logger.info("'{}' - channel metadata obtained ok.", epicsChannelName );
-               epicsEventPublisher.publishMetadataChanged( wicaChannel, wicaChannelMetadata );
-
-               // Synchronously obtain the channel's initial value.
-               final var wicaChannelValue = epicsChannelValueGetter.get(channel);
-               logger.info("'{}' - channel value obtained ok.", epicsChannelName);
-               epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, wicaChannelValue );
-
-               // Synchronously create a monitor which will notify all future value changes.
-               final Consumer<WicaChannelValue> valueChangedHandler = v -> {
-                  epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, v );
-                  statisticsCollector.incrementMonitorUpdateCount();
-               };
-               logger.info("'{}' - subscribing for monitor updates.", epicsChannelName );
-               final Monitor<Timestamped<Object>> monitor = epicsChannelValueChangeSubscriber.subscribe(channel, valueChangedHandler );
-               logger.info("'{}' - subscribed ok.", epicsChannelName );
-               monitors.put( epicsChannelName, monitor);
-
-            })
+            .thenRunAsync( () -> logger.info("'{}' - asynchronous connect completed. Waiting for channel to come online...", epicsChannelName ))
             .exceptionally(( ex ) -> {
                logger.warn("'{}' - exception on channel, details were as follows: {}", this, ex.toString());
                return null;
@@ -231,7 +216,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       {
          logger.error("'{}' - exception on channel, details were as follows: {}", epicsChannelName, ex.toString() );
       }
-      logger.info("'{}' - monitor set up completed ok.", epicsChannelName);
+      logger.info("'{}' - monitoring set up completed ok.", epicsChannelName);
    }
 
    /**
@@ -296,6 +281,49 @@ public class EpicsChannelMonitoringService implements AutoCloseable
    }
 
 /*- Private methods ----------------------------------------------------------*/
+
+   @Async( "epicsChannelMonitoringTaskExecutor" )
+   void handleChannelComesOnline( WicaChannel wicaChannel, Channel<Object> epicsChannel )
+   {
+      final EpicsChannelName epicsChannelName = EpicsChannelName.of( wicaChannel.getName().getControlSystemName() );
+
+      // ----------------------------------------------------------
+      // STEP 1: Obtain and publish the channel's metadata.
+      // ----------------------------------------------------------
+
+      final var wicaChannelMetadata = epicsChannelMetadataGetter.get( epicsChannel );
+      logger.info("'{}' - channel metadata obtained ok.", epicsChannelName );
+      epicsEventPublisher.publishMetadataChanged( wicaChannel, wicaChannelMetadata);
+      logger.info("'{}' - channel metadata published ok.", epicsChannelName );
+
+      // -----------------------------------------------------------
+      // STEP 2: Obtain and publish the channel's initial value.
+      // -----------------------------------------------------------
+
+      final var wicaChannelValue = epicsChannelValueGetter.get( epicsChannel );
+      logger.info("'{}' - channel value obtained ok.", epicsChannelName);
+      epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, wicaChannelValue );
+      logger.info("'{}' - channel value published ok.", epicsChannelName);
+
+      // -----------------------------------------------------------
+      // STEP 3: Establish or re-establish a monitor on the channel.
+      // -----------------------------------------------------------
+
+      // 3a) Create a handler for value change notifications
+      final Consumer<WicaChannelValue> valueChangedHandler = v -> {
+         epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, v );
+         statisticsCollector.incrementMonitorUpdateCount();
+      };
+
+      // 3b) Create a monitor which will notify future value changes.
+      logger.info("'{}' - subscribing for monitor updates.", epicsChannelName );
+      final Monitor<Timestamped<Object>> monitor = epicsChannelValueChangeSubscriber.subscribe( epicsChannel, valueChangedHandler );
+      logger.info("'{}' - subscribed ok.", epicsChannelName );
+
+      // 3c) Update the cache of monitors (so we know where to send future stop monitoring requests).
+      monitors.put( epicsChannelName, monitor);
+   }
+
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
