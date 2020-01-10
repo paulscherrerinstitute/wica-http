@@ -38,8 +38,8 @@ class EpicsChannelMonitoringTaskExecutorConfigurer
       logger.info( "Configuring Async Support for EpicsChannelMonitoringService..." );
       final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
       executor.setThreadNamePrefix( "my-epics-channel-monitoring-task-executor-" );
-      executor.setCorePoolSize( 5 );
-      executor.setMaxPoolSize( 50 );
+      executor.setCorePoolSize( 100 );
+      executor.setMaxPoolSize( 100 );
       executor.initialize();
       logger.info( "Async Support for EpicsChannelMonitoringService configuration completed.");
       return executor;
