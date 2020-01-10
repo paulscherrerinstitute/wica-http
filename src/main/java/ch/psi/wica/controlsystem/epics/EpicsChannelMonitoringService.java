@@ -60,6 +60,9 @@ public class EpicsChannelMonitoringService implements AutoCloseable
 
    private boolean closed = false;
 
+   @Autowired
+   private MyExecutor myExecutor;
+
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
@@ -189,7 +192,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
                // steps are perfromed asynchronously using a predefined thread pool.
                try
                {
-                  handleChannelComesOnline( wicaChannel, channel );
+                  myExecutor.handleChannelComesOnline( wicaChannel, channel );
                }
                catch( RuntimeException ex)
                {
@@ -281,50 +284,61 @@ public class EpicsChannelMonitoringService implements AutoCloseable
    }
 
 /*- Private methods ----------------------------------------------------------*/
+/*- Nested Classes -----------------------------------------------------------*/
 
-   @Async( "epicsChannelMonitoringTaskExecutor" )
-   public void handleChannelComesOnline( WicaChannel wicaChannel, Channel<Object> epicsChannel )
+   @Service
+   static class MyExecutor
    {
-      final EpicsChannelName epicsChannelName = EpicsChannelName.of( wicaChannel.getName().getControlSystemName() );
+      private final Logger logger = LoggerFactory.getLogger( MyExecutor.class );
 
-      // ----------------------------------------------------------
-      // STEP 1: Obtain and publish the channel's metadata.
-      // ----------------------------------------------------------
+      @Autowired EpicsChannelMetadataGetter epicsChannelMetadataGetter;
+      @Autowired EpicsChannelValueGetter epicsChannelValueGetter;
+      @Autowired EpicsEventPublisher epicsEventPublisher;
+      @Autowired EpicsChannelValueChangeSubscriber epicsChannelValueChangeSubscriber;
 
-      final var wicaChannelMetadata = epicsChannelMetadataGetter.get( epicsChannel );
-      logger.info("'{}' - channel metadata obtained ok.", epicsChannelName );
-      epicsEventPublisher.publishMetadataChanged( wicaChannel, wicaChannelMetadata);
-      logger.info("'{}' - channel metadata published ok.", epicsChannelName );
+      @Async( "epicsChannelMonitoringTaskExecutor" )
+      public void handleChannelComesOnline( WicaChannel wicaChannel, Channel<Object> epicsChannel )
+      {
+         final EpicsChannelName epicsChannelName = EpicsChannelName.of(wicaChannel.getName().getControlSystemName());
 
-      // -----------------------------------------------------------
-      // STEP 2: Obtain and publish the channel's initial value.
-      // -----------------------------------------------------------
+         // ----------------------------------------------------------
+         // STEP 1: Obtain and publish the channel's metadata.
+         // ----------------------------------------------------------
 
-      final var wicaChannelValue = epicsChannelValueGetter.get( epicsChannel );
-      logger.info("'{}' - channel value obtained ok.", epicsChannelName);
-      epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, wicaChannelValue );
-      logger.info("'{}' - channel value published ok.", epicsChannelName);
+         final var wicaChannelMetadata = epicsChannelMetadataGetter.get(epicsChannel);
+         logger.info("'{}' - channel metadata obtained ok.", epicsChannelName);
+         epicsEventPublisher.publishMetadataChanged(wicaChannel, wicaChannelMetadata);
+         logger.info("'{}' - channel metadata published ok.", epicsChannelName);
 
-      // -----------------------------------------------------------
-      // STEP 3: Establish or re-establish a monitor on the channel.
-      // -----------------------------------------------------------
+         // -----------------------------------------------------------
+         // STEP 2: Obtain and publish the channel's initial value.
+         // -----------------------------------------------------------
 
-      // 3a) Create a handler for value change notifications
-      final Consumer<WicaChannelValue> valueChangedHandler = v -> {
-         epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, v );
-         statisticsCollector.incrementMonitorUpdateCount();
-      };
+         final var wicaChannelValue = epicsChannelValueGetter.get(epicsChannel);
+         logger.info("'{}' - channel value obtained ok.", epicsChannelName);
+         epicsEventPublisher.publishMonitoredValueChanged(wicaChannel, wicaChannelValue);
+         logger.info("'{}' - channel value published ok.", epicsChannelName);
 
-      // 3b) Create a monitor which will notify future value changes.
-      logger.info("'{}' - subscribing for monitor updates.", epicsChannelName );
-      final Monitor<Timestamped<Object>> monitor = epicsChannelValueChangeSubscriber.subscribe( epicsChannel, valueChangedHandler );
-      logger.info("'{}' - subscribed ok.", epicsChannelName );
+         // -----------------------------------------------------------
+         // STEP 3: Establish or re-establish a monitor on the channel.
+         // -----------------------------------------------------------
 
-      // 3c) Update the cache of monitors (so we know where to send future stop monitoring requests).
-      monitors.put( epicsChannelName, monitor);
+         // 3a) Create a handler for value change notifications
+         final Consumer<WicaChannelValue> valueChangedHandler = v -> {
+            epicsEventPublisher.publishMonitoredValueChanged(wicaChannel, v);
+        //    statisticsCollector.incrementMonitorUpdateCount();
+         };
+
+         // 3b) Create a monitor which will notify future value changes.
+         logger.info("'{}' - subscribing for monitor updates.", epicsChannelName);
+         final Monitor<Timestamped<Object>> monitor = epicsChannelValueChangeSubscriber.subscribe(epicsChannel, valueChangedHandler);
+         logger.info("'{}' - subscribed ok.", epicsChannelName);
+
+         // 3c) Update the cache of monitors (so we know where to send future stop monitoring requests).
+        // monitors.put(epicsChannelName, monitor);
+      }
    }
 
-/*- Nested Classes -----------------------------------------------------------*/
 
 }
 
