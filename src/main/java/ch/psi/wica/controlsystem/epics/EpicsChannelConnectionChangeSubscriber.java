@@ -97,7 +97,7 @@ class EpicsChannelConnectionChangeSubscriber
          // assciated with the change notifier.
          epicsChannelConnectionStateChangeNotifier.callHandler( controlSystemName, connectionChangeHandler, isConnected );
 
-         logger.trace("'{}' - publication of new connection state has been scheduled.", controlSystemName );
+         logger.info("'{}' - publication of new connection state has been scheduled.", controlSystemName );
 
       });
 
@@ -128,12 +128,7 @@ class EpicsChannelConnectionChangeSubscriber
    @EnableAsync
    static class TaskExecutorConfigurer
    {
-      private final Logger logger = LoggerFactory.getLogger(EpicsChannelConnectionChangeSubscriber.TaskExecutorConfigurer.class);
-
-      /*- Main ---------------------------------------------------------------------*/
-      /*- Constructor --------------------------------------------------------------*/
-      /*- Class methods ------------------------------------------------------------*/
-      /*- Public methods -----------------------------------------------------------*/
+      private final Logger logger = LoggerFactory.getLogger( EpicsChannelConnectionChangeSubscriber.TaskExecutorConfigurer.class);
 
       @Bean( name = "EpicsChannelConnectionChangeSubscriberTaskExecutor" )
       public Executor threadPoolTaskExecutor()
@@ -141,8 +136,8 @@ class EpicsChannelConnectionChangeSubscriber
          logger.info("Configuring Async Support for EpicsChannelMonitoringService...");
          final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
          executor.setThreadNamePrefix("epics-channel-connection-change-notifier");
-         executor.setCorePoolSize(100);
-         executor.setMaxPoolSize(100);
+         executor.setCorePoolSize( 100 );
+         executor.setMaxPoolSize( 100 );
          executor.initialize();
          logger.info("Async Support for EpicsChannelMonitoringService configuration completed.");
          return executor;
