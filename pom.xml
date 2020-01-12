@@ -27,6 +27,10 @@
         <!-- <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/latest/download/wica-js.zip</wica-js-release> -->
         <!-- This definition can be used to get a specific release -->
         <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/download/1.1.3/wica-js.zip</wica-js-release>
+        <!-- BUG FIX: 2020-01-12 -->
+        <!-- The latest version of Tomcat is specified to get rid of an error message that occurs when navigating -->
+        <!-- away from web pages. See this issue: https://github.com/codecentric/spring-boot-admin/issues/1039 -->
+        <tomcat.version>9.0.30</tomcat.version>
     </properties>
 
     <dependencies>
@@ -137,7 +141,7 @@
             <plugin>
                 <groupId>com.googlecode.maven-download-plugin</groupId>
                 <artifactId>download-maven-plugin</artifactId>
-                <version>1.4.2</version>
+                <version>1.5.0</version>
                 <executions>
                     <execution>
                     <!-- the wget goal actually binds itself into the 'process-resources' phase by   -->
