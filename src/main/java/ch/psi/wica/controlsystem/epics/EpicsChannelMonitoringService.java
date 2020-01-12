@@ -51,9 +51,11 @@ public class EpicsChannelMonitoringService implements AutoCloseable
    private final Map<EpicsChannelName,Monitor<?>> monitors;
 
    private final Context caContext;
-   private final EpicsChannelConnectionChangeSubscriber epicsChannelConnectionChangeSubscriber;
+
+   private final boolean epicsGetChannelValueOnMonitorConnect;
    private final EpicsChannelMetadataGetter epicsChannelMetadataGetter;
    private final EpicsChannelValueGetter epicsChannelValueGetter;
+   private final EpicsChannelConnectionChangeSubscriber epicsChannelConnectionChangeSubscriber;
    private final EpicsChannelValueChangeSubscriber epicsChannelValueChangeSubscriber;
    private final EpicsEventPublisher epicsEventPublisher;
 
@@ -67,6 +69,8 @@ public class EpicsChannelMonitoringService implements AutoCloseable
     *
     * @param epicsCaLibraryMonitorNotifierImpl the CA library monitor notifier configuration.
     * @param epicsCaLibraryDebugLevel the CA library debug level.
+    * @param epicsGetChannelValueOnMonitorConnect whether an explicit get will be performed to read a channel's value
+    *        when it first comes online.
     * @param epicsChannelMetadataGetter an object which can be used to get the channel metadata.
     * @param epicsChannelValueGetter an object which can be used to get the channel value.
     * @param epicsChannelConnectionChangeSubscriber an object which can be used to subscribe to connection state changes.
@@ -76,19 +80,20 @@ public class EpicsChannelMonitoringService implements AutoCloseable
     */
    public EpicsChannelMonitoringService( @Value( "${wica.epics-ca-library-monitor-notifier-impl}") String  epicsCaLibraryMonitorNotifierImpl,
                                          @Value( "${wica.epics-ca-library-debug-level}") int epicsCaLibraryDebugLevel,
+                                         @Value( "${wica.epics-get-channel-value-on-monitor-connect:true}") boolean epicsGetChannelValueOnMonitorConnect,
                                          @Autowired EpicsChannelMetadataGetter epicsChannelMetadataGetter,
                                          @Autowired EpicsChannelValueGetter epicsChannelValueGetter,
                                          @Autowired EpicsChannelConnectionChangeSubscriber epicsChannelConnectionChangeSubscriber,
                                          @Autowired EpicsChannelValueChangeSubscriber epicsChannelValueChangeSubscriber,
                                          @Autowired EpicsEventPublisher epicsEventPublisher,
-                                         @Autowired StatisticsCollectionService statisticsCollectionService
-                                         )
+                                         @Autowired StatisticsCollectionService statisticsCollectionService )
    {
       logger.debug( "'{}' - constructing new EpicsChannelMonitorService instance...", this );
 
-      this.epicsChannelConnectionChangeSubscriber = Validate.notNull( epicsChannelConnectionChangeSubscriber );
+      this.epicsGetChannelValueOnMonitorConnect = epicsGetChannelValueOnMonitorConnect;
       this.epicsChannelMetadataGetter = Validate.notNull( epicsChannelMetadataGetter );
       this.epicsChannelValueGetter = Validate.notNull( epicsChannelValueGetter );
+      this.epicsChannelConnectionChangeSubscriber = Validate.notNull( epicsChannelConnectionChangeSubscriber );
       this.epicsChannelValueChangeSubscriber = Validate.notNull( epicsChannelValueChangeSubscriber );
       this.epicsEventPublisher = Validate.notNull( epicsEventPublisher );
 
@@ -290,19 +295,27 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       // STEP 1: Obtain and publish the channel's metadata.
       // ----------------------------------------------------------
 
-      final var wicaChannelMetadata = epicsChannelMetadataGetter.get(epicsChannel);
-      logger.info("'{}' - channel metadata obtained ok.", epicsChannelName);
-      epicsEventPublisher.publishMetadataChanged(wicaChannel, wicaChannelMetadata);
-      logger.info("'{}' - channel metadata published ok.", epicsChannelName);
+      logger.info( "'{}' - getting channel metadata...", epicsChannelName );
+      final var wicaChannelMetadata = epicsChannelMetadataGetter.get( epicsChannel );
+      logger.info( "'{}' - channel metadata obtained ok.", epicsChannelName );
+      logger.info( "'{}' - publishing channel metadata...", epicsChannelName );
+      epicsEventPublisher.publishMetadataChanged( wicaChannel, wicaChannelMetadata);
+      logger.info( "'{}' - channel metadata published ok.", epicsChannelName );
 
       // -----------------------------------------------------------
       // STEP 2: Obtain and publish the channel's initial value.
       // -----------------------------------------------------------
 
-//      final var wicaChannelValue = epicsChannelValueGetter.get(epicsChannel);
-//      logger.info("'{}' - channel value obtained ok.", epicsChannelName);
-//      epicsEventPublisher.publishMonitoredValueChanged(wicaChannel, wicaChannelValue);
-//      logger.info("'{}' - channel value published ok.", epicsChannelName);
+      // If feature enabled in application.properties file...
+      if ( epicsGetChannelValueOnMonitorConnect )
+      {
+         logger.info("'{}' - getting channel value...", epicsChannelName );
+         final var wicaChannelValue = epicsChannelValueGetter.get( epicsChannel );
+         logger.info("'{}' - channel value obtained ok.", epicsChannelName );
+         logger.info( "'{}' - publishing channel value...", epicsChannelName );
+         epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, wicaChannelValue );
+         logger.info("'{}' - channel value published ok.", epicsChannelName);
+      }
 
       // -----------------------------------------------------------
       // STEP 3: Establish or re-establish a monitor on the channel.
@@ -310,7 +323,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
 
       // 3a) Create a handler for value change notifications
       final Consumer<WicaChannelValue> valueChangedHandler = v -> {
-         epicsEventPublisher.publishMonitoredValueChanged(wicaChannel, v);
+         epicsEventPublisher.publishMonitoredValueChanged( wicaChannel, v );
          statisticsCollector.incrementMonitorUpdateCount();
       };
 
