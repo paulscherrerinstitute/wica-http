@@ -16,6 +16,16 @@
       "description": "The configuration for PSI's CA library when logging."
     },
     {
+      "name": "wica.epics-get-channel-value-on-monitor-connect",
+      "type": "java.lang.Boolean",
+      "description": "Whether an explicit get will be performed to read a channel's value when it first comes online."
+    },
+    {
+      "name": "wica.channel-resource-release-interval-in-secs",
+      "type": "java.lang.Integer",
+      "description": "Period after which the resources associated with a Wica Channel will be released if they are no longer in use."
+    },
+    {
       "name": "wica.channel-monitored-value-buffer-size",
       "type": "java.lang.Integer",
       "description": "The number of values that can be held in the control system monitored value buffer before older values start getting thrown away."
