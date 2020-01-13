@@ -73,7 +73,10 @@ class EpicsChannelMonitoringServiceTest
       assertThat( ex.getMessage(), is( "The channel name: 'abcd' is already being monitored." ) );
    }
 
-   // Note: to run this test the EPICS test100.db files needs to be started.
+   // TODO - Test disabled for now. Need way of starting EPICS server when performing tests as part of automatic build.
+   // By default this test is suppressed as it would create problems in the automatic
+   // build system. The test should be enabled as required during pre-production testing.
+   @Disabled
    @Test
    void testStartMonitoring_OneHundredChannelsConnectTime() throws InterruptedException
    {
