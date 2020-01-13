@@ -21,7 +21,7 @@ This log describes the functionality of tagged versions within the repository.
   Includes patched version of PSI CA library which fixes problem when interoperating.
   with IOC's behind EPICS Channel Access Gateway.
   Now includes EPICS in Docker container. 
-  Docker container now moved from Azul Java to adopt 
+  Docker container now moved from Azul Java to AdoptOpenJDK
     
   Issues:
   #7: Patch previous (wica-http-1.1.0) release to include newer (ca-1.2.2) library which fixes interoperation with IOC's behind PSI's EPICS Channel Access Gateway
@@ -34,4 +34,17 @@ This log describes the functionality of tagged versions within the repository.
   Now includes Wica-JS 1.1.2    
   Test Status: Tests run: 279, Failures: 0, Errors: 0, Skipped: 8
    
-    
+* [1.3.0] 2020-01-13
+  Added support for new averaging filter.    
+  Release now bundles wica-js.1.1.3.
+  Improvements to EPICS monitor management: (a) faster connect times when operating through gateway; (b) now
+  supports configurable delayed release of resources.
+  Improvement to statistics information displayed when accessing /admin endpoint.
+  Dockerfile build now supports JMX debug. 
+  Improvements to Travis automatic build and publication procedure.
+  Upgrade to later version of Tomcat (9.0.30) to fix bug (exception generated when navigating away from web pages).
+
+  GitHub Issues Resolved:
+  #10 Add averaging filter.
+  
+  Test Status: Tests run: 335, Failures: 0, Errors: 0, Skipped: 19
