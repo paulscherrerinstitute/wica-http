@@ -47,4 +47,4 @@ This log describes the functionality of tagged versions within the repository.
   GitHub Issues Resolved:
   #10 Add averaging filter.
   
-  Test Status: Tests run: 335, Failures: 0, Errors: 0, Skipped: 19
+  Test Status: Tests run: 334, Failures: 0, Errors: 0, Skipped: 20
