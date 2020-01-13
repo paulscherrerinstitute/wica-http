@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.function.Consumer;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -253,12 +251,6 @@ class EpicsChannelMonitoringServiceTest
       return new WicaChannel( wicaChannelName, wicaChannelProperties );
    }
 
-
 /*- Nested Classes -----------------------------------------------------------*/
-
-   // Note: these interfaces exist to avoid the need for an unchecked cast in
-   // some of the tests above
-   private interface BooleanConsumer extends Consumer<Boolean> {}
-   private interface EpicsChannelValueConsumer extends Consumer<WicaChannelValue> {}
 
 }
