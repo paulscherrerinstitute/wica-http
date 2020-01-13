@@ -60,7 +60,7 @@ public class ChannelsTests
 
       // Check the database is online
       try {
-         context.createChannel("test:db_ok", String.class).connectAsync().get(5, TimeUnit.SECONDS );
+         context.createChannel("wica:test_db_ok", String.class).connectAsync().get(5, TimeUnit.SECONDS );
       }
       catch ( TimeoutException ex ) {
          logger.error( "The EPICS test database 'epics_tests.db' was not discoverable on the local network." );

@@ -41,7 +41,7 @@ public class WicaChannelMetadataUpdateEvent
       return wicaChannel;
    }
 
-   public WicaChannelMetadata getWicaChannelData()
+   public WicaChannelMetadata getWicaChannelMetadata()
    {
       return wicaChannelMetadata;
    }

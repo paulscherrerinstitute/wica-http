@@ -52,6 +52,8 @@ public class EpicsEventPublisher
 
       logger.trace("'{}' - connection state changed to '{}'.", wicaChannel, isConnected);
 
+      // The implementation here simply uses the disconnect event to publish a
+      // new value indicating disconnection.
       if ( ! isConnected )
       {
          logger.trace("'{}' - value changed to DISCONNECTED to indicate the connection was lost.", wicaChannel);
@@ -67,7 +69,7 @@ public class EpicsEventPublisher
     * @param wicaChannel the name of the channel whose metadata has changed.
     * @param wicaChannelMetadata the metadata
     */
-   void publishMetadataChanged( WicaChannel wicaChannel, WicaChannelMetadata wicaChannelMetadata )
+   void publishMetadataChanged ( WicaChannel wicaChannel, WicaChannelMetadata wicaChannelMetadata )
    {
       Validate.notNull( wicaChannel, "The 'wicaChannel' argument was null");
       Validate.notNull( wicaChannelMetadata, "The 'wicaChannelMetadata' argument was null");

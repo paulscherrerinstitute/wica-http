@@ -3,17 +3,11 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelName;
-import ch.psi.wica.model.channel.WicaChannelProperties;
-import ch.psi.wica.model.channel.WicaChannelValue;
-import org.junit.BeforeClass;
+import ch.psi.wica.model.channel.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -22,9 +16,7 @@ import java.util.function.Consumer;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -43,17 +35,9 @@ class EpicsChannelMonitoringServiceTest
    private EpicsChannelMonitoringService epicsChannelMonitoringService;
 
    @Autowired
-   private EpicsEventPublisher epicsEventPublisherMock = Mockito.mock( EpicsEventPublisher.class );
+   private EventReceiverMock eventReceiverMock;
 
-
-   private static String[] proscanChannelNames = new String[] { "IMJI:IST:2", "XPROSCAN:STAB:2", "YMJHG:IST:2", "EMJCYV:STA3:2", "EMJCYV:IST:2", "MMAP6Y:PROF:2", "MMAV6:IST:2", "SMJ1X:IST:2", "YMJHH:SPARB:2", "EMJCYV:STAW:1", "FMJIP:IST:2", "RPS-HFRD:STA:1", "FMJEP:IST:2", "IMJGF:IST:2", "BMB1:STAP:2", "FMJIPI:BREI:2", "BMD1:STAR:2", "YMJHL:IST:2", "BMC1:STA:2", "UMJSSB:BHFX:1", "UMJSSB:BIQX:1", "BMD1:STA:2", "AMJHS-I:IADC:2", "QMA1:IST:2", "MMAP5X:SPB:2", "PRO:REG2D:X", "BME1:STAP:2", "PRO:REG2D:Y", "XPROREG:STAB:1", "SMA1Y:IST:2", "MMAP5X:PROF:2:P", "BMD2:STA:2", "EMJEC2V:IST:2", "MMAP6Y:SPB:2", "CMJSEV:PWRF:2", "BMC1:STAR:2", "BMD2:STAR:2", "BMA1:STAP:2", "MMJP2:IST1:2", "RPS-IQ:STA:1", "SMA1X:IST:2", "XPROIONS:IST1:2", "PRO:CURRENTALARM:1", "UMJSSB:BDEX:1", "YMJCS2K:IST:2", "YMJCS1K:IST:2", "FMJEPI:POS:2", "MMAC3:STR:2", "XPROSCAN:TIME:2", "AMAKI1:IST:2", "EMJEC1V:IST:2", "MMAP6Y:PROF:2:P", "IMJV:IST:2", "QMA2:IST:2", "SMJ2Y:IST:2", "FMJIPI:POS:2", "PRO:REG2D:Y:2", "BMB1:STAR:2", "BMB1:STA:2", "FMJEPI:BREI:2", "MMAC:SOL:2", "MMJP2:IST2:2", "YMJHH:STR:2", "BME1:STA:2", "BMA1:STA:2", "BME1:STAR:2", "UMJSSB:BHRX:1", "MMAP5X:PROF:2", "RPS-HF:STA:1", "YMJKKRT:IST:2", "DMAD1:IST:2", "BMC1:STAP:2", "QMA3:IST:2", "BMD2:STAP:2", "CMJLL:SOLA:2", "BMA1:STAR:2", "EMJCYV:CTRL:1", "PRO:REG2D:X:2", "MMJF:IST:2" };
-
-   private static String[] test100ChannelNames = new String[] { "wica:test:counter00", "wica:test:counter01", "wica:test:counter02", "wica:test:counter03", "wica:test:counter04",
-                                                                "wica:test:counter05", "wica:test:counter06", "wica:test:counter07", "wica:test:counter08", "wica:test:counter09",
-                                                                "wica:test:counter10", "wica:test:counter11", "wica:test:counter12", "wica:test:counter13", "wica:test:counter14",
-                                                                "wica:test:counter15", "wica:test:counter16", "wica:test:counter17", "wica:test:counter18", "wica:test:counter19"  };
-
-   /*- Main ---------------------------------------------------------------------*/
+/*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
@@ -62,6 +46,7 @@ class EpicsChannelMonitoringServiceTest
    @BeforeEach
    void beforeEach()
    {
+      eventReceiverMock.arm();
       assertThat( epicsChannelMonitoringService.getStatistics().getStartRequests(), is( "0") );
       assertThat( epicsChannelMonitoringService.getStatistics().getStopRequests(), is( "0") );
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "0") );
@@ -90,24 +75,47 @@ class EpicsChannelMonitoringServiceTest
       assertThat( ex.getMessage(), is( "The channel name: 'abcd' is already being monitored." ) );
    }
 
+   // Note: to run this test the EPICS test100.db files needs to be started.
    @Test
    void testStartMonitoring_OneHundredChannelsConnectTime() throws InterruptedException
    {
-      for ( String channel : proscanChannelNames )
+      final String[] test100ChannelNames = new String[] {
+            "wica:test:counter00", "wica:test:counter01", "wica:test:counter02", "wica:test:counter03", "wica:test:counter04",
+            "wica:test:counter05", "wica:test:counter06", "wica:test:counter07", "wica:test:counter08", "wica:test:counter09",
+            "wica:test:counter10", "wica:test:counter11", "wica:test:counter12", "wica:test:counter13", "wica:test:counter14", 
+            "wica:test:counter15", "wica:test:counter16", "wica:test:counter17", "wica:test:counter18", "wica:test:counter19",
+            "wica:test:counter20", "wica:test:counter21", "wica:test:counter22", "wica:test:counter23", "wica:test:counter24",
+            "wica:test:counter25", "wica:test:counter26", "wica:test:counter27", "wica:test:counter28", "wica:test:counter29",
+            "wica:test:counter30", "wica:test:counter31", "wica:test:counter32", "wica:test:counter33", "wica:test:counter34",
+            "wica:test:counter35", "wica:test:counter36", "wica:test:counter37", "wica:test:counter38", "wica:test:counter39",
+            "wica:test:counter40", "wica:test:counter41", "wica:test:counter42", "wica:test:counter43", "wica:test:counter44",
+            "wica:test:counter45", "wica:test:counter46", "wica:test:counter47", "wica:test:counter48", "wica:test:counter49",
+            "wica:test:counter50", "wica:test:counter51", "wica:test:counter52", "wica:test:counter53", "wica:test:counter54",
+            "wica:test:counter55", "wica:test:counter56", "wica:test:counter57", "wica:test:counter58", "wica:test:counter59",
+            "wica:test:counter60", "wica:test:counter61", "wica:test:counter62", "wica:test:counter63", "wica:test:counter64",
+            "wica:test:counter65", "wica:test:counter66", "wica:test:counter67", "wica:test:counter68", "wica:test:counter69",
+            "wica:test:counter70", "wica:test:counter71", "wica:test:counter72", "wica:test:counter73", "wica:test:counter74",
+            "wica:test:counter75", "wica:test:counter76", "wica:test:counter77", "wica:test:counter78", "wica:test:counter79",
+            "wica:test:counter80", "wica:test:counter81", "wica:test:counter82", "wica:test:counter83", "wica:test:counter84",
+            "wica:test:counter85", "wica:test:counter86", "wica:test:counter87", "wica:test:counter88", "wica:test:counter89",
+            "wica:test:counter90", "wica:test:counter91", "wica:test:counter92", "wica:test:counter93", "wica:test:counter94",
+            "wica:test:counter95", "wica:test:counter96", "wica:test:counter97", "wica:test:counter98", "wica:test:counter99"
+      };
+
+      for ( String channel : test100ChannelNames )
       {
          epicsChannelMonitoringService.startMonitoring( createWicaChannel( channel ));
       }
 
-      Thread.sleep( 1000 );
-      assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "79" ) );
+      Thread.sleep( 500 );
+      assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "100" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getClosedChannelCount(), is( "0" ) );
-      assertThat( epicsChannelMonitoringService.getStatistics().getConnectedChannelCount(), is( "79" ) );
+      assertThat( epicsChannelMonitoringService.getStatistics().getConnectedChannelCount(), is( "100" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getDisconnectedChannelCount(), is( "0" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getNeverConnectedChannelCount(), is( "0" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getNotConnectedChannelCount(), is( "0" ) );
-      assertThat( epicsChannelMonitoringService.getStatistics().getTotalMonitorCount(), is( "79" ) );
+      assertThat( epicsChannelMonitoringService.getStatistics().getTotalMonitorCount(), is( "100" ) );
    }
-
 
    @Test
    void testStartMonitoring_CheckChannelStatisticsAsExpectedWhenDealingWithOfflineChannels()
@@ -176,7 +184,7 @@ class EpicsChannelMonitoringServiceTest
    // TODO - Test disabled for now. Need way of starting EPICS server when performing tests as part of automatic build.
    // By default this test is suppressed as it would create problems in the automatic
    // build system. The test should be enabled as required during pre-production testing.
-   //@Disabled
+   @Disabled
    @Test
    void testGetConnectedChannelCount() throws InterruptedException
    {
@@ -187,7 +195,7 @@ class EpicsChannelMonitoringServiceTest
       assertThat( epicsChannelMonitoringService.getStatistics().getNeverConnectedChannelCount(), is( "0" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getNotConnectedChannelCount(), is( "0" ) );
 
-      epicsChannelMonitoringService.startMonitoring(createWicaChannel("test:db_ok" ) );
+      epicsChannelMonitoringService.startMonitoring(createWicaChannel("wica:test:db_ok" ) );
       Thread.sleep( 1_000 );
 
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "1" ) );
@@ -210,12 +218,10 @@ class EpicsChannelMonitoringServiceTest
    void testStartMonitoring_verifyInitialConnectBehaviour_HandlersAreNotNotifiedIfChannelOffline() throws InterruptedException
    {
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "0" ) );
-      final Consumer<Boolean> stateChangeHandlerMock = Mockito.mock( BooleanConsumer.class );
-      final Consumer<WicaChannelValue> valueChangeHandlerMock = Mockito.mock(EpicsChannelValueConsumer.class );
       epicsChannelMonitoringService.startMonitoring( createWicaChannel("non-existent-channel" ) );
       Thread.sleep( 1_000 );
-      Mockito.verify( epicsEventPublisherMock, never() ).publishConnectionStateChanged( null, anyBoolean() );
-      Mockito.verify( valueChangeHandlerMock, never() ).accept( any() );
+      assertThat( eventReceiverMock.getMetadataPublishedTimestamp().isEmpty(), is( true ) );
+      assertThat( eventReceiverMock.getValuePublishedTimestamp().isEmpty(), is( true ) );
    }
 
    // TODO - Test disabled for now. Need way of starting EPICS server when performing tests as part of automatic build.
@@ -226,12 +232,15 @@ class EpicsChannelMonitoringServiceTest
    void testStartMonitoring_verifyInitialConnectBehaviour_NotificationSequence() throws InterruptedException
    {
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "0" ) );
-      final Consumer<Boolean> stateChangeHandlerMock = Mockito.mock( BooleanConsumer.class );
-      final Consumer<WicaChannelValue> valueChangeHandlerMock = Mockito.mock(EpicsChannelValueConsumer.class );
-      epicsChannelMonitoringService.startMonitoring( createWicaChannel("test:db_ok" ) );
+      epicsChannelMonitoringService.startMonitoring( createWicaChannel("wica:test:db_ok" ) );
       Thread.sleep( 1_000 );
-      final InOrder inOrder = inOrder( stateChangeHandlerMock, valueChangeHandlerMock );
-      inOrder.verify( stateChangeHandlerMock ).accept(true );
+      assertThat( eventReceiverMock.getMetadataPublishedTimestamp().isPresent(), is( true ) );
+      assertThat( eventReceiverMock.getValuePublishedTimestamp().isPresent(), is( true ) );
+      assertThat( eventReceiverMock.getMetadataPublishedTimestamp().get().isBefore( eventReceiverMock.getValuePublishedTimestamp().get() ), is( true) );
+      assertThat( eventReceiverMock.getMetadata().isPresent(), is( true ) );
+      assertThat( eventReceiverMock.getMetadata().get().getType(), is(WicaChannelType.REAL ) );
+      assertThat( eventReceiverMock.getValue().isPresent(), is( true ) );
+      assertThat( eventReceiverMock.getValue().get().isConnected(), is( true ) );
    }
 
 
@@ -243,6 +252,7 @@ class EpicsChannelMonitoringServiceTest
       final WicaChannelProperties wicaChannelProperties = new WicaChannelProperties();
       return new WicaChannel( wicaChannelName, wicaChannelProperties );
    }
+
 
 /*- Nested Classes -----------------------------------------------------------*/
 

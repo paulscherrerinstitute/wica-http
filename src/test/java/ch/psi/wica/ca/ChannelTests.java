@@ -70,7 +70,7 @@ public class ChannelTests
       // Check the database is online
       try
       {
-         context.createChannel("test:db_ok", String.class).connectAsync().get(5, TimeUnit.SECONDS);
+         context.createChannel("wica:test_db_ok", String.class).connectAsync().get(5, TimeUnit.SECONDS);
       }
       catch ( TimeoutException ex )
       {
@@ -662,7 +662,7 @@ public class ChannelTests
       try ( ctx )
       {
          logger.info("Creating channel...");
-         final Channel<int[]> caChannel = ctx.createChannel("test:rawdata", int[].class);
+         final Channel<int[]> caChannel = ctx.createChannel("wica:test:rawdata", int[].class);
 
          logger.info("Connecting channel...");
          caChannel.connect();

@@ -92,7 +92,7 @@ public class WicaStreamMetadataCollectorService
 
          final WicaChannel wicaChannel = wicaChannelMetadataUpdateEvent.getWicaChannel();
          final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey(wicaChannel );
-         final WicaChannelMetadata wicaChannelMetadata = wicaChannelMetadataUpdateEvent.getWicaChannelData();
+         final WicaChannelMetadata wicaChannelMetadata = wicaChannelMetadataUpdateEvent.getWicaChannelMetadata();
          wicaStreamMetadataDataBuffer.saveDataPoint( wicaDataBufferStorageKey, wicaChannelMetadata );
 
       }

@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -82,15 +81,37 @@ class WicaStreamMonitoredValueRequesterServiceTest
    }
 
    @Test
+   void testStartMonitoring_addsEntryToEventMap()
+   {
+      assertThat( service.getLastEventForChannel( testChannel ).isEmpty(), is( true ) );
+      service.startMonitoring( wicaStream );
+      assertThat( service.getLastEventForChannel( testChannel ).isPresent(), is( true ) );
+   }
+
+   @Test
+   void testStopMonitoring_removesEntryFromEventMap() throws InterruptedException
+   {
+      assertThat( service.getLastEventForChannel( testChannel ).isEmpty(), is( true ) );
+
+      service.startMonitoring( wicaStream );
+      assertThat( service.getLastEventForChannel( testChannel ).isPresent(), is( true ) );
+
+      service.stopMonitoring( wicaStream );
+      assertThat( service.getLastEventForChannel( testChannel ).isPresent(), is( true ) );
+
+      Thread.sleep( 15000 );
+      assertThat( service.getLastEventForChannel( testChannel ).isPresent(), is( false ) );
+   }
+
+
+   @Test
    void testStartMonitoring_IncreasesInterestCount()
    {
-      assertEquals(0, service.getInterestCountForChannel( testChannel ) );
-
+      assertThat( service.getInterestCountForChannel( testChannel ),is( 0 ) );
       service.startMonitoring( wicaStream );
-      assertEquals(1, service.getInterestCountForChannel( testChannel ) );
-
+      assertThat( service.getInterestCountForChannel( testChannel ),is( 1 ) );
       service.startMonitoring( wicaStream );
-      assertEquals(2, service.getInterestCountForChannel( testChannel ) );
+      assertThat( service.getInterestCountForChannel( testChannel ),is( 2 ) );
    }
 
    @Test
@@ -99,14 +120,13 @@ class WicaStreamMonitoredValueRequesterServiceTest
       service.startMonitoring( wicaStream );
       service.startMonitoring( wicaStream );
       service.startMonitoring( wicaStream );
-      assertEquals(3, service.getInterestCountForChannel( testChannel ) );
-
+      assertThat( service.getInterestCountForChannel( testChannel ),is( 3 ) );
       service.stopMonitoring( wicaStream );
-      assertEquals(2, service.getInterestCountForChannel( testChannel ) );
+      assertThat( service.getInterestCountForChannel( testChannel ),is( 2 ) );
       service.stopMonitoring( wicaStream );
-      assertEquals(1, service.getInterestCountForChannel( testChannel ) );
+      assertThat( service.getInterestCountForChannel( testChannel ),is( 1 ) );
       service.stopMonitoring( wicaStream );
-      assertEquals(0, service.getInterestCountForChannel( testChannel ) );
+      assertThat( service.getInterestCountForChannel( testChannel ),is( 0 ) );
    }
 
    @Test

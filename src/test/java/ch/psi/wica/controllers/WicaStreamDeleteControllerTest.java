@@ -95,9 +95,13 @@ class WicaStreamDeleteControllerTest
       final RequestBuilder deleteRequest1 = MockMvcRequestBuilders.delete( "/ca/streams/0" );
       mockMvc.perform( deleteRequest1 ).andDo( print() ).andExpect( status().isOk() ).andReturn();
 
-      assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "0") );
-      assertThat( epicsChannelMonitoringService.getStatistics().getStartRequests(), is( "2" ) );
+      // Verify that initially the total channel count and number of stop requests will not change.
+      // But after the resources have been disposed of N seconds later they will be.
+      assertThat( epicsChannelMonitoringService.getStatistics().getStopRequests(), is( "0") );
+      assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "2") );
+      Thread.sleep( 6000 );
       assertThat( epicsChannelMonitoringService.getStatistics().getStopRequests(), is( "2") );
+      assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "0") );
 
       // Send a further DELETE request to delete the stream we created before. This time it should be rejected.
       final RequestBuilder deleteRequest2 = MockMvcRequestBuilders.delete( "/ca/streams/0" );

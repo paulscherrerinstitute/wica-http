@@ -91,7 +91,7 @@ class WicaChannelPutControllerTest
    @Test
    void testPutRequest_HappyDay()
    {
-      final String channelName = "test:db_ok";
+      final String channelName = "wica:test_db_ok";
       final RequestBuilder getRequest = MockMvcRequestBuilders.put("/ca/channel/" + channelName )
                                                               .contentType( MediaType.TEXT_PLAIN_VALUE )
                                                               .accept( MediaType.TEXT_PLAIN_VALUE )

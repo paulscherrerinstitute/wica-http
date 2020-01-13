@@ -289,7 +289,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
 
    public void handleChannelComesOnline( WicaChannel wicaChannel, Channel<Object> epicsChannel )
    {
-      final EpicsChannelName epicsChannelName = EpicsChannelName.of(wicaChannel.getName().getControlSystemName());
+      final EpicsChannelName epicsChannelName = EpicsChannelName.of( wicaChannel.getName().getControlSystemName());
 
       // ----------------------------------------------------------
       // STEP 1: Obtain and publish the channel's metadata.
@@ -299,7 +299,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       final var wicaChannelMetadata = epicsChannelMetadataGetter.get( epicsChannel );
       logger.info( "'{}' - channel metadata obtained ok.", epicsChannelName );
       logger.info( "'{}' - publishing channel metadata...", epicsChannelName );
-      epicsEventPublisher.publishMetadataChanged( wicaChannel, wicaChannelMetadata);
+      epicsEventPublisher.publishMetadataChanged( wicaChannel, wicaChannelMetadata );
       logger.info( "'{}' - channel metadata published ok.", epicsChannelName );
 
       // -----------------------------------------------------------

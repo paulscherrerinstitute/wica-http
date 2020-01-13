@@ -249,6 +249,23 @@ public class WicaChannelProperties
       return Objects.hash(dataAcquisitionMode, pollingIntervalInMillis, numericPrecision, filterType, filterNumSamples, filterCycleLength, filterSamplingIntervalInMillis, filterDeadband, fieldsOfInterest);
    }
 
+   @Override
+   public String toString()
+   {
+      return "WicaChannelProperties{" +
+            "dataAcquisitionMode=" + dataAcquisitionMode +
+            ", pollingIntervalInMillis=" + pollingIntervalInMillis +
+            ", numericPrecision=" + numericPrecision +
+            ", filterType=" + filterType +
+            ", filterNumSamples=" + filterNumSamples +
+            ", filterNumSamplesInAverage=" + filterNumSamplesInAverage +
+            ", filterCycleLength=" + filterCycleLength +
+            ", filterSamplingIntervalInMillis=" + filterSamplingIntervalInMillis +
+            ", filterDeadband=" + filterDeadband +
+            ", fieldsOfInterest='" + fieldsOfInterest + '\'' +
+            '}';
+   }
+
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
