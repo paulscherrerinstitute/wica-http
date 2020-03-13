@@ -226,21 +226,22 @@ class WicaStreamLoadTest
 
    private static Stream<Arguments> getArgsForTestGetSingleThreadedThroughput()
    {
-//      return Stream.of( Arguments.of( 500, testStream,  50*10*500, 10_100  ) );
-      return Stream.of( Arguments.of(  1, proscanStream,  50,  10_200 ),
-                        Arguments.of(  2, proscanStream, 100,  10_200 ),
-                        Arguments.of(  4, proscanStream, 200,  10_200 ),
-                        Arguments.of(  6, proscanStream, 300,  10_200 ),
-                        Arguments.of(  8, proscanStream, 400,  10_200 ),
-                        Arguments.of( 10, proscanStream, 500,  10_200 ),
-                        Arguments.of( 12, proscanStream, 600,  10_200 ),
-                        Arguments.of( 14, proscanStream, 700,  10_200 ),
-                        Arguments.of( 16, proscanStream, 800,  10_200 ),
-                        Arguments.of( 18, proscanStream, 900,  10_200 ),
-                        Arguments.of( 20, proscanStream, 1000, 10_200 ),
-                        Arguments.of( 30, proscanStream, 1500, 10_200 ),
-                        Arguments.of( 40, proscanStream, 2000, 10_200 ),
-                        Arguments.of( 50, proscanStream, 2500, 10_200 ) );
+      // return Stream.of( Arguments.of( 500, testStream,  50*10*500, 10_100  ) );
+      // In the tests below add 400ms headroom
+      return Stream.of( Arguments.of(  1, proscanStream,  50,  10_500 ),
+                        Arguments.of(  2, proscanStream, 100,  10_500 ),
+                        Arguments.of(  4, proscanStream, 200,  10_500 ),
+                        Arguments.of(  6, proscanStream, 300,  10_500 ),
+                        Arguments.of(  8, proscanStream, 400,  10_500 ),
+                        Arguments.of( 10, proscanStream, 500,  10_500 ),
+                        Arguments.of( 12, proscanStream, 600,  10_500 ),
+                        Arguments.of( 14, proscanStream, 700,  10_500 ),
+                        Arguments.of( 16, proscanStream, 800,  10_500 ),
+                        Arguments.of( 18, proscanStream, 900,  10_500 ),
+                        Arguments.of( 20, proscanStream, 1000, 10_500 ),
+                        Arguments.of( 30, proscanStream, 1500, 10_500 ),
+                        Arguments.of( 40, proscanStream, 2000, 10_500 ),
+                        Arguments.of( 50, proscanStream, 2500, 10_500 ) );
    }
 
    @MethodSource( "getArgsForTestGetSingleThreadedThroughput" )
@@ -497,7 +498,7 @@ class WicaStreamLoadTest
 
       final ClientResponse postResponse = WebClient.create( wicaStreamUri + "/ca/streams")
             .post()
-            .body(BodyInserters.fromObject( jsonStreamConfiguration ) )
+            .body( BodyInserters.fromValue( jsonStreamConfiguration ) )
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .exchange()
             .block();
