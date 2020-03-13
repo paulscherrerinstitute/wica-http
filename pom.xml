@@ -67,7 +67,7 @@
         <dependency>
             <groupId>org.epics</groupId>
             <artifactId>ca</artifactId>
-            <version>1.2.3-dev</version>
+            <version>1.2.2</version>
         </dependency>
 
         <dependency>
