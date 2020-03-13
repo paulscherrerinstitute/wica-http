@@ -5,9 +5,10 @@ package ch.psi.wica.infrastructure.channel;
 
 import ch.psi.wica.infrastructure.util.JsonStringFormatter;
 import ch.psi.wica.model.channel.WicaChannelValue;
-import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,8 +72,7 @@ class WicaChannelDataSerializerTestWithChannelValues
       realArrValue = WicaChannelValue.createChannelValueConnected( new double[] { 1.23456789012345, 9.87654321012345, Double.NaN }  );
 
       // Set up decoder
-      jsonDecoder = new ObjectMapper();
-      jsonDecoder.configure( JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS,true );
+      jsonDecoder = JsonMapper.builder().configure( JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS, true ).build();
    }
 
    @Test
