@@ -63,7 +63,7 @@ class WicaAdminPageController
    // Leave the default MVC handling for this method. This means that the returned value will
    // be interpreted as a reference to a thymeleaf template.
    @GetMapping( value="/admin", produces = MediaType.TEXT_HTML_VALUE )
-   public String getServiceConfigurationListAsHtml( Model viewModel )
+   public String getAdminPageAsHtml( Model viewModel )
    {
       logger.trace("Received status GET /admin request" );
 
