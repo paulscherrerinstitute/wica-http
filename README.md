@@ -457,13 +457,13 @@ The API documentation for **previous releases** can be found as follows:
 ```
 https://paulscherrerinstitute.github.io/wica-http/<rel>
 ```
-(See the [GitHub Release Area](https://github.com/paulscherrerinstitute/wica-ttp/releases) to find which releases are
+(See the [GitHub Release Area](https://github.com/paulscherrerinstitute/wica-http/releases) to find which releases are
 available).
 
 # Project Changes and Tagged Releases
 
 * Project releases are available in the [GitHub Release Area](https://github.com/paulscherrerinstitute/wica-http/releases) 
-and on [Docker Hub](https://cloud.docker.com/u/paulscherrerinstitute/repository/docker/paulscherrerinstitute/wica-http).
+and on [Docker Hub](https://hub.docker.com/r/paulscherrerinstitute/wica-http).
 
 * See the [CHANGELOG](CHANGELOG.md) file for further information.
 * See also the project's [Issue Board](https://github.com/paulscherrerinstitute/wica-http/issues).
