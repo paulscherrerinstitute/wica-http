@@ -8,17 +8,17 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -136,16 +136,16 @@ public class WicaChannelDataSerializer
       // sent down the wire when representing doubles and/or double arrays.
       module.addSerializer( double.class, new WicaDoubleSerializer( numericScale ) );
       module.addSerializer( double[].class, new WicaDoubleArraySerializer( numericScale ) );
-      final ObjectMapper mapper = Jackson2ObjectMapperBuilder.json().build();
 
-      // Turn off the feature whereby date/time values are written as timestamps.
-      mapper.configure( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false );
-      mapper.configure( SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false );
-      mapper.configure( SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true );
-
-      // It is "special" because (b) it is possible to control programmatically
-      // the serialized representation of NaN and Infinity.
-      mapper.configure( JsonGenerator.Feature.QUOTE_NON_NUMERIC_NUMBERS, quoteNumericStrings );
+      final ObjectMapper mapper = JsonMapper.builder()
+            // Turn off the feature whereby date/time values are written as timestamps.
+            .configure( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false )
+            .configure( SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false )
+            .configure( SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true )
+            // It is "special" because (b) it is possible to control programmatically
+            // the serialized representation of NaN and Infinity.
+            .configure( JsonWriteFeature.WRITE_NAN_AS_STRINGS, quoteNumericStrings )
+            .build();
 
       // It is "special" because (c) we can select the fields of interest that get
       // sent down the wire.
