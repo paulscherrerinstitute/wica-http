@@ -48,3 +48,15 @@ This log describes the functionality of tagged versions within the repository.
   #10 Add averaging filter.
   
   Test Status: Tests run: 334, Failures: 0, Errors: 0, Skipped: 20
+  
+* [1.4.0] 2020-03-11
+  Summary: Miscellaneous Improvements triggered by recent upgrade to Wica-JS release.
+  * Issue #11 Upgrade to Spring Boot 2.2.5.RELEASE.
+  * Issue #12 Upgrade EPICS CA Library to 1.2.3-dev.
+  * Issue #13 Upgrade Wica-JS to 1.2.0.
+  * Issue #14 Improve tests.
+  * Issue #15 Add support for delete via POST request.
+  * Issue #16 Small miscellaneous improvements.
+  * Issue #17 Create Wica-HTTP Release 1.4.0
+  
+  Test Status: Tests run: 340, Failures: 0, Errors: 0, Skipped: 20  
