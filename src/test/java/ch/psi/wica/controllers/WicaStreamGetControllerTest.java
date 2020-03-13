@@ -3,9 +3,10 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
+
+import ch.psi.wica.model.stream.WicaStreamPropertiesDefaults;
 import org.apache.commons.lang3.Validate;
 import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -79,21 +80,34 @@ class WicaStreamGetControllerTest
    @Test
    void testSendValidRequest_EventStreamReturnedOk() throws Exception
    {
-      // Send a POST request with a list containing a couple of EPICS channels
-      final RequestBuilder postRequest = MockMvcRequestBuilders.post( "/ca/streams" ).content(epicsChannelListOk).contentType(MediaType.APPLICATION_JSON_VALUE ).accept(MediaType.TEXT_PLAIN_VALUE );
-      final MvcResult postRequestResult = mockMvc.perform( postRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
-      logger.info( "Returned data was: '{}'", postRequestResult.getResponse().getContentAsString() );
-      final int id = Integer.parseInt( postRequestResult.getResponse().getContentAsString() );
+      // Send a POST request with a list containing a couple of EPICS channels and the default heartbeat intervals.
+      final RequestBuilder postRequest = MockMvcRequestBuilders.post( "/ca/streams" )
+         .content( epicsChannelListOk )
+         .contentType(MediaType.APPLICATION_JSON_VALUE )
+         .accept(MediaType.TEXT_PLAIN_VALUE );
 
-      // Send a GET request to subscribe to the stream we just created
-      final RequestBuilder getRequest = MockMvcRequestBuilders.get( "/ca/streams/" + id ).accept( MediaType.TEXT_EVENT_STREAM_VALUE);
-      final MvcResult getRequestResult = mockMvc.perform( getRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
-      logger.info( "Returned data was: '{}'", getRequestResult.getResponse().getContentAsString() );
+      final MvcResult postRequestResult = mockMvc.perform( postRequest )
+         .andDo( print())
+         .andExpect( status().isOk() )
+         .andReturn();
 
-      // Check that the ContentType in the response indicated we are now subscribed to an event stream
-      final String contentType = getRequestResult.getResponse().getContentType();
-      logger.info( "Returned ContentType was: '{}'", contentType );
-      assertEquals("text/event-stream;charset=UTF-8", contentType );
+      logger.info( "Data returned from POST request was: '{}'", postRequestResult.getResponse().getContentAsString() );
+
+      // Send a GET request to subscribe to the new stream.
+      final int streamId = Integer.parseInt( postRequestResult.getResponse().getContentAsString() );
+      final RequestBuilder getRequest = MockMvcRequestBuilders.get( "/ca/streams/" + streamId )
+                                                              .accept( MediaType.TEXT_EVENT_STREAM_VALUE );
+
+      // Wait for some data to come in, then verify the response.
+      final int heartbeatIntervalInMilliseconds = WicaStreamPropertiesDefaults.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS;
+      final MvcResult getRequestResult = mockMvc.perform( getRequest )
+                                                .andDo( l -> Thread.sleep(heartbeatIntervalInMilliseconds + 1000 ) )
+                                                .andDo( print())
+                                                .andExpect( status().isOk() )
+                                                .andExpect( content().contentType( "text/event-stream;charset=UTF-8" ) )
+                                                .andReturn();
+
+      logger.info( "Data returned from GET request was: '{}'", getRequestResult.getResponse().getContentAsString() );
    }
 
    @Test
@@ -101,25 +115,35 @@ class WicaStreamGetControllerTest
    {
       // Send a POST request with a list containing a couple of EPICS channels and a heartbeat interval of 2s
       final RequestBuilder postRequest = MockMvcRequestBuilders.post( "/ca/streams" )
-                                                               .content( epicsChannelListOkWithShortenedHeartbeat )
-                                                               .contentType( MediaType.APPLICATION_JSON_VALUE )
-                                                               .accept( MediaType.TEXT_PLAIN_VALUE );
+         .content( epicsChannelListOkWithShortenedHeartbeat )
+         .contentType( MediaType.APPLICATION_JSON_VALUE )
+         .accept( MediaType.TEXT_PLAIN_VALUE );
 
-      final MvcResult postRequestResult = mockMvc.perform( postRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
-      logger.info( "Returned data was: '{}'", postRequestResult.getResponse().getContentAsString() );
-      final int id = Integer.parseInt( postRequestResult.getResponse().getContentAsString() );
+      final MvcResult postRequestResult = mockMvc.perform( postRequest )
+         .andDo( print())
+         .andExpect( status()
+         .isOk() )
+         .andReturn();
 
-      // Send a GET request to subscribe to the stream we just created
-      final RequestBuilder getRequest = MockMvcRequestBuilders.get( "/ca/streams/" + id ).accept( MediaType.TEXT_EVENT_STREAM_VALUE );
+      logger.info( "Data returned from POST request was: '{}'", postRequestResult.getResponse().getContentAsString() );
+
+      // Send a GET request to subscribe to the new stream.
+      final int streamId = Integer.parseInt( postRequestResult.getResponse().getContentAsString() );
+      final RequestBuilder getRequest = MockMvcRequestBuilders.get( "/ca/streams/" + streamId )
+         .accept( MediaType.TEXT_EVENT_STREAM_VALUE );
+
+      // Wait for some data to come in, then verify the response.
       final int heartbeatIntervalInMilliseconds = 2_000;
-      mockMvc.perform( getRequest )
-             .andExpect( status().isOk() )
-             .andExpect( content().contentType( "text/event-stream;charset=UTF-8" ) )
-             .andDo( l -> Thread.sleep( heartbeatIntervalInMilliseconds + 1000 ) )
-             .andDo( print() )
-             .andExpect( content().string( containsString( "id:" ) ) )
-             .andExpect( content().string( containsString( "heartbeat" ) ) )
-             .andReturn();
+      final MvcResult getRequestResult = mockMvc.perform( getRequest )
+         .andDo( l -> Thread.sleep( heartbeatIntervalInMilliseconds + 1000 ) )
+         .andDo( print() )
+         .andExpect( status().isOk() )
+         .andExpect( content().contentType( "text/event-stream;charset=UTF-8" ) )
+         .andExpect( content().string( containsString( "id:" ) ) )
+         .andExpect( content().string( containsString( "heartbeat" ) ) )
+         .andReturn();
+
+      logger.info( "Data returned from GET request was: '{}'", getRequestResult.getResponse().getContentAsString() );
    }
 
    @Test
@@ -127,30 +151,30 @@ class WicaStreamGetControllerTest
    {
       // Send a POST request with a list containing a couple of EPICS channels and a heartbeat interval of 2s
       final RequestBuilder postRequest = MockMvcRequestBuilders.post( "/ca/streams" )
-            .content( epicsChannelListOkCustomisedForStepVerifier )
-            .contentType( MediaType.APPLICATION_JSON_VALUE )
-            .accept( MediaType.TEXT_PLAIN_VALUE );
+         .content( epicsChannelListOkCustomisedForStepVerifier )
+         .contentType( MediaType.APPLICATION_JSON_VALUE )
+         .accept( MediaType.TEXT_PLAIN_VALUE );
 
       final MvcResult postRequestResult = mockMvc.perform( postRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
-      final String id = postRequestResult.getResponse().getContentAsString();
+      final String streamId= postRequestResult.getResponse().getContentAsString();
 
       final HttpServletRequest httpServletRequestMock =  Mockito.mock( HttpServletRequest.class );
       Mockito.when( httpServletRequestMock.getRemoteHost() ).thenReturn( "MyHostname" );
-      final ResponseEntity<Flux<ServerSentEvent<String>>> responseEntity = wicaStreamGetController.get( Optional.of( id ), httpServletRequestMock );
+      final ResponseEntity<Flux<ServerSentEvent<String>>> responseEntity = wicaStreamGetController.get( Optional.of( streamId ), httpServletRequestMock );
       final Flux<ServerSentEvent<String>> flux = responseEntity.getBody();
-
+      assertNotNull( flux );
       given( httpServletRequestMock.getRemoteHost()).willReturn( "localhost");
       StepVerifier.create( flux )
-            .expectSubscription()
-            .expectNextMatches( sse -> sseCommentContains( sse, "channel metadata" ) )
-            .expectNextMatches( sse -> sseCommentContains( sse, "channel monitored values" ) )
-            .expectNextMatches( sse -> sseCommentContains( sse, "channel polled values" ) )
-            .expectNextMatches( sse -> sseCommentContains( sse, "heartbeat" ) )
-            .expectNextMatches( sse -> sseCommentContains( sse, "channel monitored values" ) )
-            .expectNextMatches( sse -> sseCommentContains( sse, "channel polled values" ) )
-            .consumeNextWith( (x) -> deleteStream( id ) )
-            .thenConsumeWhile( t -> sseCommentContains( t, "-") )
-            .verifyComplete();
+         .expectSubscription()
+         .expectNextMatches( sse -> sseCommentContains( sse, "channel metadata" ) )
+         .expectNextMatches( sse -> sseCommentContains( sse, "channel monitored values" ) )
+         .expectNextMatches( sse -> sseCommentContains( sse, "channel polled values" ) )
+         .expectNextMatches( sse -> sseCommentContains( sse, "heartbeat" ) )
+         .expectNextMatches( sse -> sseCommentContains( sse, "channel monitored values" ) )
+         .expectNextMatches( sse -> sseCommentContains( sse, "channel polled values" ) )
+         .consumeNextWith( (x) -> deleteStream( streamId ) )
+         .thenConsumeWhile( t -> sseCommentContains( t, "-") )
+         .verifyComplete();
    }
 
    @Test
@@ -161,10 +185,10 @@ class WicaStreamGetControllerTest
       final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest() ).andReturn();
 
       // Now check all the expectations were satisfied.
-      Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
+      assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
       final String responseHeader = result.getResponse().getHeader("X-WICA-ERROR" );
       assertNotNull( responseHeader );
-      Assertions.assertEquals("WICA SERVER: The stream ID was empty/null.", responseHeader );
+      assertEquals("WICA SERVER: The stream ID was empty/null.", responseHeader );
 
       // Check that the body content was empty as expected.
       final String content = result.getResponse().getContentAsString();
@@ -180,17 +204,16 @@ class WicaStreamGetControllerTest
       final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest()).andReturn();
 
       // Now check all the expectations were satisfied.
-      Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
+      assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
       final String responseHeader = result.getResponse().getHeader("X-WICA-ERROR" );
       assertNotNull( responseHeader );
-      Assertions.assertEquals("WICA SERVER: The stream ID was blank.", responseHeader );
+      assertEquals("WICA SERVER: The stream ID was blank.", responseHeader );
 
       // Check that the body content was empty as expected.
       final String content = result.getResponse().getContentAsString();
       Assert.assertEquals("", content );
       logger.info( "Returned Content was: '{}'", content );
    }
-
 
    @Test
    void testSendInvalidRequestUnknownStreamId_ShouldBeRejected() throws Exception
