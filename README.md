@@ -1,4 +1,4 @@
-# Overview [![Build Status](https://travis-ci.org/paulscherrerinstitute/wica-http.svg?branch=master)](https://travis-ci.org/paulscherrerinstitute/wica-http) 
+# Overview [![Build Status](https://travis-ci.com/paulscherrerinstitute/wica-http.svg?branch=master)](https://travis-ci.com/paulscherrerinstitute/wica-http) 
 
 This is the **Wica-HTTP** git repository, one component of PSI's WICA software suite. 
  
