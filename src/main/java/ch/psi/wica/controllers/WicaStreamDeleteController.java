@@ -23,8 +23,8 @@ import java.util.Optional;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Provides a SpringBoot REST Controller to handle DELETE operations on the
- * {code /ca/streams} endpoint.
+ * Provides a SpringBoot REST Controller to handle DELETE and POST operations
+ * on the {code /ca/streams} endpoint.
  */
 @RestController
 @RequestMapping( "/ca/streams")
@@ -64,107 +64,12 @@ class WicaStreamDeleteController
 /*- Public methods -----------------------------------------------------------*/
 
    /**
-    * Handles an HTTP POST request to DELETE the wica stream with the specified ID.
-    *
-    * @param optStreamId the ID of the stream to be deleted.
-    *
-    * @param httpServletRequest contextual information for the request; used
-    *     for statistics collection only.
-    *
-    * @return an HTTP response whose status code will be set to 'OK' (= 200)
-    *     if the delete operation completes successfully or 'Bad Request'
-    *     (= 400) if some error occurs.  When successful the body of the HTTP
-    *     response contains the ID of the resource which was deleted. When
-    *     unsuccessful an additional response header 'X-WICA-ERROR' is written
-    *     with a more detailed description of the error.
-    */
-
-   @SuppressWarnings( "OptionalUsedAsFieldOrParameterType" )
-   @PostMapping( value = { "/delete"}, consumes=MediaType.TEXT_PLAIN_VALUE, produces=MediaType.TEXT_PLAIN_VALUE )
-   public ResponseEntity<String> deleteStreamByHttpPostRequest( @RequestBody( required=false ) Optional<String> optStreamId,
-                                                                HttpServletRequest httpServletRequest  )
-   {
-      logger.trace( "POST: Handling DELETE stream request." );
-
-      // Check that the Spring framework gives us something in the HttpServletRequest field.
-      Validate.notNull( httpServletRequest, "The 'httpServletRequest' field was empty." );
-
-      logger.trace( "POST: Handling DELETE stream request from remote host '{}'", httpServletRequest.getRemoteHost() );
-
-      // Update the usage statistics for this controller.
-      statisticsCollector.incrementRequests();
-      statisticsCollector.addClientIpAddr(httpServletRequest.getRemoteHost() );
-
-      // Note: by NOT insisting that the Request Body is provided we can process
-      // its absence within this method and provide the appropriate handling.
-      // Handle the situation where the Spring framework doesn't give us anything
-      // in the stream ID field.
-      if( optStreamId.isEmpty() )
-      {
-         final String errorMessage = "WICA SERVER: The stream ID was empty/null.";
-         logger.warn( "POST: Rejected DELETE request because '{}'.", errorMessage  );
-         statisticsCollector.incrementErrors();
-         statisticsCollector.incrementReplies();
-         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
-      }
-
-      logger.trace( "POST: Handling delete stream request for ID: '{}'", optStreamId.get() );
-
-      // Handle the situation where the stream ID string is blank.
-      if( optStreamId.get().isBlank() )
-      {
-         final String errorMessage = "WICA SERVER: The stream ID was blank.";
-         logger.warn( "POST: Rejected DELETE request because '{}'.", errorMessage  );
-         statisticsCollector.incrementErrors();
-         statisticsCollector.incrementReplies();
-         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
-      }
-
-      // Handle the situation where an unknown stream ID is given
-      final WicaStreamId wicaStreamId = WicaStreamId.of( optStreamId.get() );
-      if ( ! wicaStreamLifecycleService.isKnown(wicaStreamId ) )
-      {
-         final String errorMessage = "WICA SERVER: The stream ID '" + optStreamId.get() + "' was not recognised.";
-         logger.warn( "POST: Rejected DELETE request because {}", errorMessage  );
-         statisticsCollector.incrementErrors();
-         statisticsCollector.incrementReplies();
-         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
-      }
-
-      // Attempt to delete the specified stream.
-      try
-      {
-         wicaStreamLifecycleService.delete( wicaStreamId );
-      }
-      catch( Exception ex )
-      {
-         final String errorMessage;
-         if ( ex.getMessage() == null )
-         {
-            final String exceptionClass = ex.getClass().toString();
-            errorMessage = "WICA SERVER: An exception occurred of class: '" + exceptionClass + "'.";
-         }
-         else
-         {
-            errorMessage = "WICA SERVER: " + ex.getMessage();
-         }
-         logger.warn( "POST: Rejected DELETE request because '{}'.", errorMessage  );
-         statisticsCollector.incrementReplies();
-         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
-      }
-
-      logger.trace( "POST: deleted stream with id: '{}'" , optStreamId.get()  );
-      appLogger.info( "POST: deleted stream with id: '{}' following request from client with IP: '{}'", wicaStreamId, httpServletRequest.getRemoteHost() );
-      statisticsCollector.incrementReplies();
-      return new ResponseEntity<>(  optStreamId.get() , HttpStatus.OK );
-   }
-
-
-   /**
-    * Handles an HTTP DELETE request to DELETE the wica stream with the
+    * Handles HTTP POST or DELETE requests to delete the wica stream with the
     * specified ID.
     *
-    * @param optStreamId the ID of the stream to be deleted.
+    * @param streamId the ID of the stream to be deleted.
+    * @param optConfirm parameter that must be set to 'DELETE' to confirm
+    *     deletion when this method is triggered an HTTP POST request.
     *
     * @param httpServletRequest contextual information for the request; used
     *     for statistics collection only.
@@ -177,38 +82,39 @@ class WicaStreamDeleteController
     *     with a more detailed description of the error.
     */
    @SuppressWarnings( "OptionalUsedAsFieldOrParameterType" )
-   @DeleteMapping( value = { "", "/{optStreamId}"}, produces=MediaType.TEXT_PLAIN_VALUE )
-   public ResponseEntity<String> deleteStreamByHttpDeleteRequest( @PathVariable( required=false ) Optional<String> optStreamId,
-                                                                  HttpServletRequest httpServletRequest  )
+   @RequestMapping( method = { RequestMethod.POST, RequestMethod.DELETE }, value = { "/{streamId}" }, produces = MediaType.TEXT_PLAIN_VALUE )
+   public ResponseEntity<String> deleteStream( @PathVariable String streamId,
+                                               @RequestBody( required=false ) Optional<String> optConfirm,
+                                               HttpServletRequest httpServletRequest  )
    {
-      logger.trace( "DELETE: Handling delete stream request." );
-
       // Check that the Spring framework gives us something in the HttpServletRequest field.
       Validate.notNull( httpServletRequest, "The 'httpServletRequest' field was empty." );
 
-      logger.trace( "DELETE: Handling delete stream request from remote host '{}'", httpServletRequest.getRemoteHost() );
+      final String triggerMethod = httpServletRequest.getMethod();
+      logger.trace( "DELETE: Handling delete stream request triggered by HTTP {} method.", triggerMethod );
+      logger.trace( "DELETE: The delete request originated from remote host '{}'", httpServletRequest.getRemoteHost() );
 
       // Update the usage statistics for this controller.
       statisticsCollector.incrementRequests();
-      statisticsCollector.addClientIpAddr(httpServletRequest.getRemoteHost() );
+      statisticsCollector.addClientIpAddr( httpServletRequest.getRemoteHost() );
 
       // Note: by NOT insisting that the Path Variable is provided we can process
       // its absence within this method and provide the appropriate handling.
       // Handle the situation where the Spring framework doesn't give us anything
       // in the stream ID field.
-      if( optStreamId.isEmpty() )
+      if( streamId.isEmpty() )
       {
-         final String errorMessage = "WICA SERVER: The stream ID was empty/null.";
+         final String errorMessage = "WICA SERVER: The stream ID was empty.";
          logger.warn( "DELETE: Rejected request because '{}'.", errorMessage  );
          statisticsCollector.incrementErrors();
          statisticsCollector.incrementReplies();
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
-      logger.trace( "DELETE: Handling delete stream request for ID: '{}'", optStreamId.get() );
+      logger.trace( "DELETE: Handling delete stream request for ID: '{}'", streamId );
 
       // Handle the situation where the stream ID string is blank.
-      if( optStreamId.get().isBlank() )
+      if( streamId.isBlank() )
       {
          final String errorMessage = "WICA SERVER: The stream ID was blank.";
          logger.warn( "DELETE: Rejected request because '{}'.", errorMessage  );
@@ -218,16 +124,27 @@ class WicaStreamDeleteController
       }
 
       // Handle the situation where an unknown stream ID is given
-      final WicaStreamId wicaStreamId = WicaStreamId.of( optStreamId.get() );
+      final WicaStreamId wicaStreamId = WicaStreamId.of( streamId );
       if ( ! wicaStreamLifecycleService.isKnown(wicaStreamId ) )
       {
-         final String errorMessage = "WICA SERVER: The stream ID '" + optStreamId.get() + "' was not recognised.";
+         final String errorMessage = "WICA SERVER: The stream ID '" + streamId + "' was not recognised.";
          logger.warn( "DELETE: Rejected request because {}", errorMessage  );
          statisticsCollector.incrementErrors();
          statisticsCollector.incrementReplies();
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
+      // Handle the situation where the request method is POST and the request body does not contain "DELETE".
+      if( triggerMethod.equalsIgnoreCase( "POST") &&
+            ( optConfirm.isEmpty() || ! optConfirm.get().equalsIgnoreCase( "delete" ) ) )
+      {
+         final String errorMessage = "WICA SERVER: The request method was POST but the Content Body did not contain the string 'DELETE'.";
+         logger.warn( "DELETE: Rejected request because '{}'.", errorMessage  );
+         statisticsCollector.incrementErrors();
+         statisticsCollector.incrementReplies();
+         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
+      }
+
       // Attempt to delete the specified stream.
       try
       {
@@ -250,10 +167,10 @@ class WicaStreamDeleteController
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
-      logger.trace( "DELETE: deleted stream with id: '{}'" , optStreamId.get()  );
+      logger.trace( "DELETE: deleted stream with id: '{}'" , streamId );
       appLogger.info( "DELETE: deleted stream with id: '{}' following request from client with IP: '{}'", wicaStreamId, httpServletRequest.getRemoteHost() );
       statisticsCollector.incrementReplies();
-      return new ResponseEntity<>(  optStreamId.get() , HttpStatus.OK );
+      return new ResponseEntity<>( streamId, HttpStatus.OK );
    }
 
 

@@ -73,23 +73,7 @@ class WicaStreamDeleteControllerTest
    }
 
    @Test
-   void testSendValidDeleteByPostRequest_RequestIsRejectedWhenStreamIdIsUnrecognised() throws Exception
-   {
-      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams/delete" )
-            .contentType(MediaType.TEXT_PLAIN_VALUE )
-            .content( "XXXXX" );
-      mockMvc.perform( rb ).andDo( print() ).andExpect( status().isBadRequest() ).andReturn();
-   }
-
-   @Test
-   void testSendValidDeleteByDeleteRequest_RequestIsRejectedWhenStreamIdIsUnrecognised() throws Exception
-   {
-      final RequestBuilder rb = MockMvcRequestBuilders.delete( "/ca/streams/XXXXX" );
-      mockMvc.perform( rb ).andDo( print() ).andExpect( status().isBadRequest() ).andReturn();
-   }
-
-   @Test
-   void testSendValidDeleteByPostRequest_RequestIsAccepted() throws Exception
+   void test_POST_SendValidRequest_RequestIsAccepted() throws Exception
    {
       // Send a POST request to create a stream with a list containing a couple of EPICS channels
       final RequestBuilder postRequest = MockMvcRequestBuilders.post( "/ca/streams" )
@@ -102,9 +86,9 @@ class WicaStreamDeleteControllerTest
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "2") );
 
       // Send a DELETE request to delete the stream we just created.
-      final RequestBuilder deleteRequest1 = MockMvcRequestBuilders.post( "/ca/streams/delete" )
+      final RequestBuilder deleteRequest1 = MockMvcRequestBuilders.post( "/ca/streams/0" )
             .contentType(MediaType.TEXT_PLAIN_VALUE )
-            .content( "0" );
+            .content( "DELETE" );
       mockMvc.perform( deleteRequest1 ).andDo( print() ).andExpect( status().isOk() ).andReturn();
 
       // Verify that initially the total channel count and number of stop requests will not change.
@@ -123,7 +107,7 @@ class WicaStreamDeleteControllerTest
    }
 
    @Test
-   void testSendValidDeleteByDeleteRequest_RequestIsAccepted() throws Exception
+   void test_DELETE_SendValidRequest_RequestIsAccepted() throws Exception
    {
       // Send a POST request to create a stream with a list containing a couple of EPICS channels
       final RequestBuilder postRequest = MockMvcRequestBuilders.post( "/ca/streams" )
@@ -153,51 +137,10 @@ class WicaStreamDeleteControllerTest
    }
 
    @Test
-   void testSendInvalidDeleteByPostRequestEmptyRequestBody_ShouldBeRejected() throws Exception
-   {
-      // Send the request with a null string as the content.
-      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams/delete" )
-            .contentType(MediaType.TEXT_PLAIN_VALUE )
-            .content( "" )
-            .accept( MediaType.TEXT_PLAIN_VALUE );
-      final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest()).andReturn();
-
-      // Now check all the expectations were satisfied.
-      Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
-      final String responseHeader = result.getResponse().getHeader("X-WICA-ERROR" );
-      assertNotNull( responseHeader );
-      Assertions.assertEquals("WICA SERVER: The stream ID was empty/null.", responseHeader );
-
-      // Check that the body content was empty as expected.
-      final String content = result.getResponse().getContentAsString();
-      assertEquals( "", content );
-      logger.info( "Returned Content was: '{}'", content );
-   }
-
-   @Test
-   void testSendInvalidDeleteByDeleteRequestEmptyPathVariable_ShouldBeRejected() throws Exception
-   {
-      // Send the request with a null string as the content.
-      final RequestBuilder rb = MockMvcRequestBuilders.delete("/ca/streams/" + "" ).accept( MediaType.TEXT_PLAIN_VALUE );
-      final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest()).andReturn();
-
-      // Now check all the expectations were satisfied.
-      Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
-      final String responseHeader = result.getResponse().getHeader("X-WICA-ERROR" );
-      assertNotNull( responseHeader );
-      Assertions.assertEquals("WICA SERVER: The stream ID was empty/null.", responseHeader );
-
-      // Check that the body content was empty as expected.
-      final String content = result.getResponse().getContentAsString();
-      assertEquals( "", content );
-      logger.info( "Returned Content was: '{}'", content );
-   }
-
-   @Test
-   void testSendInvalidDeleteByPostRequestBlankPathVariable_ShouldBeRejected() throws Exception
+   void test_POST_SendInvalidRequest_RequestIsRejectedWhenPathVariableIsBlank() throws Exception
    {
       // Send the request with a blank string as the content.
-      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams/delete" )
+      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams/"  + " " )
             .contentType(MediaType.TEXT_PLAIN_VALUE )
             .content( " " )
             .accept( MediaType.TEXT_PLAIN_VALUE );
@@ -216,7 +159,7 @@ class WicaStreamDeleteControllerTest
    }
 
    @Test
-   void testSendInvalidDeleteByDeleteRequestBlankPathVariable_ShouldBeRejected() throws Exception
+   void test_DELETE_SendInvalidRequest_RequestIsRejectedWhenPathVariableIsBlank() throws Exception
    {
       // Send the request with a blank string as the content.
       final RequestBuilder rb = MockMvcRequestBuilders.delete("/ca/streams/" + " " ).accept( MediaType.TEXT_PLAIN_VALUE );
@@ -235,12 +178,12 @@ class WicaStreamDeleteControllerTest
    }
 
    @Test
-   void testSendInvalidDeleteByPostRequestUnknownStreamId_ShouldBeRejected() throws Exception
+   void test_POST_SendInvalidRequest_RequestIsRejectedWhenStreamIdIsUnrecognised() throws Exception
    {
       // Send the request with an unknown stream ID.
-      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams/delete" )
+      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams/UnknownStreamId!" )
             .contentType(MediaType.TEXT_PLAIN_VALUE )
-            .content( "UnknownStreamId!" )
+            .content( "DELETE" )
             .accept( MediaType.TEXT_PLAIN_VALUE );
       final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest()).andReturn();
 
@@ -255,9 +198,8 @@ class WicaStreamDeleteControllerTest
       logger.info( "Returned Content was: '{}'", content );
    }
 
-
    @Test
-   void testSendInvalidDeleteByDeleteRequestUnknownStreamId_ShouldBeRejected() throws Exception
+   void test_DELETE_SendInvalidRequest_RequestIsRejectedWhenStreamIdIsUnrecognised() throws Exception
    {
       // Send the request with an unknown stream ID.
       final RequestBuilder rb = MockMvcRequestBuilders.delete("/ca/streams/" + "UnknownStreamId!" ).accept( MediaType.TEXT_PLAIN_VALUE );
