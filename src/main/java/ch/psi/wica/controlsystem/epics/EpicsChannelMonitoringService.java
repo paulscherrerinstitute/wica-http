@@ -13,6 +13,7 @@ import org.epics.ca.Channel;
 import org.epics.ca.Context;
 import org.epics.ca.Monitor;
 import org.epics.ca.data.Timestamped;
+import org.epics.ca.impl.LibraryConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -105,14 +107,15 @@ public class EpicsChannelMonitoringService implements AutoCloseable
 
       // Setup a context that uses the monitor notification policy and debug
       // message log level defined in the configuration file.
-      System.setProperty( "CA_MONITOR_NOTIFIER_IMPL", epicsCaLibraryMonitorNotifierImpl );
-      System.setProperty( "CA_DEBUG", String.valueOf( epicsCaLibraryDebugLevel ) );
+      final Properties properties = new Properties();
+      properties.setProperty( LibraryConfiguration.PropertyNames.CA_MONITOR_NOTIFIER_IMPL.toString(), epicsCaLibraryMonitorNotifierImpl );
+      properties.setProperty( LibraryConfiguration.PropertyNames.CA_LIBRARY_LOG_LEVEL.toString(), String.valueOf( epicsCaLibraryDebugLevel ) );
 
       //System.setProperty( "EPICS_CA_ADDR_LIST", "192.168.0.46:5064" );
       //System.setProperty( "EPICS_CA_ADDR_LIST", "129.129.145.206:5064" );
       //System.setProperty( "EPICS_CA_ADDR_LIST", "proscan-cagw:5062" );
 
-      caContext = new Context();
+      caContext = new Context( properties );
       logger.debug( "'{}' - service instance constructed ok.", this );
    }
 

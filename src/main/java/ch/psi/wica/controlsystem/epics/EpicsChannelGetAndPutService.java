@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -70,10 +71,11 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
       // Note: the EPICS_CA_MAX_ARRAY_BYTES property should not be required, since unlimited
       // size is the defaulty behaviour of the library.
       // System.setProperty( ProtocolConfiguration.PropertyNames.EPICS_CA_MAX_ARRAY_BYTES.toString(), "1000000");
-      System.setProperty( LibraryConfiguration.PropertyNames.CA_MONITOR_NOTIFIER_IMPL.toString(), epicsCaLibraryMonitorNotifierImpl );
-      System.setProperty( LibraryConfiguration.PropertyNames.CA_LIBRARY_LOG_LEVEL.toString(), String.valueOf( epicsCaLibraryDebugLevel ) );
+      final Properties properties = new Properties();
+      properties.setProperty( LibraryConfiguration.PropertyNames.CA_MONITOR_NOTIFIER_IMPL.toString(), epicsCaLibraryMonitorNotifierImpl );
+      properties.setProperty( LibraryConfiguration.PropertyNames.CA_LIBRARY_LOG_LEVEL.toString(), String.valueOf( epicsCaLibraryDebugLevel ) );
 
-      caContext = new Context();
+      caContext = new Context( properties );
       logger.debug( "'{}' - service instance constructed ok.", this );
    }
 
