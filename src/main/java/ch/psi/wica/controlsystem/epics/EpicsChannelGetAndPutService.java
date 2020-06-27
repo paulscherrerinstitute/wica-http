@@ -10,6 +10,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
 import org.epics.ca.Context;
+import org.epics.ca.impl.LibraryConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,9 +67,11 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
 
       // Setup a context that uses the monitor notification policy and debug
       // message log level defined in the configuration file.
-      System.setProperty( Context.Configuration.EPICS_CA_MAX_ARRAY_BYTES.toString(), "1000000");
-      System.setProperty( "CA_MONITOR_NOTIFIER_IMPL", epicsCaLibraryMonitorNotifierImpl );
-      System.setProperty( "CA_DEBUG", String.valueOf( epicsCaLibraryDebugLevel ) );
+      // Note: the EPICS_CA_MAX_ARRAY_BYTES property should not be required, since unlimited
+      // size is the defaulty behaviour of the library.
+      // System.setProperty( ProtocolConfiguration.PropertyNames.EPICS_CA_MAX_ARRAY_BYTES.toString(), "1000000");
+      System.setProperty( LibraryConfiguration.PropertyNames.CA_MONITOR_NOTIFIER_IMPL.toString(), epicsCaLibraryMonitorNotifierImpl );
+      System.setProperty( LibraryConfiguration.PropertyNames.CA_LIBRARY_LOG_LEVEL.toString(), String.valueOf( epicsCaLibraryDebugLevel ) );
 
       caContext = new Context();
       logger.debug( "'{}' - service instance constructed ok.", this );
