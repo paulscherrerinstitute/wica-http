@@ -5,9 +5,10 @@ package ch.psi.wica.infrastructure.channel;
 
 import ch.psi.wica.infrastructure.util.JsonStringFormatter;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
-import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +17,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.util.Set;
@@ -71,7 +71,7 @@ class WicaChannelDataSerializerTestWithMetadata
 
       // Set up decoder
       jsonDecoder = new ObjectMapper();
-      jsonDecoder.configure( JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS,true );
+      jsonDecoder = JsonMapper.builder().configure( JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS, true ).build();
    }
 
    @Test

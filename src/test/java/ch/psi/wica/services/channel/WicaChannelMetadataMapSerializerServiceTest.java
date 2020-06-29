@@ -7,8 +7,6 @@ import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.infrastructure.util.JsonStringFormatter;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,10 +58,6 @@ class WicaChannelMetadataMapSerializerServiceTest
       realArrMetadata= WicaChannelMetadata.createRealArrayInstance( "units", 3, 100.123117, 0.0, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
       realNanMetadata = WicaChannelMetadata.createRealInstance( "units", 3, Double.NaN, 0.0, 4.5, 10.6, 97.6, 2.2, 95.3, 5.1 );
       realInfMetadata = WicaChannelMetadata.createRealInstance( "units", 3, Double.POSITIVE_INFINITY, 0.0, 9.7, 10.6123, 97.61234, 2.2, 95.3, 5.1 );
-
-      // Set up decoder
-      final ObjectMapper jsonDecoder = new ObjectMapper();
-      jsonDecoder.configure( JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS, true );
    }
 
    @Test
