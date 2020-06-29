@@ -24,8 +24,8 @@ This log describes the functionality of tagged versions within the repository.
   Docker container now moved from Azul Java to AdoptOpenJDK
     
   Issues:
-  #7: Patch previous (wica-http-1.1.0) release to include newer (ca-1.2.2) library which fixes interoperation with IOC's behind PSI's EPICS Channel Access Gateway
-  #8: Patch previous (wica-http-1.1.0) release to include latest (wica-js-1.1.1) wica-JS library.
+  Issue #7: Patch previous (wica-http-1.1.0) release to include newer (ca-1.2.2) library which fixes interoperation with IOC's behind PSI's EPICS Channel Access Gateway
+  Issue #8: Patch previous (wica-http-1.1.0) release to include latest (wica-js-1.1.1) wica-JS library.
    
   Test Status: Tests run: 279, Failures: 0, Errors: 0, Skipped: 8
    
@@ -45,24 +45,31 @@ This log describes the functionality of tagged versions within the repository.
   Upgrade to later version of Tomcat (9.0.30) to fix bug (exception generated when navigating away from web pages).
 
   GitHub Issues Resolved:
-  #10 Add averaging filter.
+  Issue #10 Add averaging filter.
   
   Test Status: Tests run: 334, Failures: 0, Errors: 0, Skipped: 20
   
-* [1.4.0] 2020-06-28
-  Summary: Miscellaneous Improvements triggered by recent upgrade to Wica-JS 1.2.x release.
-  * Issue #11 Upgrade to Spring Boot 2.2.5.RELEASE.
-  * Issue #12 Upgrade EPICS CA Library to 1.2.3-dev.
-  * Issue #13 Upgrade Wica-JS to 1.2.0.
-  * Issue #14 Improve tests.
-  * Issue #15 Add support for delete via POST request.
-  * Issue #16 Small miscellaneous improvements.
-  * Issue #17 Create Wica-HTTP Release 1.4.0
-  * Issue #18 Added bug fix to issue which polluted log when navigating away from a wica page. 
-  * Issue #19 Added support for new EPICS configuration properties.
-  * Issue #20 Upgrade Wica-JS to 1.2.1. 
-  * Issue #21 Upgrade EPICS CA library to 1.3.2.
-  * Issue #22 Upgrade Wica-JS to 1.2.2. 
-  * Issue #23 Upgrade code to avoid JsonParser ALLOW_NON_NUMERIC_NUMBERS deprecation.
+* [1.4.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.4.0) Released 2020-06-28
+
+  ###### Overview:
   
-  Test Status: Tests run: 340, Failures: 0, Errors: 0, Skipped: 20  
+  Miscellaneous Improvements triggered by recent upgrade to Wica-JS 1.2.2 release.
+  
+  ###### Change List: 
+  
+  * [Issue #11](https://github.com/paulscherrerinstitute/wica-http/issues/11) Upgrade to Spring Boot 2.2.5.RELEASE.
+  * [Issue #12](https://github.com/paulscherrerinstitute/wica-http/issues/12) Upgrade EPICS CA Library to 1.2.3-dev.
+  * [Issue #13](https://github.com/paulscherrerinstitute/wica-http/issues/13) Upgrade Wica-JS to 1.2.0.
+  * [Issue #14](https://github.com/paulscherrerinstitute/wica-http/issues/14) Improve tests.
+  * [Issue #15](https://github.com/paulscherrerinstitute/wica-http/issues/15) Add support for delete via POST request.
+  * [Issue #16](https://github.com/paulscherrerinstitute/wica-http/issues/16) Small miscellaneous improvements.
+  * [Issue #17](https://github.com/paulscherrerinstitute/wica-http/issues/17) Create Wica-HTTP Release 1.4.0
+  * [Issue #18](https://github.com/paulscherrerinstitute/wica-http/issues/18) Added bug fix to issue which polluted log when navigating away from a wica page. 
+  * [Issue #19](https://github.com/paulscherrerinstitute/wica-http/issues/19) Added support for new EPICS configuration properties.
+  * [Issue #20](https://github.com/paulscherrerinstitute/wica-http/issues/20) Upgrade Wica-JS to 1.2.1. 
+  * [Issue #21](https://github.com/paulscherrerinstitute/wica-http/issues/21) Upgrade EPICS CA library to 1.3.2.
+  * [Issue #22](https://github.com/paulscherrerinstitute/wica-http/issues/22) Upgrade Wica-JS to 1.2.2. 
+  * [Issue #23](https://github.com/paulscherrerinstitute/wica-http/issues/23) Upgrade code to avoid JsonParser ALLOW_NON_NUMERIC_NUMBERS deprecation.
+  * [Issue #24](https://github.com/paulscherrerinstitute/wica-http/issues/24) Add CI support for Jacoco code coverage.
+  
+  Test Status: Tests run: 291, Failures: 0, Errors: 0, Skipped: 6  
