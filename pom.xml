@@ -138,7 +138,7 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>${wica-js-release}</url>
+                            <uri>${wica-js-release}</uri>
                             <unpack>true</unpack>
                             <skipCache>true</skipCache>
                             <!-- By unpacking the payload in the classes area this ensure that -->
