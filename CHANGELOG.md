@@ -49,8 +49,8 @@ This log describes the functionality of tagged versions within the repository.
   
   Test Status: Tests run: 334, Failures: 0, Errors: 0, Skipped: 20
   
-* [1.4.0] 2020-03-11
-  Summary: Miscellaneous Improvements triggered by recent upgrade to Wica-JS release.
+* [1.4.0] 2020-06-28
+  Summary: Miscellaneous Improvements triggered by recent upgrade to Wica-JS 1.2.x release.
   * Issue #11 Upgrade to Spring Boot 2.2.5.RELEASE.
   * Issue #12 Upgrade EPICS CA Library to 1.2.3-dev.
   * Issue #13 Upgrade Wica-JS to 1.2.0.
@@ -58,5 +58,10 @@ This log describes the functionality of tagged versions within the repository.
   * Issue #15 Add support for delete via POST request.
   * Issue #16 Small miscellaneous improvements.
   * Issue #17 Create Wica-HTTP Release 1.4.0
+  * Issue #18 Added bug fix to issue which polluted log when navigating away from a wica page. 
+  * Issue #19 Added support for new EPICS configuration properties.
+  * Issue #20 Upgrade Wica-JS to 1.2.1. 
+  * Issue #21 Upgrade EPICS CA library to 1.3.2.
+  * Issue #22 Upgrade Wica-JS to 1.2.2. 
   
   Test Status: Tests run: 340, Failures: 0, Errors: 0, Skipped: 20  
