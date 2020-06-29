@@ -93,7 +93,7 @@ class WicaChannelGetControllerTest
    @Test
    void testGetRequest_HappyDay()
    {
-      final String channelName = "wica:test_db_ok";
+      final String channelName = "wica:test:db_ok";
       final RequestBuilder getRequest = MockMvcRequestBuilders.get("/ca/channel/" + channelName + "?fieldsOfInterest=conn" )
                                                               .accept( MediaType.APPLICATION_JSON_VALUE );
 
