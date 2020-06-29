@@ -145,6 +145,7 @@
                             <!-- the release gets rebundled in the fatJar at a location where  -->
                             <!-- the Spring Boot environment will search for it.               -->
                             <outputDirectory>${project.build.directory}/classes/static/wica</outputDirectory>
+                            <md5>f06360afad116c0582e02baa2f0c4ee5</md5>
                         </configuration>
                     </execution>
                 </executions>
