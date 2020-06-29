@@ -27,6 +27,7 @@
         <!-- <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/latest/download/wica-js.zip</wica-js-release> -->
         <!-- This definition can be used to get a specific release -->
         <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/download/1.2.2/wica-js.zip</wica-js-release>
+        <wica-js-md5>https://github.com/paulscherrerinstitute/wica-js/releases/download/1.2.2/wica-js.zip</wica-js-md5>
         <!-- BUG FIX: 2020-01-12 -->
         <!-- The latest version of Tomcat is specified to get rid of an error message that occurs when navigating -->
         <!-- away from web pages. See this issue: https://github.com/codecentric/spring-boot-admin/issues/1039 -->
@@ -145,7 +146,7 @@
                             <!-- the release gets rebundled in the fatJar at a location where  -->
                             <!-- the Spring Boot environment will search for it.               -->
                             <outputDirectory>${project.build.directory}/classes/static/wica</outputDirectory>
-                            <md5>f06360afad116c0582e02baa2f0c4ee5</md5>
+                            <md5>${wica-js-md5}</md5>
                         </configuration>
                     </execution>
                 </executions>
