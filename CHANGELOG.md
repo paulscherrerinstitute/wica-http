@@ -63,5 +63,6 @@ This log describes the functionality of tagged versions within the repository.
   * Issue #20 Upgrade Wica-JS to 1.2.1. 
   * Issue #21 Upgrade EPICS CA library to 1.3.2.
   * Issue #22 Upgrade Wica-JS to 1.2.2. 
+  * Issue #23 Upgrade code to avoid JsonParser ALLOW_NON_NUMERIC_NUMBERS deprecation.
   
   Test Status: Tests run: 340, Failures: 0, Errors: 0, Skipped: 20  
