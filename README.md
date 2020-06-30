@@ -19,7 +19,7 @@ Wica comprises two main components:
 Further details about how these components interoperate is provided in the 
 [how it works](https://github.com/paulscherrerinstitute/wica-js#how-it-works) documentation.
 
-Currently WICA interoperates with the EPICS Control Systems using its well established Channel Access (CA) protocol, and by means of the [Java Channel Access Client Library](https://github.com/channelaccess/ca).
+Currently WICA interoperates with the EPICS Control Systems using its well established Channel Access (CA) protocol and by means of the [Java Channel Access Client Library](https://github.com/channelaccess/ca).
 
 # Main Features
 
