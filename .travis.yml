@@ -53,7 +53,8 @@ before_script:
 
 script:
   - echo -n "*** LIFECYCLE STARTED - 'script' *************************************************************************"
-  - mvn clean package -DskipTests=false -D maven.javadoc.skip=false -B -V
+  # Note: maven CLI options: -B means run in batch mode, -V means display version information.
+  - mvn clean package -DskipTests=true -D maven.javadoc.skip=false -B -V
   - echo -n "*** LIFECYCLE COMPLETED - 'script' ***********************************************************************"
 
 # The Travis Lifecycle 'deploy' phase is optional and runs after the Travis Lifecycle 'script' phase has completed.
