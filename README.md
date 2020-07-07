@@ -1,4 +1,4 @@
-# Overview [![Build Status](https://travis-ci.com/paulscherrerinstitute/wica-http.svg?branch=master)](https://travis-ci.com/paulscherrerinstitute/wica-http) [![codecov](https://codecov.io/gh/paulscherrerinstitute/wica-http/branch/master/graph/badge.svg)](https://codecov.io/gh/paulscherrerinstitute/wica-http) [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/paulscherrerinstitute/wica-http?color=limegreen&label=release)](https://github.com/paulscherrerinstitute/wica-js/releases) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/paulscherrerinstitute/wica-http?label=dockerhub)](https://hub.docker.com/r/paulscherrerinstitute/wica-http)
+# Overview [![Build Status](https://travis-ci.com/paulscherrerinstitute/wica-http.svg?branch=1.4.0)](https://travis-ci.com/paulscherrerinstitute/wica-http) [![codecov](https://codecov.io/gh/paulscherrerinstitute/wica-http/branch/master/graph/badge.svg)](https://codecov.io/gh/paulscherrerinstitute/wica-http) [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/paulscherrerinstitute/wica-http?color=limegreen&label=release)](https://github.com/paulscherrerinstitute/wica-js/releases) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/paulscherrerinstitute/wica-http?label=dockerhub)](https://hub.docker.com/r/paulscherrerinstitute/wica-http)
 
 This is the **Wica-HTTP** git repository, one component of PSI's WICA software suite. 
  
@@ -19,7 +19,7 @@ Wica comprises two main components:
 Further details about how these components interoperate is provided in the 
 [how it works](https://github.com/paulscherrerinstitute/wica-js#how-it-works) documentation.
 
-Currently WICA interoperates with the EPICS Control Systems using its well established Channel Access (CA) protocol. 
+Currently WICA interoperates with the EPICS Control Systems using its well established Channel Access (CA) protocol and by means of the [Java Channel Access Client Library](https://github.com/channelaccess/ca).
 
 # Main Features
 
