@@ -160,6 +160,7 @@ ENV JAVA_DBG_OPTS "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address
 ENTRYPOINT exec java $JAVA_DBG_OPTS $JAVA_JMX_OPTS \
            -Dfile.encoding=ISO8859-1 \
            -Dspring.config.location=config/application-docker-http-run.properties \
+           -Djava.class.path=lib/jarfile.jar \
            -p lib/jmuxutils.jar \
            -p lib/jarfile.jar \
            --add-modules ALL-DEFAULT \

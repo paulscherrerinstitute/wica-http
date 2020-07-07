@@ -166,6 +166,7 @@ ENV JAVA_JMX_OPTS  "-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmx
 ENTRYPOINT exec java $JAVA_DBG_OPTS $JAVA_JMX_OPTS \
            -Dfile.encoding=ISO8859-1 \
            -Dspring.config.location=config/application-docker-https-run.properties \
+           -Djava.class.path=lib/jarfile.jar \
            -p lib/jmuxutils.jar \
            -p lib/jarfile.jar \
            --add-modules ALL-DEFAULT \
