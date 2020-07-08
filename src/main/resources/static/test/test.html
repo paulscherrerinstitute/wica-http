@@ -28,10 +28,14 @@
             width: 8rem;
         }
 
+        button {
+            width: 8rem;
+        }
+
         .statusWidget {
             height: 1.2rem;
             width:  1.5rem;
-            background-color: lime;
+            background-color: white;
         }
 
     </style>
@@ -56,6 +60,7 @@
         <label>Counter 2.0s </label> <label data-wica-channel-name="wica:test:counter05">NC</label><br>
         <label>Counter 5.0s </label> <label data-wica-channel-name="wica:test:counter06">NC</label><br>
         <label>Counter 10s  </label> <label data-wica-channel-name="wica:test:counter07">NC</label><br>
+        <label></label><button onclick="resetCounters()">Reset</button><br>
     </div>
 
 
@@ -70,8 +75,38 @@
             }
             else {
                 widget.textContent = "OK";
+                widget.style.backgroundColor = "lime";
             }
         }
+
+        function resetCounters() {
+
+            setChannel( "wica:test:counter01" , 0 );
+            setChannel( "wica:test:counter02" , 0 );
+            setChannel( "wica:test:counter03" , 0 );
+            setChannel( "wica:test:counter04" , 0 );
+            setChannel( "wica:test:counter05" , 0 );
+            setChannel( "wica:test:counter06" , 0 );
+            setChannel( "wica:test:counter07" , 0 );
+        }
+
+        function setChannel( channelName, newValue )
+        {
+            fetch('http://localhost:8080/ca/channel/' + channelName, {
+                method: 'PUT',
+                headers: {
+                    'content-type': 'text/plain',
+                },
+                body: newValue
+            } )
+            .then(response => {
+                console.log(response)
+            })
+            .catch(err => {
+                console.log( err )
+            })
+        }
+
     </script>
 
 </body>
