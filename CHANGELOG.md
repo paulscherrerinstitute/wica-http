@@ -73,3 +73,21 @@ This log describes the functionality of tagged versions within the repository.
   * [Issue #24](https://github.com/paulscherrerinstitute/wica-http/issues/24) Add CI support for Jacoco code coverage.
   
   Test Status: Tests run: 291, Failures: 0, Errors: 0, Skipped: 6  
+  
+  ###### Known Problems:
+    
+  Unfortunately, the docker build had a problem when loading the new version (1.3.2) of the CA library. Sorry, this 
+  functionality will be tested in future releases. Docker users should use version 1.4.1 instead.
+  
+* [1.4.1](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.4.1) Released 2020-07-09
+
+  Fixed a regression in the use of the CA library (version 1.3.2) which prevented the Docker build from loading the 
+  library properly.
+  The test.html example has been enhanced to show how to use Wica to perform a caput.
+  
+  * [Issue #25](https://github.com/paulscherrerinstitute/wica-http/issues/25) Missing java.class.path when loading CA library version 1.3.2 using Java module path.
+  * [Issue #26](https://github.com/paulscherrerinstitute/wica-http/issues/26) Create Wica-HTTP Release 1.4.1
+  * [Issue #27](https://github.com/paulscherrerinstitute/wica-http/issues/17) Enhance test.html example to show how to perform channel put operation. 
+  * [Issue #28](https://github.com/paulscherrerinstitute/wica-http/issues/28) Fix regression bug in docker build.
+
+Test Status: Tests run: 291, Failures: 0, Errors: 0, Skipped: 6  
