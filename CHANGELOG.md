@@ -83,7 +83,7 @@ This log describes the functionality of tagged versions within the repository.
 
   Fixed a regression in the use of the CA library (version 1.3.2) which prevented the Docker build from loading the 
   library properly.
-  The test.html example has been enhanced to show how to use Wica to perform a caput.
+  The test.html example has been enhanced to show how to use Wica to write to a control system channel.
   
   * [Issue #25](https://github.com/paulscherrerinstitute/wica-http/issues/25) Missing java.class.path when loading CA library version 1.3.2 using Java module path.
   * [Issue #26](https://github.com/paulscherrerinstitute/wica-http/issues/26) Create Wica-HTTP Release 1.4.1
