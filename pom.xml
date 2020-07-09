@@ -5,7 +5,7 @@
 
     <groupId>ch.psi</groupId>
     <artifactId>wica-http</artifactId>
-    <version>1.4.1-rc1</version>
+    <version>1.4.1</version>
     <packaging>jar</packaging>
 
     <name>wica-http</name>
