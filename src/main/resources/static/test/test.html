@@ -92,7 +92,7 @@
 
         function setChannel( channelName, newValue )
         {
-            fetch('http://localhost:8080/ca/channel/' + channelName, {
+            fetch('../ca/channel/' + channelName, {
                 method: 'PUT',
                 headers: {
                     'content-type': 'text/plain',

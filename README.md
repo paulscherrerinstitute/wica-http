@@ -107,7 +107,10 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
      
       When you navigate to this page the server should connect to the database and the counters should start 
       incrementing. 
-  
+      
+      Since Version 1.4.1 the example includes code to illustrate how to set the value of the control system
+      channel (which in the case of the example resets the counters back to zero).
+       
    1. Start Developing.
       
       If the previous step worked successfully then the system is ready for something more interesting. 
