@@ -125,6 +125,7 @@ public class WicaStreamMonitoredValueCollectorService
       if ( ( ! latestPolledValue.isConnected() ) || ( ! latestMonitoredValue.isConnected() ) )
       {
          logger.info( "Channel: '{}' is not online, Validation suppressed.", wicaChannel.getNameAsString() );
+         return;
       }
 
       final LocalDateTime ts1 = ( (WicaChannelValue.WicaChannelValueConnected) latestMonitoredValue).getDataSourceTimestamp();
