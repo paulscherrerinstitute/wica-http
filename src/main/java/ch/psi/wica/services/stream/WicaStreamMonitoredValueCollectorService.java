@@ -121,8 +121,14 @@ public class WicaStreamMonitoredValueCollectorService
 
       final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
       final WicaChannelValue latestMonitoredValue = wicaStreamMonitoredValueDataBuffer.getLatest( wicaDataBufferStorageKey );
-      final LocalDateTime ts1 = latestMonitoredValue.getWicaServerTimestamp();
-      final LocalDateTime ts2 = latestPolledValue.getWicaServerTimestamp();
+
+      if ( ( ! latestPolledValue.isConnected() ) || ( ! latestMonitoredValue.isConnected() ) )
+      {
+         logger.info( "Channel: '{}' is not online, Validation suppressed.", wicaChannel.getNameAsString() );
+      }
+
+      final LocalDateTime ts1 = ( (WicaChannelValue.WicaChannelValueConnected) latestMonitoredValue).getDataSourceTimestamp();
+      final LocalDateTime ts2 = ( (WicaChannelValue.WicaChannelValueConnected) latestPolledValue).getDataSourceTimestamp();
       final Duration lag =  Duration.between( ts1, ts2 );
       logger.info( "The monitored value lag for channel: '{}' waa '{}' seconds.", wicaChannel.getNameAsString(), lag.getSeconds() );
 
