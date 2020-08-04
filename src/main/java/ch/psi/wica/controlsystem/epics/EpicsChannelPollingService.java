@@ -61,8 +61,7 @@ public class EpicsChannelPollingService implements AutoCloseable
    public EpicsChannelPollingService( @Value( "${wica.channel-get-timeout-interval-in-ms}") int timeoutInMillis,
                                       @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService,
                                       @Autowired EpicsEventPublisher epicsEventPublisher,
-                                      @Autowired StatisticsCollectionService statisticsCollectionService
-                                      )
+                                      @Autowired StatisticsCollectionService statisticsCollectionService )
    {
       logger.debug( "'{}' - constructing new EpicsChannelPollingService instance...", this );
 
