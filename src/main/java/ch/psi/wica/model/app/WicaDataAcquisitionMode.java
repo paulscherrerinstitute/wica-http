@@ -18,7 +18,7 @@ public enum WicaDataAcquisitionMode
 
    POLL              ("poll",true, false, false, false, true ),
    MONITOR           ("monitor",false, true, true, false, false ),
-   POLL_AND_MONITOR  ("poll-and-monitor", true, true, true, true, false ),
+   POLL_AND_MONITOR  ("poll-and-monitor", true, true, false, false, true ),
    POLL_MONITOR      ("poll-monitor", true, true, false,true, false );
 
 /*- Private attributes -------------------------------------------------------*/
