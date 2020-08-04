@@ -95,6 +95,7 @@ Test Status: Tests run: 291, Failures: 0, Errors: 0, Skipped: 6
 * [1.5.0-rc1](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.5.0) Released 2020-07-09
 
   First implementation of Wica Channel dead monitor detection.
-  * [Issue #29](https://github.com/paulscherrerinstitute/wica-http/issues/26) Create Wica-HTTP Release 1.5.0-rc1.
+  * [Issue #29](https://github.com/paulscherrerinstitute/wica-http/issues/29) Create Wica-HTTP Release 1.5.0-rc1.
+  * [Issue #30](https://github.com/paulscherrerinstitute/wica-http/issues/30) Add support for dead monitor detection.
 
 Test Status: Tests run: xxx, Failures: xxx, Errors: xxx, Skipped: xxx  
