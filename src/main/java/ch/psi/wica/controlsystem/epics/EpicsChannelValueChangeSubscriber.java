@@ -86,9 +86,9 @@ class EpicsChannelValueChangeSubscriber
       // CA library via the Metadata<Timestamped> class.
       logger.trace("'{}' - adding monitor...", controlSystemName );
 
-      final Monitor<Timestamped<Object>> monitor = channel.addMonitor( Timestamped.class, wicaChannelValueObj -> {
+      final Monitor<Timestamped<Object>> monitor = channel.addMonitor( Timestamped.class, epicsTimestampedObject -> {
          logger.trace("'{}' - publishing new value...", controlSystemName );
-         final var wicaChannelValue = wicaChannelValueBuilder.build( controlSystemName, wicaChannelValueObj );
+         final var wicaChannelValue = wicaChannelValueBuilder.build( controlSystemName, epicsTimestampedObject );
          valueChangeHandler.accept( wicaChannelValue );
          logger.trace("'{}' - new value published.", controlSystemName );
       } );
