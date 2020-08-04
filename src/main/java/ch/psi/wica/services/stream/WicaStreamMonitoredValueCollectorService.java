@@ -129,7 +129,11 @@ public class WicaStreamMonitoredValueCollectorService
       }
 
       final LocalDateTime ts1 = ( (WicaChannelValue.WicaChannelValueConnected) latestMonitoredValue).getDataSourceTimestamp();
+      logger.info( "Latest monitored value for channel: '{}' has the value '{}' and timestamp '{}'.", wicaChannel.getNameAsString(), latestMonitoredValue, ts1 );
+
       final LocalDateTime ts2 = ( (WicaChannelValue.WicaChannelValueConnected) latestPolledValue).getDataSourceTimestamp();
+      logger.info( "Latest polled value for channel: '{}' has the value '{}' and timestamp '{}'.", wicaChannel.getNameAsString(), latestPolledValue, ts2 );
+
       final Duration lag =  Duration.between( ts1, ts2 );
       logger.info( "The monitored value lag for channel: '{}' waa '{}' seconds.", wicaChannel.getNameAsString(), lag.getSeconds() );
 
