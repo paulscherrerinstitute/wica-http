@@ -15,12 +15,15 @@ import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.services.channel.WicaChannelValueFilteringService;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.AbstractMap;
 import java.util.List;
@@ -37,6 +40,8 @@ public class WicaStreamMonitoredValueCollectorService
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
+
+   private final Logger logger = LoggerFactory.getLogger( WicaStreamMonitoredValueCollectorService.class );
 
    private final WicaStreamMonitoredValueDataBuffer wicaStreamMonitoredValueDataBuffer;
    private final ApplicationEventPublisher applicationEventPublisher;
@@ -83,7 +88,7 @@ public class WicaStreamMonitoredValueCollectorService
    }
 
    @EventListener
-   public void handleWicaChannelMonitoredValueUpdateEvent( WicaChannelMonitoredValueUpdateEvent event)
+   public void handleWicaChannelMonitoredValueUpdateEvent( WicaChannelMonitoredValueUpdateEvent event )
    {
       Validate.notNull( event );
       final WicaChannel wicaChannel = event.getWicaChannel();
@@ -101,6 +106,30 @@ public class WicaStreamMonitoredValueCollectorService
       final WicaChannelValue wicaChannelValue = wicaStreamMonitoredValueDataBuffer.getLatest( wicaDataBufferStorageKey );
       final WicaChannelValue rewrittenChannelValue = wicaChannelValueTimestampRewriter.rewrite( wicaChannelValue, LocalDateTime.now() );
       applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannel, rewrittenChannelValue ) );
+   }
+
+   // Detect and log warning message when monitored value lags behind polled value by more than 1 second
+   @EventListener
+   public void handleUpdateEvent( WicaChannelPolledValueUpdateEvent event )
+   {
+      Validate.notNull( event );
+
+      final WicaChannel wicaChannel = event.getWicaChannel();
+      final WicaChannelValue latestPolledValue = event.getWicaChannelValue();
+
+      logger.info( "Validating latest monitored value for channel: '{}'.", wicaChannel.getNameAsString() );
+
+      final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
+      final WicaChannelValue latestMonitoredValue = wicaStreamMonitoredValueDataBuffer.getLatest( wicaDataBufferStorageKey );
+      final LocalDateTime ts1 = latestMonitoredValue.getWicaServerTimestamp();
+      final LocalDateTime ts2 = latestPolledValue.getWicaServerTimestamp();
+      final Duration lag =  Duration.between( ts1, ts2 );
+      logger.info( "The monitored value lag for channel: '{}' waa '{}' seconds.", wicaChannel.getNameAsString(), lag.getSeconds() );
+
+      if ( lag.getSeconds() > 1 )
+      {
+         logger.warn( "The monitored value for channel: '{}' is not up-to-date. Lag is {} seconds. ", wicaChannel.getNameAsString(), lag.getSeconds() );
+      }
    }
 
 /*- Private methods ----------------------------------------------------------*/
