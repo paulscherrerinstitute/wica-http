@@ -130,10 +130,10 @@ VOLUME /root/log
 VOLUME /root/lib
 
 # Provide support for serving the Wica-JS library from an external file system.
-VOLUME /root/static/wica
+VOLUME /root/static/wica_js_root
 
 # Provide support for serving the web pages from an external file system.
-VOLUME /root/static/web
+VOLUME /root/static/web_root
 
 ###############################################################################
 # 8.0 Uncomment the block below to add support for attaching a debugger
