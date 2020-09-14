@@ -221,7 +221,7 @@ public class WicaStreamMonitoredValueRequesterService
       logger.info( "Reducing interest level in monitored control system channel: '{}' to {}" , controlSystemName.asString(), newInterestCount );
       monitoredChannelInterestMap.put( storageKey, newInterestCount );
 
-      if ( currentInterestCount == 0 )
+      if ( newInterestCount == 0 )
       {
          logger.info( "No more interest in control system channel: '{}'", controlSystemName.asString() );
          logger.info( "The resources for the channel will be discarded in {} seconds.", wicaChannelResourceReleaseIntervalInSecs );
