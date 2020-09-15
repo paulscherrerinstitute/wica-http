@@ -122,9 +122,15 @@ public class WicaStreamMonitoredValueCollectorService
       final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
       final WicaChannelValue latestMonitoredValue = wicaStreamMonitoredValueDataBuffer.getLatest( wicaDataBufferStorageKey );
 
-      if ( ( ! latestPolledValue.isConnected() ) || ( ! latestMonitoredValue.isConnected() ) )
+      if ( ! latestPolledValue.isConnected() )
       {
-         logger.info( "Channel: '{}' is not online, Validation suppressed.", wicaChannel.getNameAsString() );
+         logger.info( "Latest polled value for channel: '{}' shows the channel is not online, monitor validation suppressed.", wicaChannel.getNameAsString() );
+         return;
+      }
+
+      if ( ! latestMonitoredValue.isConnected() )
+      {
+         logger.info( "Latest monitored value for channel: '{}' shows the channel is not online, monitor validation suppressed.", wicaChannel.getNameAsString() );
          return;
       }
 
