@@ -7,6 +7,7 @@ import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -120,6 +121,14 @@ public abstract class WicaChannelValue extends WicaChannelData
       return connected;
    }
 
+   @Override
+   public String toString()
+   {
+      return "WicaChannelValue{" +
+            "connected=" + connected +
+            '}';
+   }
+
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
@@ -140,6 +149,14 @@ public abstract class WicaChannelValue extends WicaChannelData
       {
          super( WicaChannelType.UNKNOWN, LocalDateTime.now(), false );
          this.val = null;
+      }
+
+      @Override
+      public String toString()
+      {
+         return "WicaChannelValueDisconnected{" +
+               "val='" + val + '\'' +
+               '}';
       }
    }
 
@@ -180,6 +197,7 @@ public abstract class WicaChannelValue extends WicaChannelData
          this.wicaChannelAlarmStatus = Validate.notNull( wicaChannelAlarmStatus, "wicaAlarmStatus cannot be null " );
          this.dataSourceTimestamp = Validate.notNull( dataSourceTimestamp,"dataSourceTimestamp cannot be null " );
       }
+
    }
 
 /*- Nested Class: WicaChannelValueConnectedReal -----------------------------*/
@@ -199,6 +217,14 @@ public abstract class WicaChannelValue extends WicaChannelData
       {
          super( WicaChannelType.REAL, alarmSeverity, alarmStatus, dataSourceTimestamp );
          this.value = value;
+      }
+
+      @Override
+      public String toString()
+      {
+         return "WicaChannelValueConnectedReal{" +
+               "value=" + value +
+               '}';
       }
    }
 
@@ -220,6 +246,14 @@ public abstract class WicaChannelValue extends WicaChannelData
          super( WicaChannelType.REAL_ARRAY, alarmSeverity, alarmStatus, dataSourceTimestamp );
          this.value = value;
       }
+
+      @Override
+      public String toString()
+      {
+         return "WicaChannelValueConnectedRealArray{" +
+               "value=" + Arrays.toString( value ) +
+               '}';
+      }
    }
 
 /*- Nested Class: WicaChannelValueConnectedInteger --------------------------*/
@@ -239,6 +273,14 @@ public abstract class WicaChannelValue extends WicaChannelData
       {
          super( WicaChannelType.INTEGER, alarmSeverity, alarmStatus, dataSourceTimestamp);
          this.value = value;
+      }
+
+      @Override
+      public String toString()
+      {
+         return "WicaChannelValueConnectedInteger{" +
+               "value=" + value +
+               '}';
       }
    }
 
@@ -260,6 +302,14 @@ public abstract class WicaChannelValue extends WicaChannelData
          super( WicaChannelType.INTEGER_ARRAY, alarmSeverity, alarmStatus, dataSourceTimestamp);
          this.value = value;
       }
+
+      @Override
+      public String toString()
+      {
+         return "WicaChannelValueConnectedIntegerArray{" +
+               "value=" + Arrays.toString( value ) +
+               '}';
+      }
    }
 
 /*- Nested Class: WicaChannelValueConnectedString ---------------------------*/
@@ -280,6 +330,14 @@ public abstract class WicaChannelValue extends WicaChannelData
          super( WicaChannelType.STRING, alarmSeverity, alarmStatus, dataSourceTimestamp);
          this.value = value;
       }
+
+      @Override
+      public String toString()
+      {
+         return "WicaChannelValueConnectedString{" +
+               "value='" + value + '\'' +
+               '}';
+      }
    }
 
 /*- Nested Class: WicaChannelValueConnectedStringArray ----------------------*/
@@ -299,6 +357,14 @@ public abstract class WicaChannelValue extends WicaChannelData
       {
          super( WicaChannelType.STRING_ARRAY, alarmSeverity, alarmStatus, dataSourceTimestamp);
          this.value = value;
+      }
+
+      @Override
+      public String toString()
+      {
+         return "WicaChannelValueConnectedStringArray{" +
+               "value=" + Arrays.toString( value ) +
+               '}';
       }
    }
 
