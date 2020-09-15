@@ -198,6 +198,16 @@ public abstract class WicaChannelValue extends WicaChannelData
          this.dataSourceTimestamp = Validate.notNull( dataSourceTimestamp,"dataSourceTimestamp cannot be null " );
       }
 
+      @Override
+      public String toString()
+      {
+         return "WicaChannelValueConnected{" +
+               "wicaChannelType=" + wicaChannelType +
+               ", wicaChannelAlarmSeverity=" + wicaChannelAlarmSeverity +
+               ", wicaChannelAlarmStatus=" + wicaChannelAlarmStatus +
+               ", dataSourceTimestamp=" + dataSourceTimestamp +
+               '}';
+      }
    }
 
 /*- Nested Class: WicaChannelValueConnectedReal -----------------------------*/
