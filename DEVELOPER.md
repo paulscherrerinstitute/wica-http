@@ -17,9 +17,9 @@ This page is a miscellaneous collection of notes intended to assist software dev
     git commit -m "my latest changes" .
     ```
 
-1. Use the mvn 'release' target to create a tag and to push it to the GitHub Server.
+1. Use the mvn 'deploy' target to create a tag and to push it to the GitHub Server.
     ```
-    mvn run release
+    mvn deploy
     ```
 1. Verify that the Travis automatic build worked and/or that the expected artifacts 
    are available on GitHub and on Docker Hub sites.
