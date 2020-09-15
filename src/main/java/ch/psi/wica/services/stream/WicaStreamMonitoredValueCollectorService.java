@@ -135,7 +135,7 @@ public class WicaStreamMonitoredValueCollectorService
       logger.info( "Latest polled value for channel: '{}' has the value '{}' and timestamp '{}'.", wicaChannel.getNameAsString(), latestPolledValue, ts2 );
 
       final Duration lag =  Duration.between( ts1, ts2 );
-      logger.info( "The monitored value lag for channel: '{}' waa '{}' seconds.", wicaChannel.getNameAsString(), lag.getSeconds() );
+      logger.info( "The monitored value lag for channel: '{}' was '{}' seconds.", wicaChannel.getNameAsString(), lag.getSeconds() );
 
       if ( lag.getSeconds() > 1 )
       {
