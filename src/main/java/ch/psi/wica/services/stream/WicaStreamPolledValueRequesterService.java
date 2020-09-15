@@ -144,7 +144,7 @@ public class WicaStreamPolledValueRequesterService
 
          // Set the initial state for the value stash.
          // Note: the poller does not write a separate metadata stash
-        applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent(wicaChannel, WicaChannelValue.createChannelValueDisconnected() ));
+         // applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent(wicaChannel, WicaChannelValue.createChannelValueDisconnected() ));
 
          // Now start polling
          applicationEventPublisher.publishEvent( new WicaChannelStartPollingEvent( wicaChannel ) );
