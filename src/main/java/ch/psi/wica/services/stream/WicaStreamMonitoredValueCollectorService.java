@@ -129,17 +129,20 @@ public class WicaStreamMonitoredValueCollectorService
       }
 
       final LocalDateTime ts1 = ( (WicaChannelValue.WicaChannelValueConnected) latestMonitoredValue).getDataSourceTimestamp();
-      logger.info( "Latest monitored value for channel: '{}' has the value '{}' and timestamp '{}'.", wicaChannel.getNameAsString(), latestMonitoredValue.toString(), ts1 );
+      final String val1 =  wicaChannel.getNameAsString();
+      logger.trace( "Latest monitored value for channel: '{}' has the value '{}' and timestamp '{}'.",val1, latestMonitoredValue.toString(), ts1 );
 
       final LocalDateTime ts2 = ( (WicaChannelValue.WicaChannelValueConnected) latestPolledValue).getDataSourceTimestamp();
-      logger.info( "Latest polled value for channel: '{}' has the value '{}' and timestamp '{}'.", wicaChannel.getNameAsString(), latestPolledValue.toString(), ts2 );
+      final String val2 =  wicaChannel.getNameAsString();
+      logger.trace( "Latest polled value for channel: '{}' has the value '{}' and timestamp '{}'.", wicaChannel.getNameAsString(), latestPolledValue.toString(), ts2 );
 
       final Duration lag =  Duration.between( ts1, ts2 );
-      logger.info( "The monitored value lag for channel: '{}' was '{}' seconds.", wicaChannel.getNameAsString(), lag.getSeconds() );
+      logger.info( "The monitored value lag for channel: '{}' was '{}' seconds.",val2, lag.getSeconds() );
 
-      if ( lag.getSeconds() > 1 )
+      if ( ( lag.getSeconds() > 5 )  && ( ! val1.equals( val2 ) ) )
       {
-         logger.warn( "The monitored value for channel: '{}' is not up-to-date. Lag is {} seconds. ", wicaChannel.getNameAsString(), lag.getSeconds() );
+         logger.warn( "The monitored value for channel: '{}' does not match the polled value. The timestamp lag is {} seconds. ", wicaChannel.getNameAsString(), lag.getSeconds() );
+         logger.warn( "Monitored values is '{}' but polled value is '{}'.", val1, val2 );
       }
    }
 
