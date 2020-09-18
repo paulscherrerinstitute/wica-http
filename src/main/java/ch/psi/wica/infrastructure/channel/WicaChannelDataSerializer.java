@@ -148,6 +148,7 @@ public class WicaChannelDataSerializer
             .configure( JsonWriteFeature.WRITE_NAN_AS_STRINGS, quoteNumericStrings )
             .build();
 
+      // Register the module which enables java.time objects (including LocalDateTime) to be serialized.
       mapper.registerModule( new JavaTimeModule());
 
       // It is "special" because (c) we can select the fields of interest that get
