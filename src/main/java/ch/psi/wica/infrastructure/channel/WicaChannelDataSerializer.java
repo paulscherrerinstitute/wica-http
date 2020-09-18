@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 
@@ -146,6 +147,8 @@ public class WicaChannelDataSerializer
             // the serialized representation of NaN and Infinity.
             .configure( JsonWriteFeature.WRITE_NAN_AS_STRINGS, quoteNumericStrings )
             .build();
+
+      mapper.registerModule( new JavaTimeModule());
 
       // It is "special" because (c) we can select the fields of interest that get
       // sent down the wire.
