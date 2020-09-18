@@ -9,12 +9,10 @@ import ch.psi.wica.model.channel.WicaChannelValue;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import com.fasterxml.jackson.databind.type.MapType;
 import net.jcip.annotations.Immutable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -45,12 +43,7 @@ public class WicaChannelValueMapSerializerService
    {
       mapper = Jackson2ObjectMapperBuilder.json().build();
       final SimpleModule module = new SimpleModule();
-
-      // Note: the approach here avoids the use of raw types by following the suggested approach
-      // in this SO article:
-      // https://stackoverflow.com/questions/47442795/jackson-register-custom-json-serializer
-      final MapType type = mapper.getTypeFactory().constructMapType( HashMap.class, WicaChannel.class, WicaChannelValue.class );
-      module.addSerializer( new WicaChannelValueMapSerializerService.MyCustomWicaChannelValueMapSerializer( quoteNumericStrings, type ) );
+      module.addSerializer( new WicaChannelValueMapSerializerService.MyCustomWicaChannelValueMapSerializer( quoteNumericStrings ) );
 
       mapper.registerModule( module );
    }
@@ -74,16 +67,14 @@ public class WicaChannelValueMapSerializerService
 /*- Nested Interfaces --------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
-   private static class MyCustomWicaChannelValueMapSerializer extends StdSerializer<Map<WicaChannel,List<WicaChannelValue>>>
+   @SuppressWarnings( "rawtypes" )
+   private static class MyCustomWicaChannelValueMapSerializer extends StdSerializer<Map>
    {
       final boolean quoteNumericStrings;
 
-      // Note: the approach here avoids the use of raw types by following the suggested approach
-      // in this SO article:
-      // https://stackoverflow.com/questions/47442795/jackson-register-custom-json-serializer
-      MyCustomWicaChannelValueMapSerializer( boolean quoteNumericStrings, JavaType type )
+      MyCustomWicaChannelValueMapSerializer( boolean quoteNumericStrings )
       {
-         super( type );
+         super( Map.class );
          this.quoteNumericStrings  = quoteNumericStrings;
       }
 
