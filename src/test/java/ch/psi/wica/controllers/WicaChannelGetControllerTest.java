@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
@@ -91,7 +93,7 @@ class WicaChannelGetControllerTest
    // build system. The test should be enabled as required during pre-production testing.
    @Disabled
    @Test
-   void testGetRequest_HappyDay()
+   void testGetRequest_HappyDay1()
    {
       final String channelName = "wica:test:db_ok";
       final RequestBuilder getRequest = MockMvcRequestBuilders.get("/ca/channel/" + channelName + "?fieldsOfInterest=conn" )
@@ -111,6 +113,38 @@ class WicaChannelGetControllerTest
       } );
    }
 
+   // By default this test is suppressed as it would create problems in the automatic
+   // build system. The test should be enabled as required during pre-production testing.
+   @Disabled
+   @Test
+   void testGetRequest_HappyDay_with_Added_TimestampCheck()
+   {
+      final LocalDateTime now = LocalDateTime.now();
+
+      // Note: a more accurate timeAndDateNowString could be constructed by including seconds in the
+      // matcher pattern. Thus: "yyyy-MM-dd'T'HH:mm:ss". But there is a higher chance this would fail
+      // if the test is performed very close to the end of an second boundary.
+      final String TRUNCATED_DATETIME_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm";
+      final DateTimeFormatter formatter = DateTimeFormatter.ofPattern( TRUNCATED_DATETIME_FORMAT_PATTERN );
+      final String truncatedTimeAndDateNow = now.format( formatter );
+
+      final String channelName = "wica:test:db_ok";
+      final RequestBuilder getRequest = MockMvcRequestBuilders.get("/ca/channel/" + channelName + "?fieldsOfInterest=ts" )
+            .accept( MediaType.APPLICATION_JSON_VALUE );
+
+      // Check that the method returns in less than the default timeout
+      final int methodDefaultTimeout = DEFAULT_GET_TIMEOUT;
+      final int guardTime = 200;
+      final int testTimeoutInMillis = methodDefaultTimeout + guardTime;
+      assertTimeoutPreemptively( Duration.ofMillis( testTimeoutInMillis ), () -> {
+         mockMvc.perform( getRequest )
+               .andExpect( status().isOk())
+               .andExpect( content().contentTypeCompatibleWith( MediaType.APPLICATION_JSON_VALUE ) )
+               .andDo( print())
+               .andExpect( content().string( containsString("\"ts\":" + "\"" + truncatedTimeAndDateNow ) ) )
+               .andReturn();
+      } );
+   }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
