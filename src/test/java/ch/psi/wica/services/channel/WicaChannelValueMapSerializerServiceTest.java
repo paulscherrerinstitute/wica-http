@@ -68,7 +68,7 @@ class WicaChannelValueMapSerializerServiceTest
    @Test
    void test_serialize()
    {
-      final Map<WicaChannel,List<WicaChannelValue>> map = Map.of(WicaChannelBuilder.create().withChannelNameAndDefaultProperties("UnconnChannel").build(), List.of(unconnValue ),
+      final Map<WicaChannel,List<WicaChannelValue>> map = Map.of(WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "UnconnChannel").build(), List.of(unconnValue ),
                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "StringTypeChannel" ).build(), List.of(strValue ),
                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "StringArrayType" ).build(), List.of(strArrValue ),
                                                                  WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "IntegerTypeChannel" ).build(), List.of(intValue ),
@@ -80,7 +80,10 @@ class WicaChannelValueMapSerializerServiceTest
 
       final var serializer = new WicaChannelValueMapSerializerService(false );
       final String jsonStr = serializer.serialize( map );
-      logger.info("JSON Value MAP serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat(jsonStr ) );
+      logger.info( "***** JSON VALUE MAP RAW - START ************\n\n'{}'\n", jsonStr );
+      logger.info( "***** JSON VALUE MAP RAW - END **************\n" );
+      logger.info( "***** JSON VALUE MAP PRETTY PRINT - START ***\n\n'{}'\n", JsonStringFormatter.prettyFormat( jsonStr ) );
+      logger.info( "***** JSON VALUE MAP PRETTY PRINT - END *****" );
    }
 
    @CsvSource( { "10000", "1", "10", "100", "1000", "1000", "1000", "10000", "10000", "10000" } )
