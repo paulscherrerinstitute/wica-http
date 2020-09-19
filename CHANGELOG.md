@@ -103,8 +103,6 @@ Test Status: Tests run: 291, Failures: 0, Errors: 0, Skipped: 6
   * [Issue #32](https://github.com/paulscherrerinstitute/wica-http/issues/32) Improve Docker naming on wica-related volumes.
   * [Issue #33](https://github.com/paulscherrerinstitute/wica-http/issues/33) Create Wica-HTTP Release 1.5.0.
   
-Test Status: Tests run: xxx, Failures: xxx, Errors: xxx, Skipped: xxx  
-
 
 * [1.5.1](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.5.1) Released 2020-09-20.
 
@@ -117,4 +115,6 @@ Test Status: Tests run: xxx, Failures: xxx, Errors: xxx, Skipped: xxx
   * [Issue #36](https://github.com/paulscherrerinstitute/wica-http/issues/36) Create Wica-HTTP Release 1.5.1
   * [Issue #37](https://github.com/paulscherrerinstitute/wica-http/issues/37) Bundle Wica-JS release 1.3.1
   
-  
+Test Status: Tests run: 336, Failures: 337, Errors: 0, Skipped: 9  
+ 
+ 
