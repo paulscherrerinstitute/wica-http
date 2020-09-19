@@ -120,12 +120,10 @@ class WicaStreamPolledValueRequesterServiceTest
       service.startPolling( wicaStream );
 
       final Map<WicaChannel, List<WicaChannelValue>> firstValueMap = wicaStreamPolledValueCollectorService.getLatest( wicaStream);
-      assertThat( firstValueMap.size(), is( 1 ) );
+      assertThat( firstValueMap.size(), is( 0 ) );
 
       final Map<WicaChannel, List<WicaChannelValue>> laterValueMap = wicaStreamPolledValueCollectorService.get( wicaStream, LocalDateTime.MIN  );
-      assertThat( laterValueMap.size(), is( 1 ) );
-      assertThat( laterValueMap.containsKey( myWicaChannel ), is( true ) );
-      assertThat( laterValueMap.get( myWicaChannel ).get( 0 ).isConnected(), is( false ) );
+      assertThat( laterValueMap.size(), is( 0 ) );
    }
 
 /*- Private methods ----------------------------------------------------------*/
