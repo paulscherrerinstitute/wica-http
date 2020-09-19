@@ -104,3 +104,17 @@ Test Status: Tests run: 291, Failures: 0, Errors: 0, Skipped: 6
   * [Issue #33](https://github.com/paulscherrerinstitute/wica-http/issues/33) Create Wica-HTTP Release 1.5.0.
   
 Test Status: Tests run: xxx, Failures: xxx, Errors: xxx, Skipped: xxx  
+
+
+* [1.5.1](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.5.1) Released 2020-09-20.
+
+  Improvements to Wica Channel Dead Monitor Detector.
+  Fix regression bug with Timestamp serialisation
+  Now bundles wica-js release 1.3.1.
+  
+  * [Issue #34](https://github.com/paulscherrerinstitute/wica-http/issues/34) Further improvements to Wica Channel Dead Monitor Detector.
+  * [Issue #35](https://github.com/paulscherrerinstitute/wica-http/issues/35) Fix regression bug with Timestamp serialisation
+  * [Issue #36](https://github.com/paulscherrerinstitute/wica-http/issues/36) Create Wica-HTTP Release 1.5.1
+  * [Issue #37](https://github.com/paulscherrerinstitute/wica-http/issues/37) Bundle Wica-JS release 1.3.1
+  
+  
