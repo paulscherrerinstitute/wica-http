@@ -142,9 +142,9 @@ public class WicaStreamPolledValueRequesterService
       {
          logger.info( "Starting polling control system channel named: '{}'", controlSystemName.asString() );
 
-         // Set the initial state for the value stash.
-         // Note: the poller does not write a separate metadata stash
-         // applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent(wicaChannel, WicaChannelValue.createChannelValueDisconnected() ));
+         // Note: we could consider here publishing events to set the initial state of the metadata stash
+         // or the value stash, but the poller does not implement channel metadata fetching and the only
+         // the first value that is published is the result of the first poll operation.
 
          // Now start polling
          applicationEventPublisher.publishEvent( new WicaChannelStartPollingEvent( wicaChannel ) );
@@ -191,6 +191,6 @@ public class WicaStreamPolledValueRequesterService
       }
    }
 
-   /*- Nested Classes -----------------------------------------------------------*/
+/*- Nested Classes -----------------------------------------------------------*/
 
 }
