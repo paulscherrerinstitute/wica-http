@@ -53,6 +53,7 @@ public class WicaStreamMonitoredValueRequesterService
    private final Logger logger = LoggerFactory.getLogger( WicaStreamMonitoredValueRequesterService.class );
 
    private final int wicaChannelResourceReleaseIntervalInSecs;
+   private final boolean wicaChannelPublishMonitorRestarts;
    private final ApplicationEventPublisher applicationEventPublisher;
    private final Map<WicaDataBufferStorageKey,Integer> monitoredChannelInterestMap;
    private final Map<WicaDataBufferStorageKey,LocalDateTime> monitoredChannelEventMap;
@@ -67,15 +68,22 @@ public class WicaStreamMonitoredValueRequesterService
     *    resources associated with a Wica Channel will be released if they are no
     *    longer in use.
     *
+    * @param wicaChannelPublishMonitorRestarts determines whether a channel
+    *    disconnect value will be published if the monitoring associated
+    *    with the channel is restarted.
+    *
     * @param applicationEventPublisher reference to the application publisher
     *    which will be used to publish the channels that are to be monitored
     *    or which are no longer of interest.
     */
    WicaStreamMonitoredValueRequesterService( @Value( "${wica.channel-resource-release-interval-in-secs}" ) int wicaChannelResourceReleaseIntervalInSecs,
+                                             @Value( "${wica.channel-publish-monitor-restarts}" ) boolean wicaChannelPublishMonitorRestarts,
                                              @Autowired ApplicationEventPublisher applicationEventPublisher )
    {
       this.wicaChannelResourceReleaseIntervalInSecs = wicaChannelResourceReleaseIntervalInSecs;
+      this.wicaChannelPublishMonitorRestarts = wicaChannelPublishMonitorRestarts;
       this.applicationEventPublisher = Validate.notNull( applicationEventPublisher );
+
       this.monitoredChannelInterestMap = Collections.synchronizedMap( new HashMap<>() );
       this.monitoredChannelEventMap = Collections.synchronizedMap( new HashMap<>() );
    }
@@ -177,6 +185,38 @@ public class WicaStreamMonitoredValueRequesterService
 /*- Private methods ----------------------------------------------------------*/
 
    /**
+    * Restarts control system monitoring of the specified wica channel.
+    *
+    * @implNote
+    * Restart is achieved by publishing STOP/START monitoring events
+    * which will be acted on by the underlying control system.
+    *
+    * When the feature is enabled each restart event results in the
+    * publication of a new value to indicate that the channel has
+    * become temporarily disconnected.
+    *
+    * @param wicaChannel the name of the channel on which monitoring.
+    *   is to be restarted.
+    */
+   private void restartMonitoringChannel( WicaChannel wicaChannel )
+   {
+      Validate.notNull( wicaChannel );
+      logger.info( "Request to restart monitoring wica channel: '{}'", wicaChannel);
+
+      // Tell the underlying control system to STOP monitoring this channel.
+      applicationEventPublisher.publishEvent( new WicaChannelStopMonitoringEvent( wicaChannel ) );
+
+      // Publish a channel disconnect value
+      if ( wicaChannelPublishMonitorRestarts )
+      {
+         applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( wicaChannel, WicaChannelValue.createChannelValueDisconnected() ) );
+      }
+
+      // Tell the underlying control system to START monitoring this channel.
+      applicationEventPublisher.publishEvent( new WicaChannelStartMonitoringEvent( wicaChannel ) );
+   }
+
+   /**
     * Starts monitoring the Wica channel with the specified name and/or
     * increments the interest count for this channel.
     *
@@ -244,7 +284,7 @@ public class WicaStreamMonitoredValueRequesterService
       final var storageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
       final var controlSystemName = wicaChannel.getName().getControlSystemName();
       Validate.validState( monitoredChannelInterestMap.containsKey( storageKey ) );
-      Validate.validState(monitoredChannelInterestMap.get( storageKey ) > 0 );
+      Validate.validState( monitoredChannelInterestMap.get( storageKey ) > 0 );
 
       // Update the timestamp of the event that was most recently associated with the storage key.
       monitoredChannelEventMap.put( storageKey, LocalDateTime.now() );
@@ -260,22 +300,6 @@ public class WicaStreamMonitoredValueRequesterService
          logger.info( "No more interest in control system channel: '{}'", controlSystemName.asString() );
          logger.info( "The resources for the channel will be discarded in {} seconds.", wicaChannelResourceReleaseIntervalInSecs );
       }
-   }
-
-   /**
-    * This method runs periodically to scan the discard list for entries corresponding to
-    * monitored channels that are no longer of interest
-    */
-   @Scheduled( fixedRate=RESOURCE_RELEASE_SCAN_INTERVAL )
-   public void discardMonitorsThatHaveReachedEndOfLife()
-   {
-      final var timeNow = LocalDateTime.now();
-      monitoredChannelInterestMap.keySet()
-         .stream()
-         .filter( key -> monitoredChannelInterestMap.get( key ) == 0 )
-         .filter( key -> timeNow.isAfter( monitoredChannelEventMap.get( key ).plusSeconds( wicaChannelResourceReleaseIntervalInSecs ) ) )
-         .collect( Collectors.toList() )
-         .forEach( this::discardMonitoredChannel );
    }
 
    private void discardMonitoredChannel( WicaDataBufferStorageKey storageKey )
