@@ -82,7 +82,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
     */
    public EpicsChannelMonitoringService( @Value( "${wica.epics-ca-library-monitor-notifier-impl}") String  epicsCaLibraryMonitorNotifierImpl,
                                          @Value( "${wica.epics-ca-library-debug-level}") int epicsCaLibraryDebugLevel,
-                                         @Value( "${wica.epics-get-channel-value-on-monitor-connect:true}") boolean epicsGetChannelValueOnMonitorConnect,
+                                         @Value( "${wica.epics-get-channel-value-on-monitor-connect}") boolean epicsGetChannelValueOnMonitorConnect,
                                          @Autowired EpicsChannelMetadataGetter epicsChannelMetadataGetter,
                                          @Autowired EpicsChannelValueGetter epicsChannelValueGetter,
                                          @Autowired EpicsChannelConnectionChangeSubscriber epicsChannelConnectionChangeSubscriber,
