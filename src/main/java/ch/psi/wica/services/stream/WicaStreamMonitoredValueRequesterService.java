@@ -201,7 +201,7 @@ public class WicaStreamMonitoredValueRequesterService
    private void restartMonitoringChannel( WicaChannel wicaChannel )
    {
       Validate.notNull( wicaChannel );
-      logger.info( "Request to restart monitoring wica channel: '{}'", wicaChannel);
+      logger.info( "Request to restart monitoring on wica channel: '{}'", wicaChannel);
 
       // Tell the underlying control system to STOP monitoring this channel.
       applicationEventPublisher.publishEvent( new WicaChannelStopMonitoringEvent( wicaChannel ) );
@@ -233,7 +233,7 @@ public class WicaStreamMonitoredValueRequesterService
    private void startMonitoringChannel( WicaChannel wicaChannel )
    {
       Validate.notNull( wicaChannel );
-      logger.info( "Request to start monitoring wica channel: '{}'", wicaChannel);
+      logger.info( "Request to start monitoring on wica channel: '{}'", wicaChannel);
 
       final var storageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
       final var controlSystemName = wicaChannel.getName().getControlSystemName();
@@ -279,7 +279,7 @@ public class WicaStreamMonitoredValueRequesterService
    private void stopMonitoringChannel( WicaChannel wicaChannel )
    {
       Validate.notNull( wicaChannel );
-      logger.info( "Request to stop monitoring wica channel: '{}'", wicaChannel );
+      logger.info( "Request to stop monitoring on wica channel: '{}'", wicaChannel );
 
       final var storageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
       final var controlSystemName = wicaChannel.getName().getControlSystemName();
