@@ -26,6 +26,11 @@
       "description": "Period after which the resources associated with a Wica Channel will be released if they are no longer in use."
     },
     {
+      "name": "wica.channel-publish-monitor-restarts",
+      "type": "java.lang.Boolean",
+      "description": "Whether a channel disconnect value will be published if the monitoring associated with a channel is restarted."
+    },
+    {
       "name": "wica.channel-monitored-value-buffer-size",
       "type": "java.lang.Integer",
       "description": "The number of values that can be held in the control system monitored value buffer before older values start getting thrown away."
