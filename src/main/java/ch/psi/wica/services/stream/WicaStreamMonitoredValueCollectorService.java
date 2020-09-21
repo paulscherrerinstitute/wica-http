@@ -69,11 +69,11 @@ public class WicaStreamMonitoredValueCollectorService
    {
       final var inputMap = wicaStreamMonitoredValueDataBuffer.getLaterThan( wicaStream.getWicaChannels(), since );
       return inputMap.entrySet()
-            .stream()
-            .filter( e -> e.getKey().getProperties().getDataAcquisitionMode().doesMonitorPublication() )
-            .map( e -> new AbstractMap.SimpleEntry<>( e.getKey(), wicaChannelValueFilteringService.filterValues( e.getKey(), e.getValue() ) ) )
-            .filter( e -> e.getValue().size() > 0 )
-            .collect( Collectors.toUnmodifiableMap( Map.Entry::getKey, Map.Entry::getValue ) );
+                     .stream()
+                     .filter( e -> e.getKey().getProperties().getDataAcquisitionMode().doesMonitorPublication() )
+                     .map( e -> new AbstractMap.SimpleEntry<>( e.getKey(), wicaChannelValueFilteringService.filterValues( e.getKey(), e.getValue() ) ) )
+                     .filter( e -> e.getValue().size() > 0 )
+                     .collect( Collectors.toUnmodifiableMap( Map.Entry::getKey, Map.Entry::getValue ) );
    }
 
    Map<WicaChannel,List<WicaChannelValue>> getLatest( WicaStream wicaStream )
