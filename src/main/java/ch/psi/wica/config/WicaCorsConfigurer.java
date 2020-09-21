@@ -31,7 +31,7 @@ class WicaCorsConfigurer implements WebMvcConfigurer
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaCorsConfigurer( @Value( "${wica.cors-allow-credentials}" ) Boolean allowCredentials,
+   public WicaCorsConfigurer( @Value( "${wica.cors-allow-credentials}" ) boolean allowCredentials,
                               @Value( "${wica.cors-allowed-origins}" ) String allowedOrigins )
    {
       this.allowCredentials = allowCredentials;
