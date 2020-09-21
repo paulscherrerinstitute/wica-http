@@ -8,6 +8,7 @@ import ch.psi.wica.model.channel.WicaChannelPropertiesDefaults;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamId;
 import ch.psi.wica.model.stream.WicaStreamPropertiesDefaults;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +21,8 @@ import java.util.Set;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -44,6 +47,27 @@ class WicaStreamLifecycleServiceTest
    void beforeEach()
    {
       WicaStreamId.resetAllocationSequencer();
+   }
+
+   @Test
+   void testCreateStreamWithNullString()
+   {
+      final var ex = assertThrows( NullPointerException.class, () -> service.create( null ) );
+      Assert.assertThat( ex.getMessage(), is( "The 'jsonStreamConfiguration' argument was null." ) );
+   }
+
+   @Test
+   void testCreateStreamWithEmptyString()
+   {
+      final var ex = assertThrows( IllegalArgumentException.class, () -> service.create( "" ) );
+      Assert.assertThat( ex.getMessage(), is( "The 'jsonStreamConfiguration' argument was empty." ) );
+   }
+
+   @Test
+   void testCreateStreamWithBlankString()
+   {
+      final var ex = assertThrows( IllegalArgumentException.class, () -> service.create( " " ) );
+      Assert.assertThat( ex.getMessage(), is( "The JSON configuration string ' ' was invalid." ) );
    }
 
    @Test
@@ -98,6 +122,62 @@ class WicaStreamLifecycleServiceTest
 
       final var wicaStreamId = stream.getWicaStreamId();
       assertThat( wicaStreamId.asString(), is("0") );
+   }
+
+   @Test
+   void testDeleteStreamWithNullString()
+   {
+      final var ex = assertThrows( NullPointerException.class, () -> service.delete( null ) );
+      Assert.assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was null." ) );
+   }
+
+   @Test
+   void testDeleteUnknownStream()
+   {
+      final var ex = assertThrows( IllegalArgumentException.class, () -> service.delete( WicaStreamId.of( "NoSuchStream" ) ) );
+      Assert.assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was not recognised." ) );
+   }
+
+   @Test
+   void testDeleteStream()
+   {
+      // Create a simple stream
+      final String testString = "{ \"props\" : {}, \"channels\":  [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
+      final WicaStream stream = service.create( testString );
+
+      // The first delete should succeed.
+      final var wicaStreamId = stream.getWicaStreamId();
+      assertDoesNotThrow( () -> service.delete( wicaStreamId ) );
+
+      // Attempting to delete the same stream a second time should result in an exception.
+      final var ex = assertThrows( IllegalArgumentException.class, () -> service.delete( WicaStreamId.of( "NoSuchStream" ) ) );
+      Assert.assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was not recognised." ) );
+   }
+
+   @Test
+   void testRestartMonitoringWithNullString()
+   {
+      final var ex = assertThrows( NullPointerException.class, () -> service.restartMonitoring( null ) );
+      Assert.assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was null." ) );
+   }
+
+   @Test
+   void testRestartMonitoringOnUnknownStream()
+   {
+      final var ex = assertThrows( IllegalArgumentException.class, () -> service.delete( WicaStreamId.of( "NoSuchStream" ) ) );
+      Assert.assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was not recognised." ) );
+   }
+
+   @Test
+   void testRestartMonitoring()
+   {
+      // Create a simple stream
+      final String testString = "{ \"props\" : {}, \"channels\":  [ { \"name\": \"MHC1:IST:2\" }, { \"name\": \"MHC2:IST:2\" }  ] }";
+      final WicaStream stream = service.create( testString );
+
+      // The restart the monitoring on it
+      final var wicaStreamId = stream.getWicaStreamId();
+      assertDoesNotThrow( () -> service.restartMonitoring( wicaStreamId ) );
    }
 
 /*- Private methods ----------------------------------------------------------*/
