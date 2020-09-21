@@ -108,10 +108,14 @@ public class WicaStreamLifecycleService
     *
     * @param jsonStreamConfiguration the configuration string.
     * @return the returned stream.
+    *
+    * @throws NullPointerException if the 'jsonStreamConfiguration' argument was null.
+    * @throws IllegalArgumentException if the 'jsonStreamConfiguration' argument was empty.
     */
    public WicaStream create( String jsonStreamConfiguration )
    {
-      Validate.notEmpty( jsonStreamConfiguration, "The 'jsonStreamConfiguration' argument was null." );
+      Validate.notNull( jsonStreamConfiguration, "The 'jsonStreamConfiguration' argument was null." );
+      Validate.notEmpty( jsonStreamConfiguration, "The 'jsonStreamConfiguration' argument was empty." );
 
       logger.info( "Creating new stream from config string: '{}'", jsonStreamConfiguration );
 
@@ -128,7 +132,7 @@ public class WicaStreamLifecycleService
          }
          catch ( Exception ex )
          {
-            throw new IllegalArgumentException("The JSON configuration string '" + jsonStreamConfiguration + "' was invalid.", ex);
+            throw new IllegalArgumentException( "The JSON configuration string '" + jsonStreamConfiguration + "' was invalid.", ex);
          }
 
          if ( wicaStream.getWicaChannels().size() == 0 )
