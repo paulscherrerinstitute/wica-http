@@ -54,7 +54,7 @@ public class WicaStreamLifecycleService
 
    /**
     *
-    * @param wicaStreamConfigurationDecoder refernce to the service that can decode the JSON stream configuration.
+    * @param wicaStreamConfigurationDecoder reference to the service that can decode the JSON stream configuration.
     *
     * @param wicaStreamMonitoredValueRequesterService reference to the service used to request the monitored
     *     *        values for the stream.
