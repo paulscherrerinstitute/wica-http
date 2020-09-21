@@ -123,7 +123,7 @@ Test Status: Tests run: 336, Failures: 0, Errors: 0, Skipped: 9
   Added support for reloading the control system monitors associated with a Wica Stream.
   
   A stream can be reloaded using the command:
-  curl -X PUT localhost:8080/ca/streams/<streamId>?reload
+  curl -i -X PUT localhost:8080/ca/streams/<streamId>?reload
   
   * [Issue #38](https://github.com/paulscherrerinstitute/wica-http/issues/34) Create Wica-HTTP Release 1.6.0.
   * [Issue #39](https://github.com/paulscherrerinstitute/wica-http/issues/35) Add support for restarting the control system monitors associated with a Wica Channel.
