@@ -48,8 +48,7 @@ class WicaAdminPageController
 
    public WicaAdminPageController( @Autowired StatisticsCollectionService statisticsCollectionService,
                                    @Autowired EpicsChannelMonitoringService epicsChannelMonitoringService,
-                                   @Autowired EpicsChannelPollingService epicsChannelPollingServiceService
-   )
+                                   @Autowired EpicsChannelPollingService epicsChannelPollingServiceService )
    {
       this.statisticsCollectionService = statisticsCollectionService;
       this.epicsChannelMonitoringService = epicsChannelMonitoringService;
