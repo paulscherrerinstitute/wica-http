@@ -82,6 +82,23 @@ public class WicaStreamMonitoredValueRequesterService
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
+
+   /**
+    * This method runs periodically to scan the discard list for entries corresponding to
+    * monitored channels that are no longer of interest
+    */
+   @Scheduled( fixedRate=RESOURCE_RELEASE_SCAN_INTERVAL )
+   public void discardMonitorsThatHaveReachedEndOfLife()
+   {
+      final var timeNow = LocalDateTime.now();
+      monitoredChannelInterestMap.keySet()
+            .stream()
+            .filter( key -> monitoredChannelInterestMap.get( key ) == 0 )
+            .filter( key -> timeNow.isAfter( monitoredChannelEventMap.get( key ).plusSeconds( wicaChannelResourceReleaseIntervalInSecs ) ) )
+            .collect( Collectors.toList() )
+            .forEach( this::discardMonitoredChannel );
+   }
+
 /*- Package-level methods ----------------------------------------------------*/
 
    /**
