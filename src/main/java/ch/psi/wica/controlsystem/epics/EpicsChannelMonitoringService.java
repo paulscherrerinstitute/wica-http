@@ -250,7 +250,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       final EpicsChannelName epicsChannelName= EpicsChannelName.of( wicaChannel.getName().getControlSystemName() );
       Validate.validState( channels.containsKey( epicsChannelName ), "The channel name: '" + epicsChannelName.asString() + "' was not recognised."  );
 
-      logger.trace("'{}' - stopping monitoring on.", epicsChannelName);
+      logger.info("'{}' - stopping monitoring on.", epicsChannelName);
       channels.get( epicsChannelName ).close();
       channels.remove( epicsChannelName );
 
