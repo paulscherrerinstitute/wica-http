@@ -115,18 +115,18 @@ Test Status: Tests run: 291, Failures: 0, Errors: 0, Skipped: 6
   * [Issue #36](https://github.com/paulscherrerinstitute/wica-http/issues/36) Create Wica-HTTP Release 1.5.1
   * [Issue #37](https://github.com/paulscherrerinstitute/wica-http/issues/37) Bundle Wica-JS release 1.3.1
   
-Test Status: Tests run: 336, Failures: 337, Errors: 0, Skipped: 9  
+Test Status: Tests run: 336, Failures: 0, Errors: 0, Skipped: 9  
 
 
 * [1.6.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.6.0) Released 2020-09-21.
 
   Added support for reloading the control system monitors associated with a Wica Stream.
   
-  * [Issue #38](https://github.com/paulscherrerinstitute/wica-http/issues/34) Create Wica-HTTP Release 1.6.0-RC1.
+  * [Issue #38](https://github.com/paulscherrerinstitute/wica-http/issues/34) Create Wica-HTTP Release 1.6.0.
   * [Issue #39](https://github.com/paulscherrerinstitute/wica-http/issues/35) Add support for restarting the control system monitors associated with a Wica Channel.
   * [Issue #40](https://github.com/paulscherrerinstitute/wica-http/issues/36) Logging Improvements.
   * [Issue #41](https://github.com/paulscherrerinstitute/wica-http/issues/37) Small Miscellaneous Improvements for Wica-HTTP Release 1.6.0.
   
-Test Status: Tests run: xxx, Failures: xxx, Errors: 0, Skipped: 9  
+Test Status: Tests run: 349, Failures: 0, Errors: 0, Skipped: 9  
  
  
