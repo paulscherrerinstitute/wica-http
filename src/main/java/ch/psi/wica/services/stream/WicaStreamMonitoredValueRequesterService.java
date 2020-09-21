@@ -85,6 +85,21 @@ public class WicaStreamMonitoredValueRequesterService
 /*- Package-level methods ----------------------------------------------------*/
 
    /**
+    * Restarts the control system monitoring of the channels in the specified stream.
+    *
+    * @param wicaStream the stream on which monitoring is to be restarted.
+    */
+   void restartMonitoring( WicaStream wicaStream )
+   {
+      Validate.notNull( wicaStream );
+
+      wicaStream.getWicaChannels()
+            .stream()
+            .filter( c -> c.getProperties().getDataAcquisitionMode().doesMonitoring() )
+            .forEach( this::restartMonitoringChannel);
+   }
+
+   /**
     * Starts monitoring the channels in the specified stream.
     *
     * @param wicaStream the stream to monitor.
