@@ -173,17 +173,17 @@ public class WicaStreamLifecycleService
    }
 
    /**
-    * Deletes the wica stream with the specified id.
+    * Deletes the wica stream with the specified ID.
     *
-    * @param wicaStreamId the Id of the stream to delete.
+    * @param wicaStreamId the ID of the stream to delete.
     *
-    * @throws NullPointerException if the stream ID was null.
-    * @throws IllegalStateException if the stream ID was not recognised.
+    * @throws NullPointerException if the 'wicaStreamId' argument was null.
+    * @throws IllegalStateException if the 'wicaStreamId' argument was not recognised.
     */
    public void delete( WicaStreamId wicaStreamId )
    {
       Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null." );
-      Validate.isTrue(( isKnown(wicaStreamId ) ), "The 'wicaStreamId' argument was not recognised."  );
+      Validate.isTrue(( isKnown( wicaStreamId ) ), "The 'wicaStreamId' argument was not recognised."  );
 
       // To ensure consistency the following operations are performed as a single atomic operation.
       synchronized( this )
@@ -195,8 +195,8 @@ public class WicaStreamLifecycleService
          // Tell the control system monitoring service that we are no longer
          // interested in this stream.
          final WicaStream wicaStream = wicaStreamServerSentEventPublisher.getStream();
-         wicaStreamMonitoredValueRequesterService.stopMonitoring(wicaStream ) ;
-         wicaStreamPolledValueRequesterService.stopPolling(wicaStream ) ;
+         wicaStreamMonitoredValueRequesterService.stopMonitoring( wicaStream ) ;
+         wicaStreamPolledValueRequesterService.stopPolling( wicaStream ) ;
 
          // Remove the stream's ID from the list of recognised publishers.
          wicaStreamPublisherMap.remove( wicaStreamId );
