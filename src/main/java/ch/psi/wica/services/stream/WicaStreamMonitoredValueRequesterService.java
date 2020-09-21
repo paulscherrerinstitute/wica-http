@@ -188,6 +188,7 @@ public class WicaStreamMonitoredValueRequesterService
     * the value set to show that the channel is disconnected.
     *
     * @param wicaChannel the name of the channel to monitor.
+    * @throws NullPointerException if the 'wicaChannel' argument was null.
     */
    private void startMonitoringChannel( WicaChannel wicaChannel )
    {
@@ -233,6 +234,7 @@ public class WicaStreamMonitoredValueRequesterService
     * @param wicaChannel the name of the channel which is no longer of interest.
     *
     * @throws IllegalStateException if the channel was never previously monitored.
+    * @throws NullPointerException if the 'wicaChannel' argument was null.
     */
    private void stopMonitoringChannel( WicaChannel wicaChannel )
    {
