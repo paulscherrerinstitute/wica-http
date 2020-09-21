@@ -203,6 +203,27 @@ public class WicaStreamLifecycleService
    }
 
    /**
+    * Restarts the control system monitoring on the wica stream with the specified id.
+    *
+    * @param wicaStreamId the Id of the stream to delete.
+    *
+    * @throws NullPointerException if the stream ID was null.
+    * @throws IllegalStateException if the stream ID was not recognised.
+    */
+   public void restartMonitoring( WicaStreamId wicaStreamId )
+   {
+      Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null." );
+      Validate.isTrue(( isKnown(wicaStreamId ) ), "The 'wicaStreamId' argument was not recognised."  );
+
+      // Get a reference to the stream
+      final WicaStreamServerSentEventPublisher wicaStreamServerSentEventPublisher = wicaStreamPublisherMap.get( wicaStreamId );
+      final WicaStream wicaStream = wicaStreamServerSentEventPublisher.getStream();
+
+      // Now invoke the stream monitoring restart feature.
+      wicaStreamMonitoredValueRequesterService.restartMonitoring( wicaStream );
+   }
+
+   /**
     * Gets the publication flux for the stream with the specified id.
     *
     * @param wicaStreamId the id of the flux to fetch.
