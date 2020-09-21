@@ -203,12 +203,12 @@ public class WicaStreamLifecycleService
    }
 
    /**
-    * Restarts the control system monitoring on the wica stream with the specified id.
+    * Restarts the control system monitoring on the wica stream with the specified ID.
     *
-    * @param wicaStreamId the Id of the stream to delete.
+    * @param wicaStreamId the ID of the stream to delete.
     *
-    * @throws NullPointerException if the stream ID was null.
-    * @throws IllegalStateException if the stream ID was not recognised.
+    * @throws NullPointerException if the 'wicaStreamId' argument was null.
+    * @throws IllegalStateException if the 'wicaStreamId' argument was not recognised.
     */
    public void restartMonitoring( WicaStreamId wicaStreamId )
    {
