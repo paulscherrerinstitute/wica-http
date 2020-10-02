@@ -41,11 +41,13 @@ class WicaChannelDataSerializerTestWithChannelValues
    private final Logger logger = LoggerFactory.getLogger( WicaChannelDataSerializerTest.class );
 
    private WicaChannelValue unconnValue;
-   private WicaChannelValue intValue ;
+   private WicaChannelValue shortValue;
+   private WicaChannelValue intValue;
    private WicaChannelValue strValue;
    private WicaChannelValue realValue;
    private WicaChannelValue realNanValue;
    private WicaChannelValue realInfValue;
+   private WicaChannelValue shortArrValue;
    private WicaChannelValue intArrValue;
    private WicaChannelValue strArrValue;
    private WicaChannelValue realArrValue;
@@ -62,11 +64,13 @@ class WicaChannelDataSerializerTestWithChannelValues
    {
       // Setup values shared across many tests
       unconnValue = WicaChannelValue.createChannelValueDisconnected();
+      shortValue = WicaChannelValue.createChannelValueConnected( (short) 27 );
       intValue = WicaChannelValue.createChannelValueConnected( 27 );
       strValue = WicaChannelValue.createChannelValueConnected( "abcdef" );
       realValue = WicaChannelValue.createChannelValueConnected( 123456.6543212345 );
       realNanValue = WicaChannelValue.createChannelValueConnected( NaN );
       realInfValue = WicaChannelValue.createChannelValueConnected( POSITIVE_INFINITY );
+      shortArrValue = WicaChannelValue.createChannelValueConnected( new short[] { 25, 12 } );
       intArrValue = WicaChannelValue.createChannelValueConnected( new int[] { 25, 12 } );
       strArrValue = WicaChannelValue.createChannelValueConnected( new String[] { "abcdef", "ghijkl" } );
       realArrValue = WicaChannelValue.createChannelValueConnected( new double[] { 1.23456789012345, 9.87654321012345, Double.NaN }  );
@@ -110,6 +114,35 @@ class WicaChannelDataSerializerTestWithChannelValues
       assertEquals( "abcdef", rootNode.get( "val" ).get( 0 ).asText() );
       assertEquals( "ghijkl", rootNode.get( "val" ).get( 1 ).asText() );
    }
+
+   @Test
+   void test_serializeValueShort() throws IOException
+   {
+      final var serializer = new WicaChannelDataSerializer( Set.of(), 5, false );
+      final var jsonStr =  serializer.writeToJson( shortValue );
+      logger.info("JSON Value SHORT serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
+      final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
+      assertTrue( rootNode.isObject() );
+      assertTrue( rootNode.has( "val") );
+      assertEquals( JsonNodeType.NUMBER, rootNode.get( "val" ).getNodeType() );
+      assertEquals( 27, rootNode.get( "val" ).asInt() );
+   }
+
+   @Test
+   void test_serializeValueShortArray() throws IOException
+   {
+      final var serializer = new WicaChannelDataSerializer( Set.of(), 5, false );
+      final var jsonStr =  serializer.writeToJson( shortArrValue );
+      logger.info( "JSON Value SHORT ARRAY serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr )  );
+      final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
+      assertTrue( rootNode.isObject() );
+      assertTrue( rootNode.has( "val") );
+      assertEquals( JsonNodeType.ARRAY, rootNode.get( "val" ).getNodeType() );
+      assertEquals( 2, rootNode.get( "val" ).size());
+      assertEquals( 25, rootNode.get( "val" ).get( 0 ).asInt() );
+      assertEquals( 12, rootNode.get( "val" ).get( 1 ).asInt() );
+   }
+
 
    @Test
    void test_serializeValueInteger() throws IOException

@@ -88,6 +88,27 @@ class WicaChannelValueMixins
       @Override public abstract @JsonProperty( "val" ) String[] getValue();
    }
 
+/*- Nested Class: WicaChannelValueConnectedShortSerializerMixin --------------*/
+
+   public static abstract class WicaChannelValueConnectedShortSerializerMixin extends WicaChannelValue.WicaChannelValueConnectedShort
+   {
+      // Dummy: only required to detect signature override errors.
+      private  WicaChannelValueConnectedShortSerializerMixin() { super(null, null, null, (short) 0 ); }
+
+      // Mappings: start here.
+      @Override public abstract @JsonProperty( "val" ) short getValue();
+   }
+
+/*- Nested Class: WicaChannelValueConnectedShortArraySerializerMixin ---------*/
+
+   public static abstract class WicaChannelValueConnectedShortArraySerializerMixin extends WicaChannelValue.WicaChannelValueConnectedShortArray
+   {
+      // Dummy: only required to detect signature override errors.
+      private  WicaChannelValueConnectedShortArraySerializerMixin() { super(null, null, null, null ); }
+
+      // Mappings: start here.
+      @Override public abstract @JsonProperty( "val" ) short[] getValue();
+   }
 
 /*- Nested Class: WicaChannelValueConnectedIntegerSerializerMixin --------------*/
 

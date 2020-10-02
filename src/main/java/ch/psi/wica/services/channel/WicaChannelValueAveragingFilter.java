@@ -132,6 +132,12 @@ class WicaChannelValueAveragingFilter implements WicaChannelValueFilter
             numberOfReceivedDoubleSamples++;
             break;
 
+         case SHORT:
+            final short currentValueAsShort = ((WicaChannelValue.WicaChannelValueConnectedShort) currentValue).getValue();
+            sum += currentValueAsShort;
+            numberOfReceivedIntegerSamples++;
+            break;
+
          case INTEGER:
             final int currentValueAsInteger = ((WicaChannelValue.WicaChannelValueConnectedInteger) currentValue).getValue();
             sum += currentValueAsInteger;

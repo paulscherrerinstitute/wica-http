@@ -41,6 +41,8 @@ class WicaChannelDataSerializerTestWithMetadata
    private WicaChannelMetadata unkMetadata;
    private WicaChannelMetadata strMetadata ;
    private WicaChannelMetadata strArrMetadata;
+   private WicaChannelMetadata shortMetadata;
+   private WicaChannelMetadata shortArrMetadata;
    private WicaChannelMetadata intMetadata;
    private WicaChannelMetadata intArrMetadata;
    private WicaChannelMetadata realMetadata;
@@ -62,6 +64,8 @@ class WicaChannelDataSerializerTestWithMetadata
       unkMetadata = WicaChannelMetadata.createUnknownInstance();
       strMetadata = WicaChannelMetadata.createStringInstance();
       strArrMetadata = WicaChannelMetadata.createStringArrayInstance();
+      shortMetadata = WicaChannelMetadata.createShortInstance( "units", 100, 0, 90, 10, 98, 2, 95, 5 );
+      shortArrMetadata = WicaChannelMetadata.createShortArrayInstance( "units", 100, 0, 90, 10, 98, 2, 95, 5 );
       intMetadata = WicaChannelMetadata.createIntegerInstance( "units", 100, 0, 90, 10, 98, 2, 95, 5 );
       intArrMetadata = WicaChannelMetadata.createIntegerArrayInstance( "units", 100, 0, 90, 10, 98, 2, 95, 5 );
       realMetadata = WicaChannelMetadata.createRealInstance( "units", 3, 90.12345678, 0.0000123, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
@@ -103,6 +107,30 @@ class WicaChannelDataSerializerTestWithMetadata
       assertTrue( rootNode.isObject() );
       assertTrue( rootNode.has( "type") );
       assertEquals( "STRING_ARRAY", rootNode.get( "type" ).textValue() );
+   }
+
+   @Test
+   void test_serializeMetadataShort() throws IOException
+   {
+      final var serializer = new WicaChannelDataSerializer( Set.of(),5, false );
+      final var jsonStr =  serializer.writeToJson( shortMetadata );
+      logger.info("JSON Metadata SHORT serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
+      final JsonNode rootNode = jsonDecoder.readTree( jsonStr );
+      assertTrue( rootNode.isObject() );
+      assertTrue( rootNode.has( "type") );
+      assertEquals( "SHORT", rootNode.get( "type" ).textValue() );
+   }
+
+   @Test
+   void test_serializeMetadataShortArray() throws IOException
+   {
+      final var serializer = new WicaChannelDataSerializer( Set.of(),5, false );
+      final var jsonStr =  serializer.writeToJson( shortArrMetadata );
+      logger.info("JSON Metadata SHORT ARRAY serialisation like this: \n'{}'", JsonStringFormatter.prettyFormat( jsonStr ) );
+      final JsonNode rootNode = jsonDecoder.readTree(jsonStr );
+      assertTrue( rootNode.isObject() );
+      assertTrue( rootNode.has( "type") );
+      assertEquals( "SHORT_ARRAY", rootNode.get( "type" ).textValue() );
    }
 
    @Test

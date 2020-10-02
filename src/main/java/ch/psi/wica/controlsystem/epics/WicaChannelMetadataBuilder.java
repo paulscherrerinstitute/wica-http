@@ -69,6 +69,14 @@ class WicaChannelMetadataBuilder
             logger.trace("'{}' - type is STRING ARRAY.", controlSystemName );
             return getMetadataStringArray();
 
+         case SHORT:
+            logger.trace("'{}' - type is SHORT.", controlSystemName );
+            return getMetadataShort( epicsMetadataObject );
+
+         case SHORT_ARRAY:
+            logger.trace("'{}' - type is SHORT ARRAY.", controlSystemName );
+            return getMetadataShortArray( epicsMetadataObject );
+
          case INTEGER:
             logger.trace("'{}' - type is INTEGER.", controlSystemName );
             return getMetadataInteger( epicsMetadataObject );
@@ -102,6 +110,36 @@ class WicaChannelMetadataBuilder
    private WicaChannelMetadata getMetadataStringArray()
    {
       return WicaChannelMetadata.createStringArrayInstance();
+   }
+
+   private <T,ST> WicaChannelMetadata getMetadataShort( Control<T,ST> metadataObject )
+   {
+      final String units = metadataObject.getUnits();
+      final short upperDisplay = (short) metadataObject.getUpperDisplay();
+      final short lowerDisplay = (short) metadataObject.getLowerDisplay();
+      final short upperControl = (short) metadataObject.getUpperControl();
+      final short lowerControl = (short) metadataObject.getLowerControl();
+      final short upperAlarm   = (short) metadataObject.getUpperAlarm();
+      final short lowerAlarm   = (short) metadataObject.getLowerAlarm();
+      final short upperWarning = (short) metadataObject.getUpperWarning();
+      final short lowerWarning = (short) metadataObject.getLowerWarning();
+
+      return WicaChannelMetadata.createShortInstance( units, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
+   }
+
+   private <T,ST> WicaChannelMetadata getMetadataShortArray( Control<T,ST> metadataObject )
+   {
+      final String units = metadataObject.getUnits();
+      final short upperDisplay = (short) metadataObject.getUpperDisplay();
+      final short lowerDisplay = (short) metadataObject.getLowerDisplay();
+      final short upperControl = (short) metadataObject.getUpperControl();
+      final short lowerControl = (short) metadataObject.getLowerControl();
+      final short upperAlarm   = (short) metadataObject.getUpperAlarm();
+      final short lowerAlarm   = (short) metadataObject.getLowerAlarm();
+      final short upperWarning = (short) metadataObject.getUpperWarning();
+      final short lowerWarning = (short) metadataObject.getLowerWarning();
+
+      return  WicaChannelMetadata.createShortArrayInstance( units, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
    }
 
    private <T,ST> WicaChannelMetadata getMetadataInteger( Control<T,ST> metadataObject )

@@ -111,6 +111,16 @@ class WicaChannelValueBuilder
             final String[] strArrayValue = (String[]) epicsValueObject.getValue();
             return  WicaChannelValue.createChannelValueConnected( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, strArrayValue );
 
+         case SHORT:
+            logger.trace("'{}' - type is SHORT.", controlSystemName );
+            final Short shortValue = (Short) epicsValueObject.getValue();
+            return WicaChannelValue.createChannelValueConnected( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, shortValue );
+
+         case SHORT_ARRAY:
+            logger.trace("'{}' - type is SHORT ARRAY.", controlSystemName );
+            final short[] shortArrayValue = (short[]) epicsValueObject.getValue();
+            return WicaChannelValue.createChannelValueConnected( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, shortArrayValue );
+
          case INTEGER:
             logger.trace("'{}' - type is INTEGER.", controlSystemName );
             final Integer intValue = (Integer) epicsValueObject.getValue();

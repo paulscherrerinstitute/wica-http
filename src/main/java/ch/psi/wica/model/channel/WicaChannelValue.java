@@ -74,6 +74,26 @@ public abstract class WicaChannelValue extends WicaChannelData
       return new WicaChannelValue.WicaChannelValueConnectedRealArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
    }
 
+   public static WicaChannelValue.WicaChannelValueConnectedShort createChannelValueConnected( short value )
+   {
+      return new WicaChannelValue.WicaChannelValueConnectedShort(WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
+   }
+
+   public static WicaChannelValue.WicaChannelValueConnectedShort createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, short value  )
+   {
+      return new WicaChannelValue.WicaChannelValueConnectedShort(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
+   }
+
+   public static WicaChannelValue.WicaChannelValueConnectedShortArray createChannelValueConnected( short[] value )
+   {
+      return new WicaChannelValue.WicaChannelValueConnectedShortArray(WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
+   }
+
+   public static WicaChannelValue.WicaChannelValueConnectedShortArray createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, short[] value  )
+   {
+      return new WicaChannelValue.WicaChannelValueConnectedShortArray( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
+   }
+
    public static WicaChannelValue.WicaChannelValueConnectedInteger createChannelValueConnected( int value )
    {
       return new WicaChannelValue.WicaChannelValueConnectedInteger(WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
@@ -261,6 +281,62 @@ public abstract class WicaChannelValue extends WicaChannelData
       public String toString()
       {
          return "WicaChannelValueConnectedRealArray{" +
+               "value=" + Arrays.toString( value ) +
+               '}';
+      }
+   }
+
+/*- Nested Class: WicaChannelValueConnectedShort ----------------------------*/
+
+   /**
+    * Represents the value of a connected channel whose underlying type is INTEGER.
+    */
+   public static class WicaChannelValueConnectedShort extends WicaChannelValueConnected
+   {
+      private final short value;
+      public short getValue()
+      {
+         return value;
+      }
+
+      public WicaChannelValueConnectedShort( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, short value )
+      {
+         super( WicaChannelType.SHORT, alarmSeverity, alarmStatus, dataSourceTimestamp);
+         this.value = value;
+      }
+
+      @Override
+      public String toString()
+      {
+         return "WicaChannelValueConnectedShort{" +
+               "value=" + value +
+               '}';
+      }
+   }
+
+/*- Nested Class: WicaChannelValueConnectedShortArray -----------------------*/
+
+   /**
+    * Represents the value of a connected channel whose underlying type is INTEGER_ARRAY.
+    */
+   public static class WicaChannelValueConnectedShortArray extends WicaChannelValueConnected
+   {
+      private final short[] value;
+      public short[] getValue()
+      {
+         return value;
+      }
+
+      public WicaChannelValueConnectedShortArray( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, short[] value )
+      {
+         super( WicaChannelType.SHORT_ARRAY, alarmSeverity, alarmStatus, dataSourceTimestamp);
+         this.value = value;
+      }
+
+      @Override
+      public String toString()
+      {
+         return "WicaChannelValueConnectedShortArray{" +
                "value=" + Arrays.toString( value ) +
                '}';
       }

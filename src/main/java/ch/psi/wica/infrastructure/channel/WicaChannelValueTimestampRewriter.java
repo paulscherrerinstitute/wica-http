@@ -49,6 +49,14 @@ public class WicaChannelValueTimestampRewriter
             final double[] dblArrayValue = ((WicaChannelValue.WicaChannelValueConnectedRealArray) connectedValue).getValue();
             return WicaChannelValue.createChannelValueConnected( alarmSeverity, alarmStatus, newTimeStamp, dblArrayValue);
 
+         case SHORT:
+            final short shortValue = ((WicaChannelValue.WicaChannelValueConnectedShort) connectedValue).getValue();
+            return WicaChannelValue.createChannelValueConnected( alarmSeverity, alarmStatus, newTimeStamp, shortValue);
+
+         case SHORT_ARRAY:
+            final short[] shortArrayValue = ((WicaChannelValue.WicaChannelValueConnectedShortArray) connectedValue).getValue();
+            return WicaChannelValue.createChannelValueConnected( alarmSeverity, alarmStatus, newTimeStamp, shortArrayValue);
+
          case INTEGER:
             final int intValue = ((WicaChannelValue.WicaChannelValueConnectedInteger) connectedValue).getValue();
             return WicaChannelValue.createChannelValueConnected( alarmSeverity, alarmStatus, newTimeStamp, intValue);

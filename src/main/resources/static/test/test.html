@@ -38,6 +38,10 @@
             background-color: white;
         }
 
+        .longfield {
+            width: 25rem;
+        }
+
     </style>
 </head>
 
@@ -52,7 +56,14 @@
     </div>
 
     <div>
-        <h2>Stream Data</h2>
+        <h2>Example Data Types</h2>
+        <label>String</label> <label class="longfield" data-wica-channel-name="wica:test:string-ex">NC</label><br>
+        <label>Enum</label>   <label class="longfield" data-wica-channel-name="wica:test:enum-ex"  >NC</label><br>
+        <label>Long</label>   <label class="longfield" data-wica-channel-name="wica:test:long-ex"  >NC</label><br>
+        <label>Double</label> <label class="longfield" data-wica-channel-name="wica:test:double-ex" data-wica-channel-props='{ "prec" : 12}'>NC</label><br>
+        <label>Short</label>  <label class="longfield" data-wica-channel-name="wica:test:double-ex.PREC">NC</label><br>
+
+        <h2>Example Streaming Data</h2>
         <label>Counter 0.1s </label> <label data-wica-channel-name="wica:test:counter01">NC</label><br>
         <label>Counter 0.2s </label> <label data-wica-channel-name="wica:test:counter02">NC</label><br>
         <label>Counter 0.5s </label> <label data-wica-channel-name="wica:test:counter03">NC</label><br>

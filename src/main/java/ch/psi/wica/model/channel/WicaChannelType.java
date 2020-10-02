@@ -21,9 +21,11 @@ public enum WicaChannelType
 
    UNKNOWN, // Initial state: used to represent the type of a channel which has
             // not yet received any information from the underlying data source.
+   SHORT,
    INTEGER,
    REAL,
    STRING,
+   SHORT_ARRAY,
    INTEGER_ARRAY,
    REAL_ARRAY,
    STRING_ARRAY;
@@ -44,7 +46,8 @@ public enum WicaChannelType
    {
       Validate.notNull( obj);
 
-      return ( obj instanceof Integer ) || ( obj instanceof int[] ) ||
+      return ( obj instanceof Short   ) || ( obj instanceof short[]  ) ||
+             ( obj instanceof Integer ) || ( obj instanceof int[]    ) ||
              ( obj instanceof Double  ) || ( obj instanceof double[] ) ||
              ( obj instanceof String  ) || ( obj instanceof String[] );
    }
@@ -67,7 +70,15 @@ public enum WicaChannelType
       Validate.notNull( pojo );
       Validate.isTrue( isRecognisedType( pojo ) );
 
-      if ( pojo instanceof Integer)
+      if ( pojo instanceof Short )
+      {
+         return SHORT;
+      }
+      else if ( pojo instanceof short[] )
+      {
+         return SHORT_ARRAY;
+      }
+      if ( pojo instanceof Integer )
       {
          return INTEGER;
       }
@@ -75,11 +86,11 @@ public enum WicaChannelType
       {
          return INTEGER_ARRAY;
       }
-      else if ( pojo instanceof Double)
+      else if ( ( pojo instanceof Float ) || ( pojo instanceof Double) )
       {
          return REAL;
       }
-      else if ( pojo instanceof double[] )
+      else if ( ( pojo instanceof float[] ) || ( pojo instanceof double[] ) )
       {
          return REAL_ARRAY;
       }
