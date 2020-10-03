@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Wica Test Types</title>
+
+    <!-- Load the Wica library from the local machine -->
+    <script src="../wica/wica.js" type="module"></script>
+
+    <style>
+        * {
+            font-family: "Helvetica Neue",sans-serif;
+        }
+
+        body {
+            background-color: darkgrey;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        label {
+            display: inline-block;
+            background-color: lightblue;
+            margin-bottom: 1rem;
+            width: 8rem;
+        }
+
+        button {
+            width: 8rem;
+        }
+
+        .longfield {
+            width: 25rem;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <h1>Wica Data Types Test Page</h1>
+
+      <div>
+        <h2>Data Types</h2>
+        <label>A - STRING </label> <label class="longfield" data-wica-channel-name="wica:test:types.A">NC</label><br>
+        <label>B - CHAR   </label> <label class="longfield" data-wica-channel-name="wica:test:types.B">NC</label><br>
+        <label>C - UCHAR  </label> <label class="longfield" data-wica-channel-name="wica:test:types.C">NC</label><br>
+        <label>D - SHORT  </label> <label class="longfield" data-wica-channel-name="wica:test:types.D">NC</label><br>
+        <label>E - USHORT </label> <label class="longfield" data-wica-channel-name="wica:test:types.E">NC</label><br>
+        <label>F - LONG   </label> <label class="longfield" data-wica-channel-name="wica:test:types.F">NC</label><br>
+        <label>G - ULONG  </label> <label class="longfield" data-wica-channel-name="wica:test:types.G">NC</label><br>
+        <label>H - FLOAT  </label> <label class="longfield" data-wica-channel-name="wica:test:types.H" data-wica-channel-props='{ "prec": 12 }' data-wica-rendering-props='{ "prec": 12 }'>NC</label><br>
+        <label>I - DOUBLE </label> <label class="longfield" data-wica-channel-name="wica:test:types.I" data-wica-channel-props='{ "prec": 12 }' data-wica-rendering-props='{ "prec": 12 }'>NC</label><br>
+        <label>J - ENUM   </label> <label class="longfield" data-wica-channel-name="wica:test:types.J">NC</label><br>
+    </div>
+
+</body>
+</html>
