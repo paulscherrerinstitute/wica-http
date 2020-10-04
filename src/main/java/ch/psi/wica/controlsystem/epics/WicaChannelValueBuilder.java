@@ -6,7 +6,6 @@ package ch.psi.wica.controlsystem.epics;
 import ch.psi.wica.model.app.ControlSystemName;
 import ch.psi.wica.model.channel.WicaChannelAlarmSeverity;
 import ch.psi.wica.model.channel.WicaChannelAlarmStatus;
-import ch.psi.wica.model.channel.WicaChannelType;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
@@ -65,18 +64,18 @@ class WicaChannelValueBuilder
       Validate.notNull( epicsValueObject );
 
       // Decode the channel type.
-      final WicaChannelType wicaChannelType;
+      final EpicsChannelType epicsChannelType;
       try
       {
-         wicaChannelType = WicaChannelType.getTypeFromPojo( epicsValueObject.getValue() );
-         logger.trace( "'{}' - value received was of type {}. ", controlSystemName, wicaChannelType );
+         epicsChannelType = EpicsChannelType.getTypeFromPojo( epicsValueObject.getValue() );
+         logger.trace( "'{}' - value received was of EPICS type {}. ", controlSystemName, epicsChannelType );
       }
       catch( IllegalArgumentException ex)
       {
          logger.error( "'{}' - type was UNKNOWN (Programming Error)", controlSystemName );
          return WicaChannelValue.createChannelValueDisconnected();
       }
-      return build( controlSystemName, wicaChannelType, epicsValueObject );
+      return build( controlSystemName, epicsChannelType, epicsValueObject );
    }
 
 /*- Private methods ----------------------------------------------------------*/
@@ -88,58 +87,68 @@ class WicaChannelValueBuilder
     * @param controlSystemName the name of the control system channel (needed
     *     for logging purposes only). Not Null.
     *
-    * @param wicaChannelType the channel type. Not Null.
+    * @param epicsChannelType the channel type. Not Null.
     * @param epicsValueObject the EPICS CA library Timestamped object. Not Null.
     *
     * @return the constructed value object.
     */
-   private WicaChannelValue build( ControlSystemName controlSystemName, WicaChannelType wicaChannelType, Timestamped<Object> epicsValueObject )
+   private WicaChannelValue build( ControlSystemName controlSystemName, EpicsChannelType epicsChannelType, Timestamped<Object> epicsValueObject )
    {
       final var wicaChannelAlarmSeverity = fromEpics (epicsValueObject.getAlarmSeverity() );
       final var wicaChannelAlarmStatus = fromEpics( epicsValueObject.getAlarmStatus() );
       final var wicaDataSourceTimestamp = getEpicsTimestamp( epicsValueObject.getSeconds(), epicsValueObject.getNanos() );
 
-      switch( wicaChannelType )
+      logger.trace("'{}' - type is {}}.", controlSystemName, epicsChannelType );
+
+      switch( epicsChannelType )
       {
          case STRING:
-            logger.trace("'{}' - type is STRING.", controlSystemName );
             final String strValue = (String) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnected( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, strValue );
+            return WicaChannelValue.createChannelValueConnectedString( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, strValue );
 
          case STRING_ARRAY:
-            logger.trace("'{}' - type is STRING ARRAY.", controlSystemName );
             final String[] strArrayValue = (String[]) epicsValueObject.getValue();
-            return  WicaChannelValue.createChannelValueConnected( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, strArrayValue );
+            return  WicaChannelValue.createChannelValueConnectedStringArray( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, strArrayValue );
+
+         case BYTE:
+            final byte byteValue = (Byte) epicsValueObject.getValue();
+            return WicaChannelValue.createChannelValueConnectedInteger( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, byteValue );
+
+         case BYTE_ARRAY:
+            final byte[] byteArrayValue = (byte[]) epicsValueObject.getValue();
+            return WicaChannelValue.createChannelValueConnectedIntegerArray( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, getIntArrayFromByteArray( byteArrayValue ) );
 
          case SHORT:
-            logger.trace("'{}' - type is SHORT.", controlSystemName );
-            final Short shortValue = (Short) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnected( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, shortValue );
+            final short shortValue = (Short) epicsValueObject.getValue();
+            return WicaChannelValue.createChannelValueConnectedInteger( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, shortValue );
 
          case SHORT_ARRAY:
-            logger.trace("'{}' - type is SHORT ARRAY.", controlSystemName );
             final short[] shortArrayValue = (short[]) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnected( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, shortArrayValue );
+            return WicaChannelValue.createChannelValueConnectedIntegerArray( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, getIntArrayFromShortArray( shortArrayValue ) );
 
          case INTEGER:
-            logger.trace("'{}' - type is INTEGER.", controlSystemName );
-            final Integer intValue = (Integer) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnected( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, intValue );
+            final int intValue = (Integer) epicsValueObject.getValue();
+            return WicaChannelValue.createChannelValueConnectedInteger( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, intValue );
 
          case INTEGER_ARRAY:
-            logger.trace("'{}' - type is INTEGER ARRAY.", controlSystemName );
             final int[] intArrayValue = (int[]) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnected( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, intArrayValue );
+            return WicaChannelValue.createChannelValueConnectedIntegerArray( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, intArrayValue );
 
-         case REAL:
-            logger.trace( "'{}' - type is DOUBLE.", controlSystemName );
-            final Double dblValue = (Double) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnected( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, dblValue );
+         case FLOAT:
+            final float floatValue = (Float) epicsValueObject.getValue();
+            return WicaChannelValue.createChannelValueConnectedReal( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, floatValue );
 
-         case REAL_ARRAY:
-            logger.trace( "'{}' - type is DOUBLE ARRAY.", controlSystemName );
+         case FLOAT_ARRAY:
+            final float[] floatArrayValue = (float[]) epicsValueObject.getValue();
+            return WicaChannelValue.createChannelValueConnectedRealArray( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, getDoubleArrayFromFloatArray( floatArrayValue ) );
+            
+         case DOUBLE:
+            final double dblValue = (Double) epicsValueObject.getValue();
+            return WicaChannelValue.createChannelValueConnectedReal( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, dblValue );
+
+         case DOUBLE_ARRAY:
             final double[] dblArrayValue = (double[]) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnected( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, dblArrayValue );
+            return WicaChannelValue.createChannelValueConnectedRealArray( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, dblArrayValue );
 
          default:
             logger.error( "'{}' - type is NOT SUPPORTED (Programming Error)", controlSystemName );
@@ -147,25 +156,55 @@ class WicaChannelValueBuilder
       }
    }
 
-   private WicaChannelAlarmSeverity fromEpics( AlarmSeverity caAlarmSeverity )
+   private static WicaChannelAlarmSeverity fromEpics( AlarmSeverity caAlarmSeverity )
    {
       return WicaChannelAlarmSeverity.valueOf( caAlarmSeverity.toString() );
    }
 
-   private WicaChannelAlarmStatus fromEpics( AlarmStatus caAlarmStatus )
+   private static WicaChannelAlarmStatus fromEpics( AlarmStatus caAlarmStatus )
    {
       return WicaChannelAlarmStatus.of( caAlarmStatus.ordinal() );
    }
 
    // TODO: this ties the current location to PSI's site. Should be made configurable.
-   private LocalDateTime getEpicsTimestamp( long secondsPastEpicsEpoch, int nanoseconds )
+   private static LocalDateTime getEpicsTimestamp( long secondsPastEpicsEpoch, int nanoseconds )
    {
       final Instant instant = Instant.ofEpochSecond(secondsPastEpicsEpoch, nanoseconds );
       final ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, ZoneId.of("Europe/Zurich") );
       return zonedDateTime.toLocalDateTime();
    }
 
+   static private int[] getIntArrayFromByteArray( byte[] inputArray )
+   {
+      final int[] outputArray = new int[ inputArray.length ];
+      for ( int i=0; i < inputArray.length; i++ )
+      {
+         outputArray[ i ] = inputArray[ i ];
+      }
+      return outputArray;
+   }
 
-   /*- Nested Classes -----------------------------------------------------------*/
+   static private int[] getIntArrayFromShortArray( short[] inputArray )
+   {
+      final int[] outputArray = new int[ inputArray.length ];
+      for ( int i=0; i < inputArray.length; i++ )
+      {
+         outputArray[ i ] = inputArray[ i ];
+      }
+      return outputArray;
+   }
+
+   static private double[] getDoubleArrayFromFloatArray( float[] inputArray )
+   {
+      final double[] outputArray = new double[ inputArray.length ];
+      for ( int i=0; i < inputArray.length; i++ )
+      {
+         outputArray[ i ] = inputArray[ i ];
+      }
+      return outputArray;
+   }
+
+
+/*- Nested Classes -----------------------------------------------------------*/
 
 }
