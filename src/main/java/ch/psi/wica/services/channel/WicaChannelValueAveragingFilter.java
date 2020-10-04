@@ -132,12 +132,6 @@ class WicaChannelValueAveragingFilter implements WicaChannelValueFilter
             numberOfReceivedDoubleSamples++;
             break;
 
-         case SHORT:
-            final short currentValueAsShort = ((WicaChannelValue.WicaChannelValueConnectedShort) currentValue).getValue();
-            sum += currentValueAsShort;
-            numberOfReceivedIntegerSamples++;
-            break;
-
          case INTEGER:
             final int currentValueAsInteger = ((WicaChannelValue.WicaChannelValueConnectedInteger) currentValue).getValue();
             sum += currentValueAsInteger;
@@ -156,11 +150,11 @@ class WicaChannelValueAveragingFilter implements WicaChannelValueFilter
       }
 
       // If there is at least one double sample then present the averaging result
-      // as a double.
+      // as a real.
       else if ( numberOfReceivedDoubleSamples > 0 )
       {
          final double average = sum / getNumberOfReceivedSamples();
-         outputList.add( WicaChannelValue.createChannelValueConnected( average ) );
+         outputList.add( WicaChannelValue.createChannelValueConnectedReal( average ) );
       }
 
       // If all the input samples are integers then present the averaging result
@@ -168,7 +162,7 @@ class WicaChannelValueAveragingFilter implements WicaChannelValueFilter
       else
       {
          final int average = (int) Math.round( sum / getNumberOfReceivedSamples() );
-         outputList.add( WicaChannelValue.createChannelValueConnected( average ) );
+         outputList.add( WicaChannelValue.createChannelValueConnectedInteger( average ) );
       }
    }
 
