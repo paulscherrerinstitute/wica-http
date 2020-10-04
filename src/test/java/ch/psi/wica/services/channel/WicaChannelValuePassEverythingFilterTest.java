@@ -5,8 +5,6 @@ package ch.psi.wica.services.channel;
 
 import ch.psi.wica.model.channel.WicaChannelValue;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
@@ -24,10 +22,6 @@ class WicaChannelValuePassEverythingFilterTest
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
-
-   private final Logger logger = LoggerFactory.getLogger( WicaChannelValuePassEverythingFilterTest.class );
-
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
@@ -36,10 +30,10 @@ class WicaChannelValuePassEverythingFilterTest
    @Test
    void testMap()
    {
-      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnected( "abc" );
-      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnected( "def" );
-      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnected( "ghi" );
-      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnected( "jkl" );
+      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnectedString( "abc" );
+      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnectedString( "def" );
+      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnectedString( "ghi" );
+      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnectedString( "jkl" );
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4 );
 
