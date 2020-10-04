@@ -96,13 +96,13 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
    
       The Wica-Http Server provides a very simple EPICS test database at the following endpoint:
       ```
-      http://localhost:8080/test/test.db
+      http://localhost:8080/test/counter.db
       ```   
       Download the DB file to your local filesystem and run it on your local network on your favourite 
       (Soft ?) IOC. The Wica-Http Server provides an equally unsophisticated :wink: web page to go with 
       it here:
       ```
-      http://localhost:8080/test/test.html
+      http://localhost:8080/test/counter.html
       ```
      
       When you navigate to this page the server should connect to the database and the counters should start 
@@ -260,12 +260,12 @@ GET /wica/wica.js
 
 ### Download the EPICS Test Database
 ```
-GET /test/test.db
+GET /test/counter.db
 ```
 
 ### Get the EPICS Test Database HTML Page
 ```
-GET /test/test.html
+GET /test/counter.html
 ```
 
 ### Get the Value of a Channel
