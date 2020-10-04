@@ -13,7 +13,7 @@ import org.apache.commons.lang3.Validate;
  * Represents the type of an EPICS Channel. This can potentially change every
  * time new channel metadata is received.
  *
- * @implNote
+ * @implNote.
  * The support here is premised on the use of Wica with the PSI CA channel
  * access client library.
  */
