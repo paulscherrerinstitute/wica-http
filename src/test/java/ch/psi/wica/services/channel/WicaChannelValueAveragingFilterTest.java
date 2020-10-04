@@ -48,8 +48,8 @@ class WicaChannelValueAveragingFilterTest
    @MethodSource( "getStringArgs"  )
    void testMapWithStringList( List<String> inputStringList, List<String> outputStringList )
    {
-      final List<WicaChannelValue> inputList = inputStringList.stream().map( WicaChannelValue::createChannelValueConnected ).collect( Collectors.toList() );
-      final List<WicaChannelValue> expectedOutputList = outputStringList.stream().map( WicaChannelValue::createChannelValueConnected ).collect( Collectors.toList() );
+      final List<WicaChannelValue> inputList = inputStringList.stream().map( WicaChannelValue::createChannelValueConnectedString ).collect( Collectors.toList() );
+      final List<WicaChannelValue> expectedOutputList = outputStringList.stream().map( WicaChannelValue::createChannelValueConnectedString ).collect( Collectors.toList() );
       final List<WicaChannelValue> actualOutputList  = filter.apply( inputList );
       assertThat( actualOutputList.size(), is( actualOutputList.size() ) );
 
@@ -75,9 +75,9 @@ class WicaChannelValueAveragingFilterTest
    @MethodSource( "getIntegerArgs"  )
    void testMapWithIntegerList( List<Integer> inputIntList, List<Integer> outputIntList )
    {
-      WicaChannelValue.createChannelValueConnected( 0 );
-      final List<WicaChannelValue> inputList = inputIntList.stream().map( WicaChannelValue::createChannelValueConnected ).collect( Collectors.toList() );
-      final List<WicaChannelValue> expectedOutputList = outputIntList.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
+      WicaChannelValue.createChannelValueConnectedInteger( 0 );
+      final List<WicaChannelValue> inputList = inputIntList.stream().map( WicaChannelValue::createChannelValueConnectedInteger ).collect( Collectors.toList() );
+      final List<WicaChannelValue> expectedOutputList = outputIntList.stream().map(WicaChannelValue::createChannelValueConnectedInteger).collect(Collectors.toList());
 
       final List<WicaChannelValue> actualOutputList  = filter.apply(inputList );
       assertThat( actualOutputList.size(), is( expectedOutputList.size() ) );
@@ -104,8 +104,8 @@ class WicaChannelValueAveragingFilterTest
    @MethodSource( "getDoubleArgs"  )
    void testMapWithDoubleList( List<Double> inputDblList, List<Double> outputDblList )
    {
-      final List<WicaChannelValue> inputList = inputDblList.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
-      final List<WicaChannelValue> expectedOutputList = outputDblList.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
+      final List<WicaChannelValue> inputList = inputDblList.stream().map(WicaChannelValue::createChannelValueConnectedReal).collect(Collectors.toList());
+      final List<WicaChannelValue> expectedOutputList = outputDblList.stream().map(WicaChannelValue::createChannelValueConnectedReal).collect(Collectors.toList());
 
       final List<WicaChannelValue> actualOutputList  = filter.apply(inputList );
       assertThat( actualOutputList.size(), is( expectedOutputList.size() ) );
@@ -122,12 +122,12 @@ class WicaChannelValueAveragingFilterTest
    {
       filter = new WicaChannelValueAveragingFilter( 2 );
 
-      return Stream.of( Arguments.of( List.of( WicaChannelValue.createChannelValueConnected( "abc" ),
-                                               WicaChannelValue.createChannelValueConnected( 1 ),
-                                               WicaChannelValue.createChannelValueConnected( 2.5 ),
+      return Stream.of( Arguments.of( List.of( WicaChannelValue.createChannelValueConnectedString( "abc" ),
+                                               WicaChannelValue.createChannelValueConnectedInteger( 1 ),
+                                               WicaChannelValue.createChannelValueConnectedReal( 2.5 ),
                                                WicaChannelValue.createChannelValueDisconnected(),
-                                               WicaChannelValue.createChannelValueConnected( 99 ) ),
-                                      List.of( WicaChannelValue.createChannelValueConnected( 1.75 ),
+                                               WicaChannelValue.createChannelValueConnectedInteger( 99 ) ),
+                                      List.of( WicaChannelValue.createChannelValueConnectedReal( 1.75 ),
                                                WicaChannelValue.createChannelValueDisconnected() ) ) );
    }
 
