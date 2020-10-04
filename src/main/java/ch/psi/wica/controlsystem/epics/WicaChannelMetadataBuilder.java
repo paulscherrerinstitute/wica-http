@@ -5,7 +5,6 @@ package ch.psi.wica.controlsystem.epics;
 
 import ch.psi.wica.model.app.ControlSystemName;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
-import ch.psi.wica.model.channel.WicaChannelType;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.data.Control;
@@ -29,7 +28,7 @@ class WicaChannelMetadataBuilder
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger(WicaChannelMetadataBuilder.class );
-
+   
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
@@ -42,56 +41,142 @@ class WicaChannelMetadataBuilder
     * @param controlSystemName the name of the control system channel (needed
     *     for logging purposes only). Not Null.
     *
-    * @param wicaChannelType the channel type. Not Null.
+    * @param epicsChannelType the type of the EPICS channel.
     *
     * @param epicsMetadataObject the EPICS CA library Control object. Not Null
     *     except when channel is of type STRING or STRING_ARRAY.
     *
     * @return the constructed metadata object.
     */
-   WicaChannelMetadata build( ControlSystemName controlSystemName, WicaChannelType wicaChannelType, Control<?,?>  epicsMetadataObject )
+   WicaChannelMetadata build( ControlSystemName controlSystemName, EpicsChannelType epicsChannelType, Control<?,?>  epicsMetadataObject )
    {
       Validate.notNull( controlSystemName );
-      Validate.notNull( wicaChannelType );
+      Validate.notNull( epicsChannelType );
 
-      if ( ( wicaChannelType != WicaChannelType.STRING ) && (wicaChannelType != WicaChannelType.STRING_ARRAY ) )
-      {
-         Validate.notNull( epicsMetadataObject );
-      }
+      logger.trace( "'{}' - type is {}", controlSystemName, epicsChannelType );
 
-      switch( wicaChannelType )
+      switch( epicsChannelType )
       {
          case STRING:
-            logger.trace("'{}' - type is STRING.", controlSystemName );
-            return getMetadataString();
+            return WicaChannelMetadata.createStringInstance();
 
          case STRING_ARRAY:
-            logger.trace("'{}' - type is STRING ARRAY.", controlSystemName );
-            return getMetadataStringArray();
+            return WicaChannelMetadata.createStringArrayInstance();
+
+         case BYTE:
+            return WicaChannelMetadata.createIntegerInstance( epicsMetadataObject.getUnits(),
+                                                              (byte) epicsMetadataObject.getUpperDisplay(),
+                                                              (byte) epicsMetadataObject.getLowerDisplay(),
+                                                              (byte) epicsMetadataObject.getUpperControl(),
+                                                              (byte) epicsMetadataObject.getLowerControl(),
+                                                              (byte) epicsMetadataObject.getUpperAlarm(),
+                                                              (byte) epicsMetadataObject.getLowerAlarm(),
+                                                              (byte) epicsMetadataObject.getUpperWarning(),
+                                                              (byte) epicsMetadataObject.getLowerWarning() );
 
          case SHORT:
-            logger.trace("'{}' - type is SHORT.", controlSystemName );
-            return getMetadataShort( epicsMetadataObject );
-
-         case SHORT_ARRAY:
-            logger.trace("'{}' - type is SHORT ARRAY.", controlSystemName );
-            return getMetadataShortArray( epicsMetadataObject );
+            return WicaChannelMetadata.createIntegerInstance( epicsMetadataObject.getUnits(),
+                                                              (short) epicsMetadataObject.getUpperDisplay(),
+                                                              (short) epicsMetadataObject.getLowerDisplay(),
+                                                              (short) epicsMetadataObject.getUpperControl(),
+                                                              (short) epicsMetadataObject.getLowerControl(),
+                                                              (short) epicsMetadataObject.getUpperAlarm(),
+                                                              (short) epicsMetadataObject.getLowerAlarm(),
+                                                              (short) epicsMetadataObject.getUpperWarning(),
+                                                              (short) epicsMetadataObject.getLowerWarning() );
 
          case INTEGER:
-            logger.trace("'{}' - type is INTEGER.", controlSystemName );
-            return getMetadataInteger( epicsMetadataObject );
+            return WicaChannelMetadata.createIntegerInstance( epicsMetadataObject.getUnits(),
+                                                             (int) epicsMetadataObject.getUpperDisplay(),
+                                                             (int) epicsMetadataObject.getLowerDisplay(),
+                                                             (int) epicsMetadataObject.getUpperControl(),
+                                                             (int) epicsMetadataObject.getLowerControl(),
+                                                             (int) epicsMetadataObject.getUpperAlarm(),
+                                                             (int) epicsMetadataObject.getLowerAlarm(),
+                                                             (int) epicsMetadataObject.getUpperWarning(),
+                                                             (int) epicsMetadataObject.getLowerWarning() );
+
+         case BYTE_ARRAY:
+            return WicaChannelMetadata.createIntegerArrayInstance( epicsMetadataObject.getUnits(),
+                                                                   (byte) epicsMetadataObject.getUpperDisplay(),
+                                                                   (byte) epicsMetadataObject.getLowerDisplay(),
+                                                                   (byte) epicsMetadataObject.getUpperControl(),
+                                                                   (byte) epicsMetadataObject.getLowerControl(),
+                                                                   (byte) epicsMetadataObject.getUpperAlarm(),
+                                                                   (byte) epicsMetadataObject.getLowerAlarm(),
+                                                                   (byte) epicsMetadataObject.getUpperWarning(),
+                                                                   (byte) epicsMetadataObject.getLowerWarning() );
+
+         case SHORT_ARRAY:
+            return WicaChannelMetadata.createIntegerArrayInstance( epicsMetadataObject.getUnits(),
+                                                                   (short) epicsMetadataObject.getUpperDisplay(),
+                                                                   (short) epicsMetadataObject.getLowerDisplay(),
+                                                                   (short) epicsMetadataObject.getUpperControl(),
+                                                                   (short) epicsMetadataObject.getLowerControl(),
+                                                                   (short) epicsMetadataObject.getUpperAlarm(),
+                                                                   (short) epicsMetadataObject.getLowerAlarm(),
+                                                                   (short) epicsMetadataObject.getUpperWarning(),
+                                                                   (short) epicsMetadataObject.getLowerWarning() );
+
 
          case INTEGER_ARRAY:
-            logger.trace("'{}' - type is INTEGER ARRAY.", controlSystemName );
-            return getMetadataIntegerArray( epicsMetadataObject );
+            return WicaChannelMetadata.createIntegerArrayInstance( epicsMetadataObject.getUnits(),
+                                                                   (int) epicsMetadataObject.getUpperDisplay(),
+                                                                   (int) epicsMetadataObject.getLowerDisplay(),
+                                                                   (int) epicsMetadataObject.getUpperControl(),
+                                                                   (int) epicsMetadataObject.getLowerControl(),
+                                                                   (int) epicsMetadataObject.getUpperAlarm(),
+                                                                   (int) epicsMetadataObject.getLowerAlarm(),
+                                                                   (int) epicsMetadataObject.getUpperWarning(),
+                                                                   (int) epicsMetadataObject.getLowerWarning() );
 
-         case REAL:
-            logger.trace( "'{}' - type is DOUBLE.", controlSystemName );
-            return getMetadataReal( epicsMetadataObject );
+         case FLOAT:
+            return WicaChannelMetadata.createRealInstance( epicsMetadataObject.getUnits(),
+                                                           epicsMetadataObject.getPrecision(),
+                                                           (float) epicsMetadataObject.getUpperDisplay(),
+                                                           (float) epicsMetadataObject.getLowerDisplay(),
+                                                           (float) epicsMetadataObject.getUpperControl(),
+                                                           (float) epicsMetadataObject.getLowerControl(),
+                                                           (float) epicsMetadataObject.getUpperAlarm(),
+                                                           (float) epicsMetadataObject.getLowerAlarm(),
+                                                           (float) epicsMetadataObject.getUpperWarning(),
+                                                           (float) epicsMetadataObject.getLowerWarning() );
 
-         case REAL_ARRAY:
-            logger.trace( "'{}' - type is DOUBLE ARRAY.", controlSystemName );
-            return getMetadataRealArray( epicsMetadataObject );
+         case DOUBLE:
+            return WicaChannelMetadata.createRealInstance( epicsMetadataObject.getUnits(),
+                                                           epicsMetadataObject.getPrecision(),
+                                                           (double) epicsMetadataObject.getUpperDisplay(),
+                                                           (double) epicsMetadataObject.getLowerDisplay(),
+                                                           (double) epicsMetadataObject.getUpperControl(),
+                                                           (double) epicsMetadataObject.getLowerControl(),
+                                                           (double) epicsMetadataObject.getUpperAlarm(),
+                                                           (double) epicsMetadataObject.getLowerAlarm(),
+                                                           (double) epicsMetadataObject.getUpperWarning(),
+                                                           (double) epicsMetadataObject.getLowerWarning() );
+
+         case FLOAT_ARRAY:
+            return WicaChannelMetadata.createRealArrayInstance( epicsMetadataObject.getUnits(),
+                                                                epicsMetadataObject.getPrecision(),
+                                                                (float) epicsMetadataObject.getUpperDisplay(),
+                                                                (float) epicsMetadataObject.getLowerDisplay(),
+                                                                (float) epicsMetadataObject.getUpperControl(),
+                                                                (float) epicsMetadataObject.getLowerControl(),
+                                                                (float) epicsMetadataObject.getUpperAlarm(),
+                                                                (float) epicsMetadataObject.getLowerAlarm(),
+                                                                (float) epicsMetadataObject.getUpperWarning(),
+                                                                (float) epicsMetadataObject.getLowerWarning() );
+
+         case DOUBLE_ARRAY:
+            return WicaChannelMetadata.createRealArrayInstance( epicsMetadataObject.getUnits(),
+                                                                epicsMetadataObject.getPrecision(),
+                                                                (double) epicsMetadataObject.getUpperDisplay(),
+                                                                (double) epicsMetadataObject.getLowerDisplay(),
+                                                                (double) epicsMetadataObject.getUpperControl(),
+                                                                (double) epicsMetadataObject.getLowerControl(),
+                                                                (double) epicsMetadataObject.getUpperAlarm(),
+                                                                (double) epicsMetadataObject.getLowerAlarm(),
+                                                                (double) epicsMetadataObject.getUpperWarning(),
+                                                                (double) epicsMetadataObject.getLowerWarning() );
 
          default:
             logger.error( "'{}' - type is NOT SUPPORTED (Programming Error)", controlSystemName );
@@ -101,107 +186,6 @@ class WicaChannelMetadataBuilder
 
 
 /*- Private methods ----------------------------------------------------------*/
-
-   private WicaChannelMetadata getMetadataString()
-   {
-      return WicaChannelMetadata.createStringInstance();
-   }
-
-   private WicaChannelMetadata getMetadataStringArray()
-   {
-      return WicaChannelMetadata.createStringArrayInstance();
-   }
-
-   private <T,ST> WicaChannelMetadata getMetadataShort( Control<T,ST> metadataObject )
-   {
-      final String units = metadataObject.getUnits();
-      final short upperDisplay = (short) metadataObject.getUpperDisplay();
-      final short lowerDisplay = (short) metadataObject.getLowerDisplay();
-      final short upperControl = (short) metadataObject.getUpperControl();
-      final short lowerControl = (short) metadataObject.getLowerControl();
-      final short upperAlarm   = (short) metadataObject.getUpperAlarm();
-      final short lowerAlarm   = (short) metadataObject.getLowerAlarm();
-      final short upperWarning = (short) metadataObject.getUpperWarning();
-      final short lowerWarning = (short) metadataObject.getLowerWarning();
-
-      return WicaChannelMetadata.createShortInstance( units, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
-   }
-
-   private <T,ST> WicaChannelMetadata getMetadataShortArray( Control<T,ST> metadataObject )
-   {
-      final String units = metadataObject.getUnits();
-      final short upperDisplay = (short) metadataObject.getUpperDisplay();
-      final short lowerDisplay = (short) metadataObject.getLowerDisplay();
-      final short upperControl = (short) metadataObject.getUpperControl();
-      final short lowerControl = (short) metadataObject.getLowerControl();
-      final short upperAlarm   = (short) metadataObject.getUpperAlarm();
-      final short lowerAlarm   = (short) metadataObject.getLowerAlarm();
-      final short upperWarning = (short) metadataObject.getUpperWarning();
-      final short lowerWarning = (short) metadataObject.getLowerWarning();
-
-      return  WicaChannelMetadata.createShortArrayInstance( units, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
-   }
-
-   private <T,ST> WicaChannelMetadata getMetadataInteger( Control<T,ST> metadataObject )
-   {
-      final String units = metadataObject.getUnits();
-      final int upperDisplay = (int) metadataObject.getUpperDisplay();
-      final int lowerDisplay = (int) metadataObject.getLowerDisplay();
-      final int upperControl = (int) metadataObject.getUpperControl();
-      final int lowerControl = (int) metadataObject.getLowerControl();
-      final int upperAlarm   = (int) metadataObject.getUpperAlarm();
-      final int lowerAlarm   = (int) metadataObject.getLowerAlarm();
-      final int upperWarning = (int) metadataObject.getUpperWarning();
-      final int lowerWarning = (int) metadataObject.getLowerWarning();
-
-      return WicaChannelMetadata.createIntegerInstance( units, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
-   }
-
-   private <T,ST> WicaChannelMetadata getMetadataIntegerArray( Control<T,ST> metadataObject )
-   {
-      final String units = metadataObject.getUnits();
-      final int upperDisplay = (int) metadataObject.getUpperDisplay();
-      final int lowerDisplay = (int) metadataObject.getLowerDisplay();
-      final int upperControl = (int) metadataObject.getUpperControl();
-      final int lowerControl = (int) metadataObject.getLowerControl();
-      final int upperAlarm   = (int) metadataObject.getUpperAlarm();
-      final int lowerAlarm   = (int) metadataObject.getLowerAlarm();
-      final int upperWarning = (int) metadataObject.getUpperWarning();
-      final int lowerWarning = (int) metadataObject.getLowerWarning();
-
-      return  WicaChannelMetadata.createIntegerArrayInstance( units, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
-   }
-
-   private <T,ST> WicaChannelMetadata getMetadataReal( Control<T,ST> metadataObject )
-   {
-      final String units = metadataObject.getUnits();
-      final int precision   = metadataObject.getPrecision();
-      final double upperDisplay = (double) metadataObject.getUpperDisplay();
-      final double lowerDisplay = (double) metadataObject.getLowerDisplay();
-      final double upperControl = (double) metadataObject.getUpperControl();
-      final double lowerControl = (double) metadataObject.getLowerControl();
-      final double upperAlarm   = (double) metadataObject.getUpperAlarm();
-      final double lowerAlarm   = (double) metadataObject.getLowerAlarm();
-      final double upperWarning = (double) metadataObject.getUpperWarning();
-      final double lowerWarning = (double) metadataObject.getLowerWarning();
-      return WicaChannelMetadata.createRealInstance( units, precision, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
-   }
-
-   private <T,ST> WicaChannelMetadata getMetadataRealArray( Control<T,ST> metadataObject )
-   {
-      final String units = metadataObject.getUnits();
-      final int precision   = metadataObject.getPrecision();
-      final double upperDisplay = (double) metadataObject.getUpperDisplay();
-      final double lowerDisplay = (double) metadataObject.getLowerDisplay();
-      final double upperControl = (double) metadataObject.getUpperControl();
-      final double lowerControl = (double) metadataObject.getLowerControl();
-      final double upperAlarm   = (double) metadataObject.getUpperAlarm();
-      final double lowerAlarm   = (double) metadataObject.getLowerAlarm();
-      final double upperWarning = (double) metadataObject.getUpperWarning();
-      final double lowerWarning = (double) metadataObject.getLowerWarning();
-      return WicaChannelMetadata.createRealArrayInstance(units, precision, upperDisplay, lowerDisplay, upperControl, lowerControl, upperAlarm, lowerAlarm, upperWarning, lowerWarning );
-   }
-
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
