@@ -29,10 +29,10 @@ class WicaChannelValueLatestValueFilterTest
    @Test
    void testMapZeroValues()
    {
-      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnected( "abc" );
-      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnected( "def" );
-      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnected( "ghi" );
-      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnected( "jkl" );
+      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnectedString( "abc" );
+      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnectedString( "def" );
+      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnectedString( "ghi" );
+      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnectedString( "jkl" );
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4 );
 
@@ -44,10 +44,10 @@ class WicaChannelValueLatestValueFilterTest
    @Test
    void testMapOneValue()
    {
-      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnected( "abc" );
-      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnected( "def" );
-      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnected( "ghi" );
-      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnected( "jkl" );
+      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnectedString( "abc" );
+      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnectedString( "def" );
+      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnectedString( "ghi" );
+      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnectedString( "jkl" );
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4 );
 
@@ -60,10 +60,10 @@ class WicaChannelValueLatestValueFilterTest
    @Test
    void testMapAllValues()
    {
-      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnected( "abc" );
-      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnected( "def" );
-      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnected( "ghi" );
-      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnected( "jkl" );
+      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnectedString( "abc" );
+      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnectedString( "def" );
+      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnectedString( "ghi" );
+      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnectedString( "jkl" );
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4 );
 
@@ -77,7 +77,7 @@ class WicaChannelValueLatestValueFilterTest
    }
 
 
-   /*- Private methods ----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
