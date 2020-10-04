@@ -37,15 +37,15 @@ class WicaChannelValueRateLimitingFilterTest
    @Test
    void testMapSampleAllValues() throws InterruptedException
    {
-      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnected( "abc" );
+      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnectedString( "abc" );
       Thread.sleep( 100 );
-      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnected( "def" );
+      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnectedString( "def" );
       Thread.sleep( 100 );
-      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnected( "ghi" );
+      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnectedString( "ghi" );
       Thread.sleep( 100 );
-      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnected( "jkl" );
+      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnectedString( "jkl" );
       Thread.sleep( 100 );
-      final WicaChannelValue strValue5 = WicaChannelValue.createChannelValueConnected( "mno" );
+      final WicaChannelValue strValue5 = WicaChannelValue.createChannelValueConnectedString( "mno" );
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4, strValue5 );
       final WicaChannelValueFilter mapper = new WicaChannelValueRateLimitingFilter(90 );
@@ -62,15 +62,15 @@ class WicaChannelValueRateLimitingFilterTest
    @Test
    void testMapSampleEveryOtherValue() throws InterruptedException
    {
-      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnected( "abc" );
+      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnectedString( "abc" );
       Thread.sleep( 100 );
-      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnected( "def" );
+      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnectedString( "def" );
       Thread.sleep( 100 );
-      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnected( "ghi" );
+      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnectedString( "ghi" );
       Thread.sleep( 100 );
-      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnected( "jkl" );
+      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnectedString( "jkl" );
       Thread.sleep( 100 );
-      final WicaChannelValue strValue5 = WicaChannelValue.createChannelValueConnected( "mno" );
+      final WicaChannelValue strValue5 = WicaChannelValue.createChannelValueConnectedString( "mno" );
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4, strValue5 );
       final WicaChannelValueFilter mapper = new WicaChannelValueRateLimitingFilter(110 );
@@ -85,7 +85,7 @@ class WicaChannelValueRateLimitingFilterTest
    @Test
    void testSuccessiveMapOperations() throws InterruptedException
    {
-      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnected( "abc" );
+      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnectedString( "abc" );
       final List<WicaChannelValue> inputList1 = List.of( strValue1 );
       final WicaChannelValueFilter mapper = new WicaChannelValueRateLimitingFilter(110 );
       final List<WicaChannelValue> outputList1  = mapper.apply(inputList1 );
@@ -93,14 +93,14 @@ class WicaChannelValueRateLimitingFilterTest
       assertThat( outputList1.size(), is( 1 ) );
       assertThat( outputList1.get( 0 ), is( inputList1.get( 0 ) ) );
 
-      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnected( "def" );
+      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnectedString( "def" );
       final List<WicaChannelValue> inputList2 = List.of( strValue2 );
       final List<WicaChannelValue> outputList2  = mapper.apply(inputList2 );
 
       assertThat( outputList2.size(), is( 0 ) );
 
       Thread.sleep( 120 );
-      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnected( "ghi" );
+      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnectedString( "ghi" );
       final List<WicaChannelValue> inputList3 = List.of( strValue3 );
       final List<WicaChannelValue> outputList3  = mapper.apply( inputList3 );
 
