@@ -125,62 +125,6 @@ class WicaChannelMetadataMixins
       int getLowerWarning();
    }
 
-/*- Nested Class: WicaChannelMetadataShortSerializerMixin --------------------*/
-   public static abstract class WicaChannelMetadataShortSerializerMixin extends WicaChannelMetadata.WicaChannelMetadataShort
-   {
-      // Dummy: only required to detect signature override errors.
-      private WicaChannelMetadataShortSerializerMixin()
-      {
-         super(null, 0, 0, 0, 0, 0, 0, 0, 0);
-      }
-
-      // Engineering Units
-      @Override
-      public abstract @JsonProperty( "egu" )
-      String getUnits();
-
-      // High Operating Range
-      @Override
-      public abstract @JsonProperty( "hopr" )
-      int getUpperDisplay();
-
-      // Low Operating Range
-      @Override
-      public abstract @JsonProperty( "lopr" )
-      int getLowerDisplay();
-
-      // Drive High Control Limit
-      @Override
-      public abstract @JsonProperty( "drvh" )
-      int getUpperControl();
-
-      // Drive Low Control Limit
-      @Override
-      public abstract @JsonProperty( "drvl" )
-      int getLowerControl();
-
-      // Upper Alarm limit
-      @Override
-      public abstract @JsonProperty( "hihi" )
-      int getUpperAlarm();
-
-      // Lower Alarm Limit
-      @Override
-      public abstract @JsonProperty( "lolo" )
-      int getLowerAlarm();
-
-      // Upper Warning limit
-      @Override
-      public abstract @JsonProperty( "high" )
-      int getUpperWarning();
-
-      // Lower Warning Limit
-      @Override
-      public abstract @JsonProperty( "low" )
-      int getLowerWarning();
-   }
-
-
 /*- Nested Class: WicaChannelMetadataIntegerArraySerializerMixin -------------*/
 
    static abstract class WicaChannelMetadataIntegerArraySerializerMixin extends WicaChannelMetadataMixins.WicaChannelMetadataIntegerSerializerMixin
