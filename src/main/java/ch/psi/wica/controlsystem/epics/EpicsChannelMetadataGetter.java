@@ -5,7 +5,6 @@ package ch.psi.wica.controlsystem.epics;
 
 import ch.psi.wica.model.app.ControlSystemName;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
-import ch.psi.wica.model.channel.WicaChannelType;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
@@ -15,9 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
-
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -91,29 +87,27 @@ class EpicsChannelMetadataGetter
       // For all channel types...
       // Perform an initial, simple, channel GET request to determine the data source type.
       // This operation is supported on all EPICS data types.
-      logger.trace( "'{}' - getting first value...", controlSystemName);
+      logger.info( "'{}' - getting first value...", controlSystemName);
       final Object firstGetObject = channel.get();
 
-      getNativeType( channel );
-
       // Decode the channel type.
-      final WicaChannelType wicaChannelType;
+      final EpicsChannelType epicsChannelType;
       try
       {
-         wicaChannelType = WicaChannelType.getTypeFromPojo( firstGetObject );
-         logger.trace( "'{}' - first value received was of type {}. ", controlSystemName, wicaChannelType );
+         epicsChannelType = EpicsChannelType.getTypeFromPojo( firstGetObject );
+         logger.trace( "'{}' - first value received was of EPICS type {}. ", controlSystemName, epicsChannelType );
       }
       catch( IllegalArgumentException ex)
       {
-         logger.error( "'{}' - type was UNKNOWN (Programming Error)", controlSystemName );
+         logger.error( "'{}' - EPICS type was UNKNOWN (Programming Error). The concrete exception message was: '{}' ", controlSystemName, ex );
          return WicaChannelMetadata.createUnknownInstance();
       }
 
       // For string types there is no further information to be obtained
       // so construct and return a metadata object immediately.
-      if  ( ( wicaChannelType == WicaChannelType.STRING ) || (wicaChannelType == WicaChannelType.STRING_ARRAY ) )
+      if  ( ( epicsChannelType == EpicsChannelType.STRING ) || (epicsChannelType == EpicsChannelType.STRING_ARRAY ) )
       {
-         return wicaChannelMetadataBuilder.build( controlSystemName, wicaChannelType, null );
+         return wicaChannelMetadataBuilder.build( controlSystemName, epicsChannelType, null );
       }
 
       // STEP 2:
@@ -126,7 +120,7 @@ class EpicsChannelMetadataGetter
       logger.trace( "'{}' - EPICS CTRL metadata received.", controlSystemName) ;
 
       // Now construct and return a wica metadata object using the control object information.
-      return wicaChannelMetadataBuilder.build( controlSystemName, wicaChannelType, epicsControlObject );
+      return wicaChannelMetadataBuilder.build( controlSystemName, epicsChannelType, epicsControlObject );
    }
 
 
@@ -147,12 +141,7 @@ class EpicsChannelMetadataGetter
       }
    }
 
-   private WicaChannelType getNativeType( Channel<Object> channel )
-   {
-      final Map<String,Object> props = channel.getProperties();
 
-      return null;
-   }
 
 /*- Nested Classes -----------------------------------------------------------*/
 
