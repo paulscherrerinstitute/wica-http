@@ -290,7 +290,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
 
 /*- Private methods ----------------------------------------------------------*/
 
-   public void handleChannelComesOnline( WicaChannel wicaChannel, Channel<Object> epicsChannel )
+   private void handleChannelComesOnline( WicaChannel wicaChannel, Channel<Object> epicsChannel )
    {
       final EpicsChannelName epicsChannelName = EpicsChannelName.of( wicaChannel.getName().getControlSystemName());
 
