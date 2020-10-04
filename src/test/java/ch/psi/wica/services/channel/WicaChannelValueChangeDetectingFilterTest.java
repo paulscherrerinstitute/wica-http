@@ -47,8 +47,8 @@ class WicaChannelValueChangeDetectingFilterTest
    @MethodSource( "getStringArgs"  )
    void testMapWithStringList( List<String> inputStringList, List<String> outputStringList )
    {
-      final List<WicaChannelValue> inputList = inputStringList.stream().map( WicaChannelValue::createChannelValueConnected ).collect( Collectors.toList() );
-      final List<WicaChannelValue> expectedOutputList = outputStringList.stream().map( WicaChannelValue::createChannelValueConnected ).collect( Collectors.toList() );
+      final List<WicaChannelValue> inputList = inputStringList.stream().map( WicaChannelValue::createChannelValueConnectedString ).collect( Collectors.toList() );
+      final List<WicaChannelValue> expectedOutputList = outputStringList.stream().map( WicaChannelValue::createChannelValueConnectedString ).collect( Collectors.toList() );
       final List<WicaChannelValue> actualOutputList  = filter.apply( inputList );
       assertThat( actualOutputList.size(), is( actualOutputList.size() ) );
 
@@ -77,9 +77,9 @@ class WicaChannelValueChangeDetectingFilterTest
    @MethodSource( "getIntegerArgs"  )
    void testMapWithIntegerList( List<Integer> inputIntList, List<Integer> outputIntList )
    {
-      WicaChannelValue.createChannelValueConnected( 0 );
-      final List<WicaChannelValue> inputList = inputIntList.stream().map( WicaChannelValue::createChannelValueConnected ).collect( Collectors.toList() );
-      final List<WicaChannelValue> expectedOutputList = outputIntList.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
+      WicaChannelValue.createChannelValueConnectedInteger( 0 );
+      final List<WicaChannelValue> inputList = inputIntList.stream().map( WicaChannelValue::createChannelValueConnectedInteger ).collect( Collectors.toList() );
+      final List<WicaChannelValue> expectedOutputList = outputIntList.stream().map(WicaChannelValue::createChannelValueConnectedInteger).collect(Collectors.toList());
 
       final List<WicaChannelValue> actualOutputList  = filter.apply(inputList );
       assertThat( actualOutputList.size(), is( expectedOutputList.size() ) );
@@ -109,8 +109,8 @@ class WicaChannelValueChangeDetectingFilterTest
    @MethodSource( "getDoubleArgs"  )
    void testMapWithDoubleList( List<Double> inputDblList, List<Double> outputDblList )
    {
-      final List<WicaChannelValue> inputList = inputDblList.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
-      final List<WicaChannelValue> expectedOutputList = outputDblList.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
+      final List<WicaChannelValue> inputList = inputDblList.stream().map(WicaChannelValue::createChannelValueConnectedReal).collect(Collectors.toList());
+      final List<WicaChannelValue> expectedOutputList = outputDblList.stream().map(WicaChannelValue::createChannelValueConnectedReal).collect(Collectors.toList());
 
       final List<WicaChannelValue> actualOutputList  = filter.apply(inputList );
       assertThat( actualOutputList.size(), is( expectedOutputList.size() ) );
@@ -134,8 +134,8 @@ class WicaChannelValueChangeDetectingFilterTest
    @MethodSource( "getMultipleMapIntegerArgs"  )
    void testMultipleMapOperations( List<Integer> inputIntList1, List<Integer> outputIntList1, List<Integer> inputIntList2, List<Integer> outputIntList2 )
    {
-      final List<WicaChannelValue> inputList1 = inputIntList1.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
-      final List<WicaChannelValue> expectedOutputList1 = outputIntList1.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
+      final List<WicaChannelValue> inputList1 = inputIntList1.stream().map(WicaChannelValue::createChannelValueConnectedInteger).collect(Collectors.toList());
+      final List<WicaChannelValue> expectedOutputList1 = outputIntList1.stream().map(WicaChannelValue::createChannelValueConnectedInteger).collect(Collectors.toList());
       final List<WicaChannelValue> actualOutputList1  = filter.apply(inputList1 );
 
       assertThat( actualOutputList1.size(), is( expectedOutputList1.size() ) );
@@ -146,8 +146,8 @@ class WicaChannelValueChangeDetectingFilterTest
          assertThat( actualValue, is( expectedValue ) );
       }
       
-      final List<WicaChannelValue> inputList2 = inputIntList2.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
-      final List<WicaChannelValue> expectedOutputList2 = outputIntList2.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
+      final List<WicaChannelValue> inputList2 = inputIntList2.stream().map(WicaChannelValue::createChannelValueConnectedInteger).collect(Collectors.toList());
+      final List<WicaChannelValue> expectedOutputList2 = outputIntList2.stream().map(WicaChannelValue::createChannelValueConnectedInteger).collect(Collectors.toList());
       final List<WicaChannelValue> actualOutputList2  = filter.apply(inputList2 );
 
       assertThat( actualOutputList2.size(), is( expectedOutputList2.size() ) );
@@ -171,8 +171,8 @@ class WicaChannelValueChangeDetectingFilterTest
    @MethodSource( "getMultipleMapMixedTypeArgs"  )
    void testMultipleMapMixedTypeOperations( List<Integer> inputIntList1, List<Integer> outputIntList1, List<String> inputStringList2, List<String> outputStringList2 )
    {
-      final List<WicaChannelValue> inputList1 = inputIntList1.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
-      final List<WicaChannelValue> expectedOutputList1 = outputIntList1.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
+      final List<WicaChannelValue> inputList1 = inputIntList1.stream().map(WicaChannelValue::createChannelValueConnectedInteger).collect(Collectors.toList());
+      final List<WicaChannelValue> expectedOutputList1 = outputIntList1.stream().map(WicaChannelValue::createChannelValueConnectedInteger).collect(Collectors.toList());
       final List<WicaChannelValue> actualOutputList1  = filter.apply(inputList1 );
 
       assertThat( actualOutputList1.size(), is( expectedOutputList1.size() ) );
@@ -183,8 +183,8 @@ class WicaChannelValueChangeDetectingFilterTest
          assertThat( actualValue, is( expectedValue ) );
       }
 
-      final List<WicaChannelValue> inputList2 = inputStringList2.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
-      final List<WicaChannelValue> expectedOutputList2 = outputStringList2.stream().map(WicaChannelValue::createChannelValueConnected).collect(Collectors.toList());
+      final List<WicaChannelValue> inputList2 = inputStringList2.stream().map(WicaChannelValue::createChannelValueConnectedString).collect(Collectors.toList());
+      final List<WicaChannelValue> expectedOutputList2 = outputStringList2.stream().map(WicaChannelValue::createChannelValueConnectedString).collect(Collectors.toList());
       final List<WicaChannelValue> actualOutputList2  = filter.apply(inputList2 );
 
       assertThat( actualOutputList2.size(), is( expectedOutputList2.size() ) );
