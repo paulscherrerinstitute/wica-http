@@ -55,14 +55,14 @@ class WicaChannelValueMapSerializerServiceTest
    {
       // Setup values shared across many tests
       unconnValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueDisconnected();
-      intValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( 27 );
-      strValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( "abcdef" );
-      realValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( 123456.654321 );
-      realNanValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( NaN );
-      realInfValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( POSITIVE_INFINITY );
-      intArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( new int[] { 25, 12 } );
-      strArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( new String[] { "abcdef", "ghijkl" } );
-      realArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnected( new double[] { 2.5000, 1.20000 }  );
+      intValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedInteger( 27 );
+      strValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedString( "abcdef" );
+      realValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedReal( 123456.654321 );
+      realNanValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedReal( NaN );
+      realInfValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedReal( POSITIVE_INFINITY );
+      intArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedIntegerArray( new int[] { 25, 12 } );
+      strArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedStringArray( new String[] { "abcdef", "ghijkl" } );
+      realArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedRealArray( new double[] { 2.5000, 1.20000 }  );
    }
 
    @Test
