@@ -38,7 +38,7 @@ class WicaChannelValueTimestampRewriterTest
    @Test
    void test()
    {
-      final var strValue = WicaChannelValue.createChannelValueConnected("abc" );
+      final var strValue = WicaChannelValue.createChannelValueConnectedString( "abc" );
       final LocalDateTime newTimestamp = LocalDateTime.now();
       final WicaChannelValue.WicaChannelValueConnectedString newValue = ( WicaChannelValue.WicaChannelValueConnectedString) rewriter.rewrite( strValue, newTimestamp );
       assertEquals( newTimestamp, newValue.getDataSourceTimestamp() );
