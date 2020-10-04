@@ -54,82 +54,62 @@ public abstract class WicaChannelValue extends WicaChannelData
       return new WicaChannelValue.WicaChannelValueDisconnected();
    }
 
-   public static WicaChannelValue.WicaChannelValueConnectedReal createChannelValueConnected( double value )
+   public static WicaChannelValue.WicaChannelValueConnectedReal createChannelValueConnectedReal( double value )
    {
       return new WicaChannelValue.WicaChannelValueConnectedReal(WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
    }
 
-   public static WicaChannelValue.WicaChannelValueConnectedReal createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double value )
+   public static WicaChannelValue.WicaChannelValueConnectedReal createChannelValueConnectedReal( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double value )
    {
       return new WicaChannelValue.WicaChannelValueConnectedReal(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
    }
 
-   public static WicaChannelValue.WicaChannelValueConnectedRealArray createChannelValueConnected( double[] value )
+   public static WicaChannelValue.WicaChannelValueConnectedRealArray createChannelValueConnectedRealArray( double[] value )
    {
       return new WicaChannelValue.WicaChannelValueConnectedRealArray(WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
    }
 
-   public static WicaChannelValue.WicaChannelValueConnectedRealArray createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double[] value )
+   public static WicaChannelValue.WicaChannelValueConnectedRealArray createChannelValueConnectedRealArray( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, double[] value )
    {
       return new WicaChannelValue.WicaChannelValueConnectedRealArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
    }
 
-   public static WicaChannelValue.WicaChannelValueConnectedShort createChannelValueConnected( short value )
-   {
-      return new WicaChannelValue.WicaChannelValueConnectedShort(WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
-   }
-
-   public static WicaChannelValue.WicaChannelValueConnectedShort createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, short value  )
-   {
-      return new WicaChannelValue.WicaChannelValueConnectedShort(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
-   }
-
-   public static WicaChannelValue.WicaChannelValueConnectedShortArray createChannelValueConnected( short[] value )
-   {
-      return new WicaChannelValue.WicaChannelValueConnectedShortArray(WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
-   }
-
-   public static WicaChannelValue.WicaChannelValueConnectedShortArray createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, short[] value  )
-   {
-      return new WicaChannelValue.WicaChannelValueConnectedShortArray( wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
-   }
-
-   public static WicaChannelValue.WicaChannelValueConnectedInteger createChannelValueConnected( int value )
+   public static WicaChannelValue.WicaChannelValueConnectedInteger createChannelValueConnectedInteger( int value )
    {
       return new WicaChannelValue.WicaChannelValueConnectedInteger(WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
    }
 
-   public static WicaChannelValue.WicaChannelValueConnectedInteger createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, int value  )
+   public static WicaChannelValue.WicaChannelValueConnectedInteger createChannelValueConnectedInteger( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, int value  )
    {
       return new WicaChannelValue.WicaChannelValueConnectedInteger(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
    }
 
-   public static WicaChannelValue.WicaChannelValueConnectedIntegerArray createChannelValueConnected( int[] value )
+   public static WicaChannelValue.WicaChannelValueConnectedIntegerArray createChannelValueConnectedIntegerArray( int[] value )
    {
       return new WicaChannelValue.WicaChannelValueConnectedIntegerArray(WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
    }
 
-   public static WicaChannelValue.WicaChannelValueConnectedIntegerArray  createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, int[] value  )
+   public static WicaChannelValue.WicaChannelValueConnectedIntegerArray  createChannelValueConnectedIntegerArray( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, int[] value  )
    {
       return new WicaChannelValue.WicaChannelValueConnectedIntegerArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
    }
 
-   public static WicaChannelValue.WicaChannelValueConnectedString createChannelValueConnected( String value )
+   public static WicaChannelValue.WicaChannelValueConnectedString createChannelValueConnectedString( String value )
    {
       return new WicaChannelValue.WicaChannelValueConnectedString(WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
    }
 
-   public static WicaChannelValue.WicaChannelValueConnectedString createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, String value  )
+   public static WicaChannelValue.WicaChannelValueConnectedString createChannelValueConnectedString( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, String value  )
    {
       return new WicaChannelValue.WicaChannelValueConnectedString(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
    }
 
-   public static WicaChannelValue.WicaChannelValueConnectedStringArray createChannelValueConnected( String[] value )
+   public static WicaChannelValue.WicaChannelValueConnectedStringArray createChannelValueConnectedStringArray( String[] value )
    {
       return new WicaChannelValue.WicaChannelValueConnectedStringArray(WicaChannelAlarmSeverity.NO_ALARM, WicaChannelAlarmStatus.ofNoError(), LocalDateTime.now(), value );
    }
 
-   public static WicaChannelValue.WicaChannelValueConnectedStringArray createChannelValueConnected( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, String[] value  )
+   public static WicaChannelValue.WicaChannelValueConnectedStringArray createChannelValueConnectedStringArray( WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp, String[] value  )
    {
       return new WicaChannelValue.WicaChannelValueConnectedStringArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, dataSourceTimestamp, value );
    }
@@ -281,62 +261,6 @@ public abstract class WicaChannelValue extends WicaChannelData
       public String toString()
       {
          return "WicaChannelValueConnectedRealArray{" +
-               "value=" + Arrays.toString( value ) +
-               '}';
-      }
-   }
-
-/*- Nested Class: WicaChannelValueConnectedShort ----------------------------*/
-
-   /**
-    * Represents the value of a connected channel whose underlying type is INTEGER.
-    */
-   public static class WicaChannelValueConnectedShort extends WicaChannelValueConnected
-   {
-      private final short value;
-      public short getValue()
-      {
-         return value;
-      }
-
-      public WicaChannelValueConnectedShort( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, short value )
-      {
-         super( WicaChannelType.SHORT, alarmSeverity, alarmStatus, dataSourceTimestamp);
-         this.value = value;
-      }
-
-      @Override
-      public String toString()
-      {
-         return "WicaChannelValueConnectedShort{" +
-               "value=" + value +
-               '}';
-      }
-   }
-
-/*- Nested Class: WicaChannelValueConnectedShortArray -----------------------*/
-
-   /**
-    * Represents the value of a connected channel whose underlying type is INTEGER_ARRAY.
-    */
-   public static class WicaChannelValueConnectedShortArray extends WicaChannelValueConnected
-   {
-      private final short[] value;
-      public short[] getValue()
-      {
-         return value;
-      }
-
-      public WicaChannelValueConnectedShortArray( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, short[] value )
-      {
-         super( WicaChannelType.SHORT_ARRAY, alarmSeverity, alarmStatus, dataSourceTimestamp);
-         this.value = value;
-      }
-
-      @Override
-      public String toString()
-      {
-         return "WicaChannelValueConnectedShortArray{" +
                "value=" + Arrays.toString( value ) +
                '}';
       }
