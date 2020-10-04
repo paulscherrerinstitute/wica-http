@@ -65,7 +65,7 @@ class WicaChannelDataSerializerTest
    @Test
    void testSerializeString()
    {
-      final var val = WicaChannelValue.createChannelValueConnected( "abcd" );
+      final var val = WicaChannelValue.createChannelValueConnectedString( "abcd" );
       final var res = wicaChannelDataSerializer.writeToJson(val );
       assertThat( res, containsString( "{\"type\":\"STRING\",\"wsts\":" + getDateTimeNowAsTruncatedIso8601String() ) );
       assertThat( res, containsString( "\"conn\":true,\"stat\":0,\"sevr\":\"0\",\"ts\":" + getDateTimeNowAsTruncatedIso8601String() ) );
@@ -75,7 +75,7 @@ class WicaChannelDataSerializerTest
    @Test
    void testSerializeStringArray()
    {
-      final var val = WicaChannelValue.createChannelValueConnected( new String[] { "abcd", "efgh" } );
+      final var val = WicaChannelValue.createChannelValueConnectedStringArray( new String[] { "abcd", "efgh" } );
       final var res = wicaChannelDataSerializer.writeToJson(val );
       assertThat( res, containsString( "{\"type\":\"STRING_ARRAY\",\"wsts\":" + getDateTimeNowAsTruncatedIso8601String() ) );
       assertThat( res, containsString( "\"conn\":true,\"stat\":0,\"sevr\":\"0\",\"ts\":" + getDateTimeNowAsTruncatedIso8601String() ) );
@@ -85,7 +85,7 @@ class WicaChannelDataSerializerTest
    @Test
    void testSerializeInteger()
    {
-      final var val = WicaChannelValue.createChannelValueConnected( 24 );
+      final var val = WicaChannelValue.createChannelValueConnectedInteger( 24 );
       final var res = wicaChannelDataSerializer.writeToJson(val );
       assertThat( res, containsString( "{\"type\":\"INTEGER\",\"wsts\":" + getDateTimeNowAsTruncatedIso8601String() ) );
       assertThat( res, containsString( "\"conn\":true,\"stat\":0,\"sevr\":\"0\",\"ts\":" + getDateTimeNowAsTruncatedIso8601String() ) );
@@ -95,7 +95,7 @@ class WicaChannelDataSerializerTest
    @Test
    void testSerializeIntegerArray()
    {
-      final var val = WicaChannelValue.createChannelValueConnected( new int[] { 24, 25 } );
+      final var val = WicaChannelValue.createChannelValueConnectedIntegerArray( new int[] { 24, 25 } );
       final var res = wicaChannelDataSerializer.writeToJson(val );
       assertThat( res, containsString( "{\"type\":\"INTEGER_ARRAY\",\"wsts\":" + getDateTimeNowAsTruncatedIso8601String() ) );
       assertThat( res, containsString( "\"conn\":true,\"stat\":0,\"sevr\":\"0\",\"ts\":"  + getDateTimeNowAsTruncatedIso8601String() ) );
@@ -121,7 +121,7 @@ class WicaChannelDataSerializerTest
    @Test
    void testSerializeReal()
    {
-      final var val = WicaChannelValue.createChannelValueConnected( 19.12345678 );
+      final var val = WicaChannelValue.createChannelValueConnectedReal( 19.12345678 );
 
       final var res1 = WicaChannelDataSerializerBuilder.create().withNumericScale( 5 ).withQuotedNumericStrings( false ).build().writeToJson( val );
       assertThat( res1, containsString( "{\"type\":\"REAL\",\"wsts\":" + getDateTimeNowAsTruncatedIso8601String() ) );
@@ -137,7 +137,7 @@ class WicaChannelDataSerializerTest
    @Test
    void testSerializeRealInf()
    {
-      final var val = WicaChannelValue.createChannelValueConnected( Double.POSITIVE_INFINITY );
+      final var val = WicaChannelValue.createChannelValueConnectedReal( Double.POSITIVE_INFINITY );
       final var res = wicaChannelDataSerializer.writeToJson(val );
       assertThat( res, containsString( "{\"type\":\"REAL\",\"wsts\":" + getDateTimeNowAsTruncatedIso8601String() ) );
       assertThat( res, containsString( "\"conn\":true,\"stat\":0,\"sevr\":\"0\",\"ts\":" + getDateTimeNowAsTruncatedIso8601String() ) );
@@ -147,7 +147,7 @@ class WicaChannelDataSerializerTest
    @Test
    void testSerializeRealNan()
    {
-      final var val = WicaChannelValue.createChannelValueConnected( Double.NaN );
+      final var val = WicaChannelValue.createChannelValueConnectedReal( Double.NaN );
       final var res = wicaChannelDataSerializer.writeToJson(val );
       assertThat( res, containsString( "{\"type\":\"REAL\",\"wsts\":" ));
       assertThat( res, containsString( "\"conn\":true,\"stat\":0,\"sevr\":\"0\",\"ts\":" + getDateTimeNowAsTruncatedIso8601String() ) );
@@ -158,7 +158,7 @@ class WicaChannelDataSerializerTest
    @Test
    void testSerializeRealArray()
    {
-      final var val = WicaChannelValue.createChannelValueConnected( new double[] { 24.12345678, 25.12345678 } );
+      final var val = WicaChannelValue.createChannelValueConnectedRealArray( new double[] { 24.12345678, 25.12345678 } );
 
       final var res1 = WicaChannelDataSerializerBuilder.create().withNumericScale( 5 ).withQuotedNumericStrings( false ).build().writeToJson( val );
       assertThat( res1, containsString( "{\"type\":\"REAL_ARRAY\",\"wsts\":" + getDateTimeNowAsTruncatedIso8601String() ) );
@@ -174,7 +174,7 @@ class WicaChannelDataSerializerTest
    @Test
    void testSerializeRealArrayWithRestrictedFieldsOfInterest()
    {
-      final var val = WicaChannelValue.createChannelValueConnected( new double[] { 24.12345678, 25.12345678 } );
+      final var val = WicaChannelValue.createChannelValueConnectedRealArray( new double[] { 24.12345678, 25.12345678 } );
       final var res = new WicaChannelDataSerializer( Set.of( "val", "sevr"), 3, false ).writeToJson(val );
       assertThat( res, is( "{\"sevr\":\"0\",\"val\":[24.123,25.123]}" ));
    }
@@ -183,7 +183,7 @@ class WicaChannelDataSerializerTest
    @ParameterizedTest
    void testPerformance( int times )
    {
-      final var val = WicaChannelValue.createChannelValueConnected( 25.12345678 );
+      final var val = WicaChannelValue.createChannelValueConnectedReal( 25.12345678 );
       final StopWatch stopwatch = StopWatch.createStarted();
 
       for ( int i = 0 ; i < times; i++ )
