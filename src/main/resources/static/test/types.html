@@ -21,19 +21,19 @@
             text-align: center;
         }
 
-        label {
-            display: inline-block;
-            background-color: lightblue;
-            margin-bottom: 1rem;
-            width: 8rem;
+        table {
+            background-color: lightgray;
+            border-spacing: 0.5rem;
         }
 
-        button {
-            width: 8rem;
+        th, td {
+            text-align: left;
+            width: 12rem;
         }
 
         .longfield {
-            width: 25rem;
+            background-color: lightblue;
+            width: 20rem;
         }
 
     </style>
@@ -43,19 +43,165 @@
 
     <h1>Wica Data Types Test Page</h1>
 
-      <div>
-        <h2>Data Types</h2>
-        <label>A - STRING </label> <label class="longfield" data-wica-channel-name="wica:test:types.A">NC</label><br>
-        <label>B - CHAR   </label> <label class="longfield" data-wica-channel-name="wica:test:types.B">NC</label><br>
-        <label>C - UCHAR  </label> <label class="longfield" data-wica-channel-name="wica:test:types.C">NC</label><br>
-        <label>D - SHORT  </label> <label class="longfield" data-wica-channel-name="wica:test:types.D">NC</label><br>
-        <label>E - USHORT </label> <label class="longfield" data-wica-channel-name="wica:test:types.E">NC</label><br>
-        <label>F - LONG   </label> <label class="longfield" data-wica-channel-name="wica:test:types.F">NC</label><br>
-        <label>G - ULONG  </label> <label class="longfield" data-wica-channel-name="wica:test:types.G">NC</label><br>
-        <label>H - FLOAT  </label> <label class="longfield" data-wica-channel-name="wica:test:types.H" data-wica-channel-props='{ "prec": 12 }' data-wica-rendering-props='{ "prec": 12 }'>NC</label><br>
-        <label>I - DOUBLE </label> <label class="longfield" data-wica-channel-name="wica:test:types.I" data-wica-channel-props='{ "prec": 12 }' data-wica-rendering-props='{ "prec": 12 }'>NC</label><br>
-        <label>J - ENUM   </label> <label class="longfield" data-wica-channel-name="wica:test:types.J">NC</label><br>
-    </div>
+        <h2>EPICS Scalar Data Types</h2>
+        <table>
+            <tr>
+                <th>EPICS DB Field Type</th>
+                <th>EPICS Native Field Type</th>
+                <th>Wica Channel Type</th>
+                <th>Example(s)</th>
+            </tr>
+            <tr>
+                <td>STRING</td>
+                <td>DBF_STRING</td>
+                <td>STRING</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:string1">NC</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:string2">NC</td>
+            </tr>
+            <tr>
+                <td>ENUM</td>
+                <td>DBF_ENUM</td>
+                <td>STRING</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:enum1">NC</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:enum2">NC</td>
+            </tr>
+            <tr>
+                <td>CHAR</td>
+                <td>DBF_CHAR</td>
+                <td>INTEGER</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:integers.A">NC</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:integers.B">NC</td>
+            </tr>
+            <tr>
+                <td>UCHAR</td>
+                <td>DBF_CHAR</td>
+                <td>INTEGER</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:integers.C">NC</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:integers.D">NC</td>
+            </tr>
+            <tr>
+                <td>SHORT</td>
+                <td>DBF_SHORT</td>
+                <td>INTEGER</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:integers.E">NC</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:integers.F">NC</td>
+            </tr>
+            <tr>
+                <td>USHORT</td>
+                <td>DBF_LONG</td>
+                <td>INTEGER</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:integers.G">NC</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:integers.H">NC</td>
+            </tr>
+            <tr>
+                <td>LONG</td>
+                <td>DBF_LONG</td>
+                <td>INTEGER</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:integers.I" data-wica-channel-props='{ "filter": "all-value" }'>NC</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:integers.J">NC</td>
+            </tr>
+            <tr>
+                <td>ULONG</td>
+                <td>DBF_DOUBLE</td>
+                <td>REAL</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:reals.A" data-wica-channel-props='{ "prec": 12}' data-wica-rendering-props='{ "prec": 12}'>NC</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:reals.B" data-wica-channel-props='{ "prec": 12}' data-wica-rendering-props='{ "prec": 12}'>NC</td>
+            </tr>
+            <tr>
+                <td>FLOAT</td>
+                <td>DBF_FLOAT</td>
+                <td>REAL</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:reals.C" data-wica-channel-props='{ "prec": 4}' data-wica-rendering-props='{ "prec": 4}'>NC</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:reals.D" data-wica-channel-props='{ "prec": 4}' data-wica-rendering-props='{ "prec": 4}'>NC</td>
+            </tr>
+            <tr>
+                <td>DOUBLE</td>
+                <td>DBF_DOUBLE</td>
+                <td>REAL</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:reals.E" data-wica-channel-props='{ "prec": 12}' data-wica-rendering-props='{ "prec": 6}'>NC</td>
+                <td class="longfield" data-wica-channel-name="wica:test:scalar:reals.F" data-wica-channel-props='{ "prec": 12}' data-wica-rendering-props='{ "exp": true }'>NC</td>
+            </tr>
+        </table>
+
+    <h2>EPICS Array Data Types</h2>
+    <table>
+        <tr>
+            <th>EPICS DB Field Type</th>
+            <th>EPICS Native Field Type</th>
+            <th>Wica Channel Type</th>
+            <th>Example</th>
+        </tr>
+        <tr>
+            <td>STRING</td>
+            <td>DBF_STRING</td>
+            <td>STRING_ARRAY</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:string1">NC</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:string2">NC</td>
+        </tr>
+        <tr>
+            <td>ENUM</td>
+            <td>DBF_ENUM</td>
+            <td>STRING_ARRAY</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:enum1">NC</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:enum2">NC</td>
+        </tr>
+        <tr>
+            <td>CHAR</td>
+            <td>DBF_CHAR</td>
+            <td>INTEGER_ARRAY</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:char1">NC</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:char2">NC</td>
+        </tr>
+        <tr>
+            <td>UCHAR</td>
+            <td>DBF_CHAR</td>
+            <td>INTEGER_ARRAY</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:uchar1">NC</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:uchar2">NC</td>
+        </tr>
+        <tr>
+            <td>SHORT</td>
+            <td>DBF_SHORT</td>
+            <td>INTEGER_ARRAY</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:short1">NC</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:short2">NC</td>
+        </tr>
+        <tr>
+            <td>USHORT</td>
+            <td>DBF_LONG</td>
+            <td>INTEGER_ARRAY</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:ushort1">NC</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:ushort2">NC</td>
+        </tr>
+        <tr>
+            <td>LONG</td>
+            <td>DBF_LONG</td>
+            <td>INTEGER_ARRAY</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:long1">NC</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:long2">NC</td>
+        </tr>
+        <tr>
+            <td>ULONG</td>
+            <td>DBF_DOUBLE</td>
+            <td>REAL_ARRAY</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:ulong1" data-wica-channel-props='{ "prec": 12}' >NC</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:ulong2" data-wica-channel-props='{ "prec": 12}' >NC</td>
+        </tr>
+        <tr>
+            <td>FLOAT</td>
+            <td>DBF_FLOAT</td>
+            <td>REAL_ARRAY</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:float1" data-wica-channel-props='{ "prec": 12}' >NC</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:float2" data-wica-channel-props='{ "prec": 12}' >NC</td>
+        </tr>
+        <tr>
+            <td>DOUBLE</td>
+            <td>DBF_DOUBLE</td>
+            <td>REAL_ARRAY</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:double1" data-wica-channel-props='{ "prec": 12}' >NC</td>
+            <td class="longfield" data-wica-channel-name="wica:test:array:double2" data-wica-channel-props='{ "prec": 12}' >NC</td>
+        </tr>
+    </table>
 
 </body>
 </html>

@@ -1,24 +1,216 @@
-record( aSub, "wica:test:types" ) {
-  field( VAL, "0" )
-  field( FTA, "STRING" )
-  field( INPA, "IM A STRING" )
-  field( FTB, "CHAR" )
-  field( INPB, 0x65 )
-  field( FTC, "UCHAR" )
-  field( INPC, "ABC" )
-  field( FTD, "SHORT" )
-  field( INPD, "-32767" )
-  field( FTE, "USHORT" )
-  field( INPE, "65535" )
-  field( FTF, "LONG" )
-  field( INPF,  "-2147483647" )
-  field( FTG, "ULONG" )
-  field( INPG,  "4294967295" )
-  field( FTH, "FLOAT" )
-  field( INPH, "1234.5678" )
-  field( FTI, "DOUBLE" )
-  field( INPI, "12345.1234567890" )
-#  field( FTJ, "ENUM" )
-#  field( INPJ, "ABC" )
+
+record( stringout, wica:test:scalar:string1 ) {
+  field( VAL, "I'm a string !" )
 }
 
+record( stringout, wica:test:scalar:string2 ) {
+  field( VAL, "Strings must be less than 40 chars !" )
+}
+
+record( bo, wica:test:scalar:enum1 ) {
+  field( VAL, "0" )
+  field( ZNAM, "ZERO" )
+  field( ONAM, "ONE" )
+}
+
+record( bo, wica:test:scalar:enum2 ) {
+  field( VAL, "1" )
+  field( ZNAM, "ZERO" )
+  field( ONAM, "ONE" )
+}
+
+record( aSub, "wica:test:scalar:integers" ) {
+  field( FTA, "CHAR" )
+  field( INPA, "-128" )
+  field( FTB, "CHAR" )
+  field( INPB, "127" )
+
+  field( FTC, "UCHAR" )
+  field( INPC, "0" )
+  field( FTD, "UCHAR" )
+  field( INPD, "127" )
+
+  field( FTE, "SHORT" )
+  field( INPE, "-32768" )
+  field( FTF, "SHORT" )
+  field( INPF, "32767" )
+
+  field( FTG, "USHORT" )
+  field( INPG, "0" )
+  field( FTH, "USHORT" )
+  field( INPH, "65535" )
+
+  field( FTI, "LONG" )
+  field( INPI,  "-2147483648" )
+  field( FTJ, "LONG" )
+  field( INPJ,  "2147483647" )
+}
+
+record( aSub, "wica:test:scalar:reals" ) {
+  field( FTA, "ULONG" )
+  field( INPA,  "0" )
+  field( FTB, "ULONG" )
+  field( INPB,  "4294967295" )
+
+  field( FTC, "FLOAT" )
+  field( INPC, "1234.5678" )
+  field( FTD, "FLOAT" )
+  field( INPD, "1234.5678" )
+
+  field( FTE, "DOUBLE" )
+  field( INPE, "123456789.12345678" )
+  field( FTF, "DOUBLE" )
+  field( INPF, "123456789.12345678" )
+}
+
+record( aSub, "wica:test:array:other" ) {
+ field( FTA, "STRING" )
+ field( NOA,  "2" )
+ field( NEA,  "2" )
+ field( FTB, "ENUM" )
+ field( NOB,  "2" )
+ field( NEB,  "2" )
+ field( FTC, "CHAR" )
+ field( NOC,  "2" )
+ field( NEC,  "2" )
+ field( FTD, "UCHAR" )
+ field( NOD,  "2" )
+ field( NED,  "2" )
+ field( FTE, "SHORT" )
+ field( NOE,  "2" )
+ field( NEE,  "2" )
+ field( FTF, "USHORT" )
+ field( NOF,  "2" )
+ field( NEF,  "2" )
+ field( FTG, "LONG" )
+ field( NOG,  "2" )
+ field( NEG,  "2" )
+ field( FTG, "LONG" )
+ field( NOG,  "2" )
+ field( NEG,  "2" )
+ field( FTH, "ULONG" )
+ field( NOH,  "2" )
+ field( NEH,  "2" )
+ field( FTI, "FLOAT" )
+ field( NOI,  "2" )
+ field( NEI,  "2" )
+ field( FTJ, "DOUBLE" )
+ field( NOJ,  "2" )
+ field( NEJ,  "2" )
+}
+
+record(waveform, wica:test:array:string1) {
+  field( FTVL, "STRING")
+  field( NELM, "3")
+  field( INP, [ "abc", "def", "ghi" ] )
+}
+
+record(waveform, wica:test:array:string2) {
+  field( FTVL, "STRING")
+  field( NELM, "2")
+  field( INP, [ "Element 0", "Element 1" ] )
+}
+
+record(waveform, wica:test:array:enum1) {
+  field( FTVL, "ENUM")
+  field( NELM, "2")
+  field( INP, [] )
+}
+
+record(waveform, wica:test:array:enum2) {
+  field( FTVL, "ENUM")
+  field( NELM, "2")
+  field( INP, [] )
+}
+
+record(waveform, wica:test:array:char1) {
+  field( FTVL, "CHAR")
+  field( NELM, "2")
+  field( INP, [ -128, 127] )
+}
+
+record(waveform, wica:test:array:char2) {
+  field( FTVL, "CHAR")
+  field( NELM, "2")
+  field( INP, [ 10,11 ] )
+}
+
+record(waveform, wica:test:array:uchar1) {
+  field( FTVL, "UCHAR")
+  field( NELM, "2")
+  field( INP, [ 0, 127] )
+}
+
+record(waveform, wica:test:array:uchar2) {
+  field( FTVL, "UCHAR")
+  field( NELM, "2")
+  field( INP, [ 100, 101 ] )
+}
+
+record(waveform, wica:test:array:short1) {
+  field( FTVL, "SHORT")
+  field( NELM, "2")
+  field( INP, [ -32768, 32767] )
+}
+
+record(waveform, wica:test:array:short2) {
+  field( FTVL, "SHORT")
+  field( NELM, "2")
+  field( INP, [ 10911, 10912 ] )
+}
+
+record(waveform, wica:test:array:ushort1) {
+  field( FTVL, "USHORT")
+  field( NELM, "2")
+  field( INP, [ 0, 65535] )
+}
+
+record(waveform, wica:test:array:ushort2) {
+  field( FTVL, "USHORT")
+  field( NELM, "2")
+  field( INP, [ 60000, 70000 ] )
+}
+
+record(waveform, wica:test:array:long1) {
+  field( FTVL, "LONG")
+  field( NELM, "2")
+  field( INP, [ -2147483648, 2147483647] )
+}
+
+record(waveform, wica:test:array:ulong1) {
+  field( FTVL, "ULONG")
+  field( NELM, "2")
+  field( INP, [ -5.78, 2.45] )
+}
+
+record(waveform, wica:test:array:ulong2) {
+  field( FTVL, "ULONG")
+  field( NELM, "2")
+  field( INP, [ 1066.1912, 1812.1815 ] )
+}
+
+record(waveform, wica:test:array:float1) {
+  field( FTVL, "FLOAT")
+  field( NELM, "2")
+  field( INP, [ -3.4E38, 3.4E38] )
+}
+
+record(waveform, wica:test:array:float2) {
+  field( FTVL, "FLOAT")
+  field( NELM, "2")
+  field( INP, [ 1812.29, 1815.63 ] )
+}
+
+record(waveform, wica:test:array:double1) {
+  field( FTVL, "DOUBLE")
+  field( NELM, "2")
+  field( PREC, "3")
+  field( INP, [ -9.999999E96, 9.999999E96] )
+}
+
+record(waveform, wica:test:array:double2) {
+  field( FTVL, "DOUBLE")
+  field( NELM, "2")
+  field( PREC, "6")
+  field( INP, [ 123.45678933, 1812.12345644 ] )
+}
