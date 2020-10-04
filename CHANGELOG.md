@@ -133,7 +133,12 @@ Test Status: Tests run: 349, Failures: 0, Errors: 0, Skipped: 9
 * [1.7.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.7.0) Released 2020-10-04.
  
   Main improvement was refactoring of support fopr EPICS types. Now properly handles scalar and array
-  DBR types associated with BYTE, FLOAT and SHORT.
+  DBR types associated with BYTE, FLOAT and SHORT. Amazingly none of the DB's supported at PSI so far
+  were using these types so the discovery that some of this was not working correctly comes late !
+  
+  The above change was triggered by investigation into use of Wica for streaming low bandwidth image
+  data. Thanks to Sarat Raj for the suggestion.
+  
   Refactored test database functionality, separating DB used for streaming ('counter.db'/'counter.html')
   from that used for verifying EPICS types ('types.db'/'types.html'). (Note: the 'types.db' only runs under
   EPICS 7 SoftIOC due to use of waveform initialisation feature).
