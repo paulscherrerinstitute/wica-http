@@ -139,17 +139,6 @@ class WicaChannelValueChangeDetectingFilter implements WicaChannelValueFilter
             }
             break;
 
-         case SHORT:
-            final short currentValueAsShort = ((WicaChannelValue.WicaChannelValueConnectedShort) currentValue).getValue();
-            final short previousValueAsShort = ((WicaChannelValue.WicaChannelValueConnectedShort) previousValue).getValue();
-            final int changeAsShort = currentValueAsShort - previousValueAsShort;
-            if ( Math.abs( changeAsShort) > deadband )
-            {
-               logger.trace("Change significant. Previous Value: {}, CurrentValue: {}, Change: {} units", previousValueAsShort, currentValueAsShort, changeAsShort );
-               return true;
-            }
-            break;
-
          case INTEGER:
            final int currentValueAsInteger = ((WicaChannelValue.WicaChannelValueConnectedInteger) currentValue).getValue();
            final int previousValueAsInteger = ((WicaChannelValue.WicaChannelValueConnectedInteger) previousValue).getValue();
