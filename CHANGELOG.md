@@ -130,4 +130,14 @@ Test Status: Tests run: 336, Failures: 0, Errors: 0, Skipped: 9
   
 Test Status: Tests run: 349, Failures: 0, Errors: 0, Skipped: 9  
  
+* [1.7.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.7.0) Released 2020-10-04.
+ 
+  * [Issue #42](https://github.com/paulscherrerinstitute/wica-http/issues/42) Add wica favicon icon.
+  * [Issue #43](https://github.com/paulscherrerinstitute/wica-http/issues/43) Create Wica HTTTP Release 1.6.0-rc1
+  * [Issue #44](https://github.com/paulscherrerinstitute/wica-http/issues/44) Add support for handling EPICS channels of DBR_SHORT data type.
+  * [Issue #45](https://github.com/paulscherrerinstitute/wica-http/issues/45) Further improvements to EPICS data type support.
+  * [Issue #46](https://github.com/paulscherrerinstitute/wica-http/issues/46) Provide test database for verifying transport of all EPICS types.
+  * [Issue #47](https://github.com/paulscherrerinstitute/wica-http/issues/47) Create Wica HTTTP Release 1.7.0.
+      
+Test Status: Tests run: 349, Failures: 0, Errors: 0, Skipped: 9  
  
