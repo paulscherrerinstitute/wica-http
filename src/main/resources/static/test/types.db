@@ -177,6 +177,12 @@ record(waveform, wica:test:array:long1) {
   field( INP, [ -2147483648, 2147483647] )
 }
 
+record(waveform, wica:test:array:long2) {
+  field( FTVL, "LONG")
+  field( NELM, "2")
+  field( INP, [ 2147483646, 2147483647] )
+}
+
 record(waveform, wica:test:array:ulong1) {
   field( FTVL, "ULONG")
   field( NELM, "2")
