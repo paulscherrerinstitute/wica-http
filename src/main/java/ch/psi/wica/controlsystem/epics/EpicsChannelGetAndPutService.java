@@ -39,7 +39,7 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(EpicsChannelMonitoringService.class );
+   private final Logger logger = LoggerFactory.getLogger( EpicsChannelGetAndPutService.class );
    private final Context caContext;
    private final EpicsChannelValueGetter epicsChannelValueGetter;
 
