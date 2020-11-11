@@ -117,6 +117,12 @@ public class WicaStreamMonitoredValueCollectorService
       final WicaChannel wicaChannel = event.getWicaChannel();
       final WicaChannelValue latestPolledValue = event.getWicaChannelValue();
 
+      if ( ! wicaChannel.getProperties().getDataAcquisitionMode().doesMonitoring() )
+      {
+         logger.info( "Polled channel: '{}' does not support monitoring. No need to perform monitor validation.", wicaChannel.getNameAsString() );
+         return;
+      }
+
       logger.info( "Validating latest monitored value for channel: '{}'.", wicaChannel.getNameAsString() );
 
       final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
