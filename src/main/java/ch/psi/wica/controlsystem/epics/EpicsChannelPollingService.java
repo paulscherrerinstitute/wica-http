@@ -110,8 +110,15 @@ public class EpicsChannelPollingService implements AutoCloseable
 
       final var scheduledFuture = executor.scheduleAtFixedRate(() -> {
 
-         final var wicaChannelValue = doPoll( wicaChannelName );
-         epicsEventPublisher.publishPolledValueUpdated( wicaChannel, wicaChannelValue );
+         try
+         {
+            final var wicaChannelValue = doPoll( wicaChannelName );
+            epicsEventPublisher.publishPolledValueUpdated( wicaChannel, wicaChannelValue );
+         }
+         catch( Exception ex )
+         {
+            logger.error( "{} - polling generated exception '{}'.", ex.toString() );
+         }
 
       }, pollingIntervalInMillis, pollingIntervalInMillis, TimeUnit.MILLISECONDS );
 
