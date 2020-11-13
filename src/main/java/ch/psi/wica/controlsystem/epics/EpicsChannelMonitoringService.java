@@ -275,7 +275,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       // Dispose of any references that are no longer required
       logger.debug( "'{}' - disposing resources...", this );
 
-      // Note: closing the context disposes of any open channels and monitors
+      // Note: closing the context automatically disposes of any open channels and monitors.
       caContext.close();
       monitors.clear();
       channels.clear();
