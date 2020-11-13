@@ -118,7 +118,7 @@ class WicaChannelPutController
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
 
       // Handle failure of the command.
-      if ( ! epicsChannelGetAndPutService.put( EpicsChannelName.of( channelName ), channelValue, timeoutInMillis, TimeUnit.MILLISECONDS ) )
+      if ( ! epicsChannelGetAndPutService.putChannelValue( EpicsChannelName.of( channelName ), channelValue, timeoutInMillis, TimeUnit.MILLISECONDS ) )
       {
          final String errorMessage = "a timeout occurred (channel = '" + channelName + "', value = '" + channelValue + "').";
          logger.warn( "PUT: Rejected request because {}", errorMessage  );
