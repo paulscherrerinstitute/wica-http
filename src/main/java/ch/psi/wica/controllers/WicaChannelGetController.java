@@ -137,7 +137,7 @@ class WicaChannelGetController
       numericScale = numericScale == null ? defaultNumericScale : numericScale;
       fieldsOfInterest = fieldsOfInterest == null ? defaultFieldsOfInterest : fieldsOfInterest;
 
-      final var wicaChannelValue = epicsChannelGetAndPutService.get( EpicsChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
+      final var wicaChannelValue = epicsChannelGetAndPutService.getChannelValue( EpicsChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
       final var fieldsOfInterestSet = Set.of( fieldsOfInterest.split( ";" ) );
 
       final var serializer = WicaChannelDataSerializerBuilder
