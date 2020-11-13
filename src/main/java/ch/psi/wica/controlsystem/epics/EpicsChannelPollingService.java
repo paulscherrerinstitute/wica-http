@@ -113,7 +113,7 @@ public class EpicsChannelPollingService implements AutoCloseable
       final int pollingIntervalInMillis = wicaChannel.getProperties().getPollingIntervalInMillis();
       logger.trace("'{}' - starting to poll with periodicity of {} milliseconds.", wicaChannelName, pollingIntervalInMillis );
 
-      final AtomicReference<WicaChannelValue> previousChannelValue = new AtomicReference<>();
+      final AtomicReference<WicaChannelValue> previousChannelValue = new AtomicReference<>( WicaChannelValue.createChannelValueDisconnected() );
       final var scheduledFuture = executor.scheduleAtFixedRate(() -> {
 
 
