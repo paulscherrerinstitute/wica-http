@@ -56,8 +56,12 @@ public class WicaChannelPollMonitorService
    {
       Validate.notNull( wicaChannelStartPollingEvent );
 
-      // Note: this service only handles the indirect, local, polling of a monitor which should
-      // already have been established on the remote IOC. All other requests will be  silently ignored.
+      // Note:
+      // This service only handles the indirect, local, polling of a monitor which should
+      // already have been established on the remote IOC as part of the stream setup.
+      // All other requests will be  silently ignored.
+      // This poller type does not need to obtain metadata for the channel since this
+      // is the responsibility of the WicaStreamMonitoredValueRequesterService.
       final WicaChannel wicaChannel = wicaChannelStartPollingEvent.get();
       final WicaDataAcquisitionMode wicaDataAcquisitionMode = wicaChannel.getProperties().getDataAcquisitionMode();
       if ( wicaDataAcquisitionMode.doesMonitorPolling() )
