@@ -146,7 +146,7 @@ public class WicaStreamPolledValueRequesterService
 
          // Now start polling
          applicationEventPublisher.publishEvent( new WicaChannelStartPollingEvent( wicaChannel ) );
-         pollerInterestMap.put(storageKey, 1 );
+         pollerInterestMap.put( storageKey, 1 );
       }
    }
 
