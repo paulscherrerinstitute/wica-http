@@ -6,6 +6,7 @@ package ch.psi.wica.controlsystem.epics;
 
 import ch.psi.wica.model.app.StatisticsCollectionService;
 import ch.psi.wica.model.channel.WicaChannel;
+import ch.psi.wica.model.channel.WicaChannelMetadata;
 import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.ThreadSafe;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -89,7 +91,10 @@ public class EpicsChannelPollingService implements AutoCloseable
     * If the channel is offline the poll operation will result in a timeout
     * and the returned value will indicate that the channel is disconnected.
     *
-    * It is the responsibility of the caller to ensure that polling 
+    * The first time the channel comes online (for example on startup or after
+    * any communications outage) the EPICS Channel Metadata is obtained and
+    * published using the configured EPICS Event Publisher.
+    *
     * @param wicaChannel the channel to be polled.
     * @throws NullPointerException if the 'wicaChannel' argument was null.
     * @throws IllegalStateException if this polling service was previously closed.
@@ -108,16 +113,35 @@ public class EpicsChannelPollingService implements AutoCloseable
       final int pollingIntervalInMillis = wicaChannel.getProperties().getPollingIntervalInMillis();
       logger.trace("'{}' - starting to poll with periodicity of {} milliseconds.", wicaChannelName, pollingIntervalInMillis );
 
+      final AtomicReference<WicaChannelValue> previousChannelValue = new AtomicReference<>();
       final var scheduledFuture = executor.scheduleAtFixedRate(() -> {
 
+
+         // Get and publish the current value of the channel
+         final WicaChannelValue currentChannelValue;
          try
          {
-            final var wicaChannelValue = doPoll( wicaChannelName );
-            epicsEventPublisher.publishPolledValueUpdated( wicaChannel, wicaChannelValue );
+            currentChannelValue = getChannelValue( wicaChannelName );
+            epicsEventPublisher.publishPolledValueUpdated( wicaChannel, currentChannelValue );
          }
          catch( Exception ex )
          {
-            logger.error( "{} - polling generated exception '{}'.", ex.toString() );
+            logger.error( "{} - polling generated exception '{}' during getChannelValue operation.", wicaChannelName, ex.toString() );
+            return;
+         }
+
+         // If the channel has just entered the online state get and publish the channel's metadata.
+         if ( onlineTransitionDetected( currentChannelValue, previousChannelValue.getAndSet( currentChannelValue ) ) )
+         {
+            try
+            {
+               final WicaChannelMetadata wicaChannelMetadata = this.getChannelMetadata( wicaChannelName );
+               epicsEventPublisher.publishMetadataChanged( wicaChannel, wicaChannelMetadata );
+            }
+            catch( Exception ex )
+            {
+               logger.error( "{} - polling generated exception '{}' during getChannelMetadata operation.", wicaChannelName, ex.toString() );
+            }
          }
 
       }, pollingIntervalInMillis, pollingIntervalInMillis, TimeUnit.MILLISECONDS );
@@ -181,15 +205,29 @@ public class EpicsChannelPollingService implements AutoCloseable
       return statisticsCollector;
    }
 
-
 /*- Private methods ----------------------------------------------------------*/
 
-   private WicaChannelValue doPoll( WicaChannelName wicaChannelName )
+   private boolean onlineTransitionDetected( WicaChannelValue currentValue, WicaChannelValue previousValue )
+   {
+      Validate.notNull( currentValue );
+      Validate.notNull( previousValue );
+
+      return currentValue.isConnected() && ( ! previousValue.isConnected() );
+   }
+
+   private WicaChannelMetadata getChannelMetadata( WicaChannelName wicaChannelName )
+   {
+      final EpicsChannelName epicsChannelName = EpicsChannelName.of( wicaChannelName.getControlSystemName() );
+
+      return epicsChannelGetAndPutService.getChannelMetadata( epicsChannelName, timeoutInMillis, TimeUnit.MILLISECONDS );
+   }
+
+   private WicaChannelValue getChannelValue( WicaChannelName wicaChannelName )
    {
       final EpicsChannelName epicsChannelName = EpicsChannelName.of( wicaChannelName.getControlSystemName() );
       statisticsCollector.incrementPollCycleCount();
 
-      var result = epicsChannelGetAndPutService.get( epicsChannelName, timeoutInMillis, TimeUnit.MILLISECONDS );
+      var result = epicsChannelGetAndPutService.getChannelValue( epicsChannelName, timeoutInMillis, TimeUnit.MILLISECONDS );
       statisticsCollector.updatePollingResult( result.isConnected() );
       return result;
    }
