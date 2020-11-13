@@ -51,8 +51,7 @@ public class WicaStreamServerSentEventPublisher
                                        WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService,
                                        WicaStreamPolledValueCollectorService wicaStreamPolledValueCollectorService,
                                        WicaChannelMetadataMapSerializerService wicaChannelMetadataMapSerializerService,
-                                       WicaChannelValueMapSerializerService wicaChannelValueMapSerializerService
-   )
+                                       WicaChannelValueMapSerializerService wicaChannelValueMapSerializerService )
    {
       this.wicaStream = Validate.notNull( wicaStream );
       this.wicaStreamMetadataCollectorService = Validate.notNull( wicaStreamMetadataCollectorService );
@@ -153,9 +152,10 @@ public class WicaStreamServerSentEventPublisher
     *
     * This flux runs periodically at a rate determined by the properties of the stream.
     *
-    * New subscribers to this flux receive firstly the latest received metadata for
-    * all channels, then subsequently only updates for those channels whose metadata
-    * has changed.
+    * New subscribers to the flux receive firstly a Server-Sent-Event (SSE) message
+    * containing the latest received metadata for all channels, then subsequent SSE messages
+    * will be sent out periodically and will contain only only information for those channels
+    * which have received new metadata information since the previous message.
     *
     * @return the flux.
     */
@@ -187,9 +187,10 @@ public class WicaStreamServerSentEventPublisher
     *
     * This flux runs periodically at a rate determined by the properties of the stream.
     *
-    * New subscribers to this flux receive firstly the latest received value for all
-    * monitored channels, then subsequently only updates for those channels whose
-    * values have changed.
+    * New subscribers to the flux receive first a Server-Sent-Event (SSE) message
+    * containing the latest received information for all monitored channels, then subsequent
+    * SSE messages will be sent out periodically and will contain only only information
+    * for those channels which have received new information since the previous message.
     *
     * @return the flux.
     */
@@ -221,9 +222,10 @@ public class WicaStreamServerSentEventPublisher
     *
     * This flux runs periodically at a rate determined by the properties of the stream.
     *
-    * New subscribers to this flux receive first the latest received value for all
-    * polled channels, then subsequently only updates for those channels whose
-    * values have changed.
+    * New subscribers to the flux receive first a Server-Sent-Event (SSE) message
+    * containing the latest received information for all polled channels, then subsequent
+    * SSE messages will be sent out periodically and will contain only only information
+    * for those channels which have received new information since the previous message.
     *
     * @return the flux.
     */
