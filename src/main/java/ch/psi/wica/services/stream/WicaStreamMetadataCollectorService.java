@@ -91,10 +91,9 @@ public class WicaStreamMetadataCollectorService
          logger.trace( "Received METADATA update event: {} ", wicaChannelMetadataUpdateEvent);
 
          final WicaChannel wicaChannel = wicaChannelMetadataUpdateEvent.getWicaChannel();
-         final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey(wicaChannel );
+         final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
          final WicaChannelMetadata wicaChannelMetadata = wicaChannelMetadataUpdateEvent.getWicaChannelMetadata();
          wicaStreamMetadataDataBuffer.saveDataPoint( wicaDataBufferStorageKey, wicaChannelMetadata );
-
       }
    }
 
