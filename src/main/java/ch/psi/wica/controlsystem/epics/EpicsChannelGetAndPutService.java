@@ -106,6 +106,7 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
 
       // Create a new autocloseable channel.
       final String channelName = epicsChannelName.asString();
+      logger.info( "'{}' - Getting channel metadata...", channelName );
       logger.info( "'{}' - Creating channel...", channelName );
       try( Channel<Object> caChannel = caContext.createChannel(channelName, Object.class ) )
       {
@@ -115,7 +116,9 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
          logger.info( "'{}' - OK: channel connected.", channelName );
 
          logger.info( "'{}' - Getting channel metadata...", channelName );
-         return epicsChannelMetadataGetter.get( caChannel );
+         final var result = epicsChannelMetadataGetter.get( caChannel );
+         logger.info( "'{}' - OK: channel metadata obtained.", channelName );
+         return result;
       }
       catch ( Throwable ex )
       {
@@ -147,6 +150,7 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
 
       // Create a new autocloseable channel.
       final String channelName = epicsChannelName.asString();
+      logger.info( "'{}' - Getting channel value...", channelName );
       logger.info( "'{}' - Creating channel...", channelName );
       try( Channel<Object> caChannel = caContext.createChannel(channelName, Object.class ) )
       {
@@ -155,7 +159,9 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
          caChannel.connectAsync().get( timeout, timeUnit );
          logger.info( "'{}' - OK: channel connected.", channelName );
          logger.info( "'{}' - Getting channel value...", channelName );
-         return epicsChannelValueGetter.get( caChannel );
+         final var result = epicsChannelValueGetter.get( caChannel );
+         logger.info( "'{}' - OK: channel value obtained.", channelName );
+         return result;
       }
       catch ( Throwable ex )
       {
@@ -189,6 +195,7 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
 
       // Create a new autocloseable channel.
       final String channelName = epicsChannelName.asString();
+      logger.info( "'{}' - Setting channel value to '{}' ...", channelName, channelValue );
       logger.info( "'{}' - Creating channel...", channelName );
       try( Channel<String> caChannel = caContext.createChannel(channelName, String.class ) )
       {
