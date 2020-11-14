@@ -204,10 +204,12 @@ public class WicaStreamServerSentEventPublisher
          .map(l -> {
             logger.trace("channel-value-monitor flux with id: '{}' is publishing new SSE...", wicaStreamId );
             final var timeOfLastUpdate = lastUpdateTime.getAndSet( LocalDateTime.now() );
-            final var map = timeOfLastUpdate.equals( LocalDateTime.MIN  ) ?
-               wicaStreamMonitoredValueCollectorService.getLatest( wicaStream ) :
+            return timeOfLastUpdate.equals( LocalDateTime.MIN  ) ? wicaStreamMonitoredValueCollectorService.getLatest( wicaStream ) :
                wicaStreamMonitoredValueCollectorService.get( wicaStream, timeOfLastUpdate );
-            final var jsonServerSentEventString = wicaChannelValueMapSerializerService.serialize(map );
+         } )
+         .filter( (map) -> map.keySet().size() > 0 )
+         .map( (map) -> {
+            final var jsonServerSentEventString = wicaChannelValueMapSerializerService.serialize( map );
             return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_MONITORED_VALUES.build(wicaStreamId, jsonServerSentEventString );
          } )
          .doOnComplete( () -> logger.warn( "channel-value-monitor flux with id: '{}' completed.", wicaStreamId ))
@@ -240,12 +242,14 @@ public class WicaStreamServerSentEventPublisher
          .map(l -> {
             logger.trace("channel-value-poll flux with id: '{}' is publishing new SSE...", wicaStreamId );
             final var timeOfLastUpdate = lastUpdateTime.getAndSet( LocalDateTime.now() );
-            final var map = timeOfLastUpdate.equals( LocalDateTime.MIN  ) ?
-               wicaStreamPolledValueCollectorService.getLatest( wicaStream ) :
+            return timeOfLastUpdate.equals( LocalDateTime.MIN  ) ? wicaStreamPolledValueCollectorService.getLatest( wicaStream ) :
                wicaStreamPolledValueCollectorService.get( wicaStream, timeOfLastUpdate );
+         } )
+         .filter( (map) -> map.keySet().size() > 0 )
+         .map( (map) -> {
             final var jsonServerSentEventString = wicaChannelValueMapSerializerService.serialize( map );
             return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_POLLED_VALUES.build(wicaStreamId, jsonServerSentEventString );
-         } )
+         })
          .doOnComplete( () -> logger.warn( "channel-value-poll flux with id: '{}' completed.", wicaStreamId ))
          .doOnCancel( () -> logger.warn("channel-value-poll flux with id: '{}' was cancelled.", wicaStreamId ))
          .doOnError( (e) -> logger.warn( "channel-value-poll flux with id: '{}' had error.", wicaStreamId, e ));
