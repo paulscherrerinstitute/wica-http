@@ -204,10 +204,10 @@ public class WicaStreamServerSentEventPublisher
          .map(l -> {
             logger.trace("channel-value-monitor flux with id: '{}' is publishing new SSE...", wicaStreamId );
             final var timeOfLastUpdate = lastUpdateTime.getAndSet( LocalDateTime.now() );
-            return timeOfLastUpdate.equals( LocalDateTime.MIN  ) ? wicaStreamMonitoredValueCollectorService.getLatest( wicaStream ) :
+            return timeOfLastUpdate.equals( LocalDateTime.MIN ) ? wicaStreamMonitoredValueCollectorService.getLatest( wicaStream ) :
                wicaStreamMonitoredValueCollectorService.get( wicaStream, timeOfLastUpdate );
          } )
-         .filter( (map) -> map.keySet().size() > 0 )
+         .filter( (map) -> ( !wicaStreamProperties.getQuietMode() ) || ( map.keySet().size() > 0 ) )
          .map( (map) -> {
             final var jsonServerSentEventString = wicaChannelValueMapSerializerService.serialize( map );
             return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_MONITORED_VALUES.build(wicaStreamId, jsonServerSentEventString );
@@ -245,7 +245,7 @@ public class WicaStreamServerSentEventPublisher
             return timeOfLastUpdate.equals( LocalDateTime.MIN  ) ? wicaStreamPolledValueCollectorService.getLatest( wicaStream ) :
                wicaStreamPolledValueCollectorService.get( wicaStream, timeOfLastUpdate );
          } )
-         .filter( (map) -> map.keySet().size() > 0 )
+            .filter( (map) -> ( !wicaStreamProperties.getQuietMode() ) || ( map.keySet().size() > 0 ) )
          .map( (map) -> {
             final var jsonServerSentEventString = wicaChannelValueMapSerializerService.serialize( map );
             return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_POLLED_VALUES.build(wicaStreamId, jsonServerSentEventString );

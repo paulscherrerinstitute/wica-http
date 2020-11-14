@@ -35,6 +35,7 @@ public class WicaStreamProperties
    private final WicaDataAcquisitionMode dataAcquisitionMode;
    private final WicaFilterType filterType ;
 
+   private final Boolean quietMode;
    private final Integer heartbeatFluxIntervalInMillis;
    private final Integer metadataFluxIntervalInMillis;
    private final Integer monitoredValueFluxIntervalInMillis;
@@ -54,6 +55,7 @@ public class WicaStreamProperties
 
    public WicaStreamProperties()
    {
+      this.quietMode                          = WicaStreamPropertiesDefaults.DEFAULT_QUIET_MODE;
       this.heartbeatFluxIntervalInMillis      = WicaStreamPropertiesDefaults.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS;
       this.metadataFluxIntervalInMillis       = WicaStreamPropertiesDefaults.DEFAULT_METADATA_FLUX_INTERVAL_IN_MILLIS;
       this.monitoredValueFluxIntervalInMillis = WicaStreamPropertiesDefaults.DEFAULT_MONITORED_VALUE_FLUX_INTERVAL_IN_MILLIS;
@@ -70,9 +72,7 @@ public class WicaStreamProperties
       this.fieldsOfInterest                   = WicaStreamPropertiesDefaults.DEFAULT_FIELDS_OF_INTEREST;
    }
 
-   // Support for deprecated property POLLRATIO. In the future this constructor can go.
-   // WARNING: Signature here must match EXACTLY with that in WicaStreamPropertiesDeserializationMixin.
-   public WicaStreamProperties( Integer pollingRatio, // deprecated
+   public WicaStreamProperties( Boolean quietMode,
                                 Integer heartbeatFluxIntervalInMillis,
                                 Integer metadataFluxIntervalInMillis,
                                 Integer monitoredValueFluxIntervalInMillis,
@@ -88,50 +88,7 @@ public class WicaStreamProperties
                                 Integer filterSamplingIntervalInMillis,
                                 Double filterDeadband )
    {
-      this.heartbeatFluxIntervalInMillis      = heartbeatFluxIntervalInMillis;
-      this.metadataFluxIntervalInMillis       = metadataFluxIntervalInMillis;
-      this.monitoredValueFluxIntervalInMillis = monitoredValueFluxIntervalInMillis;
-      this.polledValueFluxIntervalInMillis    = polledValueFluxIntervalInMillis;
-      this.dataAcquisitionMode                = dataAcquisitionMode;
-      this.pollingIntervalInMillis            = extractPollingInterval( pollingIntervalInMillis, pollingRatio );
-      this.numericPrecision                   = numericPrecision;
-      this.filterType                         = filterType;
-      this.filterNumSamples                   = filterNumSamples;
-      this.filterNumSamplesInAverage          = filterNumSamplesInAverage;
-      this.filterCycleLength                  = filterCycleLength;
-      this.filterSamplingIntervalInMillis     = filterSamplingIntervalInMillis;
-      this.filterDeadband                     = filterDeadband;
-      this.fieldsOfInterest                   = fieldsOfInterest;
-   }
-
-   // Support for deprecated property pollratio. In the future this method can go.
-   private Integer extractPollingInterval( Integer pollingIntervalInMillis, Integer pollingRatio )
-   {
-      if ( (pollingIntervalInMillis == null) && (pollingRatio != null) )
-      {
-         return pollingRatio * polledValueFluxIntervalInMillis;
-      }
-      else
-      {
-         return pollingIntervalInMillis;
-      }
-   }
-
-   public WicaStreamProperties( Integer heartbeatFluxIntervalInMillis,
-                                Integer metadataFluxIntervalInMillis,
-                                Integer monitoredValueFluxIntervalInMillis,
-                                Integer polledValueFluxIntervalInMillis,
-                                WicaDataAcquisitionMode dataAcquisitionMode,
-                                Integer pollingIntervalInMillis,
-                                String fieldsOfInterest,
-                                Integer numericPrecision,
-                                WicaFilterType filterType,
-                                Integer filterNumSamples,
-                                Integer filterNumSamplesInAverage,
-                                Integer filterCycleLength,
-                                Integer filterSamplingIntervalInMillis,
-                                Double filterDeadband )
-   {
+      this.quietMode                          = quietMode;
       this.heartbeatFluxIntervalInMillis      = heartbeatFluxIntervalInMillis;
       this.metadataFluxIntervalInMillis       = metadataFluxIntervalInMillis;
       this.monitoredValueFluxIntervalInMillis = monitoredValueFluxIntervalInMillis;
@@ -151,6 +108,16 @@ public class WicaStreamProperties
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
+
+   public Optional<Boolean> getOptionalQuietMode()
+   {
+      return Optional.ofNullable( quietMode );
+   }
+
+   public boolean getQuietMode()
+   {
+      return getOptionalQuietMode().orElseThrow( () -> new IllegalArgumentException( "The quietMode setting for this stream was not specified." ) );
+   }
 
    public Optional<Integer> getOptionalHeartbeatFluxIntervalInMillis()
    {
@@ -301,24 +268,25 @@ public class WicaStreamProperties
       WicaStreamProperties that = (WicaStreamProperties) o;
       return dataAcquisitionMode == that.dataAcquisitionMode &&
             filterType == that.filterType &&
-            Objects.equals(heartbeatFluxIntervalInMillis, that.heartbeatFluxIntervalInMillis) &&
-            Objects.equals(metadataFluxIntervalInMillis, that.metadataFluxIntervalInMillis) &&
-            Objects.equals(monitoredValueFluxIntervalInMillis, that.monitoredValueFluxIntervalInMillis) &&
-            Objects.equals(polledValueFluxIntervalInMillis, that.polledValueFluxIntervalInMillis) &&
-            Objects.equals(pollingIntervalInMillis, that.pollingIntervalInMillis) &&
-            Objects.equals(numericPrecision, that.numericPrecision) &&
-            Objects.equals(filterNumSamples, that.filterNumSamples) &&
-            Objects.equals(filterNumSamplesInAverage, that.filterNumSamplesInAverage) &&
-            Objects.equals(filterCycleLength, that.filterCycleLength) &&
-            Objects.equals(filterSamplingIntervalInMillis, that.filterSamplingIntervalInMillis) &&
-            Objects.equals(filterDeadband, that.filterDeadband) &&
-            Objects.equals(fieldsOfInterest, that.fieldsOfInterest);
+            Objects.equals( quietMode, that.quietMode) &&
+            Objects.equals( heartbeatFluxIntervalInMillis, that.heartbeatFluxIntervalInMillis) &&
+            Objects.equals( metadataFluxIntervalInMillis, that.metadataFluxIntervalInMillis) &&
+            Objects.equals( monitoredValueFluxIntervalInMillis, that.monitoredValueFluxIntervalInMillis) &&
+            Objects.equals( polledValueFluxIntervalInMillis, that.polledValueFluxIntervalInMillis) &&
+            Objects.equals( pollingIntervalInMillis, that.pollingIntervalInMillis) &&
+            Objects.equals( numericPrecision, that.numericPrecision) &&
+            Objects.equals( filterNumSamples, that.filterNumSamples) &&
+            Objects.equals( filterNumSamplesInAverage, that.filterNumSamplesInAverage) &&
+            Objects.equals( filterCycleLength, that.filterCycleLength) &&
+            Objects.equals( filterSamplingIntervalInMillis, that.filterSamplingIntervalInMillis) &&
+            Objects.equals( filterDeadband, that.filterDeadband) &&
+            Objects.equals( fieldsOfInterest, that.fieldsOfInterest);
    }
 
    @Override
    public int hashCode()
    {
-      return Objects.hash(dataAcquisitionMode, filterType, heartbeatFluxIntervalInMillis, metadataFluxIntervalInMillis, monitoredValueFluxIntervalInMillis, polledValueFluxIntervalInMillis, pollingIntervalInMillis, numericPrecision, filterNumSamples, filterCycleLength, filterSamplingIntervalInMillis, filterDeadband, fieldsOfInterest);
+      return Objects.hash( quietMode, dataAcquisitionMode, filterType, heartbeatFluxIntervalInMillis, metadataFluxIntervalInMillis, monitoredValueFluxIntervalInMillis, polledValueFluxIntervalInMillis, pollingIntervalInMillis, numericPrecision, filterNumSamples, filterCycleLength, filterSamplingIntervalInMillis, filterDeadband, fieldsOfInterest);
    }
 
 /*- Private methods ----------------------------------------------------------*/

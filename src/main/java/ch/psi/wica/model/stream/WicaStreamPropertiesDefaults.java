@@ -21,6 +21,12 @@ public class WicaStreamPropertiesDefaults
 /*- Public attributes --------------------------------------------------------*/
 
    /**
+    * Default value for whether the stream sends SSE messages for
+    * polled and monitored values even when the payload is empty.
+    */
+   public static final boolean DEFAULT_QUIET_MODE = false;
+
+   /**
     * Default value for the heartbeat flux interval that will be assigned if
     * the property is not explicitly set in the stream configuration.
     */

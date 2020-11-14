@@ -40,7 +40,8 @@ class WicaStreamTest
    void testFullConstructor()
    {
       final var testId = WicaStreamId.createNext();
-      final var testProps = new WicaStreamProperties(20,
+      final var testProps = new WicaStreamProperties(false,
+                                                     20,
                                                      21,
                                                      22,
                                                      23,

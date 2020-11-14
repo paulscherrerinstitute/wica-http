@@ -19,6 +19,7 @@ public class WicaStreamPropertiesBuilder
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
+   private Boolean quietMode;
    private Integer heartbeatFluxIntervalInMillis;
    private Integer metadataFluxIntervalInMillis;
    private Integer monitoredValueFluxIntervalInMillis;
@@ -53,6 +54,7 @@ public class WicaStreamPropertiesBuilder
 
    public WicaStreamPropertiesBuilder withDefaultProperties()
    {
+      quietMode = WicaStreamPropertiesDefaults.DEFAULT_QUIET_MODE;
       heartbeatFluxIntervalInMillis = WicaStreamPropertiesDefaults.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS;
       metadataFluxIntervalInMillis = WicaStreamPropertiesDefaults.DEFAULT_METADATA_FLUX_INTERVAL_IN_MILLIS;
       monitoredValueFluxIntervalInMillis = WicaStreamPropertiesDefaults.DEFAULT_MONITORED_VALUE_FLUX_INTERVAL_IN_MILLIS;
@@ -74,6 +76,7 @@ public class WicaStreamPropertiesBuilder
    {
       Validate.notNull( wicaStreamProperties, "The 'wicaStreamProperties' argument was null." );
 
+      wicaStreamProperties.getOptionalQuietMode().ifPresent(                           o -> quietMode = o                          );
       wicaStreamProperties.getOptionalHeartbeatFluxIntervalInMillis().ifPresent(       o -> heartbeatFluxIntervalInMillis = o      );
       wicaStreamProperties.getOptionalMetadataFluxIntervalInMillis().ifPresent(        o -> metadataFluxIntervalInMillis = o       );
       wicaStreamProperties.getOptionalMonitoredValueFluxIntervalInMillis().ifPresent(  o -> monitoredValueFluxIntervalInMillis = o );
@@ -88,6 +91,12 @@ public class WicaStreamPropertiesBuilder
       wicaStreamProperties.getOptionalFilterCycleLength().ifPresent(                   o -> filterCycleLength = o                  );
       wicaStreamProperties.getOptionalFilterSamplingIntervalInMillis().ifPresent(      o -> filterSamplingIntervalInMillis = o     );
       wicaStreamProperties.getOptionalFilterDeadband().ifPresent(                      o -> filterDeadband = o                     );
+      return this;
+   }
+
+   public WicaStreamPropertiesBuilder withQuietMode( Boolean quietMode )
+   {
+      this.quietMode = quietMode;
       return this;
    }
 
@@ -177,7 +186,8 @@ public class WicaStreamPropertiesBuilder
 
    public WicaStreamProperties build()
    {
-      return new WicaStreamProperties( heartbeatFluxIntervalInMillis,
+      return new WicaStreamProperties( quietMode,
+                                       heartbeatFluxIntervalInMillis,
                                        metadataFluxIntervalInMillis,
                                        monitoredValueFluxIntervalInMillis,
                                        polledValueFluxIntervalInMillis,

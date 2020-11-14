@@ -110,6 +110,7 @@ class WicaStreamServerSentEventPublisherTest
       atomicMetadataMap .set( req1MetadataMap );
 
       final WicaStreamProperties wicaStreamProperties = WicaStreamPropertiesBuilder.create()
+            .withQuietMode( true )
             .withMetadataFluxInterval( 200 )
             .withHeartbeatFluxInterval( 1400 )
             .withPolledValueFluxInterval( 500 )

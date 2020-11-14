@@ -50,7 +50,8 @@ class WicaStreamPropertiesTest
    @Test
    void testFullConstructorReturnsAssignedValues()
    {
-      final var objectUnderTest = new WicaStreamProperties(20,
+      final var objectUnderTest = new WicaStreamProperties(true,
+                                                           20,
                                                            21,
                                                            22,
                                                            23,
@@ -65,6 +66,7 @@ class WicaStreamPropertiesTest
                                                            16,
                                                            17.0 );
 
+      assertThat( objectUnderTest.getQuietMode(),                          is(true ) );
       assertThat( objectUnderTest.getHeartbeatFluxIntervalInMillis(),      is(20 ) );
       assertThat( objectUnderTest.getMetadataFluxIntervalInMillis(),       is(21 ) );
       assertThat( objectUnderTest.getMonitoredValueFluxIntervalInMillis(), is(22 ) );
@@ -114,7 +116,7 @@ class WicaStreamPropertiesTest
    @Test
    void testConstructorWithNullValues()
    {
-      final var objectUnderTest = new WicaStreamProperties(null, null,
+      final var objectUnderTest = new WicaStreamProperties(null, null, null,
                                                            null, null,
                                                            null, null, null,
                                                            null, null, null, null,

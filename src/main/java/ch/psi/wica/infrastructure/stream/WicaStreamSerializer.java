@@ -202,8 +202,7 @@ public class WicaStreamSerializer
    {
       // WARNING: Signature here must match EXACTLY with that in WicaStreamProperties otherwise deserialisation will fail.
       @JsonCreator
-      public WicaStreamPropertiesDeserializerMixin( @JsonProperty( "pollratio" ) Integer pollRatio, // deprecated property
-                                                    @JsonAlias   ( "heartbeat" )                    // deprecated name for hbflux
+      public WicaStreamPropertiesDeserializerMixin( @JsonProperty( "quietMode" ) Boolean quietMode,
                                                     @JsonProperty( "hbflux"    ) Integer heartbeatFluxIntervalInMillis,
                                                     @JsonProperty( "metaflux"  ) Integer metadataFluxIntervalInMillis,
                                                     @JsonProperty( "monflux"   ) Integer monitoredValueFluxIntervalInMillis,
