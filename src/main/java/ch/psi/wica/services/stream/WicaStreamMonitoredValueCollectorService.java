@@ -119,24 +119,24 @@ public class WicaStreamMonitoredValueCollectorService
 
       if ( ! wicaChannel.getProperties().getDataAcquisitionMode().doesMonitoring() )
       {
-         logger.info( "Polled channel: '{}' does not support monitoring. No need to perform monitor validation.", wicaChannel.getNameAsString() );
+         logger.trace( "Polled channel: '{}' does not support monitoring. No need to perform monitor validation.", wicaChannel.getNameAsString() );
          return;
       }
 
-      logger.info( "Validating latest monitored value for channel: '{}'.", wicaChannel.getNameAsString() );
+      logger.trace( "Validating latest monitored value for channel: '{}'.", wicaChannel.getNameAsString() );
 
       final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
       final WicaChannelValue latestMonitoredValue = wicaStreamMonitoredValueDataBuffer.getLatest( wicaDataBufferStorageKey );
 
       if ( ! latestPolledValue.isConnected() )
       {
-         logger.info( "Latest polled value for channel: '{}' shows the channel is not online, monitor validation suppressed.", wicaChannel.getNameAsString() );
+         logger.trace( "Latest polled value for channel: '{}' shows the channel is not online, monitor validation suppressed.", wicaChannel.getNameAsString() );
          return;
       }
 
       if ( ! latestMonitoredValue.isConnected() )
       {
-         logger.info( "Latest monitored value for channel: '{}' shows the channel is not online, monitor validation suppressed.", wicaChannel.getNameAsString() );
+         logger.trace( "Latest monitored value for channel: '{}' shows the channel is not online, monitor validation suppressed.", wicaChannel.getNameAsString() );
          return;
       }
 
