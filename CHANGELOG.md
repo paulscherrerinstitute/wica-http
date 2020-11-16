@@ -132,7 +132,7 @@ Test Status: Tests run: 349, Failures: 0, Errors: 0, Skipped: 9
  
 * [1.7.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.7.0) Released 2020-10-04.
  
-  Main improvement was refactoring of support fopr EPICS types. Now properly handles scalar and array
+  Main improvement was refactoring of support for EPICS types. Now properly handles scalar and array
   DBR types associated with BYTE, FLOAT and SHORT. Amazingly none of the DB's supported at PSI so far
   were using these types so the discovery that some of this was not working correctly comes late !
   
@@ -148,7 +148,32 @@ Test Status: Tests run: 349, Failures: 0, Errors: 0, Skipped: 9
   * [Issue #44](https://github.com/paulscherrerinstitute/wica-http/issues/44) Add support for handling EPICS channels of DBR_SHORT data type.
   * [Issue #45](https://github.com/paulscherrerinstitute/wica-http/issues/45) Further improvements to EPICS data type support.
   * [Issue #46](https://github.com/paulscherrerinstitute/wica-http/issues/46) Provide test database for verifying transport of all EPICS types.
-  * [Issue #47](https://github.com/paulscherrerinstitute/wica-http/issues/47) Create Wica HTTTP Release 1.7.0.
+  * [Issue #47](https://github.com/paulscherrerinstitute/wica-http/issues/47) Create Wica HTTP Release 1.7.0.
       
 Test Status: Tests run: 349, Failures: 0, Errors: 0, Skipped: 9  
+ 
+ 
+* [1.8.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.8.0) Released 2020-11-16.
+
+Some bug fixes and enhancements mostly centred around the need to efficiently support streaming waveform records containing camera data.
+
+Behaviour change: if the stream consumer cannot keep up with the SSE event flux then data is now dropped and a warning message placed in
+the server log. Previously the stream would be destroyed on the server and the client was forced to resubscribe.
+
+Enhancement: a new boolean stream property has been defined called quietMode (current default is false). When set true then the stream only sends
+polled and/or monitored value update messages when there is new information. Previously the messages would be sent but with zero payload.
+
+Behaviour change: channels whose data acquisition mode is set to poll will now also acquire and publish channel metadata.
+
+  * [Issue #48](https://github.com/paulscherrerinstitute/wica-http/issues/48) BUG FIX: Fix incorrect logger names.
+  * [Issue #49](https://github.com/paulscherrerinstitute/wica-http/issues/49) BUG FIX: Fix regression bug whereby poll-only streams were no longer working.
+  * [Issue #50](https://github.com/paulscherrerinstitute/wica-http/issues/50) BUG FIX: Update poll-monitor mode so that monitored values do not get published on Wica Stream.
+  * [Issue #51](https://github.com/paulscherrerinstitute/wica-http/issues/51) ENHANCEMENT: Further polling improvements. Streams which poll now also publish channel metadata.
+  * [Issue #52](https://github.com/paulscherrerinstitute/wica-http/issues/52) ENHANCEMENT: Improved type support in test database and viewer.
+  * [Issue #53](https://github.com/paulscherrerinstitute/wica-http/issues/53) ENHANCEMENT: Improve Javadoc on data-acquisition modes.
+  * [Issue #54](https://github.com/paulscherrerinstitute/wica-http/issues/54) ENHANCEMENT: Added support for back pressure handling. Now drops data if stream consumer can't keep up.
+  * [Issue #55](https://github.com/paulscherrerinstitute/wica-http/issues/55) ENHANCEMENT: Added support for new WicaStreamProperty "quietMode".
+  * [Issue #57](https://github.com/paulscherrerinstitute/wica-http/issues/57) Create Wica HTTP Release 1.8.0
+  
+Test Status: Tests run: 349, Failures: 0, Errors: 0, Skipped: 9    
  
