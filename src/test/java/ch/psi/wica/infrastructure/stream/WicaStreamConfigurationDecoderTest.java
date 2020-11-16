@@ -128,7 +128,7 @@ class WicaStreamConfigurationDecoderTest
             "{\"name\":\"EECI:IST:2\"},{\"name\":\"CIREV:FIST:2\"},{\"name\":\"CRREV:FIST:2\"},{\"name\":\"AIHS:IST:2\"}," +
             "{\"name\":\"HS:IST:2\"},{\"name\":\"M3ALT:IST:2\"},{\"name\":\"GLS:LEISTUNG_AKTUELL\"}," +
             "{\"name\":\"ZSLP:TOTSAVEFAST\"}]," +
-            "\"props\":{\"heartbeat\":15000,\"monflux\":100,\"pollflux\":1000,\"daqmode\":\"monitor\",\"pollint\":1000,\"prec\":6,\"fields\":\"val;sevr\"}}";
+            "\"props\":{\"hbflux\":15000,\"monflux\":100,\"pollflux\":1000,\"daqmode\":\"monitor\",\"pollint\":1000,\"prec\":6,\"fields\":\"val;sevr\"}}";
 
       final WicaStream wicaStream = decoder.decode( testString );
       final WicaStreamProperties wicaStreamProperties = wicaStream.getWicaStreamProperties();
