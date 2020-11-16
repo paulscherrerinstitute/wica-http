@@ -174,6 +174,7 @@ Behaviour change: channels whose data acquisition mode is set to poll will now a
   * [Issue #54](https://github.com/paulscherrerinstitute/wica-http/issues/54) ENHANCEMENT: Added support for back pressure handling. Now drops data if stream consumer can't keep up.
   * [Issue #55](https://github.com/paulscherrerinstitute/wica-http/issues/55) ENHANCEMENT: Added support for new WicaStreamProperty "quietMode".
   * [Issue #57](https://github.com/paulscherrerinstitute/wica-http/issues/57) Create Wica HTTP Release 1.8.0
-  
+  * [Issue #58](https://github.com/paulscherrerinstitute/wica-http/issues/58) Remove deprecated properties "pollratio" and "heartbeat".
+   
 Test Status: Tests run: 349, Failures: 0, Errors: 0, Skipped: 9    
  
