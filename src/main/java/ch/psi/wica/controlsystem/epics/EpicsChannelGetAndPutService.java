@@ -150,22 +150,22 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
 
       // Create a new autocloseable channel.
       final String channelName = epicsChannelName.asString();
-      logger.info( "'{}' - Getting channel value...", channelName );
-      logger.info( "'{}' - Creating channel...", channelName );
+      logger.trace( "'{}' - Getting channel value...", channelName );
+      logger.trace( "'{}' - Creating channel...", channelName );
       try( Channel<Object> caChannel = caContext.createChannel(channelName, Object.class ) )
       {
-         logger.info( "'{}' - OK: channel created.", channelName );
-         logger.info( "'{}' - Connecting channel with timeout {} {}...", channelName, timeout, timeUnit );
+         logger.trace( "'{}' - OK: channel created.", channelName );
+         logger.trace( "'{}' - Connecting channel with timeout {} {}...", channelName, timeout, timeUnit );
          caChannel.connectAsync().get( timeout, timeUnit );
-         logger.info( "'{}' - OK: channel connected.", channelName );
-         logger.info( "'{}' - Getting channel value...", channelName );
+         logger.trace( "'{}' - OK: channel connected.", channelName );
+         logger.trace( "'{}' - Getting channel value...", channelName );
          final var result = epicsChannelValueGetter.get( caChannel );
-         logger.info( "'{}' - OK: channel value obtained.", channelName );
+         logger.trace( "'{}' - OK: channel value obtained.", channelName );
          return result;
       }
       catch ( Throwable ex )
       {
-         logger.info( "'{}' - ERROR: Exception whilst getting channel value. Details: '{}'", channelName, ex.getMessage() );
+         logger.trace( "'{}' - ERROR: Exception whilst getting channel value. Details: '{}'", channelName, ex.getMessage() );
          return WicaChannelValue.createChannelValueDisconnected();
       }
    }
