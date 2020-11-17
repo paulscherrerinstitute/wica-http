@@ -6,11 +6,13 @@ package ch.psi.wica.controlsystem.epics;
 
 import ch.psi.wica.model.app.StatisticsCollectionService;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
 import ch.psi.wica.model.channel.WicaChannelName;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
+import org.epics.ca.Channel;
+import org.epics.ca.Context;
+import org.epics.ca.impl.LibraryConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicReference;
-
+import java.util.function.Consumer;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -29,6 +31,11 @@ import java.util.concurrent.atomic.AtomicReference;
  * A service which schedules the polling of user-specified EPICS channels of
  * interest, subsequently publishing the results of each poll operation to
  * interested consumers within the application.
+ *
+ * @implNote.
+ * The current implementation uses PSI's CA EPICS client library to create a
+ * single shared EPICS CA Context per class instance. The EPICS CA context and
+ * all associated resources are disposed of when the service instance is closed.
  */
 @Service
 @ThreadSafe
@@ -41,10 +48,15 @@ public class EpicsChannelPollingService implements AutoCloseable
    private final Logger logger = LoggerFactory.getLogger( EpicsChannelPollingService.class );
    private final EpicsChannelPollingServiceStatistics statisticsCollector;
 
-   private final EpicsChannelGetAndPutService epicsChannelGetAndPutService;
-   private final ScheduledExecutorService executor;
-   private final Map<WicaChannelName, ScheduledFuture<?>> channelExecutorMap;
-   private final int timeoutInMillis;
+   private final Map<EpicsChannelName,Channel<?>> channels;
+   private final Map<WicaChannel, ScheduledPoller> pollers;
+
+   private final Context caContext;
+
+   private final boolean epicsGetChannelValueOnPollerConnect;
+   private final EpicsChannelMetadataGetter epicsChannelMetadataGetter;
+   private final EpicsChannelValueGetter epicsChannelValueGetter;
+   private final EpicsChannelConnectionChangeSubscriber epicsChannelConnectionChangeSubscriber;
    private final EpicsEventPublisher epicsEventPublisher;
 
    private boolean closed = false;
@@ -55,27 +67,47 @@ public class EpicsChannelPollingService implements AutoCloseable
    /**
     * Returns a new instance.
     *
-    * @param timeoutInMillis the timeout for each poll operation.
-    * @param epicsChannelGetAndPutService the service which will be used for polling.
+    * @param epicsCaLibraryDebugLevel the CA library debug level.
+    * @param epicsGetChannelValueOnPollerConnect whether an explicit get will be performed to read a channel's value
+    *        when it first comes online.
+    * @param epicsChannelMetadataGetter an object which can be used to get the channel metadata.
+    * @param epicsChannelValueGetter an object which can be used to get the channel value.
+    * @param epicsChannelConnectionChangeSubscriber an object which can be used to subscribe to connection state changes.
     * @param epicsEventPublisher an object which publishes events of interest to consumers within the application.
     * @param statisticsCollectionService an object which will collect the statistics associated with this class instance.
     */
-   public EpicsChannelPollingService( @Value( "${wica.channel-get-timeout-interval-in-ms}") int timeoutInMillis,
-                                      @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService,
+   public EpicsChannelPollingService( @Value( "${wica.epics-ca-library-debug-level}") int epicsCaLibraryDebugLevel,
+                                      @Value( "${wica.epics-get-channel-value-on-poller-connect}") boolean epicsGetChannelValueOnPollerConnect,
+                                      @Autowired EpicsChannelMetadataGetter epicsChannelMetadataGetter,
+                                      @Autowired EpicsChannelValueGetter epicsChannelValueGetter,
+                                      @Autowired EpicsChannelConnectionChangeSubscriber epicsChannelConnectionChangeSubscriber,
                                       @Autowired EpicsEventPublisher epicsEventPublisher,
                                       @Autowired StatisticsCollectionService statisticsCollectionService )
    {
       logger.debug( "'{}' - constructing new EpicsChannelPollingService instance...", this );
 
-      this.timeoutInMillis = timeoutInMillis;
-      this.epicsChannelGetAndPutService = Validate.notNull( epicsChannelGetAndPutService );
+      this.epicsGetChannelValueOnPollerConnect = epicsGetChannelValueOnPollerConnect;
+      this.epicsChannelMetadataGetter = Validate.notNull( epicsChannelMetadataGetter );
+      this.epicsChannelValueGetter = Validate.notNull( epicsChannelValueGetter );
+      this.epicsChannelConnectionChangeSubscriber = Validate.notNull( epicsChannelConnectionChangeSubscriber );
       this.epicsEventPublisher = Validate.notNull( epicsEventPublisher );
-      this.channelExecutorMap = new ConcurrentHashMap<>();
 
-      this.statisticsCollector = new EpicsChannelPollingServiceStatistics(channelExecutorMap );
+      channels = new ConcurrentHashMap<>();
+      pollers = new ConcurrentHashMap<>();
+
+      this.statisticsCollector = new EpicsChannelPollingServiceStatistics( channels );
       statisticsCollectionService.addCollectable( statisticsCollector );
 
-      this.executor = Executors.newSingleThreadScheduledExecutor();
+      // Setup a context that uses the debug message log level defined in the
+      // configuration file.
+      final Properties properties = new Properties();
+      properties.setProperty( LibraryConfiguration.PropertyNames.CA_LIBRARY_LOG_LEVEL.toString(), String.valueOf( epicsCaLibraryDebugLevel ) );
+
+      //System.setProperty( "EPICS_CA_ADDR_LIST", "192.168.0.46:5064" );
+      //System.setProperty( "EPICS_CA_ADDR_LIST", "129.129.145.206:5064" );
+      //System.setProperty( "EPICS_CA_ADDR_LIST", "proscan-cagw:5062" );
+
+      caContext = new Context( properties );
       logger.debug( "'{}' - service instance constructed ok.", this );
    }
 
@@ -84,81 +116,124 @@ public class EpicsChannelPollingService implements AutoCloseable
 
    /**
     * Starts polling the EPICS control system channel associated with the
-    * specified Wica Channel. Publishes the results of each poll operation
-    * using the configured EPICS Event Publisher.
+    * specified Wica Channel. Sets up a mechanism whereby future changes to the
+    * channel's connection state or value are published using the configured
+    * EPICS Event Publisher.
+    *
+    * The creation of the underlying EPICS poller is performed asynchronously
+    * so the invocation of this method does NOT incur the cost of a network
+    * round trip.
     *
     * The EPICS channel may or may not be online when this method is invoked.
-    * If the channel is offline the poll operation will result in a timeout
-    * and the returned value will indicate that the channel is disconnected.
+    * The connection-state-change event will be published when the connection to
+    * the remote IOC is eventually established. Subsequently, the value-change
+    * event updates will be published on each periodic polling cycle to provide
+    * the latest value of the channel.
     *
-    * The first time the channel comes online (for example on startup or after
-    * any communications outage) the EPICS Channel Metadata is obtained and
-    * published using the configured EPICS Event Publisher.
+    * The current implementation is based on the assumption that higher layers
+    * within the application will ensure that the information obtained from a
+    * single EPICS channel poller operating at a particular polling rate is
+    * shared across the entire application.  It is, therefore, the responsibility
+    * of the caller to ensure that polling should not already have been established
+    * on the targeted EPICS channel. This precondition is actively enforced and
+    * violations will result in an IllegalStateException being thrown.
     *
     * @param wicaChannel the channel to be polled.
     * @throws NullPointerException if the 'wicaChannel' argument was null.
     * @throws IllegalStateException if this polling service was previously closed.
-    * @throws IllegalStateException if the EPICS channel to be polled is already
-    * being polled at the same rate.
+    * @throws IllegalStateException if the EPICS channel to be polled is already being polled.
     */
    void startPolling( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel);
+      Validate.notNull( wicaChannel );
+      Validate.validState( ! closed, "The poller service was previously closed and can no longer be used." );
 
-      Validate.validState( ! closed, "The polling service was previously closed and can no longer be used." );
+      final EpicsChannelName epicsChannelName = EpicsChannelName.of( wicaChannel.getName().getControlSystemName() );
+
+      Validate.validState( validateRequest( wicaChannel ), "The channel name: '" + epicsChannelName.asString() + "' is already being polled with an identical polling rate."  );
       statisticsCollector.incrementStartRequests();
 
-      final WicaChannelName wicaChannelName= wicaChannel.getName();
+      logger.info("'{}' - starting to poll... ", epicsChannelName);
 
-      final int pollingIntervalInMillis = wicaChannel.getProperties().getPollingIntervalInMillis();
-      logger.trace("'{}' - starting to poll with periodicity of {} milliseconds.", wicaChannelName, pollingIntervalInMillis );
+      try
+      {
+         logger.info("'{}' - creating channel of type '{}'...", epicsChannelName, "generic");
+         final Channel<Object> channel = caContext.createChannel( epicsChannelName.asString(), Object.class );
+         channels.put( epicsChannelName, channel);
+         logger.info("'{}' - channel created ok.", epicsChannelName);
 
-      final AtomicReference<WicaChannelValue> previousChannelValue = new AtomicReference<>( WicaChannelValue.createChannelValueDisconnected() );
-      final var scheduledFuture = executor.scheduleAtFixedRate(() -> {
+         logger.info("'{}' - creating poller...", epicsChannelName );
+         final ScheduledPoller scheduledPoller = new ScheduledPoller( wicaChannel, epicsChannelValueGetter );
+         pollers.put( wicaChannel, scheduledPoller );
+         logger.info("'{}' - poller created ok.", epicsChannelName);
 
-
-         // Get and publish the current value of the channel
-         final WicaChannelValue currentChannelValue;
-         try
-         {
-            currentChannelValue = getChannelValue( wicaChannelName );
-            epicsEventPublisher.publishPolledValueUpdated( wicaChannel, currentChannelValue );
-         }
-         catch( Exception ex )
-         {
-            logger.error( "{} - polling generated exception '{}' during getChannelValue operation.", wicaChannelName, ex.toString() );
-            return;
-         }
-
-         // If the channel has just entered the online state get and publish the channel's metadata.
-         if ( onlineTransitionDetected( currentChannelValue, previousChannelValue.getAndSet( currentChannelValue ) ) )
-         {
-            try
+         // Synchronously add a connection listener before making any attempt to connect the channel.
+         logger.info("'{}' - adding connection listener... ", epicsChannelName );
+         epicsChannelConnectionChangeSubscriber.subscribe( channel, (conn) -> {
+            if ( conn )
             {
-               final WicaChannelMetadata wicaChannelMetadata = this.getChannelMetadata( wicaChannelName );
-               epicsEventPublisher.publishMetadataChanged( wicaChannel, wicaChannelMetadata );
+               logger.info("'{}' - connection state changed to CONNECTED.", epicsChannelName );
+
+               // The processing below needs to be scheduled every time a channel comes online.
+               // This could be for any of the following reasons:
+               //
+               // a) this EPICS polling service has been requested to start polling a new
+               //    EPICS channel and the channel has just connected for the very first time.
+               // b) the IOC hosting the channel has just come online following a loss of network
+               //    connectivity.
+               // c) the IOC hosting the channel has just come online following a reboot.
+               try
+               {
+                  handleChannelComesOnline( wicaChannel, channel );
+               }
+               catch( RuntimeException ex)
+               {
+                  logger.error("'{}' - exception when reestablishing channel connection, details were as follows: {}", this, ex.toString() );
+               }
             }
-            catch( Exception ex )
+            else
             {
-               logger.error( "{} - polling generated exception '{}' during getChannelMetadata operation.", wicaChannelName, ex.toString() );
+               logger.info("'{}' - connection state changed to DISCONNECTED.", epicsChannelName );
+               handleChannelGoesOffline( wicaChannel );
             }
-         }
+            epicsEventPublisher.publishConnectionStateChanged( wicaChannel, conn );
+         } );
+         logger.info("'{}' - connection listener added ok.", epicsChannelName);
 
-      }, pollingIntervalInMillis, pollingIntervalInMillis, TimeUnit.MILLISECONDS );
+         logger.info("'{}' - connecting asynchronously... ", epicsChannelName);
+         channel.connectAsync()
+               .thenRunAsync( () -> {
 
-      this.channelExecutorMap.put( wicaChannelName, scheduledFuture );
+                  // Note the CA current (1.2.2) implementation of the CA library calls back
+                  // this code block using MULTIPLE threads taken from the so-called LeaderFollowersThreadPool.
+                  // By default this pool is configured for FIVE threads but where necessary this can be
+                  // increased by setting the system property shown below:
+                  // System.setProperty( "LeaderFollowersThreadPool.thread_pool_size", "50" );
 
-      logger.trace("'{}' - channel polling has been scheduled ok.", wicaChannelName);
+                  logger.info("'{}' - asyncronous connect completed. Waiting for channel to come online.", epicsChannelName );
+               })
+               .exceptionally(( ex ) -> {
+                  logger.warn("'{}' - exception on channel, details were as follows: {}", this, ex.toString());
+                  return null;
+               });
+      }
+      catch ( Exception ex )
+      {
+         logger.error("'{}' - exception on channel, details were as follows: {}", epicsChannelName, ex.toString() );
+      }
+      logger.info("'{}' - polling set up completed ok.", epicsChannelName);
    }
 
    /**
-    * Stops polling the specified channel.
+    * Stops polling the EPICS control system channel associated with the
+    * specified Wica Channel.
     *
     * It is the responsibility of the caller to ensure that polling should
-    * already have been started on the targeted EPICS channel. Should
+    * already have been established on the targeted EPICS channel. Should
     * this precondition be violated an IllegalStateException will be thrown.
     *
-    * @param wicaChannel the channel which no longer needs to be polled.
+    * @param wicaChannel the channel which is no longer of interest.
+    * @throws NullPointerException if the 'wicaChannel' argument was null.
     * @throws IllegalStateException if this polling service was previously closed.
     * @throws IllegalStateException if the channel whose polling is to be stopped
     *     was not already being polled.
@@ -169,13 +244,20 @@ public class EpicsChannelPollingService implements AutoCloseable
       Validate.validState( ! closed, "The polling service was previously closed and can no longer be used." );
       statisticsCollector.incrementStopRequests();
 
-      final WicaChannelName wicaChannelName = wicaChannel.getName();
-      Validate.validState( channelExecutorMap.containsKey( wicaChannelName ), "The channel name: '" + wicaChannelName.asString() + "' was not recognised."  );
+      final EpicsChannelName epicsChannelName= EpicsChannelName.of( wicaChannel.getName().getControlSystemName() );
+      Validate.validState( channels.containsKey( epicsChannelName ), "The channel name: '" + epicsChannelName.asString() + "' was not recognised."  );
 
-      // Cancel the scheduled task.
-      logger.trace("'{}' - stopping polling.", wicaChannelName) ;
-      channelExecutorMap.get( wicaChannelName ).cancel( false );
-      channelExecutorMap.remove( wicaChannelName );
+      logger.info("'{}' - stopping polling on.", epicsChannelName);
+      channels.get( epicsChannelName ).close();
+      channels.remove( epicsChannelName );
+
+      final boolean channelCloseAlsoDisposesMonitorCache = true;
+      //noinspection ConstantConditions,PointlessBooleanExpression
+      if ( !channelCloseAlsoDisposesMonitorCache )
+      {
+         pollers.get(wicaChannel).cancel();
+      }
+      pollers.remove( wicaChannel );
    }
 
    /**
@@ -190,12 +272,15 @@ public class EpicsChannelPollingService implements AutoCloseable
       // Dispose of any references that are no longer required
       logger.debug( "'{}' - disposing resources...", this );
 
-      // Send a cancel request to all the scheduled futures.
-      channelExecutorMap.values().forEach( c ->  c.cancel( false ) );
-      channelExecutorMap.clear();
+      // Note: closing the context automatically disposes of any open channels.
+      caContext.close();
 
-      // Close the service that provides the data source.
-      epicsChannelGetAndPutService.close();
+      // Explicitly cancel the scheduled executors.
+      pollers.keySet().forEach( (p) -> pollers.get( p ).cancel() );
+
+      // Clear data structures.
+      pollers.clear();
+      channels.clear();
 
       logger.debug( "'{}' - resources disposed ok.", this );
    }
@@ -207,32 +292,121 @@ public class EpicsChannelPollingService implements AutoCloseable
 
 /*- Private methods ----------------------------------------------------------*/
 
-   private boolean onlineTransitionDetected( WicaChannelValue currentValue, WicaChannelValue previousValue )
+   private boolean validateRequest( WicaChannel wicaChannel )
    {
-      Validate.notNull( currentValue );
-      Validate.notNull( previousValue );
+      final long identicalPollerCount = pollers.keySet()
+            .stream()
+            .filter( (ch) -> ch.getName().equals( wicaChannel.getName() ) )
+            .filter( (ch) -> ch.getProperties().getPollingIntervalInMillis() == wicaChannel.getProperties().getPollingIntervalInMillis() )
+            .count();
 
-      return currentValue.isConnected() && ( ! previousValue.isConnected() );
+      return identicalPollerCount == 0;
    }
 
-   private WicaChannelMetadata getChannelMetadata( WicaChannelName wicaChannelName )
-   {
-      final EpicsChannelName epicsChannelName = EpicsChannelName.of( wicaChannelName.getControlSystemName() );
 
-      return epicsChannelGetAndPutService.getChannelMetadata( epicsChannelName, timeoutInMillis, TimeUnit.MILLISECONDS );
+   private void handleChannelComesOnline( WicaChannel wicaChannel, Channel<Object> epicsChannel )
+   {
+      final EpicsChannelName epicsChannelName = EpicsChannelName.of( wicaChannel.getName().getControlSystemName());
+
+      // ----------------------------------------------------------
+      // STEP 1: Obtain and publish the channel's metadata.
+      // ----------------------------------------------------------
+
+      logger.info( "'{}' - getting channel metadata...", epicsChannelName );
+      final var wicaChannelMetadata = epicsChannelMetadataGetter.get( epicsChannel );
+      logger.info( "'{}' - channel metadata obtained ok.", epicsChannelName );
+      logger.info( "'{}' - publishing channel metadata...", epicsChannelName );
+      epicsEventPublisher.publishMetadataChanged( wicaChannel, wicaChannelMetadata );
+      logger.info( "'{}' - channel metadata published ok.", epicsChannelName );
+
+      // -----------------------------------------------------------
+      // STEP 2: Obtain and publish the channel's initial value.
+      // -----------------------------------------------------------
+
+      // If feature enabled in application.properties file...
+      if ( epicsGetChannelValueOnPollerConnect )
+      {
+         logger.info("'{}' - getting channel value...", epicsChannelName );
+         final var wicaChannelValue = epicsChannelValueGetter.get( epicsChannel );
+         logger.info("'{}' - channel value obtained ok.", epicsChannelName );
+         logger.info( "'{}' - publishing channel value...", epicsChannelName );
+         epicsEventPublisher.publishPolledValueUpdated( wicaChannel, wicaChannelValue );
+         logger.info("'{}' - channel value published ok.", epicsChannelName);
+      }
+
+      // -----------------------------------------------------------
+      // STEP 3: Establish or re-establish polling on the channel.
+      // -----------------------------------------------------------
+
+      // 3a) Create a handler for value change notifications
+      final Consumer<WicaChannelValue> valueUpdateHandler = v -> {
+         epicsEventPublisher.publishPolledValueUpdated( wicaChannel, v );
+         statisticsCollector.incrementPollCycleCount();
+         statisticsCollector.updatePollingResult(  v.isConnected() );
+      };
+
+      // 3b) Start the poller which will notify future value updates.
+      logger.info("'{}' - subscribing for polling value updates.", epicsChannelName);
+      final ScheduledPoller scheduledPoller = pollers.get( wicaChannel );
+      scheduledPoller.start( epicsChannel, valueUpdateHandler );
+      logger.info("'{}' - subscribed ok.", epicsChannelName);
    }
 
-   private WicaChannelValue getChannelValue( WicaChannelName wicaChannelName )
+   private void handleChannelGoesOffline( WicaChannel wicaChannel )
    {
-      final EpicsChannelName epicsChannelName = EpicsChannelName.of( wicaChannelName.getControlSystemName() );
-      statisticsCollector.incrementPollCycleCount();
-
-      var result = epicsChannelGetAndPutService.getChannelValue( epicsChannelName, timeoutInMillis, TimeUnit.MILLISECONDS );
-      statisticsCollector.updatePollingResult( result.isConnected() );
-      return result;
+      pollers.get( wicaChannel ).cancel();
    }
 
 /*- Nested Classes -----------------------------------------------------------*/
+
+   private static class ScheduledPoller
+   {
+      private final Logger logger = LoggerFactory.getLogger( ScheduledPoller.class );
+
+      private final WicaChannelName wicaChannelName;
+      private final int pollingIntervalInMillis;
+      private final EpicsChannelValueGetter epicsChannelValueGetter;
+      private final ScheduledExecutorService executor;
+
+      public ScheduledPoller( WicaChannel wicaChannel, EpicsChannelValueGetter epicsChannelValueGetter )
+      {
+         this.wicaChannelName = wicaChannel.getName();
+         this.pollingIntervalInMillis = wicaChannel.getProperties().getPollingIntervalInMillis();
+         this.epicsChannelValueGetter = epicsChannelValueGetter;
+         this.executor = Executors.newSingleThreadScheduledExecutor();
+      }
+
+      public void start( Channel<Object> epicsChannel, Consumer<WicaChannelValue> valueUpdateHandler )
+      {
+         logger.info("'{}' - starting to poll with periodicity of {} milliseconds.", wicaChannelName, pollingIntervalInMillis );
+
+         executor.scheduleAtFixedRate( () -> {
+
+            // Get and publish the current value of the channel
+            try
+            {
+               // Now construct and return a wica value object using the timestamped object information.
+               logger.info("'{}' - polling now...", wicaChannelName );
+               final WicaChannelValue channelValue = epicsChannelValueGetter.get( epicsChannel );
+               logger.info("'{}' - value obtained OK.", wicaChannelName );
+               valueUpdateHandler.accept( channelValue );
+            }
+            catch ( Exception ex )
+            {
+               logger.error( "'{}' - generated exception '{}' during poll operation.", wicaChannelName, ex.toString() );
+            }
+
+         }, pollingIntervalInMillis, pollingIntervalInMillis, TimeUnit.MILLISECONDS );
+      }
+
+      public void cancel()
+      {
+         logger.info( "'{}' - cancelling polling...", wicaChannelName );
+         executor.shutdown();
+         logger.info("'{}' - scheduler has been shutdown.", wicaChannelName );
+      }
+
+   }
 
 }
 
