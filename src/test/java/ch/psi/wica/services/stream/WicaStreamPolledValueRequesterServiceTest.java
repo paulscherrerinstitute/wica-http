@@ -10,6 +10,7 @@ import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.app.WicaFilterType;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelProperties;
+import ch.psi.wica.model.channel.WicaChannelType;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 import org.junit.jupiter.api.BeforeEach;
@@ -120,10 +121,14 @@ class WicaStreamPolledValueRequesterServiceTest
       service.startPolling( wicaStream );
 
       final Map<WicaChannel, List<WicaChannelValue>> firstValueMap = wicaStreamPolledValueCollectorService.getLatest( wicaStream);
-      assertThat( firstValueMap.size(), is( 0 ) );
+      assertThat( firstValueMap.size(), is( 1 ) );
+      assertThat( firstValueMap.get( myWicaChannel ).get( 0 ).isConnected(), is( false) );
+      assertThat( firstValueMap.get( myWicaChannel ).get( 0 ).getType(), is( WicaChannelType.UNKNOWN ) );
 
       final Map<WicaChannel, List<WicaChannelValue>> laterValueMap = wicaStreamPolledValueCollectorService.get( wicaStream, LocalDateTime.MIN  );
-      assertThat( laterValueMap.size(), is( 0 ) );
+      assertThat( laterValueMap.size(), is( 1 ) );
+      assertThat( firstValueMap.get( myWicaChannel ).get( 0 ).isConnected(), is( false) );
+      assertThat( firstValueMap.get( myWicaChannel ).get( 0 ).getType(), is( WicaChannelType.UNKNOWN ) );
    }
 
 /*- Private methods ----------------------------------------------------------*/
