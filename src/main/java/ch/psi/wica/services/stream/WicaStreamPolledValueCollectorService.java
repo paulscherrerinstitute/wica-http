@@ -79,7 +79,7 @@ public class WicaStreamPolledValueCollectorService
    {
       Validate.notNull( event );
       final WicaChannel wicaChannel = event.getWicaChannel();
-      final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getPolledValueStorageKey(wicaChannel );
+      final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getPolledValueStorageKey( wicaChannel );
       final WicaChannelValue wicaChannelValue = event.getWicaChannelValue();
       wicaStreamPolledValueDataBuffer.saveDataPoint( wicaDataBufferStorageKey, wicaChannelValue );
    }
