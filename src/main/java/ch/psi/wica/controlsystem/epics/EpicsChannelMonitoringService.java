@@ -203,7 +203,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
          } );
          logger.info("'{}' - connection listener added ok.", epicsChannelName);
 
-         logger.info("'{}' - connecting asynchronously to... ", epicsChannelName);
+         logger.info("'{}' - connecting asynchronously... ", epicsChannelName);
          channel.connectAsync()
             .thenRunAsync( () -> {
 
@@ -224,7 +224,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       {
          logger.error("'{}' - exception on channel, details were as follows: {}", epicsChannelName, ex.toString() );
       }
-      logger.info("'{}' - monitoring set up completed ok.", epicsChannelName);
+      logger.info("'{}' - polling set up completed ok.", epicsChannelName);
    }
 
    /**
