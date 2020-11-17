@@ -48,7 +48,7 @@ class WicaChannelGetControllerTest
 /*- Public methods -----------------------------------------------------------*/
 
    @Test
-   void testGetRequest_DefaultTimeout()
+   void testGetValueRequest_DefaultTimeout()
    {
       final String channelName = "XXXXX";
       final RequestBuilder getRequest = MockMvcRequestBuilders.get("/ca/channel/" + channelName + "?fieldsOfInterest=conn" )
@@ -63,13 +63,13 @@ class WicaChannelGetControllerTest
                .andExpect( status().isOk() )
                .andExpect( content().contentTypeCompatibleWith( MediaType.APPLICATION_JSON_VALUE ) )
                .andDo( print() )
-               .andExpect( content().string(containsString("\"conn\":false") ) )
+               .andExpect( content().string( containsString("\"conn\":false") ) )
                .andReturn();
       } );
    }
 
    @Test
-   void testGetRequest_UserSpecifiedTimeout()
+   void testGetValueRequest_UserSpecifiedTimeout()
    {
       final String channelName = "XXXXX";
       final int userSpecifiedTimeout = 300;
@@ -93,7 +93,7 @@ class WicaChannelGetControllerTest
    // build system. The test should be enabled as required during pre-production testing.
    @Disabled
    @Test
-   void testGetRequest_HappyDay1()
+   void testGetValueRequest_HappyDay1()
    {
       final String channelName = "wica:test:db_ok";
       final RequestBuilder getRequest = MockMvcRequestBuilders.get("/ca/channel/" + channelName + "?fieldsOfInterest=conn" )
@@ -117,7 +117,7 @@ class WicaChannelGetControllerTest
    // build system. The test should be enabled as required during pre-production testing.
    @Disabled
    @Test
-   void testGetRequest_HappyDay_with_Added_TimestampCheck()
+   void testGetValueRequest_HappyDay_with_Added_TimestampCheck()
    {
       final LocalDateTime now = LocalDateTime.now();
 
@@ -142,6 +142,30 @@ class WicaChannelGetControllerTest
                .andExpect( content().contentTypeCompatibleWith( MediaType.APPLICATION_JSON_VALUE ) )
                .andDo( print())
                .andExpect( content().string( containsString("\"ts\":" + "\"" + truncatedTimeAndDateNow ) ) )
+               .andReturn();
+      } );
+   }
+
+   // By default this test is suppressed as it would create problems in the automatic
+   // build system. The test should be enabled as required during pre-production testing.
+   @Disabled
+   @Test
+   void testGetMetadataRequest_HappyDay1()
+   {
+      final String channelName = "wica:test:db_ok";
+      final RequestBuilder getRequest = MockMvcRequestBuilders.get("/ca/channel/metadata/" + channelName + "?fieldsOfInterest=type" )
+            .accept( MediaType.APPLICATION_JSON_VALUE );
+
+      // Check that the method returns in less than the default timeout
+      final int methodDefaultTimeout = DEFAULT_GET_TIMEOUT;
+      final int guardTime = 200;
+      final int testTimeoutInMillis = methodDefaultTimeout + guardTime;
+      assertTimeoutPreemptively( Duration.ofMillis( testTimeoutInMillis ), () -> {
+         mockMvc.perform( getRequest )
+               .andExpect( status().isOk())
+               .andExpect( content().contentTypeCompatibleWith( MediaType.APPLICATION_JSON_VALUE ) )
+               .andDo( print())
+               .andExpect( content().string( containsString("\"type\":\"REAL\"") ) )
                .andReturn();
       } );
    }
