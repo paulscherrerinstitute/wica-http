@@ -4,8 +4,8 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.epics.EpicsChannelGetAndPutService;
 import ch.psi.wica.controlsystem.epics.EpicsChannelName;
+import ch.psi.wica.controlsystem.epics.EpicsChannelWriterService;
 import ch.psi.wica.model.app.StatisticsCollectionService;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ class WicaChannelPutController
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger( WicaChannelPutController.class );
-   private final EpicsChannelGetAndPutService epicsChannelGetAndPutService;
+   private final EpicsChannelWriterService epicsChannelWriterService;
    private final int defaultTimeoutInMillis;
    private final ControllerStatistics statisticsCollector;
 
@@ -50,22 +50,21 @@ class WicaChannelPutController
     * @param defaultTimeoutInMillis the default timeout that will be used
     *        when putting data to the wica channel.
 
-    * @param epicsChannelGetAndPutService reference to the service object which can be used
+    * @param epicsChannelWriterService reference to the service object which can be used
     *        to put values to a wica channel.
     *
     * @param statisticsCollectionService an object which will collect the statistics associated
     *        with this class instance.
     */
-   private WicaChannelPutController( @Value( "${wica.channel-get-timeout-interval-in-ms}") int defaultTimeoutInMillis,
-                                     @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService,
-                                     @Autowired StatisticsCollectionService statisticsCollectionService
-   )
+   private WicaChannelPutController( @Value( "${wica.channel-put-timeout-interval-in-ms}") int defaultTimeoutInMillis,
+                                     @Autowired EpicsChannelWriterService epicsChannelWriterService,
+                                     @Autowired StatisticsCollectionService statisticsCollectionService )
    {
       Validate.isTrue( defaultTimeoutInMillis > 0 );
-      Validate.notNull(epicsChannelGetAndPutService);
+      Validate.notNull( epicsChannelWriterService );
 
       this.defaultTimeoutInMillis = defaultTimeoutInMillis;
-      this.epicsChannelGetAndPutService = Validate.notNull(epicsChannelGetAndPutService);
+      this.epicsChannelWriterService = Validate.notNull( epicsChannelWriterService );
 
       this.statisticsCollector = new ControllerStatistics("WICA CHANNEL PUT CONTROLLER" );
       statisticsCollectionService.addCollectable( statisticsCollector );
@@ -118,7 +117,7 @@ class WicaChannelPutController
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
 
       // Handle failure of the command.
-      if ( ! epicsChannelGetAndPutService.putChannelValue( EpicsChannelName.of( channelName ), channelValue, timeoutInMillis, TimeUnit.MILLISECONDS ) )
+      if ( ! epicsChannelWriterService.writeStringValue( EpicsChannelName.of( channelName ), channelValue, timeoutInMillis, TimeUnit.MILLISECONDS ) )
       {
          final String errorMessage = "a timeout occurred (channel = '" + channelName + "', value = '" + channelValue + "').";
          logger.warn( "PUT: Rejected request because {}", errorMessage  );
