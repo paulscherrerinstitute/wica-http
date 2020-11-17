@@ -113,7 +113,7 @@ class WicaChannelGetController
     *    the current channel value. If a timeout occurred the JSON representation
     *    will be set to show that the channel metedata is currently UNKNOWN.
     */
-   @GetMapping( value="/metadata/{channelName}", produces = MediaType.APPLICATION_JSON_VALUE )
+   @GetMapping( value="/{channelName}", produces = MediaType.APPLICATION_JSON_VALUE )
    public ResponseEntity<String> getChannelValue( @PathVariable String channelName,
                                                   @RequestParam( value="timeout", required = false ) Integer timeoutInMillis,
                                                   @RequestParam( value="numericScale", required = false ) Integer numericScale,
@@ -180,7 +180,7 @@ class WicaChannelGetController
     *    the current channel value. If a timeout occurred the JSON representation
     *    will be set to show that the channel is currently disconnected.
     */
-   @GetMapping( value="/{channelName}", produces = MediaType.APPLICATION_JSON_VALUE )
+   @GetMapping( value="/metadata/{channelName}", produces = MediaType.APPLICATION_JSON_VALUE )
    public ResponseEntity<String> getChannelMetadata( @PathVariable String channelName,
                                                      @RequestParam( value="timeout", required = false ) Integer timeoutInMillis,
                                                      @RequestParam( value="numericScale", required = false ) Integer numericScale,
