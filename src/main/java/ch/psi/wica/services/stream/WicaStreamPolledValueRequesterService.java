@@ -3,10 +3,11 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.WicaChannelStartPollingEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelStopPollingEvent;
+import ch.psi.wica.controlsystem.event.*;
 import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
+import ch.psi.wica.model.channel.WicaChannelMetadata;
+import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
@@ -132,7 +133,7 @@ public class WicaStreamPolledValueRequesterService
          final int currentInterestCount = pollerInterestMap.get( storageKey );
          final int newInterestCount = currentInterestCount + 1;
          logger.info( "Increasing interest level in polled control system channel named: '{}' to {}", controlSystemName, newInterestCount );
-         pollerInterestMap.put(storageKey, newInterestCount );
+         pollerInterestMap.put( storageKey, newInterestCount );
       }
       // If a channel with these polling parameters DOES NOT exist then start polling it using
       // the prescribed parameters.
@@ -140,11 +141,10 @@ public class WicaStreamPolledValueRequesterService
       {
          logger.info( "Starting polling control system channel named: '{}'", controlSystemName.asString() );
 
-         // Note: we could consider here publishing events to set the initial state of the metadata stash
-         // or the value stash, but the poller does not implement channel metadata fetching and the only
-         // the first value that is published is the result of the first poll operation.
-
-         // Now start polling
+         // Set the initial state for the value and metadata stashes and publish an event
+         // instructing the underlying control system to start polling.
+         applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent( wicaChannel, WicaChannelMetadata.createUnknownInstance() ) );
+         applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannel, WicaChannelValue.createChannelValueDisconnected() ) );
          applicationEventPublisher.publishEvent( new WicaChannelStartPollingEvent( wicaChannel ) );
          pollerInterestMap.put( storageKey, 1 );
       }
@@ -171,7 +171,7 @@ public class WicaStreamPolledValueRequesterService
       final var storageKey = WicaDataBufferStorageKey.getPolledValueStorageKey( wicaChannel );
       final var controlSystemName = wicaChannel.getName().getControlSystemName();
 
-      Validate.validState(pollerInterestMap.containsKey(storageKey ) );
+      Validate.validState( pollerInterestMap.containsKey(storageKey ) );
       Validate.validState(pollerInterestMap.get(storageKey ) > 0 );
 
       final int currentInterestCount = pollerInterestMap.get(storageKey );
@@ -184,7 +184,7 @@ public class WicaStreamPolledValueRequesterService
       else
       {
          logger.info( "Stopping polling control system channel named: '{}'", controlSystemName.asString() );
-         pollerInterestMap.remove(storageKey );
+         pollerInterestMap.remove( storageKey );
          applicationEventPublisher.publishEvent( new WicaChannelStopPollingEvent( wicaChannel ) );
       }
    }
