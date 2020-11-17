@@ -86,22 +86,22 @@ class WicaChannelGetController
 /*- Public methods -----------------------------------------------------------*/
 
    /**
-    * Handles an HTTP GET request to return the value of the specified channel.
+    * Handles an HTTP GET request to return the metadata of the specified channel.
     *
-    * @param channelName the name of the channel whose value is to be fetched.
+    * @param channelName the name of the channel whose metadata is to be fetched.
     *
     * @param timeoutInMillis the timeout to be applied when attempting to
-    *     get the channel value from the underlying data source. If this
+    *     get the channel metadata from the underlying data source. If this
     *     optional parameter is not provided then the configured default
     *     value will be used.
     *
     * @param numericScale the default number of digits after the decimal
-    *     point when getting the current value of a wica channel. If this
+    *     point when getting the current metadata of a wica channel. If this
     *     optional parameter is not provided then the configured default
     *     value will be used.
     *
     * @param fieldsOfInterest the default fields of interest to be returned
-    *      when getting the current value of a wica channel. If this
+    *      when getting the current metadata of a wica channel. If this
     *     optional parameter is not provided then the configured default
     *     value will be used.
     *
@@ -111,9 +111,9 @@ class WicaChannelGetController
     * @return ResponseEntity set to return an HTTP status code of 'OK'
     *    (= 200) and a body which includes the JSON string representation of
     *    the current channel value. If a timeout occurred the JSON representation
-    *    will be set to show that the channel is currently disconnected.
+    *    will be set to show that the channel metedata is currently UNKNOWN.
     */
-   @GetMapping( value="/{channelName}", produces = MediaType.APPLICATION_JSON_VALUE )
+   @GetMapping( value="/metadata/{channelName}", produces = MediaType.APPLICATION_JSON_VALUE )
    public ResponseEntity<String> getChannelValue( @PathVariable String channelName,
                                                   @RequestParam( value="timeout", required = false ) Integer timeoutInMillis,
                                                   @RequestParam( value="numericScale", required = false ) Integer numericScale,
@@ -148,6 +148,73 @@ class WicaChannelGetController
             .build();
 
       logger.info( "'{}' - OK: Returning wica channel value.", channelName );
+      statisticsCollector.incrementReplies();
+      return new ResponseEntity<>( serializer.writeToJson( wicaChannelValue ), HttpStatus.OK );
+   }
+
+   /**
+    * Handles an HTTP GET request to return the value of the specified channel.
+    *
+    * @param channelName the name of the channel whose value is to be fetched.
+    *
+    * @param timeoutInMillis the timeout to be applied when attempting to
+    *     get the channel value from the underlying data source. If this
+    *     optional parameter is not provided then the configured default
+    *     value will be used.
+    *
+    * @param numericScale the default number of digits after the decimal
+    *     point when getting the current value of a wica channel. If this
+    *     optional parameter is not provided then the configured default
+    *     value will be used.
+    *
+    * @param fieldsOfInterest the default fields of interest to be returned
+    *      when getting the current value of a wica channel. If this
+    *     optional parameter is not provided then the configured default
+    *     value will be used.
+    *
+    * @param httpServletRequest contextual information for the request; used
+    *     for statistics collection only.
+    *
+    * @return ResponseEntity set to return an HTTP status code of 'OK'
+    *    (= 200) and a body which includes the JSON string representation of
+    *    the current channel value. If a timeout occurred the JSON representation
+    *    will be set to show that the channel is currently disconnected.
+    */
+   @GetMapping( value="/{channelName}", produces = MediaType.APPLICATION_JSON_VALUE )
+   public ResponseEntity<String> getChannelMetadata( @PathVariable String channelName,
+                                                     @RequestParam( value="timeout", required = false ) Integer timeoutInMillis,
+                                                     @RequestParam( value="numericScale", required = false ) Integer numericScale,
+                                                     @RequestParam( value="fieldsOfInterest", required = false ) String fieldsOfInterest,
+                                                     HttpServletRequest httpServletRequest )
+   {
+      logger.info( "GET: Handling channel get metadata request." );
+
+      // Check that the Spring framework gives us something in the HttpServletRequest and channelName fields.
+      Validate.notNull( httpServletRequest, "The 'httpServletRequest' field was empty." );
+      Validate.notNull( channelName, "The 'channelName' field was empty." );
+
+      logger.info( "GET: Handling channel get metadata request for channel '{}' from remote host '{}'", channelName, httpServletRequest.getRemoteHost() );
+
+      // Update the usage statistics for this controller.
+      statisticsCollector.incrementRequests();
+      statisticsCollector.addClientIpAddr(httpServletRequest.getRemoteHost() );
+
+      // Assign default values when not explicitly provided.
+      timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
+      numericScale = numericScale == null ? defaultNumericScale : numericScale;
+      fieldsOfInterest = fieldsOfInterest == null ? defaultFieldsOfInterest : fieldsOfInterest;
+
+      final var wicaChannelValue = epicsChannelReaderService.readChannelMetadata( EpicsChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
+      final var fieldsOfInterestSet = Set.of( fieldsOfInterest.split( ";" ) );
+
+      final var serializer = WicaChannelDataSerializerBuilder
+            .create()
+            .withFieldsOfInterest( fieldsOfInterestSet )
+            .withNumericScale( numericScale )
+            .withQuotedNumericStrings( false )
+            .build();
+
+      logger.info( "'{}' - OK: Returning wica channel metadata.", channelName );
       statisticsCollector.incrementReplies();
       return new ResponseEntity<>( serializer.writeToJson( wicaChannelValue ), HttpStatus.OK );
    }

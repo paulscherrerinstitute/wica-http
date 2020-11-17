@@ -22,8 +22,8 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A service which offers the possibility to get or put the values of an
- * EPICS channel.
+ * A service which offers the possibility to get the metadata or value
+ * associated with an EPICS channel.
  *
  * @implNote.
  * The current implementation uses PSI's CA EPICS client library to create a
@@ -32,13 +32,13 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 @ThreadSafe
-public class EpicsChannelGetAndPutService implements AutoCloseable
+public class EpicsChannelReaderService implements AutoCloseable
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( EpicsChannelGetAndPutService.class );
+   private final Logger logger = LoggerFactory.getLogger( EpicsChannelReaderService.class );
    private final Context caContext;
    private final EpicsChannelValueGetter epicsChannelValueGetter;
    private final EpicsChannelMetadataGetter epicsChannelMetadataGetter;
@@ -51,14 +51,12 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
     * Returns a new instance that will read and/or write information from
     * EPICS channels of interest using the supplied value getter.
     *
-    * @param epicsCaLibraryMonitorNotifierImpl the CA library monitor notifier configuration.
     * @param epicsCaLibraryDebugLevel          the CA library debug level.
     * @param epicsChannelValueGetter           an object that can get and build the returned value.
     */
-   public EpicsChannelGetAndPutService( @Value( "${wica.epics-ca-library-monitor-notifier-impl}" ) String epicsCaLibraryMonitorNotifierImpl,
-                                        @Value( "${wica.epics-ca-library-debug-level}" ) int epicsCaLibraryDebugLevel,
-                                        @Autowired EpicsChannelMetadataGetter epicsChannelMetadataGetter,
-                                        @Autowired EpicsChannelValueGetter epicsChannelValueGetter )
+   public EpicsChannelReaderService( @Value( "${wica.epics-ca-library-debug-level}" ) int epicsCaLibraryDebugLevel,
+                                     @Autowired EpicsChannelMetadataGetter epicsChannelMetadataGetter,
+                                     @Autowired EpicsChannelValueGetter epicsChannelValueGetter )
    {
       logger.debug( "'{}' - constructing new EpicsChannelGetAndPutService instance...", this );
 
@@ -67,16 +65,15 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
 
       logger.info( "Creating CA context for WicaChannelService..." );
 
-      // Setup a context that uses the monitor notification policy and debug
-      // message log level defined in the configuration file.
+      // Setup a context that uses the debug message log level defined in the configuration file.
       // Note: the EPICS_CA_MAX_ARRAY_BYTES property should not be required, since unlimited
-      // size is the defaulty behaviour of the library.
+      // size is the default behaviour of the library.
       // System.setProperty( ProtocolConfiguration.PropertyNames.EPICS_CA_MAX_ARRAY_BYTES.toString(), "1000000");
       final Properties properties = new Properties();
-      properties.setProperty( LibraryConfiguration.PropertyNames.CA_MONITOR_NOTIFIER_IMPL.toString(), epicsCaLibraryMonitorNotifierImpl );
       properties.setProperty( LibraryConfiguration.PropertyNames.CA_LIBRARY_LOG_LEVEL.toString(), String.valueOf( epicsCaLibraryDebugLevel ) );
 
-      caContext = new Context( properties );
+      this.caContext = new Context( properties );
+
       logger.debug( "'{}' - service instance constructed ok.", this );
    }
 
@@ -84,7 +81,7 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
 /*- Public methods -----------------------------------------------------------*/
 
    /**
-    * Gets the metadata associated with a channel.
+    * Returns the metadata associated with a channel.
     *
     * This method incurs the network cost of establishing a channel to the remote
     * data source and performing a synchronous GET operation.
@@ -94,41 +91,36 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
     * @param timeout the timeout to be applied when attempting to get the channel
     *     metadata from the underlying data source. If a timeout occurs the returned
     *     value will be WicaChannelMetadataUnknown.
+    *
     * @param timeUnit the time units to be used.
+    *
     * @return the metadata.
     */
-   public WicaChannelMetadata getChannelMetadata( EpicsChannelName epicsChannelName, long timeout, TimeUnit timeUnit )
+   public WicaChannelMetadata readChannelMetadata( EpicsChannelName epicsChannelName, long timeout, TimeUnit timeUnit )
    {
       Validate.notNull( epicsChannelName );
       Validate.notNull( timeUnit );
       Validate.isTrue( timeout > 0 );
       Validate.validState( ! closed, "The service was previously closed and can no longer be used." );
 
-      // Create a new autocloseable channel.
       final String channelName = epicsChannelName.asString();
-      logger.info( "'{}' - Getting channel metadata...", channelName );
-      logger.info( "'{}' - Creating channel...", channelName );
-      try( Channel<Object> caChannel = caContext.createChannel(channelName, Object.class ) )
+      logger.info( "'{}' - Reading channel metadata...", channelName );
+      try( final Channel<Object> caChannel = this.caContext.createChannel( epicsChannelName.asString(), Object.class ) )
       {
-         logger.info( "'{}' - OK: channel created.", channelName );
-         logger.info( "'{}' - Connecting channel with timeout {} {}...", channelName, timeout, timeUnit );
-         caChannel.connectAsync().get( timeout, timeUnit );
-         logger.info( "'{}' - OK: channel connected.", channelName );
-
          logger.info( "'{}' - Getting channel metadata...", channelName );
          final var result = epicsChannelMetadataGetter.get( caChannel );
          logger.info( "'{}' - OK: channel metadata obtained.", channelName );
          return result;
       }
-      catch ( Throwable ex )
+      catch ( Throwable th )
       {
-         logger.info( "'{}' - ERROR: Exception whilst getting channel metadata. Details: '{}'", channelName, ex.getMessage() );
+         logger.info( "'{}' - ERROR: Exception whilst getting channel metadata. Details: '{}'.", channelName, th.getMessage() );
          return WicaChannelMetadata.createUnknownInstance();
       }
    }
 
    /**
-    * Gets the value of a channel.
+    * Returns the value of a channel.
     *
     * This method incurs the network cost of establishing a channel to the remote
     * data source and performing a synchronous GET operation.
@@ -138,10 +130,12 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
     * @param timeout the timeout to be applied when attempting to get the channel
     *     value from the underlying data source. If a timeout occurs the returned
     *     value will be WicaChannelValueDisconnected.
+    *
     * @param timeUnit the time units to be used.
+    *
     * @return the value.
     */
-   public WicaChannelValue getChannelValue( EpicsChannelName epicsChannelName, long timeout, TimeUnit timeUnit )
+   public WicaChannelValue readChannelValue( EpicsChannelName epicsChannelName, long timeout, TimeUnit timeUnit )
    {
       Validate.notNull( epicsChannelName );
       Validate.notNull( timeUnit );
@@ -150,72 +144,19 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
 
       // Create a new autocloseable channel.
       final String channelName = epicsChannelName.asString();
-      logger.trace( "'{}' - Getting channel value...", channelName );
-      logger.trace( "'{}' - Creating channel...", channelName );
-      try( Channel<Object> caChannel = caContext.createChannel(channelName, Object.class ) )
+      logger.info( "'{}' - Reading channel value...", channelName );
+      try( final Channel<Object> caChannel = this.caContext.createChannel( epicsChannelName.asString(), Object.class ) )
       {
-         logger.trace( "'{}' - OK: channel created.", channelName );
-         logger.trace( "'{}' - Connecting channel with timeout {} {}...", channelName, timeout, timeUnit );
-         caChannel.connectAsync().get( timeout, timeUnit );
-         logger.trace( "'{}' - OK: channel connected.", channelName );
-         logger.trace( "'{}' - Getting channel value...", channelName );
+         logger.info( "'{}' - Getting channel value...", channelName );
          final var result = epicsChannelValueGetter.get( caChannel );
-         logger.trace( "'{}' - OK: channel value obtained.", channelName );
+         logger.info( "'{}' - OK: channel value obtained.", channelName );
          return result;
       }
-      catch ( Throwable ex )
+      catch ( Throwable th )
       {
-         logger.trace( "'{}' - ERROR: Exception whilst getting channel value. Details: '{}'", channelName, ex.getMessage() );
+         logger.info( "'{}' - ERROR: Exception whilst getting channel metadata. Details: '{}'.", channelName, th.getMessage() );
          return WicaChannelValue.createChannelValueDisconnected();
       }
-   }
-
-   /**
-    * Sets the value of a channel.
-    *
-    * This method incurs the network cost of establishing a channel to the remote
-    * data source and performing a synchronous (= confirmed) PUT operation.
-    *
-    * @param epicsChannelName the channel name.
-    * @param channelValue the channel value.
-    * @param timeout the timeout to be applied when attempting to put the channel
-    *     value to the underlying data source. If a timeout occurs the returned
-    *     value will be false.
-    * @param timeUnit the time units to be used.
-    * @return boolean set true when the put completed successfully.
-    * @throws NullPointerException if any of the reference object arguments were null.
-    */
-   public boolean putChannelValue( EpicsChannelName epicsChannelName, String channelValue, long timeout, TimeUnit timeUnit )
-   {
-      Validate.notNull( epicsChannelName );
-      Validate.notNull( channelValue );
-      Validate.notNull( timeUnit );
-      Validate.isTrue( timeout > 0 );
-      Validate.validState( ! closed, "The service was previously closed and can no longer be used." );
-
-      // Create a new autocloseable channel.
-      final String channelName = epicsChannelName.asString();
-      logger.info( "'{}' - Setting channel value to '{}' ...", channelName, channelValue );
-      logger.info( "'{}' - Creating channel...", channelName );
-      try( Channel<String> caChannel = caContext.createChannel(channelName, String.class ) )
-      {
-         logger.info( "'{}' - OK: channel created.", channelName );
-
-         logger.info( "'{}' - Connecting channel with timeout {} {}...", channelName, timeout, timeUnit );
-         caChannel.connectAsync().get( timeout, timeUnit );
-         logger.info( "'{}' - OK: channel connected.", channelName );
-
-         logger.info( "'{}' - Putting to channel with timeout {} {}...", channelName, timeout, timeUnit );
-         caChannel.putAsync( channelValue ).get( timeout, timeUnit );
-         logger.info( "'{}' - OK: Channel PUT completed.", channelName );
-      }
-      catch ( Throwable ex )
-      {
-         logger.info( "'{}' - ERROR: Exception whilst getting channel value. Details: '{}'", channelName, ex.getMessage() );
-         return false;
-      }
-
-      return true;
    }
 
    /**
@@ -232,12 +173,11 @@ public class EpicsChannelGetAndPutService implements AutoCloseable
 
       // Note: closing the context disposes of any open channels.
       caContext.close();
-
       logger.debug( "'{}' - resources disposed ok.", this );
    }
 
-
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
+
 
 }
