@@ -84,7 +84,7 @@ class WicaAdminPageController
    }
 
    @GetMapping( value="/channel-monitors/unconn" )
-   public ResponseEntity<List<String>> getUnconnectedChannels()
+   public ResponseEntity<List<String>> getUnconnectedChannelMonitors()
    {
       final List<String> unconnectedChannelNames = epicsChannelMonitoringService.getStatistics().getUnconnectedChannelNames();
       return new ResponseEntity<>( unconnectedChannelNames, HttpStatus.OK );
@@ -95,6 +95,13 @@ class WicaAdminPageController
    {
       final List<String> channelNames = epicsChannelPollingService.getStatistics().getChannelNames();
       return new ResponseEntity<>( channelNames, HttpStatus.OK );
+   }
+
+   @GetMapping( value="/channel-pollers/unconn" )
+   public ResponseEntity<List<String>> getUnconnectedChannelPollers()
+   {
+      final List<String> unconnectedChannelNames = epicsChannelPollingService.getStatistics().getUnconnectedChannelNames();
+      return new ResponseEntity<>( unconnectedChannelNames, HttpStatus.OK );
    }
 
    @PutMapping( value="/statistics" )
