@@ -107,6 +107,8 @@ public class EpicsChannelReaderService implements AutoCloseable
       logger.info( "'{}' - Reading channel metadata...", channelName );
       try( final Channel<Object> caChannel = this.caContext.createChannel( epicsChannelName.asString(), Object.class ) )
       {
+         caChannel.connectAsync().get( timeout, timeUnit);
+
          logger.info( "'{}' - Getting channel metadata...", channelName );
          final var result = epicsChannelMetadataGetter.get( caChannel );
          logger.info( "'{}' - OK: channel metadata obtained.", channelName );
@@ -147,6 +149,8 @@ public class EpicsChannelReaderService implements AutoCloseable
       logger.info( "'{}' - Reading channel value...", channelName );
       try( final Channel<Object> caChannel = this.caContext.createChannel( epicsChannelName.asString(), Object.class ) )
       {
+         caChannel.connectAsync().get( timeout, timeUnit);
+
          logger.info( "'{}' - Getting channel value...", channelName );
          final var result = epicsChannelValueGetter.get( caChannel );
          logger.info( "'{}' - OK: channel value obtained.", channelName );
@@ -154,7 +158,7 @@ public class EpicsChannelReaderService implements AutoCloseable
       }
       catch ( Throwable th )
       {
-         logger.info( "'{}' - ERROR: Exception whilst getting channel metadata. Details: '{}'.", channelName, th.getMessage() );
+         logger.info( "'{}' - ERROR: Exception whilst getting channel value. Details: '{}'.", channelName, th.getMessage() );
          return WicaChannelValue.createChannelValueDisconnected();
       }
    }
