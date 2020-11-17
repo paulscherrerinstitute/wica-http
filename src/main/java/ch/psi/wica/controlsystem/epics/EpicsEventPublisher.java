@@ -27,7 +27,7 @@ public class EpicsEventPublisher
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger( EpicsEventPublisher.class );
-   private ApplicationEventPublisher applicationEventPublisher;
+   private final ApplicationEventPublisher applicationEventPublisher;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
