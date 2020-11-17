@@ -176,5 +176,5 @@ Behaviour change: channels whose data acquisition mode is set to poll will now a
   * [Issue #57](https://github.com/paulscherrerinstitute/wica-http/issues/57) Create Wica HTTP Release 1.8.0
   * [Issue #58](https://github.com/paulscherrerinstitute/wica-http/issues/58) Remove deprecated properties "pollratio" and "heartbeat".
    
-Test Status: Tests run: 349, Failures: 0, Errors: 0, Skipped: 9    
+Test Status: Tests run: 354, Failures: 0, Errors: 0, Skipped: 13    
  
