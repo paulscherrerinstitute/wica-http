@@ -4,7 +4,7 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.epics.EpicsChannelGetAndPutService;
+import ch.psi.wica.controlsystem.epics.EpicsChannelReaderService;
 import ch.psi.wica.controlsystem.epics.EpicsChannelName;
 import ch.psi.wica.infrastructure.channel.WicaChannelDataSerializerBuilder;
 import ch.psi.wica.model.app.StatisticsCollectionService;
@@ -38,7 +38,7 @@ class WicaChannelGetController
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger( WicaChannelGetController.class );
-   private final EpicsChannelGetAndPutService epicsChannelGetAndPutService;
+   private final EpicsChannelReaderService epicsChannelReaderService;
    private final int defaultTimeoutInMillis;
    private final int defaultNumericScale;
    private final String defaultFieldsOfInterest;
@@ -57,7 +57,7 @@ class WicaChannelGetController
     * @param defaultNumericScale the default numeric scale that will be used
     *        when returning the value of the channel.
     *
-    * @param epicsChannelGetAndPutService reference to the service object which can be used
+    * @param epicsChannelReaderService reference to the service object which can be used
     *        to get values to or from a wica channel.
     * @param statisticsCollectionService an object which will collect the statistics
     *        associated with this class instance.
@@ -65,18 +65,18 @@ class WicaChannelGetController
    private WicaChannelGetController( @Value( "${wica.channel-get-timeout-interval-in-ms}") int defaultTimeoutInMillis,
                                      @Value( "${wica.channel-get-numeric-scale}") int defaultNumericScale,
                                      @Value( "${wica.channel-get-fields-of-interest}") String defaultFieldsOfInterest,
-                                     @Autowired EpicsChannelGetAndPutService epicsChannelGetAndPutService,
+                                     @Autowired EpicsChannelReaderService epicsChannelReaderService,
                                      @Autowired StatisticsCollectionService statisticsCollectionService
    )
    {
       Validate.isTrue( defaultTimeoutInMillis > 0 );
       Validate.isTrue( defaultNumericScale > 0 );
-      Validate.notNull(epicsChannelGetAndPutService);
+      Validate.notNull( epicsChannelReaderService );
 
       this.defaultTimeoutInMillis = defaultTimeoutInMillis;
       this.defaultNumericScale = defaultNumericScale;
       this.defaultFieldsOfInterest = defaultFieldsOfInterest;
-      this.epicsChannelGetAndPutService = epicsChannelGetAndPutService;
+      this.epicsChannelReaderService = epicsChannelReaderService;
 
       this.statisticsCollector = new ControllerStatistics("WICA CHANNEL GET CONTROLLER" );
       statisticsCollectionService.addCollectable( statisticsCollector );
@@ -137,7 +137,7 @@ class WicaChannelGetController
       numericScale = numericScale == null ? defaultNumericScale : numericScale;
       fieldsOfInterest = fieldsOfInterest == null ? defaultFieldsOfInterest : fieldsOfInterest;
 
-      final var wicaChannelValue = epicsChannelGetAndPutService.getChannelValue( EpicsChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
+      final var wicaChannelValue = epicsChannelReaderService.readChannelValue( EpicsChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
       final var fieldsOfInterestSet = Set.of( fieldsOfInterest.split( ";" ) );
 
       final var serializer = WicaChannelDataSerializerBuilder
