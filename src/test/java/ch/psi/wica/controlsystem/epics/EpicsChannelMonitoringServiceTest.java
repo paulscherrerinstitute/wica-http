@@ -169,7 +169,8 @@ class EpicsChannelMonitoringServiceTest
    @Test
    void testStartMonitoring_CheckStatisticsAsExpectedWhenDealingWithOfflineChannels()
    {
-      // Verify that attempting to monitor a non-existent channel
+      // Verify that attempting to monitor a non-existent channel does not result in the
+      // monitor count increasing.
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalMonitorCount(), is( "0" ) );
 
       epicsChannelMonitoringService.startMonitoring( createWicaChannel("non-existent-channel-1" ) );
