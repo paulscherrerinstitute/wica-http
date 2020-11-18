@@ -42,10 +42,10 @@ public class StatisticsCollectionService
 
    public void resetStatistics()
    {
-      collectables.forEach(StatisticsCollectable::reset);
+      collectables.forEach( StatisticsCollectable::reset );
    }
 
-   /*- Private methods ----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

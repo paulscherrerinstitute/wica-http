@@ -34,6 +34,13 @@
             width: 50%;
         }
 
+        button {
+            border: 2px solid darkgray;
+            padding: 2px;
+            background-color: lightblue;
+            border-radius: 7%;
+        }
+
     </style>
     <title>Wica Admin Page</title>
 </head>
@@ -54,5 +61,31 @@
         </table>
     </div>
 
+    <h2>Useful Links</h2>
+    <ul>
+    <li><a href="/channel-monitors/all">Get All Monitors</a></li>
+        <li><a href="/channel-monitors/unconn">Get Unconnected Monitors</a></li>
+        <li><a href="/channel-pollers/all">Get All Pollers</a></li>
+        <li><a href="/channel-pollers/unconn">Get Unconnected Pollers</a></li>
+    </ul>
+
+    <h2>Commands</h2>
+
+    <ul>
+    <li><div><button onclick="resetStatistics();">Reset Statistics</button></div></li>
+    </ul>
 </body>
+
+<script>
+
+    // Trigger a request on the server to reset the statistics
+    function resetStatistics()
+    {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open( "PUT", "/statistics", true);
+        xhttp.send( "reset=true" );
+    }
+
+</script>
+
 </html>
