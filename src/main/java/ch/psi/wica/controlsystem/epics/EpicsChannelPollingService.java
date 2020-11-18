@@ -386,9 +386,9 @@ public class EpicsChannelPollingService implements AutoCloseable
             try
             {
                // Now construct and return a wica value object using the timestamped object information.
-               logger.info("'{}' - polling now...", wicaChannelName );
+               logger.trace("'{}' - polling now...", wicaChannelName );
                final WicaChannelValue channelValue = epicsChannelValueGetter.get( epicsChannel );
-               logger.info("'{}' - value obtained OK.", wicaChannelName );
+               logger.trace("'{}' - value obtained OK.", wicaChannelName );
                valueUpdateHandler.accept( channelValue );
             }
             catch ( Exception ex )
