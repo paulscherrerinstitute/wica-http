@@ -163,7 +163,10 @@ the server log. Previously the stream would be destroyed on the server and the c
 Enhancement: a new boolean stream property has been defined called quietMode (current default is false). When set true then the stream only sends
 polled and/or monitored value update messages when there is new information. Previously the messages would be sent but with zero payload.
 
-Behaviour change: channels whose data acquisition mode is set to poll will now also acquire and publish channel metadata.
+Behaviour change: channels whose data acquisition mode is set to poll will now also acquire and publish channel metadata when it
+comes online.
+
+Behaviour change: channels whose data acquisition mode is set to poll will only do so when the channel is online. 
 
   * [Issue #48](https://github.com/paulscherrerinstitute/wica-http/issues/48) BUG FIX: Fix incorrect logger names.
   * [Issue #49](https://github.com/paulscherrerinstitute/wica-http/issues/49) BUG FIX: Fix regression bug whereby poll-only streams were no longer working.
@@ -175,6 +178,7 @@ Behaviour change: channels whose data acquisition mode is set to poll will now a
   * [Issue #55](https://github.com/paulscherrerinstitute/wica-http/issues/55) ENHANCEMENT: Added support for new WicaStreamProperty "quietMode".
   * [Issue #57](https://github.com/paulscherrerinstitute/wica-http/issues/57) Create Wica HTTP Release 1.8.0
   * [Issue #58](https://github.com/paulscherrerinstitute/wica-http/issues/58) Remove deprecated properties "pollratio" and "heartbeat".
+  * [Issue #59](https://github.com/paulscherrerinstitute/wica-http/issues/59) ENHANCEMENT: Improvements to Admin Page.
    
 Test Status: Tests run: 354, Failures: 0, Errors: 0, Skipped: 13    
  
