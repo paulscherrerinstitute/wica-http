@@ -51,8 +51,9 @@ public class EpicsChannelReaderService implements AutoCloseable
     * Returns a new instance that will read and/or write information from
     * EPICS channels of interest using the supplied value getter.
     *
-    * @param epicsCaLibraryDebugLevel          the CA library debug level.
-    * @param epicsChannelValueGetter           an object that can get and build the returned value.
+    * @param epicsCaLibraryDebugLevel the CA library debug level.
+    * @param epicsChannelMetadataGetter an object that can get and build the returned metadata.
+    * @param epicsChannelValueGetter an object that can get and build the returned value.
     */
    public EpicsChannelReaderService( @Value( "${wica.epics-ca-library-debug-level}" ) int epicsCaLibraryDebugLevel,
                                      @Autowired EpicsChannelMetadataGetter epicsChannelMetadataGetter,
