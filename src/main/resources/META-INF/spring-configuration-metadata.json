@@ -56,9 +56,14 @@
       "description": "The default number of digits after the decimal point when getting the current value of a wica channel."
     },
     {
-      "name": "wica.channel-get-fields-of-interest",
+      "name": "wica.channel-get-value-fields-of-interest",
       "type": "java.lang.String",
       "description": "Semicolon separated list specifying the default names of the fields that will be returned when getting the current value of a wica channel."
+    },
+    {
+      "name": "wica.channel-get-metadata-fields-of-interest",
+      "type": "java.lang.String",
+      "description": "Semicolon separated list specifying the default names of the fields that will be returned when getting the metadata associated with a wica channel."
     },
     {
       "name": "wica.channel-put-timeout-interval-in-ms",
