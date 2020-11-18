@@ -41,8 +41,8 @@ class WicaChannelGetController
    private final EpicsChannelReaderService epicsChannelReaderService;
    private final int defaultTimeoutInMillis;
    private final int defaultNumericScale;
-   private final String defaultValueFieldsOfInterest;
-   private final String defaultMetadataFieldsOfInterest;
+   private final String channelValueDefaultFieldsOfInterest;
+   private final String channelMetadataDefaultFieldsOfInterest;
 
    private final ControllerStatistics statisticsCollector;
 
@@ -65,8 +65,8 @@ class WicaChannelGetController
     */
    private WicaChannelGetController( @Value( "${wica.channel-get-timeout-interval-in-ms}") int defaultTimeoutInMillis,
                                      @Value( "${wica.channel-get-numeric-scale}") int defaultNumericScale,
-                                     @Value( "${wica.channel-get-default-value-fields-of-interest}") String defaultValueFieldsOfInterest,
-                                     @Value( "${wica.channel-get-default-metadata-fields-of-interest}") String defaultMetadataFieldsOfInterest,
+                                     @Value( "${wica.channel-get-value-default-fields-of-interest}") String channelValueDefaultFieldsOfInterest,
+                                     @Value( "${wica.channel-get-metadata-default-fields-of-interest}") String channelMetadataDefaultFieldsOfInterest,
                                      @Autowired EpicsChannelReaderService epicsChannelReaderService,
                                      @Autowired StatisticsCollectionService statisticsCollectionService
    )
@@ -77,8 +77,8 @@ class WicaChannelGetController
 
       this.defaultTimeoutInMillis = defaultTimeoutInMillis;
       this.defaultNumericScale = defaultNumericScale;
-      this.defaultValueFieldsOfInterest = defaultValueFieldsOfInterest;
-      this.defaultMetadataFieldsOfInterest = defaultMetadataFieldsOfInterest;
+      this.channelValueDefaultFieldsOfInterest = channelValueDefaultFieldsOfInterest;
+      this.channelMetadataDefaultFieldsOfInterest = channelMetadataDefaultFieldsOfInterest;
       this.epicsChannelReaderService = epicsChannelReaderService;
 
       this.statisticsCollector = new ControllerStatistics("WICA CHANNEL GET CONTROLLER" );
@@ -138,7 +138,7 @@ class WicaChannelGetController
       // Assign default values when not explicitly provided.
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
       numericScale = numericScale == null ? defaultNumericScale : numericScale;
-      fieldsOfInterest = fieldsOfInterest == null ? defaultValueFieldsOfInterest : fieldsOfInterest;
+      fieldsOfInterest = fieldsOfInterest == null ? channelValueDefaultFieldsOfInterest : fieldsOfInterest;
 
       final var wicaChannelValue = epicsChannelReaderService.readChannelValue( EpicsChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
       final var fieldsOfInterestSet = Set.of( fieldsOfInterest.split( ";" ) );
@@ -205,7 +205,7 @@ class WicaChannelGetController
       // Assign default values when not explicitly provided.
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
       numericScale = numericScale == null ? defaultNumericScale : numericScale;
-      fieldsOfInterest = fieldsOfInterest == null ? defaultMetadataFieldsOfInterest : fieldsOfInterest;
+      fieldsOfInterest = fieldsOfInterest == null ? channelMetadataDefaultFieldsOfInterest : fieldsOfInterest;
 
       final var wicaChannelValue = epicsChannelReaderService.readChannelMetadata( EpicsChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
       final var fieldsOfInterestSet = Set.of( fieldsOfInterest.split( ";" ) );
