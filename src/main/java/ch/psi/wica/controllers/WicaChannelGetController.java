@@ -41,7 +41,8 @@ class WicaChannelGetController
    private final EpicsChannelReaderService epicsChannelReaderService;
    private final int defaultTimeoutInMillis;
    private final int defaultNumericScale;
-   private final String defaultFieldsOfInterest;
+   private final String defaultValueFieldsOfInterest;
+   private final String defaultMetadataFieldsOfInterest;
 
    private final ControllerStatistics statisticsCollector;
 
@@ -64,7 +65,8 @@ class WicaChannelGetController
     */
    private WicaChannelGetController( @Value( "${wica.channel-get-timeout-interval-in-ms}") int defaultTimeoutInMillis,
                                      @Value( "${wica.channel-get-numeric-scale}") int defaultNumericScale,
-                                     @Value( "${wica.channel-get-fields-of-interest}") String defaultFieldsOfInterest,
+                                     @Value( "${wica.channel-get-default-value-fields-of-interest}") String defaultValueFieldsOfInterest,
+                                     @Value( "${wica.channel-get-default-metadata-fields-of-interest}") String defaultMetadataFieldsOfInterest,
                                      @Autowired EpicsChannelReaderService epicsChannelReaderService,
                                      @Autowired StatisticsCollectionService statisticsCollectionService
    )
@@ -75,7 +77,8 @@ class WicaChannelGetController
 
       this.defaultTimeoutInMillis = defaultTimeoutInMillis;
       this.defaultNumericScale = defaultNumericScale;
-      this.defaultFieldsOfInterest = defaultFieldsOfInterest;
+      this.defaultValueFieldsOfInterest = defaultValueFieldsOfInterest;
+      this.defaultMetadataFieldsOfInterest = defaultMetadataFieldsOfInterest;
       this.epicsChannelReaderService = epicsChannelReaderService;
 
       this.statisticsCollector = new ControllerStatistics("WICA CHANNEL GET CONTROLLER" );
@@ -135,7 +138,7 @@ class WicaChannelGetController
       // Assign default values when not explicitly provided.
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
       numericScale = numericScale == null ? defaultNumericScale : numericScale;
-      fieldsOfInterest = fieldsOfInterest == null ? defaultFieldsOfInterest : fieldsOfInterest;
+      fieldsOfInterest = fieldsOfInterest == null ? defaultValueFieldsOfInterest : fieldsOfInterest;
 
       final var wicaChannelValue = epicsChannelReaderService.readChannelValue( EpicsChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
       final var fieldsOfInterestSet = Set.of( fieldsOfInterest.split( ";" ) );
@@ -153,24 +156,24 @@ class WicaChannelGetController
    }
 
    /**
-    * Handles an HTTP GET request to return the value of the specified channel.
+    * Handles an HTTP GET request to return the metadata of the specified channel.
     *
-    * @param channelName the name of the channel whose value is to be fetched.
+    * @param channelName the name of the channel whose metadata is to be fetched.
     *
     * @param timeoutInMillis the timeout to be applied when attempting to
-    *     get the channel value from the underlying data source. If this
+    *     get the channel metadata from the underlying data source. If this
     *     optional parameter is not provided then the configured default
-    *     value will be used.
+    *     will be used.
     *
     * @param numericScale the default number of digits after the decimal
-    *     point when getting the current value of a wica channel. If this
+    *     point when getting the current metadata for a wica channel. If this
     *     optional parameter is not provided then the configured default
-    *     value will be used.
+    *     will be used.
     *
     * @param fieldsOfInterest the default fields of interest to be returned
-    *      when getting the current value of a wica channel. If this
+    *     when getting the current metadata for a wica channel. If this
     *     optional parameter is not provided then the configured default
-    *     value will be used.
+    *     will be used.
     *
     * @param httpServletRequest contextual information for the request; used
     *     for statistics collection only.
@@ -202,7 +205,7 @@ class WicaChannelGetController
       // Assign default values when not explicitly provided.
       timeoutInMillis = timeoutInMillis == null ? defaultTimeoutInMillis : timeoutInMillis;
       numericScale = numericScale == null ? defaultNumericScale : numericScale;
-      fieldsOfInterest = fieldsOfInterest == null ? defaultFieldsOfInterest : fieldsOfInterest;
+      fieldsOfInterest = fieldsOfInterest == null ? defaultMetadataFieldsOfInterest : fieldsOfInterest;
 
       final var wicaChannelValue = epicsChannelReaderService.readChannelMetadata( EpicsChannelName.of( channelName ), timeoutInMillis, TimeUnit.MILLISECONDS );
       final var fieldsOfInterestSet = Set.of( fieldsOfInterest.split( ";" ) );
