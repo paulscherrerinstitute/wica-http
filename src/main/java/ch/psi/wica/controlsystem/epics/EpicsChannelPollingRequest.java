@@ -3,10 +3,8 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-
 import ch.psi.wica.model.channel.WicaChannel;
 
-import java.util.concurrent.TimeUnit;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -27,7 +25,7 @@ public class EpicsChannelPollingRequest
 
    EpicsChannelPollingRequest( WicaChannel wicaChannel )
    {
-      this( EpicsChannelName.of( wicaChannel.getNameAsString() ), wicaChannel.getProperties().getPollingIntervalInMillis(), wicaChannel );
+      this( EpicsChannelName.of( wicaChannel.getName().getControlSystemName() ), wicaChannel.getProperties().getPollingIntervalInMillis(), wicaChannel );
    }
 
    EpicsChannelPollingRequest( EpicsChannelName epicsChannelName, long pollingIntervalInMillis, WicaChannel publicationChannel )

@@ -24,7 +24,7 @@ public class EpicsChannelMonitoringRequest
 
    EpicsChannelMonitoringRequest( WicaChannel wicaChannel )
    {
-      this( EpicsChannelName.of( wicaChannel.getNameAsString() ), wicaChannel );
+      this( EpicsChannelName.of( wicaChannel.getName().getControlSystemName() ), wicaChannel );
    }
 
    EpicsChannelMonitoringRequest( EpicsChannelName epicsChannelName, WicaChannel publicationChannel )
