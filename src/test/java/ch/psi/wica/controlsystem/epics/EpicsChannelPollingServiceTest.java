@@ -77,23 +77,31 @@ class EpicsChannelPollingServiceTest
    }
 
    @Test
-   void testStartPolling_ThrowsIllegalStateExceptionWhenChannelNameNotUniqueAndPollingIntervalsAreTheSame()
+   void testStartPolling_ThrowsIllegalStateExceptionWhenWicaChannelNotUnique()
    {
-      epicsChannelPollingService.startPolling( createWicaChannel( "abcd" ));
-      final var ex = assertThrows( IllegalStateException.class, () -> epicsChannelPollingService.startPolling( createWicaChannel( "abcd" ) ) );
-      assertThat( ex.getMessage(), is( "The channel name: 'abcd' is already being polled with an identical polling rate." ) );
+      final EpicsChannelPollingRequest pollingRequest1 = createPollRequest("abcd", 100 );
+      final EpicsChannelPollingRequest pollingRequest2 = createPollRequest("abcd", 100 );
+      epicsChannelPollingService.startPolling( pollingRequest1 );
+
+      final var ex = assertThrows( IllegalStateException.class, () -> epicsChannelPollingService.startPolling( pollingRequest2 ) );
+      assertThat( ex.getMessage(), is( "The request object is already active." ) );
    }
 
    @Test
    void testStartPolling_DoesntThrowsIllegalStateExceptionWhenChannelNameNotUniqueAndPollingIntervalsAreDifferent()
    {
-      epicsChannelPollingService.startPolling( createWicaChannel( "abcd", 100 ));
-      assertDoesNotThrow( () -> epicsChannelPollingService.startPolling( createWicaChannel( "abcd", 101 ) ) );
+      final EpicsChannelPollingRequest pollingRequest1 = createPollRequest("abcd", 100 );
+      final EpicsChannelPollingRequest pollingRequest2 = createPollRequest("abcd", 101 );
+
+      epicsChannelPollingService.startPolling( pollingRequest1 );
+      assertDoesNotThrow( () -> epicsChannelPollingService.startPolling( pollingRequest2 ) );
    }
 
    // TODO - Test disabled for now. Need way of starting EPICS server when performing tests as part of automatic build.
    // By default this test is suppressed as it would create problems in the automatic
    // build system. The test should be enabled as required during pre-production testing.
+   // Please run the EPICS IOC 'epics_tests.db' defined in 'src/test/resources/epics'.
+   // Also, you may need to ensure that your local VPN is not active.
    @Disabled
    @Test
    void testStartPolling_OneHundredOnlineChannelsConnectTime()
@@ -124,17 +132,18 @@ class EpicsChannelPollingServiceTest
       final StopWatch stopWatch = StopWatch.createStarted();
       for ( String channel : test100ChannelNames )
       {
-         epicsChannelPollingService.startPolling( createWicaChannel( channel, 1000 ) );
+         epicsChannelPollingService.startPolling( createPollRequest( channel, 1000 ) );
       }
 
       // Verify that the connection time for 100 channels is less than 500ms.
       assertThat( stopWatch.getTime( TimeUnit.MILLISECONDS), lessThan( 500L ) );
    }
 
-
    // TODO - Test disabled for now. Need way of starting EPICS server when performing tests as part of automatic build.
    // By default this test is suppressed as it would create problems in the automatic
    // build system. The test should be enabled as required during pre-production testing.
+   // Please run the EPICS IOC 'epics_tests.db' defined in 'src/test/resources/epics'.
+   // Also, you may need to ensure that your local VPN is not active.
    @Disabled
    @Test
    void testStartPolling_OneHundredOnlineChannelsStatisticsCollection() throws InterruptedException
@@ -164,7 +173,7 @@ class EpicsChannelPollingServiceTest
 
       for ( String channel : test100ChannelNames )
       {
-         epicsChannelPollingService.startPolling( createWicaChannel( channel, 1000 ) );
+         epicsChannelPollingService.startPolling( createPollRequest( channel, 1000 ) );
       }
 
       Thread.sleep( 2500 );
@@ -179,14 +188,16 @@ class EpicsChannelPollingServiceTest
    @Test
    void testStopPolling_ThrowsIllegalStateExceptionWhenStoppingPollingChannelThatWasNeverPreviouslyPolled()
    {
-      final var ex = assertThrows( IllegalStateException.class, () -> epicsChannelPollingService.stopPolling( createWicaChannel("unknown-channel" ) ) );
-      assertThat( ex.getMessage(), is( "The channel name: 'unknown-channel' was not recognised.") );
+      final var ex = assertThrows( IllegalStateException.class, () -> epicsChannelPollingService.stopPolling( createPollRequest("unknown-channel" ) ) );
+      assertThat( ex.getMessage(), is( "The request object was not recognised." ) );
    }
 
    @Test
    void testStartPolling_CheckChannelStatisticsAsExpectedForOfflineChannels() throws InterruptedException
    {
-      epicsChannelPollingService.startPolling( createWicaChannel("offline-channel", 100 ) );
+      final EpicsChannelPollingRequest pollRequest = createPollRequest("offline-channel", 100 );
+
+      epicsChannelPollingService.startPolling( pollRequest );
       assertThat( epicsChannelPollingService.getStatistics().getStartRequests(), is( "1" ) );
       assertThat( epicsChannelPollingService.getStatistics().getStopRequests(), is( "0" ) );
       assertThat( epicsChannelPollingService.getStatistics().getTotalChannelCount(), is( "1" ) );
@@ -202,13 +213,15 @@ class EpicsChannelPollingServiceTest
       assertThat( epicsChannelPollingService.getStatistics().getPollSuccessCount(), is( "0" ) );
       assertThat( epicsChannelPollingService.getStatistics().getPollFailureCount(), is( "0" ) );
 
-      epicsChannelPollingService.stopPolling( createWicaChannel("offline-channel" ) );
+      epicsChannelPollingService.stopPolling( pollRequest );
    }
 
    @Test
    void testStopMonitoring_CheckChannelStatisticsAsExpectedWhenDisposingOfflineChannels() throws InterruptedException
    {
-      epicsChannelPollingService.startPolling( createWicaChannel("offline-channel", 500 ) );
+      final EpicsChannelPollingRequest pollRequest = createPollRequest("offline-channel", 500 );
+
+      epicsChannelPollingService.startPolling( pollRequest );
       assertThat( epicsChannelPollingService.getStatistics().getStartRequests(), is( "1") );
       assertThat( epicsChannelPollingService.getStatistics().getStopRequests(), is( "0") );
       assertThat( epicsChannelPollingService.getStatistics().getTotalChannelCount(), is( "1") );
@@ -217,7 +230,7 @@ class EpicsChannelPollingServiceTest
 
       Thread.sleep( 800 );
 
-      epicsChannelPollingService.stopPolling( createWicaChannel("offline-channel" ) );
+      epicsChannelPollingService.stopPolling( pollRequest );
       assertThat( epicsChannelPollingService.getStatistics().getStartRequests(), is( "1") );
       assertThat( epicsChannelPollingService.getStatistics().getStopRequests(), is( "1") );
       assertThat( epicsChannelPollingService.getStatistics().getTotalChannelCount(), is( "0") );
@@ -228,14 +241,14 @@ class EpicsChannelPollingServiceTest
    @Test
    void testStartPolling_CheckStatisticsAsExpectedWhenDealingWithOfflineChannels()
    {
-      // Verify that attempting to monitor a non-existent channel does result in the
+      // Verify that attempting to poll a non-existent channel does result in the
       // active poller count increasing.
       assertThat( epicsChannelPollingService.getStatistics().getTotalChannelCount(), is( "0" ) );
 
-      epicsChannelPollingService.startPolling( createWicaChannel("non-existent-channel-1", 100 ) );
+      epicsChannelPollingService.startPolling( createPollRequest("non-existent-channel-1", 100 ) );
       assertThat( epicsChannelPollingService.getStatistics().getTotalChannelCount(), is( "1" ) );
 
-      epicsChannelPollingService.startPolling( createWicaChannel("non-existent-channel-2", 101 ) );
+      epicsChannelPollingService.startPolling( createPollRequest("non-existent-channel-2", 101 ) );
       assertThat( epicsChannelPollingService.getStatistics().getTotalChannelCount(), is( "2" ) );
 
       epicsChannelPollingService.close();
@@ -245,7 +258,7 @@ class EpicsChannelPollingServiceTest
    @Test
    void testStartPolling_verifyInitialConnectBehaviour_HandlersAreNotNotifiedIfChannelOffline() throws InterruptedException
    {
-      epicsChannelPollingService.startPolling( createWicaChannel("non-existent-channel" ) );
+      epicsChannelPollingService.startPolling( createPollRequest("non-existent-channel" ) );
       Thread.sleep( 1000 );
       assertThat( eventReceiverMock.getMetadataPublishedTimestamp().isEmpty(), is( true ) );
       assertThat( eventReceiverMock.getValuePublishedTimestamp().isEmpty(), is( true ) );
@@ -254,11 +267,13 @@ class EpicsChannelPollingServiceTest
    // TODO - Test disabled for now. Need way of starting EPICS server when performing tests as part of automatic build.
    // By default this test is suppressed as it would create problems in the automatic
    // build system. The test should be enabled as required during pre-production testing.
+   // Please run the EPICS IOC 'epics_tests.db' defined in 'src/test/resources/epics'.
+   // Also, you may need to ensure that your local VPN is not active.
    @Disabled
    @Test
    void testStartPolling_verifyInitialConnectBehaviour_NotificationSequence() throws InterruptedException
    {
-      epicsChannelPollingService.startPolling( createWicaChannel("wica:test:db_ok" ) );
+      epicsChannelPollingService.startPolling( createPollRequest("wica:test:db_ok" ) );
       Thread.sleep( 2500 );
       assertThat( eventReceiverMock.getMetadataPublishedTimestamp().isPresent(), is( true ) );
       assertThat( eventReceiverMock.getValuePublishedTimestamp().isPresent(), is( true ) );
@@ -272,12 +287,12 @@ class EpicsChannelPollingServiceTest
 
 /*- Private methods ----------------------------------------------------------*/
 
-   private WicaChannel createWicaChannel( String name )
+   private EpicsChannelPollingRequest createPollRequest( String name )
    {
-      return createWicaChannel( name, 4000 );
+      return createPollRequest( name, 4000 );
    }
 
-   private WicaChannel createWicaChannel( String name, int pollingInterval )
+   private EpicsChannelPollingRequest createPollRequest( String name, int pollingInterval )
    {
       final WicaChannelName wicaChannelName = WicaChannelName.of( name );
       final WicaChannelProperties wicaChannelProperties = WicaChannelPropertiesBuilder
@@ -286,7 +301,8 @@ class EpicsChannelPollingServiceTest
             .withPollingIntervalInMillis( pollingInterval )
             .build();
 
-      return new WicaChannel( wicaChannelName, wicaChannelProperties );
+      final WicaChannel wicaChannel = new WicaChannel( wicaChannelName, wicaChannelProperties );
+      return new EpicsChannelPollingRequest( wicaChannel );
    }
 
 /*- Nested Classes -----------------------------------------------------------*/

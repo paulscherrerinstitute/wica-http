@@ -48,6 +48,8 @@ class WicaStreamCreateControllerTest
    private String epicsChannelListOk1;
    private String epicsChannelListOk2;
    private String epicsChannelListEmpty;
+   private String epicsChannelListRepeatedChannelName;
+   private String epicsChannelListRepeatedChannelNameDifferentPollIntervals;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -60,8 +62,11 @@ class WicaStreamCreateControllerTest
       epicsChannelListOk1 = Files.readString(Paths.get("src/test/resources/epics/epics_channel_list_ok.json") );
       epicsChannelListOk2 = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_ok2.json") );
       epicsChannelListEmpty = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_empty.json") );
+      epicsChannelListRepeatedChannelName = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_repeated_channel_name.json") );
+      epicsChannelListRepeatedChannelNameDifferentPollIntervals = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_repeated_channel_name_different_poll_intervals.json") );
 
       WicaStreamId.resetAllocationSequencer();
+
    }
 
 	@Test
@@ -155,6 +160,48 @@ class WicaStreamCreateControllerTest
       final String errorHeader = result.getResponse().getHeader( "X-WICA-ERROR" );
       assertNotNull( errorHeader );
       assertEquals( "WICA SERVER: The JSON configuration string did not define any channels.", errorHeader );
+
+      // Check that the body content was empty as expected.
+      final String content = result.getResponse().getContentAsString();
+      assertEquals( "", content );
+      logger.info( "Returned Content was: '{}'", content );
+   }
+
+   @Test
+   void testSendInvalidRequestRepeatedChannelName_ShouldBeRejected() throws Exception
+   {
+      // Send the request with a repeated channel name
+      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams" )
+            .content( epicsChannelListRepeatedChannelName )
+            .contentType( MediaType.APPLICATION_JSON_VALUE )
+            .accept( MediaType.TEXT_PLAIN_VALUE );
+      final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest() ).andReturn();
+
+      // Check that the X-WICA-ERROR is as expected
+      final String errorHeader = result.getResponse().getHeader( "X-WICA-ERROR" );
+      assertNotNull( errorHeader );
+      assertEquals( "WICA SERVER: The JSON configuration string '" + epicsChannelListRepeatedChannelName + "' was invalid.", errorHeader );
+
+      // Check that the body content was empty as expected.
+      final String content = result.getResponse().getContentAsString();
+      assertEquals( "", content );
+      logger.info( "Returned Content was: '{}'", content );
+   }
+
+   @Test
+   void testSendInvalidRequestRepeatedChannelNameDifferentPollIntervals_ShouldBeRejected() throws Exception
+   {
+      // Send the request with a repeated channel name
+      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams" )
+            .content( epicsChannelListRepeatedChannelNameDifferentPollIntervals )
+            .contentType( MediaType.APPLICATION_JSON_VALUE )
+            .accept( MediaType.TEXT_PLAIN_VALUE );
+      final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest() ).andReturn();
+
+      // Check that the X-WICA-ERROR is as expected
+      final String errorHeader = result.getResponse().getHeader( "X-WICA-ERROR" );
+      assertNotNull( errorHeader );
+      assertEquals( "WICA SERVER: The JSON configuration string '" + epicsChannelListRepeatedChannelNameDifferentPollIntervals + "' was invalid.", errorHeader );
 
       // Check that the body content was empty as expected.
       final String content = result.getResponse().getContentAsString();

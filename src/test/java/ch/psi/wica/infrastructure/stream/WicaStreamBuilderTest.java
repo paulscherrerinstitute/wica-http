@@ -16,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -105,9 +107,20 @@ class WicaStreamBuilderTest
             .build();
 
       assertThat( wicaStream.getWicaStreamProperties(), is ( WicaStreamPropertiesBuilder.create().build() ) );
-      assertThat( wicaStream.getWicaStreamId(), is(  WicaStreamId.of( "streamDEF" ) ) );
       assertThat( wicaStream.getWicaChannels().size(), is( 2 ) );
       assertThat( wicaStream.getWicaChannels(), containsInAnyOrder( channel123, channel456 ) );
+   }
+
+   @Test
+   void testCreateAndBuild_with_twoIdenticallyNamedchannels()
+   {
+      final WicaChannel channel123 = WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "channel123" ).build();
+      final Exception ex = assertThrows( IllegalArgumentException.class, () -> WicaStreamBuilder.create()
+                                                                                                .withChannel( channel123 )
+                                                                                                .withChannel( channel123 )
+                                                                                                .build() );
+
+      assertThat( ex.getMessage(), is ( "The 'wicaChannel' argument specified a channel that was identical to one that was already defined." ) );
    }
 
    @Test
@@ -186,7 +199,28 @@ class WicaStreamBuilderTest
       assertThat( wicaStream.getWicaChannel( "chan3" ).get().getProperties().getNumericPrecision(), is( 11 ) );
    }
 
-/*- Private methods ----------------------------------------------------------*/
+   @Test
+   void testCreateAndBuild_withTwoIdenticallyNamedChannelsAndStreamProperties()
+   {
+      final Exception ex = assertThrows( IllegalArgumentException.class, () -> WicaStreamBuilder.create()
+                                                                                                .withStreamProperties( WicaStreamPropertiesBuilder.create().withDefaultProperties().withNumericPrecision( 11 ).build() )
+                                                                                                .withChannelNameAndStreamProperties( "chan1" )
+                                                                                                .withChannelNameAndStreamProperties( "chan1" )
+                                                                                                .build() );
+      assertThat( ex.getMessage(), is( "The 'WicaChannelName' argument specified a channel that was identical to one that was already defined." ) );
+
+   }
+
+   @Test
+   void testCreateAndBuild_withTwoIdenticallyNamedChannelsAndDifferentChannelProperties()
+   {
+      assertDoesNotThrow( () -> WicaStreamBuilder.create()
+                                                 .withChannelNameAndCombinedProperties( "chan1", WicaChannelPropertiesBuilder.create().withNumericPrecision( 1 ).build() )
+                                                 .withChannelNameAndCombinedProperties( "chan1", WicaChannelPropertiesBuilder.create().withNumericPrecision( 2 ).build() )
+                                                 .build() );
+   }
+
+   /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

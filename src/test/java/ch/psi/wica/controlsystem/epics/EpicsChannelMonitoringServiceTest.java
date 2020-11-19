@@ -68,14 +68,16 @@ class EpicsChannelMonitoringServiceTest
    @Test
    void testStartMonitoring_ThrowsIllegalStateExceptionWhenChannelNameNotUnique()
    {
-      epicsChannelMonitoringService.startMonitoring( createWicaChannel( "abcd" ));
-      final var ex = assertThrows( IllegalStateException.class, () -> epicsChannelMonitoringService.startMonitoring( createWicaChannel( "abcd" ) ) );
-      assertThat( ex.getMessage(), is( "The channel name: 'abcd' is already being monitored." ) );
+      epicsChannelMonitoringService.startMonitoring( createMonitorRequest( "abcd" ));
+      final var ex = assertThrows( IllegalStateException.class, () -> epicsChannelMonitoringService.startMonitoring( createMonitorRequest( "abcd" ) ) );
+      assertThat( ex.getMessage(), is( "The request object is already active." ) );
    }
 
    // TODO - Test disabled for now. Need way of starting EPICS server when performing tests as part of automatic build.
    // By default this test is suppressed as it would create problems in the automatic
    // build system. The test should be enabled as required during pre-production testing.
+   // Please run the EPICS IOC 'epics_tests.db' defined in 'src/test/resources/epics'.
+   // Also, you may need to ensure that your local VPN is not active.
    @Disabled
    @Test
    void testStartMonitoring_OneHundredChannelsConnectTime() throws InterruptedException
@@ -105,7 +107,7 @@ class EpicsChannelMonitoringServiceTest
 
       for ( String channel : test100ChannelNames )
       {
-         epicsChannelMonitoringService.startMonitoring( createWicaChannel( channel ));
+         epicsChannelMonitoringService.startMonitoring( createMonitorRequest( channel ));
       }
 
       Thread.sleep( 500 );
@@ -130,7 +132,7 @@ class EpicsChannelMonitoringServiceTest
       assertThat( epicsChannelMonitoringService.getStatistics().getNotConnectedChannelCount(), is( "0" ) );
 
       // Verify that a call to monitor a channel results in an increase in the channel creation count.
-      epicsChannelMonitoringService.startMonitoring( createWicaChannel("offline-channel-1" ) );
+      epicsChannelMonitoringService.startMonitoring( createMonitorRequest( "offline-channel-1" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "1" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getClosedChannelCount(), is( "0" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getConnectedChannelCount(), is( "0" ) );
@@ -142,14 +144,14 @@ class EpicsChannelMonitoringServiceTest
    @Test
    void testStopMonitoring_ThrowsIllegalStateExceptionWhenStoppingMonitoringChannelThatWasNeverPreviouslyMonitored()
    {
-      final var ex = assertThrows( IllegalStateException.class, () -> epicsChannelMonitoringService.stopMonitoring( createWicaChannel("unknown-channel" ) ) );
-      assertThat( ex.getMessage(), is( "The channel name: 'unknown-channel' was not recognised.") );
+      final var ex = assertThrows( IllegalStateException.class, () -> epicsChannelMonitoringService.stopMonitoring( createMonitorRequest( "unknown-channel" ) ) );
+      assertThat( ex.getMessage(), is( "The request object was not recognised.") );
    }
 
    @Test
    void testStopMonitoring_CheckChannelStatisticsAsExpectedWhenDisposingOfflineChannels()
    {
-      epicsChannelMonitoringService.startMonitoring( createWicaChannel("offline-channel-1" ) );
+      epicsChannelMonitoringService.startMonitoring( createMonitorRequest( "offline-channel-1" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "1" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getClosedChannelCount(), is( "0" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getConnectedChannelCount(), is( "0" ) );
@@ -157,7 +159,7 @@ class EpicsChannelMonitoringServiceTest
       assertThat( epicsChannelMonitoringService.getStatistics().getNeverConnectedChannelCount(), is( "1" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getNotConnectedChannelCount(), is( "1" ) );
 
-      epicsChannelMonitoringService.stopMonitoring( createWicaChannel("offline-channel-1" ) );
+      epicsChannelMonitoringService.stopMonitoring( createMonitorRequest( "offline-channel-1" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "0" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getClosedChannelCount(), is( "0" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getConnectedChannelCount(), is( "0" ) );
@@ -173,10 +175,10 @@ class EpicsChannelMonitoringServiceTest
       // monitor count increasing.
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalMonitorCount(), is( "0" ) );
 
-      epicsChannelMonitoringService.startMonitoring( createWicaChannel("non-existent-channel-1" ) );
+      epicsChannelMonitoringService.startMonitoring( createMonitorRequest( "non-existent-channel-1" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalMonitorCount(), is( "0" ) );
 
-      epicsChannelMonitoringService.startMonitoring( createWicaChannel("non-existent-channel-2" ) );
+      epicsChannelMonitoringService.startMonitoring( createMonitorRequest( "non-existent-channel-2" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalMonitorCount(), is( "0" ) );
 
       epicsChannelMonitoringService.close();
@@ -186,6 +188,8 @@ class EpicsChannelMonitoringServiceTest
    // TODO - Test disabled for now. Need way of starting EPICS server when performing tests as part of automatic build.
    // By default this test is suppressed as it would create problems in the automatic
    // build system. The test should be enabled as required during pre-production testing.
+   // Please run the EPICS IOC 'epics_tests.db' defined in 'src/test/resources/epics'.
+   // Also, you may need to ensure that your local VPN is not active.
    @Disabled
    @Test
    void testGetConnectedChannelCount() throws InterruptedException
@@ -197,7 +201,7 @@ class EpicsChannelMonitoringServiceTest
       assertThat( epicsChannelMonitoringService.getStatistics().getNeverConnectedChannelCount(), is( "0" ) );
       assertThat( epicsChannelMonitoringService.getStatistics().getNotConnectedChannelCount(), is( "0" ) );
 
-      epicsChannelMonitoringService.startMonitoring(createWicaChannel("wica:test:db_ok" ) );
+      epicsChannelMonitoringService.startMonitoring( createMonitorRequest( "wica:test:db_ok" ) );
       Thread.sleep( 1_000 );
 
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "1" ) );
@@ -220,7 +224,7 @@ class EpicsChannelMonitoringServiceTest
    void testStartMonitoring_verifyInitialConnectBehaviour_HandlersAreNotNotifiedIfChannelOffline() throws InterruptedException
    {
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "0" ) );
-      epicsChannelMonitoringService.startMonitoring( createWicaChannel("non-existent-channel" ) );
+      epicsChannelMonitoringService.startMonitoring( createMonitorRequest( "non-existent-channel" ) );
       Thread.sleep( 1_000 );
       assertThat( eventReceiverMock.getMetadataPublishedTimestamp().isEmpty(), is( true ) );
       assertThat( eventReceiverMock.getValuePublishedTimestamp().isEmpty(), is( true ) );
@@ -229,12 +233,14 @@ class EpicsChannelMonitoringServiceTest
    // TODO - Test disabled for now. Need way of starting EPICS server when performing tests as part of automatic build.
    // By default this test is suppressed as it would create problems in the automatic
    // build system. The test should be enabled as required during pre-production testing.
+   // Please run the EPICS IOC 'epics_tests.db' defined in 'src/test/resources/epics'.
+   // Also, you may need to ensure that your local VPN is not active.
    @Disabled
    @Test
    void testStartMonitoring_verifyInitialConnectBehaviour_NotificationSequence() throws InterruptedException
    {
       assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "0" ) );
-      epicsChannelMonitoringService.startMonitoring( createWicaChannel("wica:test:db_ok" ) );
+      epicsChannelMonitoringService.startMonitoring( createMonitorRequest( "wica:test:db_ok" ) );
       Thread.sleep( 1_000 );
       assertThat( eventReceiverMock.getMetadataPublishedTimestamp().isPresent(), is( true ) );
       assertThat( eventReceiverMock.getValuePublishedTimestamp().isPresent(), is( true ) );
@@ -248,11 +254,12 @@ class EpicsChannelMonitoringServiceTest
 
 /*- Private methods ----------------------------------------------------------*/
 
-   private WicaChannel createWicaChannel( String name )
+   private EpicsChannelMonitoringRequest createMonitorRequest( String name )
    {
       final WicaChannelName wicaChannelName = WicaChannelName.of( name );
       final WicaChannelProperties wicaChannelProperties = new WicaChannelProperties();
-      return new WicaChannel( wicaChannelName, wicaChannelProperties );
+      final WicaChannel wicaChannel = new WicaChannel( wicaChannelName, wicaChannelProperties );
+      return new EpicsChannelMonitoringRequest( wicaChannel );
    }
 
 /*- Nested Classes -----------------------------------------------------------*/

@@ -232,6 +232,14 @@ class WicaStreamConfigurationDecoderTest
    }
 
    @Test
+   void testBadDecodeSequence_twoChannelsHaveTheSameName()
+   {
+      final String testString = "{ \"channels\": [ { \"name\": \"ABC\" }, { \"name\": \"ABC\" } ] }";
+      final var ex = assertThrows( IllegalArgumentException.class, () -> decoder.decode( testString ) );
+      assertThat( ex.getMessage(), is( "The JSON configuration string did not contain a valid and/or unique channel specification." ) );
+   }
+
+   @Test
    void testBadDecodeSequence_channelNameFieldIsMissing()
    {
       final String testString = "{ \"channels\": [ { \"props\": \"ABC\" } ] }";
