@@ -46,8 +46,8 @@ public class WicaStreamConfigurationDecoder
       catch ( IOException ex )
       {
          final Logger logger = LoggerFactory.getLogger(WicaStreamConfigurationDecoder.class);
-         logger.warn("Failed to decode JSON channel configuration string '{}'", jsonInputString );
-         logger.warn("The detail of the exception message was '{}", ex.getMessage() );
+         logger.warn( "Failed to decode JSON channel configuration string '{}'", jsonInputString );
+         logger.warn( "The detail of the exception message was '{}", ex.getMessage() );
          throw new IllegalArgumentException( "The JSON channel configuration string: '" + jsonInputString + "' was invalid.", ex );
       }
    }
@@ -122,10 +122,16 @@ public class WicaStreamConfigurationDecoder
             final JsonNode propsNode = channelNode.get( "props" );
             if ( propsNode.isContainerNode() )
             {
-
                final WicaChannelProperties wicaChannelPropertiesFromJson = WicaStreamSerializer.readFromJson( propsNode.toString(), WicaChannelProperties.class );
-               wicaStreamBuilder = wicaStreamBuilder.withChannelNameAndCombinedProperties( wicaChannelName, wicaChannelPropertiesFromJson );
-           }
+               try
+               {
+                  wicaStreamBuilder = wicaStreamBuilder.withChannelNameAndCombinedProperties( wicaChannelName, wicaChannelPropertiesFromJson );
+               }
+               catch( Exception ex )
+               {
+                  throw new IllegalArgumentException( "The JSON configuration string did not contain a valid and/or unique channel specification." );
+               }
+            }
             else
             {
                throw new IllegalArgumentException( "The 'props' field in one or more channel nodes of the JSON configuration string was not a container value." );
@@ -133,7 +139,14 @@ public class WicaStreamConfigurationDecoder
          }
          else
          {
-            wicaStreamBuilder = wicaStreamBuilder.withChannelNameAndStreamProperties( wicaChannelName );
+            try
+            {
+               wicaStreamBuilder = wicaStreamBuilder.withChannelNameAndStreamProperties( wicaChannelName );
+            }
+            catch ( Exception ex )
+            {
+               throw new IllegalArgumentException( "The JSON configuration string did not contain a valid and/or unique channel specification." );
+            }
          }
       }
 
