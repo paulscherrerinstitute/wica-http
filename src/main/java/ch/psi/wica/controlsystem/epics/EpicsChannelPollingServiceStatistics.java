@@ -4,7 +4,6 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.app.ControlSystemName;
 import ch.psi.wica.model.app.StatisticsCollectable;
 import net.jcip.annotations.ThreadSafe;
 import org.epics.ca.Channel;
@@ -32,12 +31,12 @@ public class EpicsChannelPollingServiceStatistics implements StatisticsCollectab
    private final AtomicInteger pollSuccessCount = new AtomicInteger(0);
    private final AtomicInteger pollFailureCount = new AtomicInteger(0);
 
-   private final Map<EpicsChannelName, Channel<?>> channelMap;
+   private final Map<EpicsChannelPollingRequest, Channel<?>> channelMap;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public EpicsChannelPollingServiceStatistics( Map<EpicsChannelName, Channel<?>> channelMap )
+   public EpicsChannelPollingServiceStatistics( Map<EpicsChannelPollingRequest, Channel<?>> channelMap )
    {
       this.channelMap = channelMap;
    }
@@ -80,7 +79,7 @@ public class EpicsChannelPollingServiceStatistics implements StatisticsCollectab
       return channelMap
             .keySet()
             .stream()
-            .map( ControlSystemName::asString)
+            .map( EpicsChannelPollingRequest::toString )
             .collect(Collectors.toUnmodifiableList() );
    }
 
@@ -90,7 +89,7 @@ public class EpicsChannelPollingServiceStatistics implements StatisticsCollectab
             .keySet()
             .stream()
             .filter( channel -> channelMap.get( channel ).getConnectionState() != ConnectionState.CONNECTED )
-            .map( ControlSystemName::asString )
+            .map( EpicsChannelPollingRequest::toString )
             .collect( Collectors.toUnmodifiableList() );
    }
 

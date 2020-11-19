@@ -4,7 +4,6 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.app.ControlSystemName;
 import ch.psi.wica.model.app.StatisticsCollectable;
 import net.jcip.annotations.ThreadSafe;
 import org.epics.ca.Channel;
@@ -31,14 +30,14 @@ public class EpicsChannelMonitoringServiceStatistics implements StatisticsCollec
    private final AtomicInteger stopRequests = new AtomicInteger(0);
    private final AtomicInteger monitorUpdateCount = new AtomicInteger(0);
 
-   private final Map<EpicsChannelName, Channel<?>> channelMap;
-   private final Map<EpicsChannelName, Monitor<?>> monitorMap;
+   private final Map<EpicsChannelMonitoringRequest, Channel<?>> channelMap;
+   private final Map<EpicsChannelMonitoringRequest, Monitor<?>> monitorMap;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public EpicsChannelMonitoringServiceStatistics( Map<EpicsChannelName, Channel<?>> channelMap,
-                                                   Map<EpicsChannelName, Monitor<?>> monitorMap )
+   public EpicsChannelMonitoringServiceStatistics( Map<EpicsChannelMonitoringRequest, Channel<?>> channelMap,
+                                                   Map<EpicsChannelMonitoringRequest, Monitor<?>> monitorMap )
    {
       this.channelMap = channelMap;
       this.monitorMap = monitorMap;
@@ -76,7 +75,7 @@ public class EpicsChannelMonitoringServiceStatistics implements StatisticsCollec
       return channelMap
             .keySet()
             .stream()
-            .map(ControlSystemName::asString)
+            .map( EpicsChannelMonitoringRequest::toString )
             .collect(Collectors.toUnmodifiableList() );
    }
 
@@ -86,7 +85,7 @@ public class EpicsChannelMonitoringServiceStatistics implements StatisticsCollec
             .keySet()
             .stream()
             .filter( channel -> channelMap.get( channel ).getConnectionState() != ConnectionState.CONNECTED )
-            .map( ControlSystemName::asString )
+            .map( EpicsChannelMonitoringRequest::toString )
             .collect( Collectors.toUnmodifiableList() );
    }
 

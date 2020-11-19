@@ -36,7 +36,7 @@ public class WicaStreamPolledValueRequesterService
    /*- Public attributes --------------------------------------------------------*/
    /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaStreamMonitoredValueRequesterService.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaStreamPolledValueRequesterService.class );
    private final ApplicationEventPublisher applicationEventPublisher;
 
    private final Map<WicaDataBufferStorageKey,Integer> pollerInterestMap;

@@ -80,12 +80,12 @@ public class EpicsEventPublisher
    }
 
    /**
-    * Handles a value change published by the EPICS channel monitor.
+    * Handles a monitor update published by the EPICS channel monitor.
     *
     * @param wicaChannel the name of the channel whose value has changed.
     * @param wicaChannelValue the new value.
     */
-   void publishMonitoredValueChanged( WicaChannel wicaChannel, WicaChannelValue wicaChannelValue )
+   void publishMonitoredValueUpdated( WicaChannel wicaChannel, WicaChannelValue wicaChannelValue )
    {
       Validate.notNull( wicaChannel, "The 'wicaChannel' argument was null");
       Validate.notNull( wicaChannelValue, "The 'wicaChannelValue' argument was null");

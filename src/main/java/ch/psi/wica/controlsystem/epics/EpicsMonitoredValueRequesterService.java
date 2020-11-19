@@ -5,14 +5,12 @@ package ch.psi.wica.controlsystem.epics;
 
 import ch.psi.wica.controlsystem.event.WicaChannelStartMonitoringEvent;
 import ch.psi.wica.controlsystem.event.WicaChannelStopMonitoringEvent;
-import ch.psi.wica.model.app.ControlSystemName;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelName;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -100,38 +98,36 @@ public class EpicsMonitoredValueRequesterService
    }
 
    /**
-    * Starts monitoring the control system channel with the specified name.
+    * Starts monitoring the specified wica channel.
     *
-    * @param wicaChannel the name of the channel to monitor.
+    * @param wicaChannel the channel to monitor.
     */
    private void startMonitoring( WicaChannel wicaChannel )
    {
       Validate.notNull( wicaChannel );
-      final ControlSystemName controlSystemName = wicaChannel.getName().getControlSystemName();
-
-      appLogger.trace( "EPICS channel subscribe: '{}'", controlSystemName.asString() );
-      logger.trace( "Subscribing to new control system channel named: '{}'", controlSystemName.asString() );
 
       // Now start monitoring
-      epicsChannelMonitoringService.startMonitoring( wicaChannel );
+      final var requestObject = new EpicsChannelMonitoringRequest( wicaChannel );
+      appLogger.trace( "Starting monitor: '{}'", requestObject );
+      epicsChannelMonitoringService.startMonitoring( requestObject );
+
    }
 
    /**
-    * Stops monitoring the control system channel with the specified name.
+    * Stops monitoring the specified wica channel.
     *
-    * @param wicaChannel the name of the channel which is no longer of interest.
+    * @param wicaChannel the channel which should no longer be monitored.
     */
    private void stopMonitoring( WicaChannel wicaChannel )
    {
       Validate.notNull( wicaChannel );
-      final ControlSystemName controlSystemName = wicaChannel.getName().getControlSystemName();
 
-      appLogger.info( "EPICS channel unsubscribe: '{}'", controlSystemName.asString() );
-      logger.trace( "Unsubscribing from control system channel named: '{}'", controlSystemName.asString() );
+       // Now stop monitoring
+      final var requestObject = new EpicsChannelMonitoringRequest( wicaChannel );
+      appLogger.trace( "Stopping monitor: '{}'", requestObject );
+      epicsChannelMonitoringService.stopMonitoring( requestObject );
 
-      epicsChannelMonitoringService.stopMonitoring( wicaChannel );
    }
-
 
 /*- Nested Classes -----------------------------------------------------------*/
 

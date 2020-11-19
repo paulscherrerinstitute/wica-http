@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
@@ -35,6 +34,7 @@ public class EpicsPolledValueRequesterService
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
+   private final Logger appLogger = LoggerFactory.getLogger("APP_LOGGER" );
    private final Logger logger = LoggerFactory.getLogger(EpicsPolledValueRequesterService.class );
    private final EpicsChannelPollingService epicsChannelPollingService;
 
@@ -116,18 +116,24 @@ public class EpicsPolledValueRequesterService
       Validate.notNull( wicaChannel );
 
       // Now start polling
-      epicsChannelPollingService.startPolling( wicaChannel );
+      final var requestObject = new EpicsChannelPollingRequest( wicaChannel );
+      appLogger.trace( "Starting poller: '{}'", requestObject );
+      epicsChannelPollingService.startPolling( requestObject );
    }
 
    /**
     * Stops polling the specified wica channel.
     *
-    * @param wicaChannel the name of the channel which is no longer of interest.
+    * @param wicaChannel the channel which should no longer be polled.
     */
-   private void stopPolling( WicaChannel wicaChannel  )
+   private void stopPolling( WicaChannel wicaChannel )
    {
       Validate.notNull( wicaChannel );
-      epicsChannelPollingService.stopPolling( wicaChannel );
+
+      // Now stop polling
+      final var requestObject = new EpicsChannelPollingRequest( wicaChannel );
+      appLogger.trace( "Stopping poller: '{}'", requestObject );
+      epicsChannelPollingService.stopPolling( requestObject );
    }
 
 /*- Nested Classes -----------------------------------------------------------*/
