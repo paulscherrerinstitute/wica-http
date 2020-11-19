@@ -87,7 +87,7 @@ class EpicsChannelMetadataGetter
       // For all channel types...
       // Perform an initial, simple, channel GET request to determine the data source type.
       // This operation is supported on all EPICS data types.
-      logger.info( "'{}' - getting first value...", controlSystemName);
+      logger.trace( "'{}' - getting first value...", controlSystemName);
       final Object firstGetObject = channel.get();
 
       // Decode the channel type.

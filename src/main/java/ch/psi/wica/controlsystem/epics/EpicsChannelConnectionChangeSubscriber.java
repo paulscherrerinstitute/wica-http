@@ -81,7 +81,7 @@ class EpicsChannelConnectionChangeSubscriber
       // Obtain the control system name for logging purposes.
       final ControlSystemName controlSystemName = ControlSystemName.of(channel.getName());
 
-      logger.info("'{}' - adding connection change handler...", controlSystemName );
+      logger.trace("'{}' - adding connection change handler...", controlSystemName );
       channel.addConnectionListener(( chan, isConnected ) -> {
 
          // Note the current (1.2.2) implementation of the PSI CA library calls back the
@@ -91,17 +91,17 @@ class EpicsChannelConnectionChangeSubscriber
          // makes use of Spring Boot's Async processing facility to ensure that the execution
          // is delegated to execute using a predefined thread pool.
 
-         logger.info("'{}' - scheduling publication of new connection state: '{}'", controlSystemName, isConnected );
+         logger.trace("'{}' - scheduling publication of new connection state: '{}'", controlSystemName, isConnected );
 
          // Delegate the notification to be performed asynchronously using the task executor
          // assciated with the change notifier.
          epicsChannelConnectionStateChangeNotifier.callHandler( controlSystemName, connectionChangeHandler, isConnected );
 
-         logger.info("'{}' - publication of new connection state has been scheduled.", controlSystemName );
+         logger.trace("'{}' - publication of new connection state has been scheduled.", controlSystemName );
 
       });
 
-      logger.info("'{}' - connection change handler added.", controlSystemName );
+      logger.trace("'{}' - connection change handler added.", controlSystemName );
 
       // Validate postconditions
       Validate.isTrue( channel.getConnectionState() == ConnectionState.NEVER_CONNECTED, "Programming Error: The channel was not in the expected state (NEVER_CONNECTED)" );
@@ -118,7 +118,7 @@ class EpicsChannelConnectionChangeSubscriber
       @Async( "EpicsChannelConnectionChangeSubscriberTaskExecutor" )
       public void callHandler( ControlSystemName controlSystemName, Consumer<Boolean> connectionChangeHandler, boolean isConnected )
       {
-         logger.info("'{}' - publishing new connection state: '{}'", controlSystemName, isConnected );
+         logger.trace("'{}' - publishing new connection state: '{}'", controlSystemName, isConnected );
          connectionChangeHandler.accept( isConnected );
          logger.trace("'{}' - published new connection state ok.", controlSystemName );
       }
