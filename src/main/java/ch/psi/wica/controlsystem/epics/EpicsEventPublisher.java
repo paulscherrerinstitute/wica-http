@@ -45,7 +45,7 @@ public class EpicsEventPublisher
     * @param wicaChannel the name of the channel whose connection state has changed.
     * @param isConnected the new connection state.
     */
-   void publishConnectionStateChanged( WicaChannel wicaChannel, Boolean isConnected )
+   void publishMonitorConnectionStateChanged( WicaChannel wicaChannel, Boolean isConnected )
    {
       Validate.notNull( wicaChannel, "The 'controlSystemName' argument was null" );
       Validate.notNull( isConnected, "The 'isConnected' argument was null"  );
@@ -58,13 +58,35 @@ public class EpicsEventPublisher
       {
          logger.trace("'{}' - value changed to DISCONNECTED to indicate the connection was lost.", wicaChannel);
          final WicaChannelValue disconnectedValue = WicaChannelValue.createChannelValueDisconnected();
-
          applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( wicaChannel, disconnectedValue ) );
       }
    }
 
    /**
-    * Handles a metadata change published by the EPICS channel monitor.
+    * Handles a connection state change published by the EPICS channel poller.
+    *
+    * @param wicaChannel the name of the channel whose connection state has changed.
+    * @param isConnected the new connection state.
+    */
+   void publishPollerConnectionStateChanged( WicaChannel wicaChannel, Boolean isConnected )
+   {
+      Validate.notNull( wicaChannel, "The 'controlSystemName' argument was null" );
+      Validate.notNull( isConnected, "The 'isConnected' argument was null"  );
+
+      logger.trace("'{}' - connection state changed to '{}'.", wicaChannel, isConnected);
+
+      // The implementation here simply uses the disconnect event to publish a
+      // new value indicating disconnection.
+      if ( ! isConnected )
+      {
+         logger.trace("'{}' - value changed to DISCONNECTED to indicate the connection was lost.", wicaChannel);
+         final WicaChannelValue disconnectedValue = WicaChannelValue.createChannelValueDisconnected();
+         applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannel, disconnectedValue ) );
+      }
+   }
+
+   /**
+    * Handles a metadata change published by the EPICS channel monitor or EPICS channel poller.
     *
     * @param wicaChannel the name of the channel whose metadata has changed.
     * @param wicaChannelMetadata the metadata

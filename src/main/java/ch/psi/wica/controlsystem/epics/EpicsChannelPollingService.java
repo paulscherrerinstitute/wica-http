@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -189,7 +186,7 @@ public class EpicsChannelPollingService implements AutoCloseable
                logger.info("'{}' - connection state changed to DISCONNECTED.", requestObject );
                handleChannelGoesOffline( requestObject );
             }
-            epicsEventPublisher.publishConnectionStateChanged( requestObject.getPublicationChannel(), conn );
+            epicsEventPublisher.publishPollerConnectionStateChanged( requestObject.getPublicationChannel(), conn );
          } );
          logger.trace("'{}' - connection listener added ok.", requestObject );
 
@@ -341,6 +338,7 @@ public class EpicsChannelPollingService implements AutoCloseable
       private final EpicsChannelPollingRequest requestObject;
       private final EpicsChannelValueGetter epicsChannelValueGetter;
       private final ScheduledExecutorService executor;
+      private ScheduledFuture<?> scheduledFuture;
 
       public ScheduledPoller( EpicsChannelPollingRequest requestObject, EpicsChannelValueGetter epicsChannelValueGetter )
       {
@@ -352,7 +350,7 @@ public class EpicsChannelPollingService implements AutoCloseable
       public void start( Channel<Object> epicsChannel, Consumer<WicaChannelValue> valueUpdateHandler )
       {
          logger.trace("'{}' - starting to poll...", requestObject);
-         executor.scheduleAtFixedRate( () -> {
+         this.scheduledFuture = executor.scheduleAtFixedRate( () -> {
 
             // Get and publish the current value of the channel
             try
@@ -373,7 +371,7 @@ public class EpicsChannelPollingService implements AutoCloseable
       public void cancel()
       {
          logger.trace( "'{}' - cancelling polling...", requestObject );
-         executor.shutdown();
+         this.scheduledFuture.cancel( false );
          logger.trace("'{}' - cancelled.", requestObject );
       }
    }

@@ -190,7 +190,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
             {
                logger.info("'{}' - connection state changed to DISCONNECTED.", requestObject );
             }
-            epicsEventPublisher.publishConnectionStateChanged( requestObject.getPublicationChannel(), conn );
+            epicsEventPublisher.publishMonitorConnectionStateChanged( requestObject.getPublicationChannel(), conn );
          } );
          logger.trace("'{}' - connection listener added ok.", requestObject );
 
@@ -225,7 +225,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
     * @param requestObject the request specification object.
     *
     * @throws NullPointerException if the 'requestObject' argument was null.
-    * @throws IllegalStateException if this polling service was previously closed.
+    * @throws IllegalStateException if this monitoring service was previously closed.
     * @throws IllegalStateException if the 'requestObject' was not recognised.
     */
    void stopMonitoring( EpicsChannelMonitoringRequest requestObject )
@@ -307,7 +307,7 @@ public class EpicsChannelMonitoringService implements AutoCloseable
       }
 
       // -----------------------------------------------------------
-      // STEP 3: Establish or re-establish polling on the channel.
+      // STEP 3: Establish or re-establish monitoring on the channel.
       // -----------------------------------------------------------
 
       // 3a) Create a handler for value change notifications
