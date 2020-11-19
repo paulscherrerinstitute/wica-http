@@ -180,5 +180,5 @@ Behaviour change: channels whose data acquisition mode is set to poll will only 
   * [Issue #58](https://github.com/paulscherrerinstitute/wica-http/issues/58) Remove deprecated properties "pollratio" and "heartbeat".
   * [Issue #59](https://github.com/paulscherrerinstitute/wica-http/issues/59) ENHANCEMENT: Improvements to Admin Page.
    
-Test Status: Tests run: 354, Failures: 0, Errors: 0, Skipped: 13    
+Test Status: Tests run: 360, Failures: 0, Errors: 0, Skipped: 13    
  
