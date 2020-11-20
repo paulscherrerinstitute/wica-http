@@ -5,6 +5,7 @@ package ch.psi.wica.controlsystem.epics;
 
 
 import ch.psi.wica.model.channel.WicaChannel;
+import org.apache.commons.lang3.Validate;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -24,13 +25,13 @@ public class EpicsChannelMonitoringRequest
 
    EpicsChannelMonitoringRequest( WicaChannel wicaChannel )
    {
-      this( EpicsChannelName.of( wicaChannel.getName().getControlSystemName() ), wicaChannel );
+      this( EpicsChannelName.of( Validate.notNull( wicaChannel ).getName().getControlSystemName() ), wicaChannel );
    }
 
    EpicsChannelMonitoringRequest( EpicsChannelName epicsChannelName, WicaChannel publicationChannel )
    {
-      this.epicsChannelName = epicsChannelName;
-      this.publicationChannel = publicationChannel;
+      this.epicsChannelName = Validate.notNull( epicsChannelName );
+      this.publicationChannel = Validate.notNull( publicationChannel );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -52,9 +53,19 @@ public class EpicsChannelMonitoringRequest
       return "Monitor<" + epicsChannelName + '>';
    }
 
-   // The EpicsChannelMonitoringService will not accept two requests which are equal.
-   // The rule here establishes that the requests are considered the same if they
+   // To enforce the efficient use of resources the EpicsChannelMonitoringService
+   // will reject requests which would result in multiple monitors being placed
+   // on the same EPICS channel. This is conveniently achieved by rejecting
+   // requests which are "the same".
+   //
+   // The rule below establishes that requests are considered the same if they
    // refer to the same EPICS channel name.
+   //
+   // Note: to avoid internal conflicts the higher level components of the
+   // application (currently WicaStreamMonitoredValueRequesterService and
+   // WicareamMonitoredValueCollectorService) must be designed to ensure
+   // that the constraint described above is not violated.
+
    @Override
    public boolean equals( Object o )
    {
@@ -69,13 +80,13 @@ public class EpicsChannelMonitoringRequest
 
       EpicsChannelMonitoringRequest that = (EpicsChannelMonitoringRequest) o;
 
-      return epicsChannelName != null ? epicsChannelName.equals( that.epicsChannelName ) : that.epicsChannelName == null;
+      return epicsChannelName.equals( that.epicsChannelName );
    }
 
    @Override
    public int hashCode()
    {
-      return epicsChannelName != null ? epicsChannelName.hashCode() : 0;
+      return epicsChannelName.hashCode();
    }
 
 /*- Private methods ----------------------------------------------------------*/
