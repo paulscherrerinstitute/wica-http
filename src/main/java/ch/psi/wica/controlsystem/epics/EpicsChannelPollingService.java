@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -338,7 +339,7 @@ public class EpicsChannelPollingService implements AutoCloseable
       private final EpicsChannelPollingRequest requestObject;
       private final EpicsChannelValueGetter epicsChannelValueGetter;
       private final ScheduledExecutorService executor;
-      private ScheduledFuture<?> scheduledFuture;
+      private final AtomicReference<ScheduledFuture<?>> scheduledFutureRef = new AtomicReference<>();
 
       public ScheduledPoller( EpicsChannelPollingRequest requestObject, EpicsChannelValueGetter epicsChannelValueGetter )
       {
@@ -350,7 +351,7 @@ public class EpicsChannelPollingService implements AutoCloseable
       public void start( Channel<Object> epicsChannel, Consumer<WicaChannelValue> valueUpdateHandler )
       {
          logger.trace("'{}' - starting to poll...", requestObject);
-         this.scheduledFuture = executor.scheduleAtFixedRate( () -> {
+         this.scheduledFutureRef.set( executor.scheduleAtFixedRate( () -> {
 
             // Get and publish the current value of the channel
             try
@@ -365,13 +366,22 @@ public class EpicsChannelPollingService implements AutoCloseable
             {
                logger.error( "'{}' - generated exception '{}' during poll operation.", requestObject, ex.toString() );
             }
-         }, requestObject.getPollingInterval(), requestObject.getPollingInterval(), TimeUnit.MILLISECONDS );
+         }, requestObject.getPollingInterval(), requestObject.getPollingInterval(), TimeUnit.MILLISECONDS ) );
       }
 
       public void cancel()
       {
          logger.trace( "'{}' - cancelling polling...", requestObject );
-         this.scheduledFuture.cancel( false );
+
+         synchronized( this )
+         {
+            if ( this.scheduledFutureRef.get() != null )
+            {
+               this.scheduledFutureRef.get().cancel( false );
+               this.scheduledFutureRef.set( null );
+            }
+         }
+
          logger.trace("'{}' - cancelled.", requestObject );
       }
    }
