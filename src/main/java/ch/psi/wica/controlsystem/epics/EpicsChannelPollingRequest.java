@@ -4,6 +4,7 @@ package ch.psi.wica.controlsystem.epics;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.channel.WicaChannel;
+import org.apache.commons.lang3.Validate;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -25,14 +26,14 @@ public class EpicsChannelPollingRequest
 
    EpicsChannelPollingRequest( WicaChannel wicaChannel )
    {
-      this( EpicsChannelName.of( wicaChannel.getName().getControlSystemName() ), wicaChannel.getProperties().getPollingIntervalInMillis(), wicaChannel );
+      this( EpicsChannelName.of( Validate.notNull( wicaChannel.getName().getControlSystemName() ) ), wicaChannel.getProperties().getPollingIntervalInMillis(), wicaChannel );
    }
 
    EpicsChannelPollingRequest( EpicsChannelName epicsChannelName, long pollingIntervalInMillis, WicaChannel publicationChannel )
    {
-      this.epicsChannelName = epicsChannelName;
+      this.epicsChannelName = Validate.notNull( epicsChannelName );
       this.pollingInterval = pollingIntervalInMillis;
-      this.publicationChannel = publicationChannel;
+      this.publicationChannel = Validate.notNull( publicationChannel );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -59,9 +60,20 @@ public class EpicsChannelPollingRequest
       return "Poller<" + epicsChannelName + "," + pollingInterval + '>';
    }
 
-   // The EpicsChannelPollingService will not accept two requests which are equal.
-   // The rule here establishes that the requests are considered the same if they
-   // refer to the same EPICS channel name AND the same polling interval.
+   // To enforce the efficient use of resources the EpicsChannelPollingService
+   // will reject requests which would result in multiple pollers operating at
+   // the same polling rates being placed on the same EPICS channel. This is
+   // conveniently achieved by rejecting requests which are "the same".
+   //
+   // The rule below establishes that polling requests are considered the same
+   // if they refer to the same EPICS channel name operating at the same polling
+   // interval.
+   //
+   // Note: to avoid internal conflicts the higher level components of the
+   // application (currently WicaStreamPolledValueRequesterService and
+   // WicaStreamPolledValueCollectorService) must be designed to ensure
+   // that the constraint described above is not violated.
+
    @Override
    public boolean equals( Object o )
    {
@@ -80,13 +92,13 @@ public class EpicsChannelPollingRequest
       {
          return false;
       }
-      return epicsChannelName != null ? epicsChannelName.equals( that.epicsChannelName ) : that.epicsChannelName == null;
+      return epicsChannelName.equals( that.epicsChannelName );
    }
 
    @Override
    public int hashCode()
    {
-      int result = epicsChannelName != null ? epicsChannelName.hashCode() : 0;
+      int result = epicsChannelName.hashCode();
       result = 31 * result + (int) (pollingInterval ^ (pollingInterval >>> 32));
       return result;
    }
