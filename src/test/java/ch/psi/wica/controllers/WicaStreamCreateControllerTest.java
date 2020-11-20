@@ -50,6 +50,8 @@ class WicaStreamCreateControllerTest
    private String epicsChannelListEmpty;
    private String epicsChannelListRepeatedChannelName;
    private String epicsChannelListRepeatedChannelNameDifferentPollIntervals;
+   private String  epicsChannelListRepeatedChannelNameDifferentInstances;
+
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -63,10 +65,10 @@ class WicaStreamCreateControllerTest
       epicsChannelListOk2 = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_ok2.json") );
       epicsChannelListEmpty = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_empty.json") );
       epicsChannelListRepeatedChannelName = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_repeated_channel_name.json") );
+      epicsChannelListRepeatedChannelNameDifferentInstances = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_repeated_channel_name_different_instances.json") );
       epicsChannelListRepeatedChannelNameDifferentPollIntervals = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_repeated_channel_name_different_poll_intervals.json") );
 
       WicaStreamId.resetAllocationSequencer();
-
    }
 
 	@Test
@@ -186,6 +188,36 @@ class WicaStreamCreateControllerTest
       final String content = result.getResponse().getContentAsString();
       assertEquals( "", content );
       logger.info( "Returned Content was: '{}'", content );
+   }
+
+   @Test
+   void testSendInvalidRequestRepeatedChannelNameDifferentInstances_ShouldBeAccepted() throws Exception
+   {
+      // Send the request with a repeated channel name
+      final RequestBuilder rb = MockMvcRequestBuilders.post( "/ca/streams" )
+            .content( epicsChannelListRepeatedChannelNameDifferentInstances )
+            .contentType( MediaType.APPLICATION_JSON_VALUE )
+            .accept( MediaType.TEXT_PLAIN_VALUE );
+
+      final MvcResult response = mockMvc.perform( rb ).andDo( print()).andExpect( status().isOk() ).andReturn();
+
+      // Check that the status code was ok
+      final int statusCode = response.getResponse().getStatus();
+      logger.info( "Response status code was: '{}'", statusCode  );
+      assertEquals( HttpStatus.OK.value(), statusCode );
+
+      // Check that the ContentType in the response is just normal text
+      final String contentType = response.getResponse().getContentType();
+      logger.info( "Returned ContentType was: '{}'", contentType );
+      assertEquals("text/plain;charset=UTF-8", contentType );
+
+      // Check that the X-WICA-ERROR header is NOT written.
+      assertNull( response.getResponse().getHeader( "X-WICA-ERROR" ) );
+
+      // Check that the first stream that was allocated was Stream with id "0"
+      final String content1 = response.getResponse().getContentAsString();
+      logger.info( "Returned Content was: '{}'", content1 );
+      assertEquals( "0", content1 );
    }
 
    @Test

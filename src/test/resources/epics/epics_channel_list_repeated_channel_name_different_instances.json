@@ -1,0 +1,6 @@
+{
+  "channels" : [ { "name": "test:counter00##1", "props": { "daqmode" : "monitor" } },
+                 { "name": "test:counter00##2", "props": { "daqmode" : "monitor" } },
+                 { "name": "test:counter00##3", "props": { "daqmode" : "poll" } },
+                 { "name": "test:counter00##4", "props": { "daqmode" : "poll" } } ]
+}
