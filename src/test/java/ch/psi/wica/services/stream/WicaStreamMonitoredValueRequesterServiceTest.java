@@ -130,32 +130,6 @@ class WicaStreamMonitoredValueRequesterServiceTest
    }
 
    @Test
-   void testStartMonitoring_wicaStreamMetadataCollectorServiceInitialisedOk()
-   {
-      final String myWicaChannelName = "simon:counter:01";
-      final WicaChannelProperties wicaChannelProperties = WicaChannelPropertiesBuilder.create()
-            .withDataAcquisitionMode( WicaDataAcquisitionMode.MONITOR )
-            .withFilterType(WicaFilterType.ALL_VALUE )
-            .build();
-
-      final WicaChannel myWicaChannel = WicaChannelBuilder.create().withChannelNameAndProperties( myWicaChannelName, wicaChannelProperties ).build();
-
-      final WicaStream wicaStream = WicaStreamBuilder.create()
-            .withId( "myStream" )
-            .withChannel( myWicaChannel )
-            .build();
-
-      final Map<WicaChannel, WicaChannelMetadata> preInitialValueMap = wicaStreamMetadataCollectorService.get( wicaStream, LocalDateTime.MIN );
-      assertThat( preInitialValueMap.size(), is( 0 ) );
-
-      service.startMonitoring( wicaStream );
-
-      final Map<WicaChannel, WicaChannelMetadata> initialMetadataMap = wicaStreamMetadataCollectorService.get( wicaStream, LocalDateTime.MIN );
-      assertThat( initialMetadataMap.size(), is( 1 ) );
-      assertThat( initialMetadataMap.get( myWicaChannel ).getType(), is( WicaChannelType.UNKNOWN ) );
-   }
-
-   @Test
    void testStartMonitoring_wicaStreamMonitoredValueCollectorServiceInitialisedOk()
    {
       final String myWicaChannelName = "simon:counter:01";
@@ -171,15 +145,21 @@ class WicaStreamMonitoredValueRequesterServiceTest
          .withChannel( myWicaChannel )
          .build();
 
-      final Map<WicaChannel, List<WicaChannelValue>> preInitialValueMap = wicaStreamMonitoredValueCollectorService.get( wicaStream, LocalDateTime.MIN );
-      assertThat( preInitialValueMap.size(), is( 0 ) );
+      final Map<WicaChannel, List<WicaChannelValue>> preFirstValueMap = wicaStreamMonitoredValueCollectorService.get( wicaStream, LocalDateTime.MIN );
+      assertThat( preFirstValueMap.size(), is( 0 ) );
 
       service.startMonitoring( wicaStream );
 
-      final Map<WicaChannel, List<WicaChannelValue>> initialValueMap = wicaStreamMonitoredValueCollectorService.get( wicaStream, LocalDateTime.MIN );
-      assertThat( initialValueMap.size(), is( 1 ) );
-      assertThat( initialValueMap.containsKey( myWicaChannel ), is( true ) );
-      assertThat( initialValueMap.get( myWicaChannel ).get( 0 ).isConnected(), is( false ) );
+      final Map<WicaChannel, List<WicaChannelValue>> firstValueMap = wicaStreamMonitoredValueCollectorService.getLatest( wicaStream);
+      assertThat( firstValueMap.size(), is( 1 ) );
+      assertThat( firstValueMap.get( myWicaChannel ).get( 0 ).isConnected(), is( false) );
+      assertThat( firstValueMap.get( myWicaChannel ).get( 0 ).getType(), is( WicaChannelType.UNKNOWN ) );
+
+      final Map<WicaChannel, List<WicaChannelValue>> laterValueMap = wicaStreamMonitoredValueCollectorService.get( wicaStream, LocalDateTime.MIN );
+      assertThat( laterValueMap.size(), is( 1 ) );
+      assertThat( laterValueMap.containsKey( myWicaChannel ), is( true ) );
+      assertThat( firstValueMap.get( myWicaChannel ).get( 0 ).isConnected(), is( false ) );
+      assertThat( laterValueMap.get( myWicaChannel ).get( 0 ).getType(), is( WicaChannelType.UNKNOWN ) );
    }
 
 

@@ -3,9 +3,9 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.WicaChannelMonitoredValueUpdateEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelPolledMonitorValueUpdateEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelPolledValueUpdateEvent;
+import ch.psi.wica.controlsystem.event.wica.WicaChannelMonitoredValueUpdateEvent;
+import ch.psi.wica.controlsystem.event.wica.WicaChannelPolledMonitorValueUpdateEvent;
+import ch.psi.wica.controlsystem.event.wica.WicaChannelPolledValueUpdateEvent;
 import ch.psi.wica.infrastructure.channel.WicaChannelValueTimestampRewriter;
 import ch.psi.wica.infrastructure.stream.WicaStreamMonitoredValueDataBuffer;
 import ch.psi.wica.model.app.WicaDataBufferStorageKey;
@@ -141,20 +141,22 @@ public class WicaStreamMonitoredValueCollectorService
       }
 
       final LocalDateTime ts1 = ( (WicaChannelValue.WicaChannelValueConnected) latestMonitoredValue).getDataSourceTimestamp();
-      final String val1 =  wicaChannel.getNameAsString();
-      logger.trace( "Latest monitored value for channel: '{}' has the value '{}' and timestamp '{}'.",val1, latestMonitoredValue.toString(), ts1 );
+      final String name1 =  wicaChannel.getNameAsString();
+      final String val1 =  latestMonitoredValue.toString();
+      logger.trace( "Latest monitored value for channel: '{}' has the value '{}' and timestamp '{}'.", name1, val1, ts1 );
 
       final LocalDateTime ts2 = ( (WicaChannelValue.WicaChannelValueConnected) latestPolledValue).getDataSourceTimestamp();
-      final String val2 =  wicaChannel.getNameAsString();
-      logger.trace( "Latest polled value for channel: '{}' has the value '{}' and timestamp '{}'.", wicaChannel.getNameAsString(), latestPolledValue.toString(), ts2 );
+      final String name2 =  wicaChannel.getNameAsString();
+      final String val2 =  latestPolledValue.toString();
+      logger.trace( "Latest polled value for channel: '{}' has the value '{}' and timestamp '{}'.", name2, val2, ts2 );
 
       final Duration lag =  Duration.between( ts1, ts2 );
-      logger.info( "The monitored value lag for channel: '{}' was '{}' seconds.",val2, lag.getSeconds() );
+      logger.trace( "The monitored value lag for channel: '{}' was '{}' seconds.", val2, lag.getSeconds() );
 
       if ( ( lag.getSeconds() > 5 )  && ( ! val1.equals( val2 ) ) )
       {
-         logger.warn( "The monitored value for channel: '{}' does not match the polled value. The timestamp lag is {} seconds. ", wicaChannel.getNameAsString(), lag.getSeconds() );
-         logger.warn( "Monitored values is '{}' but polled value is '{}'.", val1, val2 );
+         logger.warn( "The monitored value for channel: '{}' does not match the polled value. The timestamp lag is {} seconds. ", name1, lag.getSeconds() );
+         logger.warn( "Monitored value is '{}' but polled value is '{}'.", val1, val2 );
       }
    }
 

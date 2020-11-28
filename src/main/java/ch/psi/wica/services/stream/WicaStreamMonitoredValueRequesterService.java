@@ -3,13 +3,9 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.WicaChannelMetadataUpdateEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelMonitoredValueUpdateEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelStartMonitoringEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelStopMonitoringEvent;
+import ch.psi.wica.controlsystem.event.wica.*;
 import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 import net.jcip.annotations.ThreadSafe;
@@ -36,7 +32,7 @@ import java.util.stream.Collectors;
 
 /**
  * Provides a service for starting and stopping the control system monitoring
- * of a WicaStream.
+ * of the channels in a WicaStream.
  */
 @Configuration
 @EnableScheduling
@@ -54,6 +50,7 @@ public class WicaStreamMonitoredValueRequesterService
 
    private final int wicaChannelResourceReleaseIntervalInSecs;
    private final boolean wicaChannelPublishMonitorRestarts;
+   private final boolean wicaChannelPublishChannelValueInitialState;
    private final ApplicationEventPublisher applicationEventPublisher;
    private final Map<WicaDataBufferStorageKey,Integer> monitoredChannelInterestMap;
    private final Map<WicaDataBufferStorageKey,LocalDateTime> monitoredChannelEventMap;
@@ -72,18 +69,24 @@ public class WicaStreamMonitoredValueRequesterService
     *    disconnect value will be published if the monitoring associated
     *    with the channel is restarted.
     *
+    * @param wicaChannelPublishChannelValueInitialState determines whether a
+    *    channel's initial value will be published as DISCONNECTED when a
+    *    channel is first created or whether nothing will be published until
+    *    the first monitored value is acquired.
+    *
     * @param applicationEventPublisher reference to the application publisher
     *    which will be used to publish the channels that are to be monitored
     *    or which are no longer of interest.
     */
    WicaStreamMonitoredValueRequesterService( @Value( "${wica.channel-resource-release-interval-in-secs}" ) int wicaChannelResourceReleaseIntervalInSecs,
                                              @Value( "${wica.channel-publish-monitor-restarts}" ) boolean wicaChannelPublishMonitorRestarts,
+                                             @Value( "${wica.channel-publish-channel-value-initial-state}" ) boolean wicaChannelPublishChannelValueInitialState,
                                              @Autowired ApplicationEventPublisher applicationEventPublisher )
    {
       this.wicaChannelResourceReleaseIntervalInSecs = wicaChannelResourceReleaseIntervalInSecs;
       this.wicaChannelPublishMonitorRestarts = wicaChannelPublishMonitorRestarts;
+      this.wicaChannelPublishChannelValueInitialState = wicaChannelPublishChannelValueInitialState;
       this.applicationEventPublisher = Validate.notNull( applicationEventPublisher );
-
       this.monitoredChannelInterestMap = Collections.synchronizedMap( new HashMap<>() );
       this.monitoredChannelEventMap = Collections.synchronizedMap( new HashMap<>() );
    }
@@ -220,13 +223,6 @@ public class WicaStreamMonitoredValueRequesterService
     * Starts monitoring the Wica channel with the specified name and/or
     * increments the interest count for this channel.
     *
-    * Immediately thereafter the channel's connection state, metadata and
-    * value will become observable via the other methods in this class.
-    *
-    * Until the wica server receives its first value from the channel's
-    * underlying data source the metadata will be set to type UNKNOWN and
-    * the value set to show that the channel is disconnected.
-    *
     * @param wicaChannel the name of the channel to monitor.
     * @throws NullPointerException if the 'wicaChannel' argument was null.
     */
@@ -241,25 +237,29 @@ public class WicaStreamMonitoredValueRequesterService
       // Update the timestamp of the event that was most recently associated with the storage key.
       monitoredChannelEventMap.put( storageKey, LocalDateTime.now() );
 
-      // If a channel with the same storage key was not previously being monitored
-      // then start monitoring it. Otherwise simply increase the interest count.
+      // If a channel with these monitoring parameters already exists simply increment the interest count.
       if ( monitoredChannelInterestMap.containsKey( storageKey ) )
       {
          final int newInterestCount = monitoredChannelInterestMap.get( storageKey ) + 1;
          logger.info( "Increasing interest level in monitored control system channel: '{}' to {}", controlSystemName, newInterestCount );
          monitoredChannelInterestMap.put( storageKey, newInterestCount );
+         return;
       }
-      else
-      {
-         logger.info( "Starting monitoring on control system channel: '{}'", controlSystemName );
 
-         // Set the initial state for the value and metadata stashes and publish an event
-         // instructing the underlying control system to start monitoring.
-         applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent( wicaChannel, WicaChannelMetadata.createUnknownInstance() ) );
+      // If a channel with these monitoring parameters DOES NOT exist then start monitoring it using
+      // the prescribed parameters.
+      logger.info( "Starting monitoring on control system channel named: '{}'", wicaChannel.getName() );
+
+      // When the initial state publication feature is enabled publish the initial channel's state as being DISCONNECTED.
+      if ( this.wicaChannelPublishChannelValueInitialState )
+      {
          applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent(wicaChannel, WicaChannelValue.createChannelValueDisconnected() ) );
-         applicationEventPublisher.publishEvent( new WicaChannelStartMonitoringEvent( wicaChannel ) );
-         monitoredChannelInterestMap.put( storageKey, 1 );
       }
+
+      // Publish an event instructing the underlying control system to start monitoring.
+      // Pretty soon the first monitored value should arrive.
+      applicationEventPublisher.publishEvent( new WicaChannelStartMonitoringEvent( wicaChannel ) );
+      monitoredChannelInterestMap.put( storageKey, 1 );
    }
 
    /**
@@ -292,7 +292,7 @@ public class WicaStreamMonitoredValueRequesterService
       // Reduce the level of interest in the channel.
       final int currentInterestCount = monitoredChannelInterestMap.get( storageKey );
       final int newInterestCount = currentInterestCount - 1;
-      logger.info( "Reducing interest level in monitored control system channel: '{}' to {}" , controlSystemName.asString(), newInterestCount );
+      logger.info( "Reducing interest level in monitored control system channel named: '{}' to {}" , controlSystemName.asString(), newInterestCount );
       monitoredChannelInterestMap.put( storageKey, newInterestCount );
 
       if ( newInterestCount == 0 )

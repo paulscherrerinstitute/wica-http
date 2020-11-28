@@ -3,7 +3,7 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.WicaChannelMetadataUpdateEvent;
+import ch.psi.wica.controlsystem.event.wica.WicaChannelMetadataUpdateEvent;
 import ch.psi.wica.infrastructure.stream.WicaStreamMetadataDataBuffer;
 import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;

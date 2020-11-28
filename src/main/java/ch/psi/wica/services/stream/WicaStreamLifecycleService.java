@@ -39,6 +39,7 @@ public class WicaStreamLifecycleService
    private final Map<WicaStreamId, WicaStreamServerSentEventPublisher> wicaStreamPublisherMap = Collections.synchronizedMap( new HashMap<>() );
 
    private final WicaStreamConfigurationDecoder wicaStreamConfigurationDecoder;
+   private final WicaStreamMetadataRequesterService wicaStreamMetadataRequesterService;
    private final WicaStreamMonitoredValueRequesterService wicaStreamMonitoredValueRequesterService;
    private final WicaStreamPolledValueRequesterService wicaStreamPolledValueRequesterService;
    private final WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService;
@@ -56,8 +57,10 @@ public class WicaStreamLifecycleService
     *
     * @param wicaStreamConfigurationDecoder reference to the service that can decode the JSON stream configuration.
     *
+    * @param wicaStreamMetadataRequesterService reference to the service used to request the metadata for the stream.
+    *
     * @param wicaStreamMonitoredValueRequesterService reference to the service used to request the monitored
-    *     *        values for the stream.
+    *        values for the stream.
     *
     * @param wicaStreamPolledValueRequesterService reference to the service used to request the polled
     *        values for the stream.
@@ -76,6 +79,7 @@ public class WicaStreamLifecycleService
     * @param wicaChannelValueMapSerializerService reference to the service that serializes the value map.
     */
    public WicaStreamLifecycleService( @Autowired WicaStreamConfigurationDecoder wicaStreamConfigurationDecoder,
+                                      @Autowired WicaStreamMetadataRequesterService wicaStreamMetadataRequesterService,
                                       @Autowired WicaStreamMonitoredValueRequesterService wicaStreamMonitoredValueRequesterService,
                                       @Autowired WicaStreamPolledValueRequesterService wicaStreamPolledValueRequesterService,
                                       @Autowired WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService,
@@ -87,6 +91,7 @@ public class WicaStreamLifecycleService
    )
    {
       this.wicaStreamConfigurationDecoder = wicaStreamConfigurationDecoder;
+      this.wicaStreamMetadataRequesterService = Validate.notNull( wicaStreamMetadataRequesterService);
       this.wicaStreamMonitoredValueRequesterService = Validate.notNull( wicaStreamMonitoredValueRequesterService);
       this.wicaStreamPolledValueRequesterService = Validate.notNull(wicaStreamPolledValueRequesterService);
       this.wicaStreamMetadataCollectorService = wicaStreamMetadataCollectorService;
@@ -141,17 +146,24 @@ public class WicaStreamLifecycleService
          }
 
          final long streamDecodeTimeInMillis = streamDecodeTimer.getTime();
-         logger.info("Stream decoding took: '{}' ms.,", streamDecodeTimeInMillis );
+         logger.info( "Stream decoding took: '{}' ms.,", streamDecodeTimeInMillis );
+         logger.info( "Stream created OK. Stream ID is '{}'", wicaStream.getWicaStreamId() );
 
-         logger.info( "Stream created OK from config string: '{}.'", wicaStream );
+         // Tell the control system metadata service to start acquiring metadata
+         // for the  control system channels in this stream.
+         final StopWatch startMetadataTimer = StopWatch.createStarted();
+         wicaStreamMetadataRequesterService.startDataAcquisition( wicaStream );
+         logger.info( "Stream metadata initialisation took: '{}' us.", startMetadataTimer.getTime( TimeUnit.MICROSECONDS ));
 
          // Tell the control system monitoring service to start monitoring
          // and/or polling the  control system channels in this stream.
          final StopWatch startMonitoringTimer = StopWatch.createStarted();
          wicaStreamMonitoredValueRequesterService.startMonitoring( wicaStream );
+         logger.info( "Stream monitoring initialisation took: '{}' us.", startMonitoringTimer.getTime( TimeUnit.MICROSECONDS ));
+
+         final StopWatch startPollingTimer = StopWatch.createStarted();
          wicaStreamPolledValueRequesterService.startPolling( wicaStream );
-         final long startMonitoringTimeInMicroseconds = startMonitoringTimer.getTime(TimeUnit.MICROSECONDS );
-         logger.info("Stream monitoring took: '{}' us.", startMonitoringTimeInMicroseconds);
+         logger.info( "Stream polling initialisation took: '{}' us.", startPollingTimer.getTime( TimeUnit.MICROSECONDS ));
 
          // Create a new publisher and add it to the map of recognized publishers.
          // Note:publication will not begin until there is at least one active subscriber.
@@ -195,6 +207,7 @@ public class WicaStreamLifecycleService
          // Tell the control system monitoring service that we are no longer
          // interested in this stream.
          final WicaStream wicaStream = wicaStreamServerSentEventPublisher.getStream();
+         wicaStreamMetadataRequesterService.stopDataAcquisition( wicaStream );
          wicaStreamMonitoredValueRequesterService.stopMonitoring( wicaStream ) ;
          wicaStreamPolledValueRequesterService.stopPolling( wicaStream ) ;
 
@@ -209,7 +222,7 @@ public class WicaStreamLifecycleService
    /**
     * Restarts the control system monitoring on the wica stream with the specified ID.
     *
-    * @param wicaStreamId the ID of the stream to delete.
+    * @param wicaStreamId the ID of the stream to restart.
     *
     * @throws NullPointerException if the 'wicaStreamId' argument was null.
     * @throws IllegalStateException if the 'wicaStreamId' argument was not recognised.
@@ -225,6 +238,27 @@ public class WicaStreamLifecycleService
 
       // Now invoke the stream monitoring restart feature.
       wicaStreamMonitoredValueRequesterService.restartMonitoring( wicaStream );
+   }
+
+   /**
+    * Restarts the control system polling on the wica stream with the specified ID.
+    *
+    * @param wicaStreamId the ID of the stream to restart.
+    *
+    * @throws NullPointerException if the 'wicaStreamId' argument was null.
+    * @throws IllegalStateException if the 'wicaStreamId' argument was not recognised.
+    */
+   public void restartPolling( WicaStreamId wicaStreamId )
+   {
+      Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument was null." );
+      Validate.isTrue(( isKnown( wicaStreamId ) ), "The 'wicaStreamId' argument was not recognised."  );
+
+      // Get a reference to the stream
+      final WicaStreamServerSentEventPublisher wicaStreamServerSentEventPublisher = wicaStreamPublisherMap.get( wicaStreamId );
+      final WicaStream wicaStream = wicaStreamServerSentEventPublisher.getStream();
+
+      // Now invoke the stream monitoring restart feature.
+      wicaStreamPolledValueRequesterService.restartPolling( wicaStream );
    }
 
    /**
