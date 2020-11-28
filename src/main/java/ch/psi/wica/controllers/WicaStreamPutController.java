@@ -146,10 +146,11 @@ class WicaStreamPutController
          return ResponseEntity.status( HttpStatus.BAD_REQUEST ).header( "X-WICA-ERROR", errorMessage ).build();
       }
 
-      // Attempt to reload the monitoring on the specified stream.
+      // Attempt to reload the monitoring and polling on the specified stream.
       try
       {
          wicaStreamLifecycleService.restartMonitoring( wicaStreamId );
+         wicaStreamLifecycleService.restartPolling( wicaStreamId );
       }
       catch( Exception ex )
       {
