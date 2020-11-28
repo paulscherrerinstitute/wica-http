@@ -4,9 +4,9 @@ package ch.psi.wica.controlsystem.epics;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.WicaChannelMetadataUpdateEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelMonitoredValueUpdateEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelPolledValueUpdateEvent;
+import ch.psi.wica.controlsystem.event.wica.WicaChannelMetadataUpdateEvent;
+import ch.psi.wica.controlsystem.event.wica.WicaChannelMonitoredValueUpdateEvent;
+import ch.psi.wica.controlsystem.event.wica.WicaChannelPolledValueUpdateEvent;
 import ch.psi.wica.model.channel.WicaChannelMetadata;
 import ch.psi.wica.model.channel.WicaChannelValue;
 import org.springframework.context.event.EventListener;
@@ -44,6 +44,26 @@ public class EventReceiverMock
       valuePublished.set( null );
    }
 
+   public Optional<LocalDateTime> getMetadataPublishedTimestamp()
+   {
+      return Optional.ofNullable( metadataPublished.get() );
+   }
+
+   public Optional<LocalDateTime> getValuePublishedTimestamp()
+   {
+      return Optional.ofNullable( valuePublished.get() );
+   }
+
+   public Optional<WicaChannelMetadata> getMetadata()
+   {
+      return Optional.ofNullable( metadata.get() );
+   }
+
+   public Optional<WicaChannelValue> getValue()
+   {
+      return Optional.ofNullable( value.get() );
+   }
+
    @EventListener
    public void handleWicaChannelMonitoredValueUpdateEvent( WicaChannelMonitoredValueUpdateEvent event)
    {
@@ -67,27 +87,6 @@ public class EventReceiverMock
 
 
 /*- Package-level methods ----------------------------------------------------*/
-
-   Optional<LocalDateTime> getMetadataPublishedTimestamp()
-   {
-      return Optional.ofNullable( metadataPublished.get() );
-   }
-
-   Optional<LocalDateTime> getValuePublishedTimestamp()
-   {
-      return Optional.ofNullable( valuePublished.get() );
-   }
-
-   Optional<WicaChannelMetadata> getMetadata()
-   {
-      return Optional.ofNullable( metadata.get() );
-   }
-
-   Optional<WicaChannelValue> getValue()
-   {
-      return Optional.ofNullable( value.get() );
-   }
-
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
