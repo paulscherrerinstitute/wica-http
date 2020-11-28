@@ -3,7 +3,7 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.epics.EpicsChannelMonitoringService;
+import ch.psi.wica.controlsystem.epics.monitor.EpicsChannelMonitorService;
 import ch.psi.wica.model.stream.WicaStreamId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ class WicaStreamPutControllerTest
 	private MockMvc mockMvc;
 
 	@Autowired
-	private EpicsChannelMonitoringService epicsChannelMonitoringService;
+	private EpicsChannelMonitorService epicsChannelMonitorService;
 
    private String epicsChannelListOk;
 
@@ -67,11 +67,11 @@ class WicaStreamPutControllerTest
    {
       epicsChannelListOk = Files.readString( Paths.get("src/test/resources/epics/epics_channel_list_ok.json") );
       WicaStreamId.resetAllocationSequencer();
-      epicsChannelMonitoringService.getStatistics().reset();
+      epicsChannelMonitorService.getStatistics().reset();
    }
 
    @Test
-   void test_PUT_SendValidRequest_RequestIsAccepted() throws Exception
+   void test_POST_SendValidRequest_RequestIsAccepted() throws Exception
    {
       // Send a POST request to create a stream with a list containing a couple of EPICS channels
       final RequestBuilder postRequest = MockMvcRequestBuilders.post( "/ca/streams" )
@@ -82,9 +82,9 @@ class WicaStreamPutControllerTest
       final MvcResult postRequestResult = mockMvc.perform( postRequest ).andDo( print()).andExpect( status().isOk() ).andReturn();
       logger.info( "Returned data was: '{}'", postRequestResult.getResponse().getContentAsString() );
 
-      assertThat( epicsChannelMonitoringService.getStatistics().getStartRequests(), is( "2") );
-      assertThat( epicsChannelMonitoringService.getStatistics().getStopRequests(), is( "0") );
-      assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "2") );
+      assertThat( epicsChannelMonitorService.getStatistics().getStartRequests(), is( "2") );
+      assertThat( epicsChannelMonitorService.getStatistics().getStopRequests(), is( "0") );
+      assertThat( epicsChannelMonitorService.getStatistics().getActiveRequests(), is( "2") );
 
       // Send a PUT request to reload the control system monitoring on the stream we just created.
       final RequestBuilder putRequest = MockMvcRequestBuilders.put( "/ca/streams/0?action=reload" );
@@ -92,9 +92,9 @@ class WicaStreamPutControllerTest
 
       // Verify that initially the total channel count and number of stop requests will not change.
       // But after the resources have been disposed of N seconds later they will be.
-      assertThat( epicsChannelMonitoringService.getStatistics().getStartRequests(), is( "4") );
-      assertThat( epicsChannelMonitoringService.getStatistics().getStopRequests(), is( "2") );
-      assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "2") );
+      assertThat( epicsChannelMonitorService.getStatistics().getStartRequests(), is( "4") );
+      assertThat( epicsChannelMonitorService.getStatistics().getStopRequests(), is( "2") );
+      assertThat( epicsChannelMonitorService.getStatistics().getActiveRequests(), is( "2") );
 
       // Send a DELETE request to delete the stream we just created.
       final RequestBuilder deleteRequest = MockMvcRequestBuilders.delete( "/ca/streams/0" );
@@ -102,13 +102,13 @@ class WicaStreamPutControllerTest
 
       // Verify that initially the total channel count and number of stop requests will not change.
       // But after the resources have been disposed of N seconds later they will be.
-      assertThat( epicsChannelMonitoringService.getStatistics().getStartRequests(), is( "4") );
-      assertThat( epicsChannelMonitoringService.getStatistics().getStopRequests(), is( "2") );
-      assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "2") );
+      assertThat( epicsChannelMonitorService.getStatistics().getStartRequests(), is( "4") );
+      assertThat( epicsChannelMonitorService.getStatistics().getStopRequests(), is( "2") );
+      assertThat( epicsChannelMonitorService.getStatistics().getActiveRequests(), is( "2") );
       Thread.sleep( 6000 );
-      assertThat( epicsChannelMonitoringService.getStatistics().getStartRequests(), is( "4") );
-      assertThat( epicsChannelMonitoringService.getStatistics().getStopRequests(), is( "4") );
-      assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "0") );
+      assertThat( epicsChannelMonitorService.getStatistics().getStartRequests(), is( "4") );
+      assertThat( epicsChannelMonitorService.getStatistics().getStopRequests(), is( "4") );
+      assertThat( epicsChannelMonitorService.getStatistics().getActiveRequests(), is( "0") );
    }
 
    @Test
@@ -161,13 +161,13 @@ class WicaStreamPutControllerTest
 
       // Verify that initially the total channel count and number of stop requests will not change.
       // But after the resources have been disposed of N seconds later they will be.
-      assertThat( epicsChannelMonitoringService.getStatistics().getStartRequests(), is( "2") );
-      assertThat( epicsChannelMonitoringService.getStatistics().getStopRequests(), is( "0") );
-      assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "2") );
+      assertThat( epicsChannelMonitorService.getStatistics().getStartRequests(), is( "2") );
+      assertThat( epicsChannelMonitorService.getStatistics().getStopRequests(), is( "0") );
+      assertThat( epicsChannelMonitorService.getStatistics().getActiveRequests(), is( "2") );
       Thread.sleep( 6000 );
-      assertThat( epicsChannelMonitoringService.getStatistics().getStartRequests(), is( "2") );
-      assertThat( epicsChannelMonitoringService.getStatistics().getStopRequests(), is( "2") );
-      assertThat( epicsChannelMonitoringService.getStatistics().getTotalChannelCount(), is( "0") );
+      assertThat( epicsChannelMonitorService.getStatistics().getStartRequests(), is( "2") );
+      assertThat( epicsChannelMonitorService.getStatistics().getStopRequests(), is( "2") );
+      assertThat( epicsChannelMonitorService.getStatistics().getActiveRequests(), is( "0") );
 
    }
 

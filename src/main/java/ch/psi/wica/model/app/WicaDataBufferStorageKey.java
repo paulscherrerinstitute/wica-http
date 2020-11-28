@@ -39,14 +39,10 @@ public class WicaDataBufferStorageKey
       Validate.notNull( wicaChannel );
 
       // Optimisation Note:
-      // The storage key for saving data obtained by channel polling is based on the channel's
-      // name, the channel's polling interval and the polling mode (network-based or monitor based).
-      // This means that saved information can be shared between different subscribers when/if
-      // these parameters are aligned.
-      final int hashCode = (Objects.hash( wicaChannel.getName(),
-                                          wicaChannel.getProperties().getOptionalPollingIntervalInMillis(),
-                                          wicaChannel.getProperties().getDataAcquisitionMode() ) );
-
+      // The storage key for saving data obtained by channel polling is based on ALL the properties
+      // of the Wica Channel. This means that each Wica Channel is represented uniquely in the
+      // polled value data stache.
+      final int hashCode = (Objects.hash( wicaChannel ));
       return new WicaDataBufferStorageKey( wicaChannel, hashCode );
    }
 
@@ -55,11 +51,10 @@ public class WicaDataBufferStorageKey
       Validate.notNull( wicaChannel );
 
       // Optimisation Note:
-      // The storage key for saving data obtained by channel monitoring is based only on the
-      // channel's control system name. This means that saved information can be shared when
-      // multiple wica stream subscribers obtain information from the same control system
-      // control point.
-      final int hashCode = (Objects.hash( wicaChannel.getName().getControlSystemName() ) );
+      // The storage key for saving data obtained by channel monitoring is based on ALL the properties
+      // of the Wica Channel. This means that each Wica Channel is represented uniquely in the
+      // monitored value data stache.
+      final int hashCode = (Objects.hash( wicaChannel ));
       return new WicaDataBufferStorageKey( wicaChannel, hashCode );
    }
 
@@ -68,11 +63,9 @@ public class WicaDataBufferStorageKey
       Validate.notNull( wicaChannel );
 
       // Optimisation Note:
-      // The storage key for saving metadata information is based only on the channel's
-      // control system name. This means that saved information can be shared when multiple
-      // wica stream subscribers obtain information from the same control system control
-      // point.
-      final int hashCode = (Objects.hash( wicaChannel.getName().getControlSystemName() ) );
+      // The storage key for saving metadata is based on ALL the properties of the Wica Channel.
+      // This means that each Wica Channel is represented uniquely in the metadata stache.
+      final int hashCode = (Objects.hash( wicaChannel ));
       return new WicaDataBufferStorageKey( wicaChannel, hashCode );
    }
 
