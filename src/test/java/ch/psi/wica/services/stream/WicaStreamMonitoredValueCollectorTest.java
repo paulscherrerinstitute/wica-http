@@ -3,7 +3,7 @@ package ch.psi.wica.services.stream;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.WicaChannelMonitoredValueUpdateEvent;
+import ch.psi.wica.controlsystem.event.wica.WicaChannelMonitoredValueUpdateEvent;
 import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.infrastructure.channel.WicaChannelPropertiesBuilder;
 import ch.psi.wica.infrastructure.channel.WicaChannelValueTimestampRewriter;
