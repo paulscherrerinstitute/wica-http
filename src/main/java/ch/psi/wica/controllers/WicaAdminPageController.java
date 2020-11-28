@@ -4,8 +4,9 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.epics.EpicsChannelMonitoringService;
-import ch.psi.wica.controlsystem.epics.EpicsChannelPollingService;
+import ch.psi.wica.controlsystem.epics.channel.EpicsChannelManager;
+import ch.psi.wica.controlsystem.epics.monitor.EpicsChannelMonitorPublisher;
+import ch.psi.wica.controlsystem.epics.poller.EpicsChannelPollerPublisher;
 import ch.psi.wica.model.app.StatisticsCollectable;
 import ch.psi.wica.model.app.StatisticsCollectionService;
 import net.jcip.annotations.ThreadSafe;
@@ -40,19 +41,25 @@ class WicaAdminPageController
    private final Logger logger = LoggerFactory.getLogger(WicaAdminPageController.class );
 
    private final StatisticsCollectionService statisticsCollectionService;
-   private final EpicsChannelMonitoringService epicsChannelMonitoringService;
-   private final EpicsChannelPollingService epicsChannelPollingService;
+   private final EpicsChannelMonitorPublisher epicsChannelMonitorPublisher;
+   private final EpicsChannelPollerPublisher epicsChannelPollerPublisher;
+   private final EpicsChannelManager epicsMonitoredChannelManager;
+   private final EpicsChannelManager epicsPolledChannelManager;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    public WicaAdminPageController( @Autowired StatisticsCollectionService statisticsCollectionService,
-                                   @Autowired EpicsChannelMonitoringService epicsChannelMonitoringService,
-                                   @Autowired EpicsChannelPollingService epicsChannelPollingServiceService )
+                                   @Autowired EpicsChannelMonitorPublisher epicsChannelMonitorPublisher,
+                                   @Autowired EpicsChannelPollerPublisher epicsChannelPollerPublisher,
+                                   @Autowired EpicsChannelManager.EpicsMonitoredChannelManagerService epicsMonitoredChannelManager,
+                                   @Autowired EpicsChannelManager.EpicsPolledChannelManagerService epicsPolledChannelManager)
    {
       this.statisticsCollectionService = statisticsCollectionService;
-      this.epicsChannelMonitoringService = epicsChannelMonitoringService;
-      this.epicsChannelPollingService= epicsChannelPollingServiceService;
+      this.epicsChannelMonitorPublisher = epicsChannelMonitorPublisher;
+      this.epicsChannelPollerPublisher= epicsChannelPollerPublisher;
+      this.epicsMonitoredChannelManager = epicsMonitoredChannelManager;
+      this.epicsPolledChannelManager = epicsPolledChannelManager;
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -79,28 +86,28 @@ class WicaAdminPageController
    @GetMapping( value="/channel-monitors/all", produces = MediaType.APPLICATION_JSON_VALUE )
    public ResponseEntity<List<String>> getAllMonitoredChannels()
    {
-      final List<String> channelNames = epicsChannelMonitoringService.getStatistics().getChannelNames();
+      final List<String> channelNames = epicsChannelMonitorPublisher.getStatistics().getChannelNames();
       return new ResponseEntity<>( channelNames, HttpStatus.OK );
    }
 
    @GetMapping( value="/channel-monitors/unconn" )
    public ResponseEntity<List<String>> getUnconnectedChannelMonitors()
    {
-      final List<String> unconnectedChannelNames = epicsChannelMonitoringService.getStatistics().getUnconnectedChannelNames();
+      final List<String> unconnectedChannelNames = epicsMonitoredChannelManager.getStatistics().getUnconnectedChannels();
       return new ResponseEntity<>( unconnectedChannelNames, HttpStatus.OK );
    }
 
    @GetMapping( value="/channel-pollers/all", produces = MediaType.APPLICATION_JSON_VALUE )
    public ResponseEntity<List<String>> getAllPolledChannels()
    {
-      final List<String> channelNames = epicsChannelPollingService.getStatistics().getChannelNames();
+      final List<String> channelNames = epicsChannelPollerPublisher.getStatistics().getChannelNames();
       return new ResponseEntity<>( channelNames, HttpStatus.OK );
    }
 
    @GetMapping( value="/channel-pollers/unconn" )
    public ResponseEntity<List<String>> getUnconnectedChannelPollers()
    {
-      final List<String> unconnectedChannelNames = epicsChannelPollingService.getStatistics().getUnconnectedChannelNames();
+      final List<String> unconnectedChannelNames = epicsPolledChannelManager.getStatistics().getUnconnectedChannels();
       return new ResponseEntity<>( unconnectedChannelNames, HttpStatus.OK );
    }
 

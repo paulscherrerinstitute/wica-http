@@ -4,8 +4,8 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.epics.EpicsChannelReaderService;
-import ch.psi.wica.controlsystem.epics.EpicsChannelName;
+import ch.psi.wica.controlsystem.epics.io.EpicsChannelReaderService;
+import ch.psi.wica.controlsystem.epics.channel.EpicsChannelName;
 import ch.psi.wica.infrastructure.channel.WicaChannelDataSerializerBuilder;
 import ch.psi.wica.model.app.StatisticsCollectionService;
 import org.apache.commons.lang3.Validate;

@@ -110,6 +110,16 @@ public class WicaStream
       return wicaChannels.stream().filter( c -> c.getNameAsString().equals( wicaChannelName ) ).findFirst();
    }
 
+   @Override
+   public String toString()
+   {
+      return "WicaStream{" +
+            "wicaStreamId=" + wicaStreamId +
+            ", wicaStreamProperties=" + wicaStreamProperties +
+            ", wicaChannels=" + wicaChannels +
+            '}';
+   }
+
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 

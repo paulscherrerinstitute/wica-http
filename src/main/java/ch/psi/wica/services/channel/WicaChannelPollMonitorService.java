@@ -4,9 +4,9 @@ package ch.psi.wica.services.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.event.WicaChannelPolledMonitorValueUpdateEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelStartPollingEvent;
-import ch.psi.wica.controlsystem.event.WicaChannelStopPollingEvent;
+import ch.psi.wica.controlsystem.event.wica.WicaChannelPolledMonitorValueUpdateEvent;
+import ch.psi.wica.controlsystem.event.wica.WicaChannelStartPollingEvent;
+import ch.psi.wica.controlsystem.event.wica.WicaChannelStopPollingEvent;
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.channel.WicaChannel;
 import net.jcip.annotations.ThreadSafe;
