@@ -181,4 +181,18 @@ Behaviour change: channels whose data acquisition mode is set to poll will only 
   * [Issue #59](https://github.com/paulscherrerinstitute/wica-http/issues/59) ENHANCEMENT: Improvements to Admin Page.
    
 Test Status: Tests run: 360, Failures: 0, Errors: 0, Skipped: 13    
+
+
+* [1.9.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.9.0) Released 2020-11-28.
+
+This was a big refactoring of the aspects of this project that provides support for the EPICS Control System.
+The intention was not to introduce breaking behaviour changes but to refactor the structure for improved future
+maintainability.
+
+  * [Issue #60](https://github.com/paulscherrerinstitute/wica-http/issues/60) ENHANCEMENT: Refactor EPICS Control System support for improved structure and maintainability.
+  * [Issue #61](https://github.com/paulscherrerinstitute/wica-http/issues/61) Create Wica HTTP Release 1.9.0
+  * [Issue #62](https://github.com/paulscherrerinstitute/wica-http/issues/62) ENHANCEMENT: Add support for 'wica.channel-publish-poller-restart', 'wica.channel-publish-channel-value-initial-state' 
+                                                                              and 'wica.channel-publish-channel-metadata-initial-state' configuration settings/ 
+  
+Test Status: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14    
  
