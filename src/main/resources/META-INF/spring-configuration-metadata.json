@@ -16,16 +16,6 @@
       "description": "The configuration for PSI's CA library when logging."
     },
     {
-      "name": "wica.epics-get-channel-value-on-monitor-connect",
-      "type": "java.lang.Boolean",
-      "description": "Whether an explicit get will be performed to read a channel's value when a monitored channel first comes online."
-    },
-    {
-      "name": "wica.epics-get-channel-value-on-poller-connect",
-      "type": "java.lang.Boolean",
-      "description": "Whether an explicit get will be performed to read a channel's value when a polled channel first comes online."
-    },
-    {
       "name": "wica.channel-resource-release-interval-in-secs",
       "type": "java.lang.Integer",
       "description": "Period after which the resources associated with a Wica Channel will be released if they are no longer in use."
