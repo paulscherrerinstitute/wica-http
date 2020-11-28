@@ -26,6 +26,21 @@
       "description": "Whether a channel disconnect value will be published if the monitoring associated with a channel is restarted."
     },
     {
+      "name": "wica.channel-publish-poller-restarts",
+      "type": "java.lang.Boolean",
+      "description": "Whether a channel disconnect value will be published if the polling associated with a channel is restarted."
+    },
+    {
+      "name": "wica.channel-publish-channel-value-initial-state",
+      "type": "java.lang.Boolean",
+      "description": "Whether a channel's initial value will be published as DISCONNECTED when a channel is first created."
+    },
+    {
+      "name": "wica.channel-publish-channel-metadata-initial-state",
+      "type": "java.lang.Boolean",
+      "description": "Whether a channel's initial metadata will be published as UNKNOWN when a channel is first created."
+    },
+    {
       "name": "wica.channel-monitored-value-buffer-size",
       "type": "java.lang.Integer",
       "description": "The number of values that can be held in the control system monitored value buffer before older values start getting thrown away."
