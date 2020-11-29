@@ -26,10 +26,11 @@ public class ConfigurationStatistics implements StatisticsCollectable
    private final String testLoggingOnStartup;
    private final String epicsCaLibraryMonitorNotifierImpl;
    private final String epicsCaLibraryDebugLevel;
-   private final String epicsGetChannelValueOnMonitorConnect;
-   private final String epicsGetChannelValueOnPollerConnect;
    private final String channelResourceReleaseIntervalInSecs;
    private final String channelPublishMonitorRestarts;
+   private final String channelPublishPollerRestarts;
+   private final String channelPublishChannelValueInitialState;
+   private final String channelPublishChannelMetadataInitialState;
    private final String channelMonitoredValueBufferSize;
    private final String channelPolledValueBufferSize;
    private final String channelGetTimeoutIntervalInMs;
@@ -49,11 +50,12 @@ public class ConfigurationStatistics implements StatisticsCollectable
    public ConfigurationStatistics( @Value( "${wica.test-logging-on-startup}" ) Boolean testLoggingOnStartup,
                                    @Value( "${wica.epics-ca-library-monitor-notifier-impl}" ) String epicsCaLibraryMonitorNotifierImpl,
                                    @Value( "${wica.epics-ca-library-debug-level}" ) Integer epicsCaLibraryDebugLevel,
-                                   @Value( "${wica.epics-get-channel-value-on-monitor-connect}") Boolean epicsGetChannelValueOnMonitorConnect,
-                                   @Value( "${wica.epics-get-channel-value-on-poller-connect}") Boolean epicsGetChannelValueOnPollerConnect,
                                    @Value( "${wica.channel-resource-release-interval-in-secs}") Integer channelResourceReleaseIntervalInSecs,
                                    @Value( "${wica.channel-publish-monitor-restarts}") Boolean channelPublishMonitorRestarts,
+                                   @Value( "${wica.channel-publish-poller-restarts}") Boolean channelPublishPollerRestarts,
                                    @Value( "${wica.channel-monitored-value-buffer-size}" ) Integer channelMonitoredValueBufferSize,
+                                   @Value( "${wica.channel-publish-channel-value-initial-state}") Boolean channelPublishChannelValueInitialState,
+                                   @Value( "${wica.channel-publish-channel-metadata-initial-state}") Boolean channelPublishChannelMetadataInitialState,
                                    @Value( "${wica.channel-polled-value-buffer-size}" ) Integer channelPolledValueBufferSize,
                                    @Value( "${wica.channel-get-timeout-interval-in-ms}" ) Integer channelGetTimeoutIntervalInMs,
                                    @Value( "${wica.channel-get-numeric-scale}" ) Integer channelGetNumericScale,
@@ -68,10 +70,11 @@ public class ConfigurationStatistics implements StatisticsCollectable
       this.testLoggingOnStartup = String.valueOf( testLoggingOnStartup );
       this.epicsCaLibraryMonitorNotifierImpl = epicsCaLibraryMonitorNotifierImpl;
       this.epicsCaLibraryDebugLevel = String.valueOf( epicsCaLibraryDebugLevel );
-      this.epicsGetChannelValueOnMonitorConnect = String.valueOf( epicsGetChannelValueOnMonitorConnect );
-      this.epicsGetChannelValueOnPollerConnect = String.valueOf( epicsGetChannelValueOnPollerConnect );
       this.channelResourceReleaseIntervalInSecs = String.valueOf( channelResourceReleaseIntervalInSecs );
       this.channelPublishMonitorRestarts = String.valueOf( channelPublishMonitorRestarts );
+      this.channelPublishPollerRestarts = String.valueOf( channelPublishPollerRestarts );
+      this.channelPublishChannelValueInitialState = String.valueOf( channelPublishChannelValueInitialState );
+      this.channelPublishChannelMetadataInitialState = String.valueOf( channelPublishChannelMetadataInitialState );
       this.channelMonitoredValueBufferSize = String.valueOf( channelMonitoredValueBufferSize );
       this.channelPolledValueBufferSize = String.valueOf( channelPolledValueBufferSize );
       this.channelGetTimeoutIntervalInMs = String.valueOf( channelGetTimeoutIntervalInMs );
@@ -95,10 +98,11 @@ public class ConfigurationStatistics implements StatisticsCollectable
       return new Statistics( "SERVER CONFIGURATION", List.of( new StatisticsItem( "- wica.test-logging-on-startup",                         testLoggingOnStartup ),
                                                                       new StatisticsItem( "- wica.epics-ca-library-monitor-notifier-impl",          epicsCaLibraryMonitorNotifierImpl ),
                                                                       new StatisticsItem( "- wica.epics-ca-library-debug-level",                    epicsCaLibraryDebugLevel ),
-                                                                      new StatisticsItem( "- wica.epics-get-channel-value-on-monitor-connect",      epicsGetChannelValueOnMonitorConnect ),
-                                                                      new StatisticsItem( "- wica.epics-get-channel-value-on-poller-connect",       epicsGetChannelValueOnPollerConnect ),
                                                                       new StatisticsItem( "- wica.channel-resource-release-interval-in-secs",       channelResourceReleaseIntervalInSecs ),
                                                                       new StatisticsItem( "- wica.channel-publish-monitor-restarts",                channelPublishMonitorRestarts ),
+                                                                      new StatisticsItem( "- wica.channel-publish-poller-restarts",                 channelPublishPollerRestarts ),
+                                                                      new StatisticsItem( "- wica.channel-publish-channel-value-initial-state",     channelPublishChannelValueInitialState ),
+                                                                      new StatisticsItem( "- wica.channel-publish-channel-metadata-initial-state",  channelPublishChannelMetadataInitialState ),
                                                                       new StatisticsItem( "- wica.channel-monitored-value-buffer-size",             channelMonitoredValueBufferSize ),
                                                                       new StatisticsItem( "- wica.channel-polled-value-buffer-size",                channelPolledValueBufferSize ),
                                                                       new StatisticsItem( "- wica.channel-get-timeout-interval-in-ms",              channelGetTimeoutIntervalInMs ),
