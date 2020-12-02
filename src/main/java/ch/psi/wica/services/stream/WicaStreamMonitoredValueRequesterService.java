@@ -234,7 +234,9 @@ public class WicaStreamMonitoredValueRequesterService
       final var storageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
       final var controlSystemName = wicaChannel.getName().getControlSystemName();
 
-      // Update the timestamp of the event that was most recently associated with the storage key.
+      // Update the timestamp associated with the storage key. These timestamps are used by
+      // the periodic scheduling task to determine when to release a channel for which
+      // there is no longer any interest.
       monitoredChannelEventMap.put( storageKey, LocalDateTime.now() );
 
       // If a channel with these monitoring parameters already exists simply increment the interest count.
