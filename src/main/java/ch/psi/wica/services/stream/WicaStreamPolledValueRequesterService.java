@@ -217,7 +217,9 @@ public class WicaStreamPolledValueRequesterService
       final var storageKey = WicaDataBufferStorageKey.getPolledValueStorageKey( wicaChannel );
       final var controlSystemName = wicaChannel.getName().getControlSystemName();
 
-      // Update the timestamp of the event that was most recently associated with the storage key.
+      // Update the timestamp associated with the storage key. These timestamps are used by
+      // the periodic scheduling task to determine when to release a channel for which
+      // there is no longer any interest.
       polledChannelEventMap.put( storageKey, LocalDateTime.now() );
 
       // If a channel with these polling parameters already exists simply increment the interest count.
