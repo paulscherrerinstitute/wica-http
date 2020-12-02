@@ -97,7 +97,7 @@ public class WicaStreamBuilder
       final WicaChannelProperties wicaChannelPropertiesFromStream = WicaChannelPropertiesBuilder.create().withChannelPropertiesFromStream( wicaStreamProperties ).build();
       final WicaChannel wicaChannel = WicaChannelBuilder.create()
             .withChannelNameAndProperties( wicaChannelName, wicaChannelPropertiesFromStream ).build();
-      Validate.isTrue(  ! wicaChannels.contains( wicaChannel ),"The 'WicaChannelName' argument specified a channel that was identical to one that was already defined." );
+      Validate.isTrue(  ! wicaChannels.contains( wicaChannel ),"The 'WicaChannelName' argument specified a channel ('" + wicaChannel + "') that was identical to one that was already defined." );
       wicaChannels.add ( wicaChannel );
       return this;
    }
@@ -107,7 +107,7 @@ public class WicaStreamBuilder
       Validate.notNull( wicaChannelName,"The 'WicaChannelName' argument was null." );
 
       final WicaChannel wicaChannel = WicaChannelBuilder.create().withChannelNameAndDefaultProperties( wicaChannelName ).build();
-      Validate.isTrue(  ! wicaChannels.contains( wicaChannel ),"The 'WicaChannelName' argument specified a channel that was identical to one that was already defined." );
+      Validate.isTrue(  ! wicaChannels.contains( wicaChannel ),"The 'WicaChannelName' argument specified a channel ('" + wicaChannel + "') that was identical to one that was already defined." );
       wicaChannels.add ( wicaChannel );
       return this;
    }
@@ -123,7 +123,7 @@ public class WicaStreamBuilder
             .build();
 
       final WicaChannel wicaChannel = WicaChannelBuilder.create().withChannelNameAndProperties( wicaChannelName, wicaChannelCombinedProperties ).build();
-      Validate.isTrue(  ! wicaChannels.contains( wicaChannel ),"The 'WicaChannelName' argument specified a channel that was identical to one that was already defined." );
+      Validate.isTrue(  ! wicaChannels.contains( wicaChannel ),"The 'WicaChannelName' argument specified a channel ('" + wicaChannel + "') that was identical to one that was already defined." );
       wicaChannels.add( wicaChannel );
       return this;
    }
