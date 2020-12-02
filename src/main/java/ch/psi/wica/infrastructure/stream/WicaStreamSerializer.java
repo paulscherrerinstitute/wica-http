@@ -39,8 +39,8 @@ public class WicaStreamSerializer
 
    private static final Logger logger = LoggerFactory.getLogger( WicaStreamSerializer.class );
 
-   private static ObjectMapper serializerMapper = new ObjectMapper();
-   private static ObjectMapper deserializerMapper = new ObjectMapper();
+   private static final ObjectMapper serializerMapper = new ObjectMapper();
+   private static final ObjectMapper deserializerMapper = new ObjectMapper();
 
    static
    {
@@ -190,6 +190,7 @@ public class WicaStreamSerializer
    public static abstract class WicaStreamDeserializerMixin extends WicaStream
    {
       // WARNING: Signature here must match EXACTLY with that in WicaStream otherwise deserialisation will fail.
+      @SuppressWarnings( "unused" )
       @JsonCreator
       public WicaStreamDeserializerMixin( @JsonProperty( "props"    ) WicaStreamProperties wicaStreamProperties,
                                           @JsonProperty( "channels" ) Set<WicaChannel> wicaChannels) {}
@@ -201,6 +202,7 @@ public class WicaStreamSerializer
    public static abstract class WicaStreamPropertiesDeserializerMixin extends WicaStreamProperties
    {
       // WARNING: Signature here must match EXACTLY with that in WicaStreamProperties otherwise deserialisation will fail.
+      @SuppressWarnings( "unused" )
       @JsonCreator
       public WicaStreamPropertiesDeserializerMixin( @JsonProperty( "quietMode" ) Boolean quietMode,
                                                     @JsonProperty( "hbflux"    ) Integer heartbeatFluxIntervalInMillis,
@@ -225,6 +227,7 @@ public class WicaStreamSerializer
    public static abstract class WicaChannelDeserializerMixin extends WicaChannel
    {
       // WARNING: Signature here must match EXACTLY with that in WicaChannel otherwise deserialisation will fail.
+      @SuppressWarnings( "unused" )
       @JsonCreator
       public WicaChannelDeserializerMixin( @JsonProperty( "name"  ) WicaChannelName wicaChannelName,
                                            @JsonProperty( "props" ) WicaChannelProperties wicaChannelProperties ) {}
@@ -236,9 +239,9 @@ public class WicaStreamSerializer
    public static abstract class WicaChannelPropertiesDeserializerMixin extends WicaChannelProperties
    {
       // WARNING: Signature here must match EXACTLY with that in WicaChannelProperties otherwise deserialisation will fail.
+      @SuppressWarnings( "unused" )
       @JsonCreator
-      public WicaChannelPropertiesDeserializerMixin( @JsonProperty( "pollratio" ) Integer pollRatio, // deprecated property
-                                                     @JsonProperty( "daqmode"  ) WicaDataAcquisitionMode dataAcquisitionMode,
+      public WicaChannelPropertiesDeserializerMixin( @JsonProperty( "daqmode"  ) WicaDataAcquisitionMode dataAcquisitionMode,
                                                      @JsonProperty( "pollint"  ) Integer pollingIntervalInMillis,
                                                      @JsonProperty( "fields"   ) String fieldsOfInterest,
                                                      @JsonProperty( "prec"     ) Integer numericPrecision,
