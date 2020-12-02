@@ -5,7 +5,6 @@ package ch.psi.wica.model.channel;
 
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.app.WicaFilterType;
-import ch.psi.wica.model.stream.WicaStreamPropertiesDefaults;
 import net.jcip.annotations.Immutable;
 
 import java.util.Objects;
@@ -56,45 +55,6 @@ public class WicaChannelProperties
       this.filterSamplingIntervalInMillis = WicaChannelPropertiesDefaults.DEFAULT_FILTER_SAMPLING_INTERVAL_IN_MILLIS;
       this.filterDeadband                 = WicaChannelPropertiesDefaults.DEFAULT_FILTER_DEADBAND;
       this.fieldsOfInterest               = WicaChannelPropertiesDefaults.DEFAULT_FIELDS_OF_INTEREST;
-   }
-
-   // Support for deprecated property POLLRATIO. In the future this constructor can go.
-   // WARNING: Signature here must match EXACTLY with that in WicaStreamPropertiesDeserializationMixin.
-   public WicaChannelProperties( Integer pollingRatio, // deprecated
-                                 WicaDataAcquisitionMode dataAcquisitionMode,
-                                 Integer pollingIntervalInMillis,
-                                 String fieldsOfInterest,
-                                 Integer numericPrecision,
-                                 WicaFilterType filterType,
-                                 Integer filterNumSamples,
-                                 Integer filterNumSamplesInAverage,
-                                 Integer filterCycleLength,
-                                 Integer filterSamplingIntervalInMillis,
-                                 Double filterDeadband )
-   {
-      this.dataAcquisitionMode                = dataAcquisitionMode;
-      this.pollingIntervalInMillis            = extractPollingInterval( pollingIntervalInMillis, pollingRatio );
-      this.numericPrecision                   = numericPrecision;
-      this.filterType                         = filterType;
-      this.filterNumSamples                   = filterNumSamples;
-      this.filterNumSamplesInAverage          = filterNumSamplesInAverage;
-      this.filterCycleLength                  = filterCycleLength;
-      this.filterSamplingIntervalInMillis     = filterSamplingIntervalInMillis;
-      this.filterDeadband                     = filterDeadband;
-      this.fieldsOfInterest                   = fieldsOfInterest;
-   }
-
-   // Support for deprecated property pollratio. In the future this method can go.
-   private Integer extractPollingInterval( Integer pollingIntervalInMillis, Integer pollingRatio )
-   {
-      if ( (pollingIntervalInMillis == null) && (pollingRatio != null) )
-      {
-         return pollingRatio * WicaStreamPropertiesDefaults.DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS;
-      }
-      else
-      {
-         return pollingIntervalInMillis;
-      }
    }
 
    // WARNING: Signature here must match EXACTLY with that in WicaStreamPropertiesDeserializationMixin.
