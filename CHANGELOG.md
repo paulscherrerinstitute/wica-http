@@ -183,11 +183,14 @@ Behaviour change: channels whose data acquisition mode is set to poll will only 
 Test Status: Tests run: 360, Failures: 0, Errors: 0, Skipped: 13    
 
 
-* [1.9.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.9.0) Released 2020-11-28.
+* [1.9.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.9.0) Released 2020-12-03.
 
 This was a big refactoring of the aspects of this project that provides support for the EPICS Control System.
 The intention was not to introduce breaking behaviour changes but to refactor the structure for improved future
-maintainability.
+maintainability. 
+
+This release bundles Wica_JS 1.4.0 which supports autogeneration of the Wica Channel instance specifiers and
+a feature which allows CSS autoload to be suppressed.
 
   * [Issue #60](https://github.com/paulscherrerinstitute/wica-http/issues/60) ENHANCEMENT: Refactor EPICS Control System support for improved structure and maintainability.
   * [Issue #61](https://github.com/paulscherrerinstitute/wica-http/issues/61) Create Wica HTTP Release 1.9.0
