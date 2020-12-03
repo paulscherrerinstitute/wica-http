@@ -1,0 +1,35 @@
+record( calc, "wica:test:counter01" ) {
+  field( SCAN,".1 second")
+  field( CALC,"VAL+1")
+  field( MDEL,"100")
+}
+ 
+record( calc, "wica:test:counter02" ) {
+  field( SCAN,".2 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "wica:test:counter03" ) {
+  field( SCAN,".5 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "wica:test:counter04" ) {
+  field( SCAN,"1 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "wica:test:counter05" ) {
+  field( SCAN,"2 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "wica:test:counter06" ) {
+  field( SCAN,"5 second")
+  field( CALC,"VAL+1")
+}
+
+record( calc, "wica:test:counter07" ) {
+  field( SCAN,"10 second")
+  field( CALC,"VAL+1")
+}
