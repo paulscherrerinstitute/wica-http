@@ -27,7 +27,7 @@
         <!-- <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/latest/download/wica-js.zip</wica-js-release> -->
         <!-- This definition can be used to get a specific release -->
         <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/download/1.4.0/wica-js.zip</wica-js-release>
-        <wica-js-md5>85d739d06af2aa25845367e825ede9a8</wica-js-md5>
+        <wica-js-md5>6f4e95d699e4ff2f2c7c9d50b8dbcbe6</wica-js-md5>
         <!-- BUG FIX: 2020-01-12 -->
         <!-- The latest version of Tomcat is specified to get rid of an error message that occurs when navigating -->
         <!-- away from web pages. See this issue: https://github.com/codecentric/spring-boot-admin/issues/1039 -->
