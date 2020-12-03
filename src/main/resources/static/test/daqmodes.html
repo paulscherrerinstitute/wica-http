@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Wica Daqmode Test</title>
+
+    <!-- Load the Wica library from the local machine -->
+    <script src="../wica/wica.js"  data-wica-log-level=4 data-wica-stream-autoload-css="false" type="module"></script>
+
+    <style>
+        * {
+            font-family: "Helvetica Neue",sans-serif;
+        }
+
+        body {
+            background-color: darkgrey;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        label {
+            display: inline-block;
+            background-color: lightblue;
+            margin-bottom: 1rem;
+            width: 25rem;
+        }
+
+        button {
+            width: 8rem;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <h1>Wica Data Acquisition Mode Test Page</h1>
+
+    <div>
+        <h2>Monitor Examples #1 </h2>
+        <label>Counter 0.1s #1 Monitor</label> <label data-wica-channel-name="wica:test:counter01##00" data-wica-channel-props='{ "daqmode" : "monitor" }'>NC</label><br>
+        <label>Counter 0.1s #1 Monitor</label> <label data-wica-channel-name="wica:test:counter01##01" data-wica-channel-props='{ "daqmode" : "monitor" }'>NC</label><br>
+        <label>Counter 0.2s #1 Monitor</label> <label data-wica-channel-name="wica:test:counter02##02" data-wica-channel-props='{ "daqmode" : "monitor" }'>NC</label><br>
+        <label>Counter 0.2s #1 Monitor</label> <label data-wica-channel-name="wica:test:counter02##03" data-wica-channel-props='{ "daqmode" : "monitor" }'>NC</label><br>
+
+        <h2>Poll Examples #1 </h2>
+        <label>Counter 0.1s #1 Poll every 1s</label> <label data-wica-channel-name="wica:test:counter01##04" data-wica-channel-props='{ "daqmode" : "poll", "pollint" : 1000  }'>NC</label><br>
+        <label>Counter 0.1s #2 Poll every 1s</label> <label data-wica-channel-name="wica:test:counter01##05" data-wica-channel-props='{ "daqmode" : "poll", "pollint" : 1000  }'>NC</label><br>
+        <label>Counter 0.1s #3 Poll every 2s</label> <label data-wica-channel-name="wica:test:counter02##06" data-wica-channel-props='{ "daqmode" : "poll", "pollint" : 2000  }'>NC</label><br>
+        <label>Counter 0.1s #3 Poll every 2s</label> <label data-wica-channel-name="wica:test:counter02##07" data-wica-channel-props='{ "daqmode" : "poll", "pollint" : 2000  }'>NC</label><br>
+
+        <h2>Poll-Monitor Examples #1 </h2>
+        <label>Counter 0.1s #1 Poll-Monitor</label> <label data-wica-channel-name="wica:test:counter01##08" data-wica-channel-props='{ ILLEGAL !!! "daqmode" : "poll-monitor", "pollint" : 1000  }'>NC</label><br>
+        <label>Counter 0.1s #1 Poll-Monitor</label> <label data-wica-channel-name="wica:test:counter01##09" data-wica-channel-props='{ "daqmode" : "poll-monitor", "pollint" : 1000  }'>NC</label><br>
+        <label>Counter 0.2s #1 Poll-Monitor</label> <label data-wica-channel-name="wica:test:counter02##10" data-wica-channel-props='{ "daqmode" : "poll-monitor", "pollint" : 2000  }'>NC</label><br>
+        <label>Counter 0.2s #1 Poll-Monitor</label> <label data-wica-channel-name="wica:test:counter02##11" data-wica-channel-props='{ "daqmode" : "poll-monitor", "pollint" : 2000  }'>NC</label><br>
+
+        <h2>Poll-and-Monitor Examples #1 </h2>
+        <label>Counter 0.1s #1 Poll-and-Monitor, Poll every 1s</label> <label data-wica-channel-name="wica:test:counter01##12" data-wica-channel-props='{ "daqmode" : "poll-and-monitor", "pollint" : 1000 }'>NC</label><br>
+        <label>Counter 0.1s #1 Poll-and-Monitor. Poll every 1s</label> <label data-wica-channel-name="wica:test:counter01##13" data-wica-channel-props='{ "daqmode" : "poll-and-monitor", "pollint" : 1000 }'>NC</label><br>
+        <label>Counter 0.2s #1 Poll-and-Monitor, Poll every 2s</label> <label data-wica-channel-name="wica:test:counter02##14" data-wica-channel-props='{ "daqmode" : "poll-and-monitor", "pollint" : 2000 }'>NC</label><br>
+        <label>Counter 0.2s #1 Poll-and-Monitor, Poll every 2s</label> <label data-wica-channel-name="wica:test:counter02##15" data-wica-channel-props='{ "daqmode" : "poll-and-monitor", "pollint" : 2000 }'>NC</label><br>
+
+        <h2>Monitor Examples #2 </h2>
+        <label>Counter 0.1s #1 Monitor</label> <label data-wica-channel-name="wica:test:counter01" data-wica-channel-props='{ "daqmode" : "monitor" }'>NC</label><br>
+        <label>Counter 0.1s #1 Monitor</label> <label data-wica-channel-name="wica:test:counter01" data-wica-channel-props='{ "daqmode" : "monitor" }'>NC</label><br>
+        <label>Counter 0.2s #1 Monitor</label> <label data-wica-channel-name="wica:test:counter02" data-wica-channel-props='{ "daqmode" : "monitor" }'>NC</label><br>
+        <label>Counter 0.2s #1 Monitor</label> <label data-wica-channel-name="wica:test:counter02" data-wica-channel-props='{ "daqmode" : "monitor" }'>NC</label><br>
+
+        <h2>Poll Examples #2 </h2>
+        <label>Counter 0.1s #1 Poll every 1s</label> <label data-wica-channel-name="wica:test:counter01" data-wica-channel-props='{ "daqmode" : "poll", "pollint" : 1000  }'>NC</label><br>
+        <label>Counter 0.1s #2 Poll every 1s</label> <label data-wica-channel-name="wica:test:counter01" data-wica-channel-props='{ "daqmode" : "poll", "pollint" : 1000  }'>NC</label><br>
+        <label>Counter 0.1s #3 Poll every 2s</label> <label data-wica-channel-name="wica:test:counter02" data-wica-channel-props='{ "daqmode" : "poll", "pollint" : 2000  }'>NC</label><br>
+        <label>Counter 0.1s #3 Poll every 2s</label> <label data-wica-channel-name="wica:test:counter02" data-wica-channel-props='{ "daqmode" : "poll", "pollint" : 2000  }'>NC</label><br>
+
+        <h2>Poll-Monitor Examples #2 </h2>
+        <label>Counter 0.1s #1 Poll-Monitor</label> <label data-wica-channel-name="wica:test:counter01" data-wica-channel-props='{ "daqmode" : "poll-monitor", "pollint" : 1000  }'>NC</label><br>
+        <label>Counter 0.1s #1 Poll-Monitor</label> <label data-wica-channel-name="wica:test:counter01" data-wica-channel-props='{ "daqmode" : "poll-monitor", "pollint" : 1000  }'>NC</label><br>
+        <label>Counter 0.2s #1 Poll-Monitor</label> <label data-wica-channel-name="wica:test:counter02" data-wica-channel-props='{ "daqmode" : "poll-monitor", "pollint" : 2000  }'>NC</label><br>
+        <label>Counter 0.2s #1 Poll-Monitor</label> <label data-wica-channel-name="wica:test:counter02" data-wica-channel-props='{ "daqmode" : "poll-monitor", "pollint" : 2000  }'>NC</label><br>
+
+        <h2>Poll-and-Monitor Examples #2 </h2>
+        <label>Counter 0.1s #1 Poll-and-Monitor, Poll every 1s</label> <label data-wica-channel-name="wica:test:counter01" data-wica-channel-props='{ "daqmode" : "poll-and-monitor", "pollint" : 1000 }'>NC</label><br>
+        <label>Counter 0.1s #1 Poll-and-Monitor. Poll every 1s</label> <label data-wica-channel-name="wica:test:counter01" data-wica-channel-props='{ "daqmode" : "poll-and-monitor", "pollint" : 1000 }'>NC</label><br>
+        <label>Counter 0.2s #1 Poll-and-Monitor, Poll every 2s</label> <label data-wica-channel-name="wica:test:counter02" data-wica-channel-props='{ "daqmode" : "poll-and-monitor", "pollint" : 2000 }'>NC</label><br>
+        <label>Counter 0.2s #1 Poll-and-Monitor, Poll every 2s</label> <label data-wica-channel-name="wica:test:counter02" data-wica-channel-props='{ "daqmode" : "poll-and-monitor", "pollint" : 2000 }'>NC</label><br>
+
+        <label></label><button onclick="resetCounters()">Reset</button><br>
+    </div>
+
+
+    <script>
+
+        function resetCounters() {
+
+            setChannel( "wica:test:counter01" , 0 );
+            setChannel( "wica:test:counter02" , 0 );
+            setChannel( "wica:test:counter03" , 0 );
+            setChannel( "wica:test:counter04" , 0 );
+            setChannel( "wica:test:counter05" , 0 );
+            setChannel( "wica:test:counter06" , 0 );
+            setChannel( "wica:test:counter07" , 0 );
+        }
+
+        function setChannel( channelName, newValue )
+        {
+            fetch('../ca/channel/' + channelName, {
+                method: 'PUT',
+                headers: {
+                    'content-type': 'text/plain',
+                },
+                body: newValue
+            } )
+            .then(response => {
+                console.log(response)
+            })
+            .catch(err => {
+                console.log( err )
+            })
+        }
+
+    </script>
+
+</body>
+</html>
