@@ -193,6 +193,13 @@ maintainability.
   * [Issue #61](https://github.com/paulscherrerinstitute/wica-http/issues/61) Create Wica HTTP Release 1.9.0
   * [Issue #62](https://github.com/paulscherrerinstitute/wica-http/issues/62) ENHANCEMENT: Add support for 'wica.channel-publish-poller-restart', 'wica.channel-publish-channel-value-initial-state' 
                                                                               and 'wica.channel-publish-channel-metadata-initial-state' configuration settings/ 
-  
+  * [Issue #63](https://github.com/paulscherrerinstitute/wica-http/issues/63) ENHANCEMENT: Retire 'wica.epics-get-channel-value-on-monitor-connect' and 'wica.epics-get-channel-value-on-monitor-connect' configuration settings.
+  * [Issue #64](https://github.com/paulscherrerinstitute/wica-http/issues/64) BUG FIX: Commit Docker directory bug
+  * [Issue #65](https://github.com/paulscherrerinstitute/wica-http/issues/65) BUG FIX: Fixed problem in poller/monitor lag calculator.
+  * [Issue #66](https://github.com/paulscherrerinstitute/wica-http/issues/66) ENHANCEMENT: Improve stream WicaStreamBuilder debug messages. 
+  * [Issue #67](https://github.com/paulscherrerinstitute/wica-http/issues/67) BUG FIX: Remove all references to deprecated pollratio
+  * [Issue #68](https://github.com/paulscherrerinstitute/wica-http/issues/68) ENHANCEMENT: Bundle Wica-JS release 1.4.0.
+  * [Issue #69](https://github.com/paulscherrerinstitute/wica-http/issues/69) ENHANCEMENT: Add Data Acquisition Mode test page. 
+    
 Test Status: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14    
  
