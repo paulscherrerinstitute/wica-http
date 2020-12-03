@@ -200,6 +200,7 @@ maintainability.
   * [Issue #67](https://github.com/paulscherrerinstitute/wica-http/issues/67) BUG FIX: Remove all references to deprecated pollratio
   * [Issue #68](https://github.com/paulscherrerinstitute/wica-http/issues/68) ENHANCEMENT: Bundle Wica-JS release 1.4.0.
   * [Issue #69](https://github.com/paulscherrerinstitute/wica-http/issues/69) ENHANCEMENT: Add Data Acquisition Mode test page. 
+  * [Issue #70](https://github.com/paulscherrerinstitute/wica-http/issues/70) ENHANCEMENT: Create counter test database with monitor deadband.
     
 Test Status: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14    
  
