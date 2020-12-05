@@ -206,4 +206,12 @@ a feature which allows CSS autoload to be suppressed.
   * [Issue #70](https://github.com/paulscherrerinstitute/wica-http/issues/70) ENHANCEMENT: Create counter test database with monitor deadband.
     
 Test Status: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14    
+
+* [1.9.1](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.9.1) Released 2020-12-05.
  
+ Now bundles latest Wica-JS release 1.5.1. 
+ 
+   * [Issue #71](https://github.com/paulscherrerinstitute/wica-http/issues/60) Bundle Wica-JS release 1.5.1
+   * [Issue #72](https://github.com/paulscherrerinstitute/wica-http/issues/60) Create Wica HTTP Release 1.9.1
+   
+Test Status: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14       
