@@ -218,8 +218,17 @@ Test Status: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
 
 * [1.10.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.9.1) Released 2020-12-09.
 
-Upgraded to Spring Boot 2.4.0. In future will need to deal with deprecated ReplayProcessor class and Web Client 
-exchange methods. Now logs messages to show when system is under back pressure. Fixes bug which causes
+Upgraded to Spring Boot 2.4.0. 
+In future will need to deal with deprecated ReplayProcessor class and Web Client exchange methods. 
+Now logs messages to show when system is under back pressure. 
+Fixes bug which causes long configuration strings to exceed HTTP header length when invalid.
+
+Application.property files changes: 
+  * (a) spring.resources.static.locations -> spring.web.resources.static.locations
+  * (b) spring.resources.cache.cachecontrol.max-age -> spring.web.resources.cache.cachecontrol.max-age
+  * (c) wica.cors-allowed-origins -> wica.cors-allowed-origin-patterns
+    
+Issues Addressed:
 
 * [Issue #73](https://github.com/paulscherrerinstitute/wica-http/issues/73) Create Wica-HTTP Release 1.10.0
 * [Issue #74](https://github.com/paulscherrerinstitute/wica-http/issues/74) ENHANCEMENT: Insert warnings in log when data is being dropped due to back pressure.
