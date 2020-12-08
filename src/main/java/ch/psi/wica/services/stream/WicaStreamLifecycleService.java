@@ -145,7 +145,7 @@ public class WicaStreamLifecycleService
          if ( wicaStream.getWicaChannels().size() == 0 )
          {
             logger.warn( "The JSON configuration string '{}' did not define any channels.", jsonStreamConfiguration );
-            throw new IllegalArgumentException( "The JSON configuration string '" + truncateString( jsonStreamConfiguration ) + "' did not define any channels." );
+            throw new IllegalArgumentException( "The JSON configuration string did not define any channels." );
          }
 
          final long streamDecodeTimeInMillis = streamDecodeTimer.getTime();

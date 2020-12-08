@@ -5,7 +5,7 @@ package ch.psi.wica.controllers;
 
 import ch.psi.wica.controlsystem.epics.monitor.EpicsChannelMonitorService;
 import ch.psi.wica.model.stream.WicaStreamId;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.hamcrest.CoreMatchers.*;
@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -147,10 +147,10 @@ class WicaStreamDeleteControllerTest
       final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest()).andReturn();
 
       // Now check all the expectations were satisfied.
-      Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
+      assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
       final String responseHeader = result.getResponse().getHeader("X-WICA-ERROR" );
       assertNotNull( responseHeader );
-      Assertions.assertEquals("WICA SERVER: The stream ID was blank.", responseHeader );
+      assertEquals("WICA SERVER: The stream ID was blank.", responseHeader );
 
       // Check that the body content was empty as expected.
       final String content = result.getResponse().getContentAsString();
@@ -166,10 +166,10 @@ class WicaStreamDeleteControllerTest
       final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest()).andReturn();
 
       // Now check all the expectations were satisfied.
-      Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
+      assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
       final String responseHeader = result.getResponse().getHeader("X-WICA-ERROR" );
       assertNotNull( responseHeader );
-      Assertions.assertEquals("WICA SERVER: The stream ID was blank.", responseHeader );
+      assertEquals("WICA SERVER: The stream ID was blank.", responseHeader );
 
       // Check that the body content was empty as expected.
       final String content = result.getResponse().getContentAsString();

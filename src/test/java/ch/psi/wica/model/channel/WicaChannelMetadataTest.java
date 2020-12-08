@@ -6,7 +6,7 @@ package ch.psi.wica.model.channel;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/

@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
@@ -23,19 +22,15 @@ class WicaCorsConfigurer implements WebMvcConfigurer
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger(WicaCorsConfigurer.class );
-
-   private final boolean allowCredentials;
-   private final String allowedOrigins;
+   private final String allowedOriginPatterns;
 
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaCorsConfigurer( @Value( "${wica.cors-allow-credentials}" ) boolean allowCredentials,
-                              @Value( "${wica.cors-allowed-origins}" ) String allowedOrigins )
+   public WicaCorsConfigurer( @Value( "${wica.cors-allowed-origin-patterns}" ) String allowedOriginPatterns )
    {
-      this.allowCredentials = allowCredentials;
-      this.allowedOrigins = allowedOrigins;
+      this.allowedOriginPatterns = allowedOriginPatterns;
    }
 
 
@@ -45,10 +40,9 @@ class WicaCorsConfigurer implements WebMvcConfigurer
    @Override
    public void addCorsMappings( CorsRegistry registry )
    {
-      logger.info( "Configuring CORS... [allowCredentials='{}', allowedOrigins='{}']", allowCredentials, allowedOrigins );
+      logger.info( "Configuring CORS... [allowedOriginPatterns='{}']", allowedOriginPatterns );
       registry.addMapping("/**")
-              .allowCredentials( this.allowCredentials )
-              .allowedOrigins( this.allowedOrigins );
+              .allowedOriginPatterns( this.allowedOriginPatterns );
       logger.info( "CORS configuration completed.");
    }
 

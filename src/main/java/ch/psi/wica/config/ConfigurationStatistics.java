@@ -40,8 +40,7 @@ public class ConfigurationStatistics implements StatisticsCollectable
    private final String channelPutTimeoutIntervalInMs;
    private final String streamQuoteNumericStrings;
    private final String streamMetadataFieldsOfInterest;
-   private final String corsAllowCredentials;
-   private final String corsAllowedOrigins;
+   private final String corsAllowedOriginPatterns;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -64,8 +63,7 @@ public class ConfigurationStatistics implements StatisticsCollectable
                                    @Value( "${wica.channel-put-timeout-interval-in-ms}" ) Integer channelPutTimeoutIntervalInMs,
                                    @Value( "${wica.stream-quote-numeric-strings}" ) Boolean streamQuoteNumericStrings,
                                    @Value( "${wica.stream-metadata-fields-of-interest}" ) String streamMetadataFieldsOfInterest,
-                                   @Value( "${wica.cors-allow_credentials}" ) Boolean corsAllowCredentials,
-                                   @Value( "${wica.cors-allowed-origins}" ) String corsAllowedOrigins )
+                                   @Value( "${wica.cors-allowed-origin-patterns}" ) String corsAllowedOriginPatterns )
    {
       this.testLoggingOnStartup = String.valueOf( testLoggingOnStartup );
       this.epicsCaLibraryMonitorNotifierImpl = epicsCaLibraryMonitorNotifierImpl;
@@ -84,8 +82,7 @@ public class ConfigurationStatistics implements StatisticsCollectable
       this.channelPutTimeoutIntervalInMs = String.valueOf( channelPutTimeoutIntervalInMs );
       this.streamQuoteNumericStrings = String.valueOf( streamQuoteNumericStrings );
       this.streamMetadataFieldsOfInterest = streamMetadataFieldsOfInterest;
-      this.corsAllowCredentials = String.valueOf( corsAllowCredentials );
-      this.corsAllowedOrigins = String.valueOf( corsAllowedOrigins );
+      this.corsAllowedOriginPatterns = String.valueOf( corsAllowedOriginPatterns );
 
    }
 
@@ -112,8 +109,7 @@ public class ConfigurationStatistics implements StatisticsCollectable
                                                                       new StatisticsItem( "- wica.channel-put-timeout-interval-in-ms",              channelPutTimeoutIntervalInMs ),
                                                                       new StatisticsItem( "- wica.stream-quote-numeric-strings",                    streamQuoteNumericStrings ),
                                                                       new StatisticsItem( "- wica.stream-metadata-fields-of-interest",              streamMetadataFieldsOfInterest ),
-                                                                      new StatisticsItem( "- wica.cors-allow-credentials",                          corsAllowCredentials ),
-                                                                      new StatisticsItem( "- wica.cors-allowed-origins",                            corsAllowedOrigins ) ) );
+                                                                      new StatisticsItem( "- wica.cors-allowed-origin-patterns",                    corsAllowedOriginPatterns ) ) );
    }
 
    @Override

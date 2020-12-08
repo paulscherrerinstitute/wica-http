@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -119,6 +119,7 @@ class WicaStreamMonitoredValueDataBufferTest
          Runnable r = () -> injectValueUpdate(  abc, testValue1 );
          executorService.submit( r  );
       }
+      //noinspection ResultOfMethodCallIgnored
       executorService.awaitTermination(1, TimeUnit.SECONDS );
 
       final var laterThanBeginTimeMap = testObject.getLaterThan( Set.of( abc ), beginTime );

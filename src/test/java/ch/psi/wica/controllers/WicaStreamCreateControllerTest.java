@@ -4,7 +4,6 @@ package ch.psi.wica.controllers;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.stream.WicaStreamId;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -23,9 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -115,7 +112,7 @@ class WicaStreamCreateControllerTest
       final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest() ).andReturn();
 
       // Now check all the expectations were satisfied.
-      Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
+      assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
       final String responseHeader = result.getResponse().getHeader("X-WICA-ERROR" );
       assertNotNull( responseHeader );
       assertEquals("WICA SERVER: The stream configuration string was blank.", responseHeader );
@@ -137,7 +134,7 @@ class WicaStreamCreateControllerTest
       final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest() ).andReturn();
 
       // Now check all the expectations were satisfied.
-      Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
+      assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus() );
       final String responseHeader = result.getResponse().getHeader("X-WICA-ERROR" );
       assertNotNull( responseHeader );
       assertEquals("WICA SERVER: The stream configuration string was empty/null.", responseHeader );

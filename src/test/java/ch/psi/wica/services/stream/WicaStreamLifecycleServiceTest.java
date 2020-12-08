@@ -8,26 +8,20 @@ import ch.psi.wica.model.channel.WicaChannelPropertiesDefaults;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamId;
 import ch.psi.wica.model.stream.WicaStreamPropertiesDefaults;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@RunWith( SpringRunner.class)
 @SpringBootTest
 class WicaStreamLifecycleServiceTest
 {
@@ -53,21 +47,21 @@ class WicaStreamLifecycleServiceTest
    void testCreateStreamWithNullString()
    {
       final var ex = assertThrows( NullPointerException.class, () -> service.create( null ) );
-      Assert.assertThat( ex.getMessage(), is( "The 'jsonStreamConfiguration' argument was null." ) );
+      assertThat( ex.getMessage(), is( "The 'jsonStreamConfiguration' argument was null." ) );
    }
 
    @Test
    void testCreateStreamWithEmptyString()
    {
       final var ex = assertThrows( IllegalArgumentException.class, () -> service.create( "" ) );
-      Assert.assertThat( ex.getMessage(), is( "The 'jsonStreamConfiguration' argument was empty." ) );
+      assertThat( ex.getMessage(), is( "The 'jsonStreamConfiguration' argument was empty." ) );
    }
 
    @Test
    void testCreateStreamWithBlankString()
    {
       final var ex = assertThrows( IllegalArgumentException.class, () -> service.create( " " ) );
-      Assert.assertThat( ex.getMessage(), is( "The JSON configuration string ' ' was invalid." ) );
+      assertThat( ex.getMessage(), is( "The JSON configuration string ' ' was invalid." ) );
    }
 
    @Test
@@ -128,14 +122,14 @@ class WicaStreamLifecycleServiceTest
    void testDeleteStreamWithNullString()
    {
       final var ex = assertThrows( NullPointerException.class, () -> service.delete( null ) );
-      Assert.assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was null." ) );
+      assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was null." ) );
    }
 
    @Test
    void testDeleteUnknownStream()
    {
       final var ex = assertThrows( IllegalArgumentException.class, () -> service.delete( WicaStreamId.of( "NoSuchStream" ) ) );
-      Assert.assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was not recognised." ) );
+      assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was not recognised." ) );
    }
 
    @Test
@@ -151,21 +145,21 @@ class WicaStreamLifecycleServiceTest
 
       // Attempting to delete the same stream a second time should result in an exception.
       final var ex = assertThrows( IllegalArgumentException.class, () -> service.delete( WicaStreamId.of( "NoSuchStream" ) ) );
-      Assert.assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was not recognised." ) );
+      assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was not recognised." ) );
    }
 
    @Test
    void testRestartMonitoringWithNullString()
    {
       final var ex = assertThrows( NullPointerException.class, () -> service.restartMonitoring( null ) );
-      Assert.assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was null." ) );
+      assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was null." ) );
    }
 
    @Test
    void testRestartMonitoringOnUnknownStream()
    {
       final var ex = assertThrows( IllegalArgumentException.class, () -> service.delete( WicaStreamId.of( "NoSuchStream" ) ) );
-      Assert.assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was not recognised." ) );
+      assertThat( ex.getMessage(), is( "The 'wicaStreamId' argument was not recognised." ) );
    }
 
    @Test

@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.LongStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class WicaReactiveTests
@@ -25,6 +25,8 @@ class WicaReactiveTests
 
    // This test verifies that cancel requests are back-propagated up the operator chain to
    // the root publisher, in this case flux1 and flux2. Single-threaded case.
+   // TODO: Need to deal with ReplayProcessor deprecation warning
+   @SuppressWarnings( "deprecation" )
    @Test
    void reactorTest_check_cancel_back_propagation()
    {
@@ -55,6 +57,8 @@ class WicaReactiveTests
 
    // This test verifies that cancel requests are back-propagated up the operator chain to
    // the root publisher, in this case flux1 and flux2. Multi-threaded case.
+   // TODO: Need to deal with ReplayProcessor deprecation warning
+   @SuppressWarnings( "deprecation" )
    @Test
    void reactorTest_check_cancel_back_propagation_threaded() throws InterruptedException
    {
@@ -107,6 +111,8 @@ class WicaReactiveTests
    // the behaviour that I have seen.
    // https://stackoverflow.com/questions/19309417/what-should-happen-if-i-throw-an-exception-in-my-subscribe-callback-for-an-obser
    // https://social.msdn.microsoft.com/Forums/en-US/6ea06e08-6d26-49b4-a3fa-276d1efef780/what-if-an-exception-is-thrown-by-the-observer-in-onnext?forum=rx
+   // TODO: Need to deal with ReplayProcessor deprecation warning
+   @SuppressWarnings( "deprecation" )
    @Test
    void reactorTest_check_exception_back_propagation_no_subscriber_error_handler()
    {
@@ -174,25 +180,29 @@ class WicaReactiveTests
       // Verify that flux3 got its subscription cancelled
       assertTrue( flux3Cancelled.get() );
 
-      // The data sources do not know that the downwind subscriber flux3 has had its subscription
+      // Previously: The data sources do not know that the downwind subscriber flux3 has had its subscription
       // cancelled - because they were not informed !
-      assertFalse( flux1Cancelled.get() );
-      assertFalse( flux2Cancelled.get() );
+      // Since 2.4.0 the downwind subscribers DO get informed !
+      assertTrue( flux1Cancelled.get() ); // behaviour change 2.4.0
+      assertTrue( flux2Cancelled.get() ); // behaviour change 2.4.0
 
-      // Even triggering the cancel signal directly will NOT cause the upstream publishers
+      // Previously: even triggering the cancel signal directly will NOT cause the upstream publishers
       // to get cancelled. (Presumably it's too late as the merged publisher has already
       // cancelled the subscription.
+      // Since 2.4.0 the downwind subscribers DO get informed !
       disposable.dispose();
-      assertFalse( flux1Cancelled.get() );
-      assertFalse( flux2Cancelled.get() );
+      assertTrue( flux1Cancelled.get() ); // behaviour change 2.4.0
+      assertTrue( flux2Cancelled.get() ); // behaviour change 2.4.0
 
-      // Therefore the downwind counters (correctly) show there is something
+      // Previously: Therefore the downwind counters (correctly) show there is something
       // subscribed.
-      assertEquals( 1L, src1.downstreamCount() );
-      assertEquals( 1L, src2.downstreamCount() );
+      // Since 2.4.0 the downwind count is zero !
+      assertEquals( 0L, src1.downstreamCount() );
+      assertEquals( 0L, src2.downstreamCount() );
 
-      // Verify that the exception WAS back-propagated to the data source
-      assertTrue( Exceptions.isErrorCallbackNotImplemented( dataSourceThrowCatcher.get() ) );
+      // Previously: verify that the exception WAS back-propagated to the data source
+      // Since 2.4.0 the exception is NOT propagated since the data source is meant to be completely isolated.
+      assertFalse( Exceptions.isErrorCallbackNotImplemented( dataSourceThrowCatcher.get() ) );
 
       // Try to send something else down the pipe and verify this does not cause exceptions
       // even though the publication mechanism is now effectively broken.
@@ -222,6 +232,8 @@ class WicaReactiveTests
    //   (b) the subscriber exception is NOT back-propagated to the upstream publisher.
    //   (c) all subscriptions in the upstream chain are automatically cancelled.
    //
+   // TODO: Need to deal with ReplayProcessor deprecation warning
+   @SuppressWarnings( "deprecation" )
    @Test
    void reactorTest_check_exception_back_propagation_with_subscriber_error_handler()
    {

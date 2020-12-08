@@ -61,9 +61,9 @@ class WicaStreamLoadTest
 //   private final String wicaStreamUri = "https://gfa-wica.psi.ch";
    private final String wicaStreamUri = "https://gfa-wica-dev.psi.ch";
 
-   private static WicaStream lightStream = makeWicaStream( 1 );
-   private static WicaStream heavyStream = makeWicaStream( 1000 );
-   private static WicaStream proscanStream = makeProscanStream();
+   private static final WicaStream lightStream = makeWicaStream( 1 );
+   private static final WicaStream heavyStream = makeWicaStream( 1000 );
+   private static final WicaStream proscanStream = makeProscanStream();
 //   private static WicaStream testStream = makeTestStream();
 
 /*- Main ---------------------------------------------------------------------*/
@@ -134,7 +134,7 @@ class WicaStreamLoadTest
          assertNotNull( sendStreamCreateRequest( wicaStream ) );
       }
       final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
-      logger.info( "Stream Create test completed {} iterations in {} us. Throughput = {} requests/second.", iterations, createStreamCycleTime, (1_000_000 * iterations ) / createStreamCycleTime );
+      logger.info( "Stream Create test completed {} iterations in {} us. Throughput = {} requests/second.", iterations, createStreamCycleTime, (1_000_000L * iterations ) / createStreamCycleTime );
 
       logger.info( "Starting Single-Threaded Stream Delete test..." );
       int firstId = Integer.parseInt( firstResult );
@@ -147,7 +147,7 @@ class WicaStreamLoadTest
          assertNotNull(sendStreamDeleteRequest(String.valueOf(firstId + i ) ) );
       }
       final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
-      logger.info( "Stream Delete Test completed {} iterations in {} us. Throughput = {} requests/second.", iterations, deleteStreamCycleTime, (1_000_000 * iterations ) / deleteStreamCycleTime );
+      logger.info( "Stream Delete Test completed {} iterations in {} us. Throughput = {} requests/second.", iterations, deleteStreamCycleTime, (1_000_000L * iterations ) / deleteStreamCycleTime );
    }
 
    private static Stream<Arguments> getArgsForTestStreamCreateAndDeleteMultiThreadedThroughput()
@@ -198,7 +198,7 @@ class WicaStreamLoadTest
          assertNotNull( result );
       }
       final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
-      logger.info( "Multi-Threaded Stream Create test completed {} iterations in {} us. Throughput = {} requests/second.", iterations, createStreamCycleTime, (1_000_000 * iterations ) / createStreamCycleTime );
+      logger.info( "Multi-Threaded Stream Create test completed {} iterations in {} us. Throughput = {} requests/second.", iterations, createStreamCycleTime, (1_000_000L * iterations ) / createStreamCycleTime );
 
       logger.info( "Starting Multi-Threaded Stream Delete test..." );
       int firstId = Integer.parseInt( firstResult );
@@ -221,7 +221,7 @@ class WicaStreamLoadTest
          assertNotNull( result );
       }
       final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
-      logger.info( "Multi-Threaded Stream Delete test completed {} iterations in {} us. Throughput = {} requests/second.", iterations, deleteStreamCycleTime, (1_000_000 * iterations ) / deleteStreamCycleTime );
+      logger.info( "Multi-Threaded Stream Delete test completed {} iterations in {} us. Throughput = {} requests/second.", iterations, deleteStreamCycleTime, (1_000_000L * iterations ) / deleteStreamCycleTime );
    }
 
    private static Stream<Arguments> getArgsForTestGetSingleThreadedThroughput()
@@ -261,7 +261,7 @@ class WicaStreamLoadTest
       }
       final long createStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
       logger.info( "Stream Create test peformed POST operate on {} streams in {} us. Throughput = {} requests/second.",
-                   numberOfStreams, createStreamCycleTime, (1_000_000 * numberOfStreams ) / createStreamCycleTime );
+                   numberOfStreams, createStreamCycleTime, ( 1_000_000L * numberOfStreams ) / createStreamCycleTime );
 
       logger.info( "Starting Single-Threaded Stream Get test..." );
       int firstId = Integer.parseInt( firstResult );
@@ -288,7 +288,7 @@ class WicaStreamLoadTest
 
       final long getStreamCycleTime = stopWatch.getTime( TimeUnit.MICROSECONDS );
       logger.info( "Stream Get Test performed GET operation on {} streams in {} us. Throughput = {} requests/second. ",
-                   numberOfStreams, getStreamCycleTime, (1_000_000 * numberOfStreams ) / getStreamCycleTime );
+                   numberOfStreams, getStreamCycleTime, (1_000_000L * numberOfStreams ) / getStreamCycleTime );
 
       logger.info( "Pausing for event delivery." );
       stopWatch.reset();
@@ -323,7 +323,7 @@ class WicaStreamLoadTest
       }
       final long deleteStreamCycleTime = stopWatch.getTime(TimeUnit.MICROSECONDS );
       logger.info( "Stream Delete Test performed DELETE operation on {} streams in {} us. Throughput = {} requests/second.",
-                   numberOfStreams, deleteStreamCycleTime, (1_000_000 * numberOfStreams ) / deleteStreamCycleTime );
+                   numberOfStreams, deleteStreamCycleTime, (1_000_000L * numberOfStreams ) / deleteStreamCycleTime );
 
       assertThat( deliveryTimeInMillis, lessThan( expectedTimeInMillis ) );
    }
@@ -490,6 +490,8 @@ class WicaStreamLoadTest
       return wicaStreamBuilder.build();
    }
 
+   // TODO: Need to deal with exchange deprecatiuon warning
+   @SuppressWarnings( "deprecation" )
    private String sendStreamCreateRequest( WicaStream wicaStream )
    {
       logger.trace( "Creating new Stream..." );
@@ -516,6 +518,8 @@ class WicaStreamLoadTest
       }
    }
 
+   // TODO: Need to deal with exchange deprecatiuon warning
+   @SuppressWarnings( "deprecation" )
    private String sendStreamDeleteRequest( String streamId  )
    {
       logger.trace( "Deleting Stream with id {} ...", streamId );

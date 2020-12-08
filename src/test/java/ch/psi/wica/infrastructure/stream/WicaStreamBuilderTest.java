@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -207,7 +207,7 @@ class WicaStreamBuilderTest
                                                                                                 .withChannelNameAndStreamProperties( "chan1" )
                                                                                                 .withChannelNameAndStreamProperties( "chan1" )
                                                                                                 .build() );
-      assertThat( ex.getMessage(), is( "The 'WicaChannelName' argument specified a channel that was identical to one that was already defined." ) );
+      assertThat( ex.getMessage(), is( "The 'WicaChannelName' argument specified a channel ('chan1') that was identical to one that was already defined." ) );
 
    }
 

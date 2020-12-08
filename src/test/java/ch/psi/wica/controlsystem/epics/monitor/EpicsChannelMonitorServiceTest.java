@@ -16,7 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -225,6 +226,7 @@ class EpicsChannelMonitorServiceTest
 
 /*- Private methods ----------------------------------------------------------*/
 
+   @SuppressWarnings( "SameParameterValue" )
    private EpicsChannelMetadataRequest createMetadataRequest( String name )
    {
       final WicaChannelName wicaChannelName = WicaChannelName.of( name );

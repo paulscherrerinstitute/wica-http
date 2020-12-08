@@ -3,10 +3,8 @@ package ch.psi.wica.controllers;
 
 /*- Imported packages --------------------------------------------------------*/
 
-
 import ch.psi.wica.model.stream.WicaStreamPropertiesDefaults;
 import org.apache.commons.lang3.Validate;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -104,7 +102,7 @@ class WicaStreamGetControllerTest
                                                 .andDo( l -> Thread.sleep(heartbeatIntervalInMilliseconds + 1000 ) )
                                                 .andDo( print())
                                                 .andExpect( status().isOk() )
-                                                .andExpect( content().contentType( "text/event-stream;charset=UTF-8" ) )
+                                                .andExpect( content().contentType( "text/event-stream" ) )
                                                 .andReturn();
 
       logger.info( "Data returned from GET request was: '{}'", getRequestResult.getResponse().getContentAsString() );
@@ -138,7 +136,7 @@ class WicaStreamGetControllerTest
          .andDo( l -> Thread.sleep( heartbeatIntervalInMilliseconds + 1000 ) )
          .andDo( print() )
          .andExpect( status().isOk() )
-         .andExpect( content().contentType( "text/event-stream;charset=UTF-8" ) )
+         .andExpect( content().contentType( "text/event-stream" ) )
          .andExpect( content().string( containsString( "id:" ) ) )
          .andExpect( content().string( containsString( "heartbeat" ) ) )
          .andReturn();
@@ -192,7 +190,7 @@ class WicaStreamGetControllerTest
 
       // Check that the body content was empty as expected.
       final String content = result.getResponse().getContentAsString();
-      Assert.assertEquals("", content );
+      assertEquals("", content );
       logger.info( "Returned Content was: '{}'", content );
    }
 
@@ -211,7 +209,7 @@ class WicaStreamGetControllerTest
 
       // Check that the body content was empty as expected.
       final String content = result.getResponse().getContentAsString();
-      Assert.assertEquals("", content );
+      assertEquals("", content );
       logger.info( "Returned Content was: '{}'", content );
    }
 
@@ -225,11 +223,11 @@ class WicaStreamGetControllerTest
       // Check that the X-WICA-ERROR is as expected
       final String errorHeader = result.getResponse().getHeader( "X-WICA-ERROR" );
       assertNotNull( errorHeader );
-      Assert.assertEquals("WICA SERVER: The stream ID 'UnknownStreamId!' was not recognised.", errorHeader );
+      assertEquals("WICA SERVER: The stream ID 'UnknownStreamId!' was not recognised.", errorHeader );
 
       // Check that the body content was empty as expected.
       final String content = result.getResponse().getContentAsString();
-      Assert.assertEquals("", content );
+      assertEquals("", content );
       logger.info( "Returned Content was: '{}'", content );
    }
 

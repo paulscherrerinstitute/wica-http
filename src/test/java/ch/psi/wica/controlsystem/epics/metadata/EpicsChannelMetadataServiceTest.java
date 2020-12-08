@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -29,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class EpicsChannelMetadataServiceTest
 {
 
-   /*- Public attributes --------------------------------------------------------*/
-   /*- Private attributes -------------------------------------------------------*/
+/*- Public attributes --------------------------------------------------------*/
+/*- Private attributes -------------------------------------------------------*/
 
    @Autowired
    private EpicsChannelManager.EpicsPolledChannelManagerService epicsChannelManager;
@@ -41,11 +41,11 @@ class EpicsChannelMetadataServiceTest
    @Autowired
    private EventReceiverMock eventReceiverMock;
 
-   /*- Main ---------------------------------------------------------------------*/
-   /*- Constructor --------------------------------------------------------------*/
-   /*- Class methods ------------------------------------------------------------*/
-   /*- Public methods -----------------------------------------------------------*/
-   /*- Package-access methods ---------------------------------------------------*/
+/*- Main ---------------------------------------------------------------------*/
+/*- Constructor --------------------------------------------------------------*/
+/*- Class methods ------------------------------------------------------------*/
+/*- Public methods -----------------------------------------------------------*/
+/*- Package-access methods ---------------------------------------------------*/
 
    @BeforeEach
    void beforeEach()
@@ -55,7 +55,6 @@ class EpicsChannelMetadataServiceTest
       assertThat( epicsChannelMetadataService.getStatistics().getStopRequests(), is( "0") );
       assertThat( epicsChannelMetadataService.getStatistics().getActiveChannels(), is( "0") );
       assertThat( epicsChannelMetadataService.getStatistics().getChannelConnectCount(), is( "0") );
-
    }
 
    @AfterEach
@@ -159,7 +158,6 @@ class EpicsChannelMetadataServiceTest
       assertThat( eventReceiverMock.getMetadataPublishedTimestamp().isEmpty(), is( true ) );
       assertThat( eventReceiverMock.getValuePublishedTimestamp().isEmpty(), is( true ) );
    }
-
 
 /*- Private methods ----------------------------------------------------------*/
 
