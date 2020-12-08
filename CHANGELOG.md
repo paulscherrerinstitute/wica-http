@@ -209,9 +209,21 @@ Test Status: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
 
 * [1.9.1](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.9.1) Released 2020-12-05.
  
- Now bundles latest Wica-JS release 1.5.1. 
+Now bundles latest Wica-JS release 1.5.1. 
  
-   * [Issue #71](https://github.com/paulscherrerinstitute/wica-http/issues/60) Bundle Wica-JS release 1.5.1
-   * [Issue #72](https://github.com/paulscherrerinstitute/wica-http/issues/60) Create Wica HTTP Release 1.9.1
+   * [Issue #71](https://github.com/paulscherrerinstitute/wica-http/issues/71) Bundle Wica-JS release 1.5.1
+   * [Issue #72](https://github.com/paulscherrerinstitute/wica-http/issues/72) Create Wica HTTP Release 1.9.1
    
-Test Status: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14       
+Test Status: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
+
+* [1.10.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.9.1) Released 2020-12-09.
+
+Upgraded to Spring Boot 2.4.0. In future will need to deal with deprecated ReplayProcessor class and Web Client 
+exchange methods. Now logs messages to show when system is under back pressure. Fixes bug which causes
+
+* [Issue #73](https://github.com/paulscherrerinstitute/wica-http/issues/73) Create Wica-HTTP Release 1.10.0
+* [Issue #74](https://github.com/paulscherrerinstitute/wica-http/issues/74) ENHANCEMENT: Insert warnings in log when data is being dropped due to back pressure.
+* [Issue #75](https://github.com/paulscherrerinstitute/wica-http/issues/75) BUG FIX: Truncate exception message length when stream configuration string is too long (avoids HTTP header overflow).
+* [Issue #76](https://github.com/paulscherrerinstitute/wica-http/issues/76) ENHANCEMENT: Upgrade to Spring Boot 2.4.0.
+
+Test Status: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
