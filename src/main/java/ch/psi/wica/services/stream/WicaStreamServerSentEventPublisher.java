@@ -200,7 +200,7 @@ public class WicaStreamServerSentEventPublisher
    {
       final AtomicReference<LocalDateTime> lastUpdateTime = new AtomicReference<>( LocalDateTime.MIN  );
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getMonitoredValueFluxIntervalInMillis() ) )
-         .onBackpressureDrop()
+         .onBackpressureDrop( (x) -> logger.warn( "Dropping message with sequence no. '{}' because remote web client couldn't keep up", x ) )
          .map(l -> {
             logger.trace("channel-value-monitor flux with id: '{}' is publishing new SSE...", wicaStreamId );
             final var timeOfLastUpdate = lastUpdateTime.getAndSet( LocalDateTime.now() );
@@ -238,7 +238,7 @@ public class WicaStreamServerSentEventPublisher
    {
       final AtomicReference<LocalDateTime> lastUpdateTime = new AtomicReference<>( LocalDateTime.MIN  );
       return Flux.interval( Duration.ofMillis( wicaStreamProperties.getPolledValueFluxIntervalInMillis() ) )
-         .onBackpressureDrop()
+         .onBackpressureDrop( (x) -> logger.warn( "Dropping message with sequence no. '{}' because remote web client couldn't keep up", x ) )
          .map(l -> {
             logger.trace("channel-value-poll flux with id: '{}' is publishing new SSE...", wicaStreamId );
             final var timeOfLastUpdate = lastUpdateTime.getAndSet( LocalDateTime.now() );
