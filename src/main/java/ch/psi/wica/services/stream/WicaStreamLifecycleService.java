@@ -133,16 +133,19 @@ public class WicaStreamLifecycleService
          final WicaStream wicaStream;
          try
          {
-            wicaStream = wicaStreamConfigurationDecoder.decode( jsonStreamConfiguration);
+            wicaStream = wicaStreamConfigurationDecoder.decode( jsonStreamConfiguration );
          }
          catch ( Exception ex )
          {
-            throw new IllegalArgumentException( "The JSON configuration string '" + jsonStreamConfiguration + "' was invalid.", ex);
+            logger.warn( "The JSON configuration string '{}' was invalid.", jsonStreamConfiguration );
+            logger.warn( "The underlying exception was '{}'.", ex.getMessage() );
+            throw new IllegalArgumentException( "The JSON configuration string '" + truncateString( jsonStreamConfiguration ) + "' was invalid.", ex );
          }
 
          if ( wicaStream.getWicaChannels().size() == 0 )
          {
-            throw new IllegalArgumentException("The JSON configuration string did not define any channels.");
+            logger.warn( "The JSON configuration string '{}' did not define any channels.", jsonStreamConfiguration );
+            throw new IllegalArgumentException( "The JSON configuration string '" + truncateString( jsonStreamConfiguration ) + "' did not define any channels." );
          }
 
          final long streamDecodeTimeInMillis = streamDecodeTimer.getTime();
@@ -286,6 +289,14 @@ public class WicaStreamLifecycleService
    }
 
 /*- Private methods ----------------------------------------------------------*/
+
+   private String truncateString( String input )
+   {
+      final int MAX_LENGTH = 256;
+      return ( input.length() > MAX_LENGTH ) ? input.substring( 0, MAX_LENGTH ) + "..." : input;
+   }
+
+
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
