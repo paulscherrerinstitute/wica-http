@@ -212,7 +212,7 @@ public class WicaStreamPolledValueRequesterService
    private void startPollingChannel( WicaChannel wicaChannel )
    {
       Validate.notNull( wicaChannel );
-      logger.info( "Request to start polling wica channel: '{}' with polling interval '{}' ms.", wicaChannel, wicaChannel.getProperties().getPollingIntervalInMillis() );
+      logger.debug( "Request to start polling wica channel: '{}' with polling interval '{}' ms.", wicaChannel, wicaChannel.getProperties().getPollingIntervalInMillis() );
 
       final var storageKey = WicaDataBufferStorageKey.getPolledValueStorageKey( wicaChannel );
       final var controlSystemName = wicaChannel.getName().getControlSystemName();
@@ -226,14 +226,14 @@ public class WicaStreamPolledValueRequesterService
       if ( polledChannelInterestMap.containsKey( storageKey ) )
       {
          final int newInterestCount = polledChannelInterestMap.get( storageKey ) + 1;
-         logger.info( "Increasing interest level in polled control system channel named: '{}' to {}", controlSystemName, newInterestCount );
+         logger.debug( "Increasing interest level in polled control system channel named: '{}' to {}", controlSystemName, newInterestCount );
          polledChannelInterestMap.put( storageKey, newInterestCount );
          return;
       }
 
       // If a channel with these polling parameters DOES NOT exist then start polling it using
       // the prescribed parameters.
-      logger.info( "Starting polling control system channel named: '{}'", wicaChannel.getName() );
+      logger.debug( "Starting polling control system channel named: '{}'", wicaChannel.getName() );
 
       // When the initial state publication feature is enabled publish the initial channel's state as being DISCONNECTED.
       if ( this.wicaChannelPublishChannelValueInitialState )
@@ -263,7 +263,7 @@ public class WicaStreamPolledValueRequesterService
    private void stopPollingChannel( WicaChannel wicaChannel )
    {
       Validate.notNull( wicaChannel );
-      logger.info( "Request to stop polling wica channel: '{}'", wicaChannel );
+      logger.debug( "Request to stop polling wica channel: '{}'", wicaChannel );
 
       final var storageKey = WicaDataBufferStorageKey.getPolledValueStorageKey( wicaChannel );
       final var controlSystemName = wicaChannel.getName().getControlSystemName();
@@ -276,13 +276,13 @@ public class WicaStreamPolledValueRequesterService
       // Reduce the level of interest in the channel.
       final int currentInterestCount = polledChannelInterestMap.get( storageKey );
       final int newInterestCount = currentInterestCount - 1;
-      logger.info( "Reducing interest level in polled control system channel named: '{}' to {}" , controlSystemName.asString(), newInterestCount );
+      logger.debug( "Reducing interest level in polled control system channel named: '{}' to {}" , controlSystemName.asString(), newInterestCount );
       polledChannelInterestMap.put( storageKey, newInterestCount );
 
       if ( newInterestCount == 0 )
       {
-         logger.info( "No more interest in control system channel: '{}'", controlSystemName.asString() );
-         logger.info( "The resources for the channel will be discarded in {} seconds.", wicaChannelResourceReleaseIntervalInSecs );
+         logger.debug( "No more interest in control system channel: '{}'", controlSystemName.asString() );
+         logger.debug( "The resources for the channel will be discarded in {} seconds.", wicaChannelResourceReleaseIntervalInSecs );
       }
    }
 
@@ -292,7 +292,7 @@ public class WicaStreamPolledValueRequesterService
       Validate.isTrue( polledChannelEventMap.containsKey( storageKey ) );
       Validate.isTrue( polledChannelInterestMap.get(storageKey ) == 0 );
 
-      logger.info( "Releasing resources for polled control system channel associated with storage key: '{}'." , storageKey.toString() );
+      logger.debug( "Releasing resources for polled control system channel associated with storage key: '{}'." , storageKey.toString() );
       applicationEventPublisher.publishEvent( new WicaChannelStopPollingEvent( storageKey.getWicaChannel() ) );
 
       polledChannelInterestMap.remove( storageKey );

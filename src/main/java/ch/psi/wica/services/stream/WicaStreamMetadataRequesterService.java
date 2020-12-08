@@ -138,7 +138,7 @@ public class WicaStreamMetadataRequesterService
    private void startDataAcquisitionChannel( WicaChannel wicaChannel )
    {
       Validate.notNull( wicaChannel );
-      logger.info( "Request to start acquiring metadata for wica channel: '{}'", wicaChannel );
+      logger.debug( "Request to start acquiring metadata for wica channel: '{}'", wicaChannel );
 
       final var storageKey = WicaDataBufferStorageKey.getMetadataStorageKey( wicaChannel );
       final var controlSystemName = wicaChannel.getName().getControlSystemName();
@@ -150,13 +150,13 @@ public class WicaStreamMetadataRequesterService
       if ( channelInterestMap.containsKey( storageKey ) )
       {
          final int newInterestCount = channelInterestMap.get( storageKey ) + 1;
-         logger.info( "Increasing interest level in metadata for control system channel: '{}' to {}", controlSystemName, newInterestCount );
+         logger.debug( "Increasing interest level in metadata for control system channel: '{}' to {}", controlSystemName, newInterestCount );
          channelInterestMap.put( storageKey, newInterestCount );
          return;
       }
 
       // If a channel with these parameters DOES NOT exist then start acquiring metadata for it.
-      logger.info( "Starting acquiring metadata for control system channel named: '{}'", wicaChannel.getName() );
+      logger.debug( "Starting acquiring metadata for control system channel named: '{}'", wicaChannel.getName() );
 
       // When the initial state publication feature is enabled publish the channel's initial metadata value
       // as being UNKNOWN.
@@ -186,7 +186,7 @@ public class WicaStreamMetadataRequesterService
    private void stopDataAcquisitionChannel( WicaChannel wicaChannel )
    {
       Validate.notNull( wicaChannel );
-      logger.info( "Request to stop acquiring metadata for wica channel: '{}'", wicaChannel );
+      logger.debug( "Request to stop acquiring metadata for wica channel: '{}'", wicaChannel );
 
       final var storageKey = WicaDataBufferStorageKey.getMetadataStorageKey( wicaChannel );
       final var controlSystemName = wicaChannel.getName().getControlSystemName();
@@ -199,13 +199,13 @@ public class WicaStreamMetadataRequesterService
       // Reduce the level of interest in the channel.
       final int currentInterestCount = channelInterestMap.get( storageKey );
       final int newInterestCount = currentInterestCount - 1;
-      logger.info( "Reducing interest level in metadata for control system channel named: '{}' to {}" , controlSystemName.asString(), newInterestCount );
+      logger.debug( "Reducing interest level in metadata for control system channel named: '{}' to {}" , controlSystemName.asString(), newInterestCount );
       channelInterestMap.put( storageKey, newInterestCount );
 
       if ( newInterestCount == 0 )
       {
-         logger.info( "No more interest in metadata for control system channel: '{}'", controlSystemName.asString() );
-         logger.info( "The resources for the channel will be discarded in {} seconds.", wicaChannelResourceReleaseIntervalInSecs );
+         logger.debug( "No more interest in metadata for control system channel: '{}'", controlSystemName.asString() );
+         logger.debug( "The resources for the channel will be discarded in {} seconds.", wicaChannelResourceReleaseIntervalInSecs );
       }
    }
 
@@ -215,7 +215,7 @@ public class WicaStreamMetadataRequesterService
       Validate.isTrue( channelEventMap.containsKey( storageKey ) );
       Validate.isTrue( channelInterestMap.get( storageKey ) == 0 );
 
-      logger.info( "Releasing resources for the control system channel associated with storage key: '{}'." , storageKey.toString() );
+      logger.debug( "Releasing resources for the control system channel associated with storage key: '{}'." , storageKey.toString() );
       applicationEventPublisher.publishEvent( new WicaChannelStopMetadataDataAcquisitionEvent( storageKey.getWicaChannel() ) );
 
       channelInterestMap.remove( storageKey );

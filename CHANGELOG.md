@@ -235,4 +235,4 @@ Issues Addressed:
 * [Issue #75](https://github.com/paulscherrerinstitute/wica-http/issues/75) BUG FIX: Truncate exception message length when stream configuration string is too long (avoids HTTP header overflow).
 * [Issue #76](https://github.com/paulscherrerinstitute/wica-http/issues/76) ENHANCEMENT: Upgrade to Spring Boot 2.4.0.
 
-Test Status: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
+IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
