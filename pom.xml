@@ -31,7 +31,7 @@
         <!-- BUG FIX: 2020-01-12 -->
         <!-- The latest version of Tomcat is specified to get rid of an error message that occurs when navigating -->
         <!-- away from web pages. See this issue: https://github.com/codecentric/spring-boot-admin/issues/1039 -->
-        <tomcat.version>9.0.30</tomcat.version>
+        <!-- <tomcat.version>9.0.30</tomcat.version> -->
     </properties>
 
     <dependencies>
