@@ -216,7 +216,7 @@ Now bundles latest Wica-JS release 1.5.1.
    
 Test Status: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
 
-* [1.10.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.9.1) Released 2020-12-09.
+* [1.10.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.10.0) Released 2020-12-09.
 
 Upgraded to Spring Boot 2.4.0. 
 In future will need to deal with deprecated ReplayProcessor class and Web Client exchange methods. 
@@ -234,5 +234,16 @@ Issues Addressed:
 * [Issue #74](https://github.com/paulscherrerinstitute/wica-http/issues/74) ENHANCEMENT: Insert warnings in log when data is being dropped due to back pressure.
 * [Issue #75](https://github.com/paulscherrerinstitute/wica-http/issues/75) BUG FIX: Truncate exception message length when stream configuration string is too long (avoids HTTP header overflow).
 * [Issue #76](https://github.com/paulscherrerinstitute/wica-http/issues/76) ENHANCEMENT: Upgrade to Spring Boot 2.4.0.
+
+IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
+
+* [1.10.1](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.10.1) Released 2020-12-11
+
+Fixes the cross origin regression bug reported by Jose.
+At the same time reenabled Tomcat to work with the default version for the SpringBoot 2.4.0 platform.
+
+* [Issue #77](https://github.com/paulscherrerinstitute/wica-http/issues/77) Remove override of Tomcat version in pom file.
+* [Issue #78](https://github.com/paulscherrerinstitute/wica-http/issues/78) Create Wica-HTTP Release 1.10.1
+* [Issue #79](https://github.com/paulscherrerinstitute/wica-http/issues/79) Fix Cross-Origin Regression Bug following move to Spring Boot 2.4.0.
 
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
