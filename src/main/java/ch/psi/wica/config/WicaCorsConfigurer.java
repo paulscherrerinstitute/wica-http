@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@Configuration
+//@Configuration
 class WicaCorsConfigurer implements WebMvcConfigurer
 {
 
@@ -42,6 +42,7 @@ class WicaCorsConfigurer implements WebMvcConfigurer
    {
       logger.info( "Configuring CORS... [allowedOriginPatterns='{}']", allowedOriginPatterns );
       registry.addMapping("/**")
+              .allowCredentials( true )
               .allowedOriginPatterns( this.allowedOriginPatterns );
       logger.info( "CORS configuration completed.");
    }
