@@ -43,9 +43,8 @@ class WicaCorsConfigurer implements WebMvcConfigurer
       logger.info( "Configuring CORS... [allowedOriginPatterns='{}']", allowedOriginPatterns );
       registry.addMapping("/**")
               .allowCredentials( true )
-              .allowedMethods( "OPTIONS", "GET", "PUT", "POST", "DELETE"  )
-              .allowedOriginPatterns( this.allowedOriginPatterns )
-              .maxAge( 1880 );
+              .allowedMethods( "*"  )
+              .allowedOriginPatterns( this.allowedOriginPatterns );
       logger.info( "CORS configuration completed.");
    }
 
