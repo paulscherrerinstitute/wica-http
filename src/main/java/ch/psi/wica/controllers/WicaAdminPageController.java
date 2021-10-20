@@ -13,14 +13,22 @@ import net.jcip.annotations.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Enumeration;
 import java.util.List;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -65,6 +73,38 @@ class WicaAdminPageController
 /*- Class methods ------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
+
+
+   @RequestMapping("/ilkcs/**")
+   public ResponseEntity<?> mirrorRest( @RequestBody(required = false) String body,
+                                     HttpMethod method, HttpServletRequest request, HttpServletResponse response)
+         throws URISyntaxException
+   {
+      String requestUrl = request.getRequestURI();
+
+      URI uri = new URI( "https", null, "hipa-ilk.psi.ch", 9443, null, null, null);
+      uri = UriComponentsBuilder.fromUri( uri)
+            .path(requestUrl)
+            .query(request.getQueryString())
+            .build(true).toUri();
+
+      HttpHeaders headers = new HttpHeaders();
+      Enumeration<String> headerNames = request.getHeaderNames();
+      while (headerNames.hasMoreElements()) {
+         String headerName = headerNames.nextElement();
+         headers.set(headerName, request.getHeader(headerName));
+      }
+
+      HttpEntity<String> httpEntity = new HttpEntity<>(body, headers);
+      RestTemplate restTemplate = new RestTemplate();
+      try {
+         return restTemplate.exchange(uri, method, httpEntity, String.class);
+      } catch( HttpStatusCodeException e) {
+         return ResponseEntity.status(e.getRawStatusCode())
+               .headers(e.getResponseHeaders())
+               .body(e.getResponseBodyAsString());
+      }
+   }
 
    // Leave the default MVC handling for this method. This means that the returned value will
    // be interpreted as a reference to a thymeleaf template.
