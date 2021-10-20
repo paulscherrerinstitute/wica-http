@@ -42,16 +42,14 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Setup node environment
-      - name: Checkout and Build
-        uses: actions/setup-node@v2
+      # Setup Java environment and build with maven
+      - uses: actions/setup-java@v2
         with:
-          node-version: 14
-      - run: npm ci
-      - run: npm run-script lint
-      - run: npm run-script docs
-      - run: npm run-script build
-      - run: npm run-script zip
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'maven'
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
 
       - name: Deploy GitHub Javadoc to GitHub Pages Area 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.3
@@ -72,7 +70,7 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload Wica_JS ZIP File to Release Assets Area
+      - name: Upload Wica_HTTP ZIP File to Release Assets Area
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
