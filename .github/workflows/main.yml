@@ -49,13 +49,14 @@ jobs:
           java-version: '11'
           cache: 'maven'
       - name: Build with Maven
+        # Note: maven CLI options: -B means run in batch mode, -V means display version information.
         run: mvn -B package  -DskipTests=true --file pom.xml
 
       - name: Deploy GitHub Javadoc to GitHub Pages Area 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.3
         with:
           branch: gh-pages # The branch the action should deploy to.
-          folder: dist/apidocs # The folder the action should deploy.
+          folder: target/site/apidocs # The folder the action should deploy.
 
       - name: Create Release
         id: create_release
