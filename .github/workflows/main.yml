@@ -58,30 +58,30 @@ jobs:
           branch: gh-pages # The branch the action should deploy to.
           folder: target/site/apidocs # The folder the action should deploy.
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          body: |
-            See the CHANGELOG.md file for the changes in this Release
-          draft: false
-          prerelease: false
+#      - name: Create Release
+#        id: create_release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+#        with:
+#          tag_name: ${{ github.ref }}
+#          release_name: ${{ github.ref }}
+#          body: |
+#            See the CHANGELOG.md file for the changes in this Release
+#          draft: false
+#          prerelease: false
 
-        # Doesn't yet work due to need to support wildcards
-        #      - name: Upload Wica-Http ZIP File to Release Assets Area
-        #        id: upload-release-asset
-        #        uses: actions/upload-release-asset@v1
-        #        env:
-        #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        #        with:
-        #          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-        #          asset_path: dist/wica-http.zip
-        #          asset_name: wica-http-*.jar
-        #          asset_content_type: application/zip
+        # Doesn't yet work properly (tied to 1.10.2-SNAPSHOT release). Need to support wildcards.
+#        - name: Upload Wica-Http ZIP File to Release Assets Area
+#          id: upload-release-asset
+#          uses: actions/upload-release-asset@v1
+#          env:
+#            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          with:
+#            upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+#            asset_path: target
+#            asset_name: wica-http-1.10.2-SNAPSHOT.jar
+#            asset_content_type: application/java-archive
 
       - name: Login to Docker Hub
         uses: docker/login-action@v1
