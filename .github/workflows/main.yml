@@ -102,7 +102,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./
-          file: ./docker/Dockerfile
+          file: ./docker/Dockerfile.https
           push: true
 #          tags: paulscherrerinstitute/wica-http:${{ steps.get_version.outputs.VERSION }}
           tags: paulscherrerinstitute/wica-http:1.10.2-SNAPSHOT
