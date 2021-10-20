@@ -1,0 +1,110 @@
+#####################################################################################
+# GitHub action file to support automatic build and deployment of Wica-HTTP Artifacts
+#####################################################################################
+
+#
+# This build recipe should be set up to trigger every time new TAGGED commits
+# are pushed to the Wica-HTTP repository in the PSI Organisational Area on the
+# GitHub Server.
+#
+# Currently the build recipe supports the following actions:
+#
+# - Builds Wica-HTTP API documentation and transfers asset to GitHub Pages Area.
+# - Builds Wica-HTTP Release Bundle and transfers asset to GitHub Releases Area.
+# - Builds Wica-HTTP Docker Image and transfers asset to Docker Hub.
+#
+
+# This is a basic workflow to help you get started with Actions
+
+name: Wica-HTTP CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches:
+      - "!*"
+    tags:
+      - "*"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Setup node environment
+      - name: Checkout and Build
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - run: npm ci
+      - run: npm run-script lint
+      - run: npm run-script docs
+      - run: npm run-script build
+      - run: npm run-script zip
+
+      - name: Deploy GitHub Javadoc to GitHub Pages Area 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.3
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: dist/apidocs # The folder the action should deploy.
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: |
+            See the CHANGELOG.md file for the changes in this Release
+          draft: false
+          prerelease: false
+
+      - name: Upload Wica_JS ZIP File to Release Assets Area
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: dist/wica-http.zip
+          asset_name: wica-http.zip
+          asset_content_type: application/zip
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Docker Setup Build Environment
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+
+      - name: Docker Build and push to Docker Hub
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./docker/Dockerfile
+          push: true
+          tags: paulscherrerinstitute/wica-http:${{ steps.get_version.outputs.VERSION }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
