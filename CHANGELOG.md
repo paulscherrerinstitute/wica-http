@@ -247,3 +247,14 @@ At the same time reenabled Tomcat to work with the default version for the Sprin
 * [Issue #79](https://github.com/paulscherrerinstitute/wica-http/issues/79) Fix Cross-Origin Regression Bug following move to Spring Boot 2.4.0.
 
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
+
+
+* [1.10.2](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.10.1) Released 2021-XX-XX
+
+This release retires the Travis build and now builds using the GitHub Actions CI environment instead.
+The behaviour is intended to be the same as the Travis build. That's to say:
+- create docs and upload to GitHub Pages Area.
+- deploy release to GitHub releases area inlcuding additional assets.
+- build and create a tagged docker image on Docker Hub.
+
+* Issue #XX Create release 1.10.2
