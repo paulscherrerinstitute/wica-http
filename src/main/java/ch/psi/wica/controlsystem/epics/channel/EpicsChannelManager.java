@@ -57,7 +57,8 @@ public abstract class EpicsChannelManager implements AutoCloseable
     * Constructs a new instance.
     *
     * @param scope a String which specifies the scope of this manager.
-    * @param epicsChannelAccessContextSupplier an object which can be used to subscribe to connection state changes.
+    * @param epicsChannelAccessContextSupplier an object which can be used to obtain an initialised channel access context
+    *   appropriate to the needs of the consumer.
     * @param epicsChannelConnectionChangeSubscriber an object which can be used to subscribe to connection state changes.
     * @param epicsChannelEventPublisher an object which publishes events of interest to consumers within the application.
     * @param statisticsCollectionService an object which will collect the statistics associated with this class instance.
