@@ -49,7 +49,7 @@ jobs:
           java-version: '11'
           cache: 'maven'
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn -B package  -DskipTests=true --file pom.xml
 
       - name: Deploy GitHub Javadoc to GitHub Pages Area 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.3
