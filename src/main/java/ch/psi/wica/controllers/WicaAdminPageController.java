@@ -74,17 +74,16 @@ class WicaAdminPageController
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-
    @RequestMapping("/ilkcs/**")
-   public ResponseEntity<?> mirrorRest( @RequestBody(required = false) String body,
-                                     HttpMethod method, HttpServletRequest request, HttpServletResponse response)
+   public ResponseEntity<?> mirrorRestIlkCs( @RequestBody(required = false) String body,
+                                             HttpMethod method, HttpServletRequest request, HttpServletResponse response)
          throws URISyntaxException
    {
       String requestUrl = request.getRequestURI();
 
-      URI uri = new URI( "https", null, "hipa-ilk.psi.ch", 9443, null, null, null);
+      URI uri = new URI( "https", null, "hipa-ilk.psi.ch", 10443, null, null, null);
       uri = UriComponentsBuilder.fromUri( uri)
-            .path(requestUrl)
+            .path( requestUrl.substring( 6 ) )
             .query(request.getQueryString())
             .build(true).toUri();
 
@@ -95,16 +94,58 @@ class WicaAdminPageController
          headers.set(headerName, request.getHeader(headerName));
       }
 
-      HttpEntity<String> httpEntity = new HttpEntity<>(body, headers);
+      HttpEntity<String> httpEntity = new HttpEntity<>( body, headers);
       RestTemplate restTemplate = new RestTemplate();
       try {
          return restTemplate.exchange(uri, method, httpEntity, String.class);
       } catch( HttpStatusCodeException e) {
+         logger.warn( e.getMessage() );
          return ResponseEntity.status(e.getRawStatusCode())
                .headers(e.getResponseHeaders())
                .body(e.getResponseBodyAsString());
+      } catch( RuntimeException ex )
+      {
+         logger.warn( ex.getMessage() );
+         return ResponseEntity.badRequest().build();
       }
    }
+
+   @RequestMapping("/ilkdb/**")
+   public ResponseEntity<?> mirrorRestIlkDb( @RequestBody(required = false) String body,
+                                             HttpMethod method, HttpServletRequest request, HttpServletResponse response)
+         throws URISyntaxException
+   {
+      String requestUrl = request.getRequestURI();
+
+      URI uri = new URI( "https", null, "hipa-ilk.psi.ch", 9443, null, null, null);
+      uri = UriComponentsBuilder.fromUri( uri)
+            .path( requestUrl.substring( 6 ) )
+            .query(request.getQueryString())
+            .build(true).toUri();
+
+      HttpHeaders headers = new HttpHeaders();
+      Enumeration<String> headerNames = request.getHeaderNames();
+      while (headerNames.hasMoreElements()) {
+         String headerName = headerNames.nextElement();
+         headers.set(headerName, request.getHeader(headerName));
+      }
+
+      HttpEntity<String> httpEntity = new HttpEntity<>( body, headers);
+      RestTemplate restTemplate = new RestTemplate();
+      try {
+         return restTemplate.exchange(uri, method, httpEntity, String.class);
+      } catch( HttpStatusCodeException e) {
+         logger.warn( e.getMessage() );
+         return ResponseEntity.status(e.getRawStatusCode())
+               .headers(e.getResponseHeaders())
+               .body(e.getResponseBodyAsString());
+      } catch( RuntimeException ex )
+      {
+         logger.warn( ex.getMessage() );
+         return ResponseEntity.badRequest().build();
+      }
+   }
+
 
    // Leave the default MVC handling for this method. This means that the returned value will
    // be interpreted as a reference to a thymeleaf template.
