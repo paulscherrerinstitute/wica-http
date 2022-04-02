@@ -155,7 +155,7 @@ ENV JAVA_JMX_OPTS  "-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmx
 # 9.0 Define the ENTRYPOINT
 ###############################################################################
 
-# Run the application on the Java 11 module path invoking the docker-run configuration profile
+# Run the application on the Java 17 module path invoking the docker-run configuration profile
 # and passing the keystore password.
 
 # Note the 'file.encoding' setting determines how the application reconstitutes
