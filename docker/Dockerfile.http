@@ -47,7 +47,7 @@ RUN cd base-7.0.6.1 ; make
 # 3.0 Obtain a container with a JDK implementation
 ###############################################################################
 
-FROM eclipse-temurin:17-jdk-debian-slim
+FROM eclipse-temurin:17-jre-alpine
 
 ################################################################################
 ## 4.0 Define the rest of our application
@@ -95,8 +95,8 @@ WORKDIR /root
 # 5.0 Install any additional applications
 ###############################################################################
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-    apt-get install -y libreadline-dev
+#RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+#    apt-get install -y libreadline-dev
 
 ###############################################################################
 # 6.0 Set up the application project structure
