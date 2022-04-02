@@ -71,7 +71,7 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
       ```
       
       Note: the Wica-HTTP Server is a Spring Boot application. The default configuration properties 
-      for the server are specified in the [application.properties](./src/main/resources/application.properties) 
+      for the server are specified in the [application.properties](src/main/resources/application.properties) 
       file that is bundled into the jar distribution file. The default values can be overriden when starting 
       up the server by specifying them on the command line.
       
@@ -157,7 +157,7 @@ The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
 
       Example:
       ```
-      docker pull paulscherrerinstitute/wica-http:1.0.1
+      docker pull paulscherrerinstitute/wica-http:1.11.0
       ```
 
    1. [Optional]: Set up the EPICS Channel-Access environment variables.
