@@ -249,7 +249,7 @@ At the same time reenabled Tomcat to work with the default version for the Sprin
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
 
 
-* [1.10.2](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.10.1) Released 2021-XX-XX
+* [1.10.2](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.10.2) Released 2022-04-XX
 
 This release retires the Travis build and now builds using the GitHub Actions CI environment instead.
 The behaviour is intended to be the same as the Travis build. That's to say:
@@ -257,4 +257,6 @@ The behaviour is intended to be the same as the Travis build. That's to say:
 - deploy release to GitHub releases area inlcuding additional assets.
 - build and create a tagged docker image on Docker Hub.
 
-* Issue #XX Create release 1.10.2
+* [Issue #80](https://github.com/paulscherrerinstitute/wica-http/issues/80) Add support for GitHub Actions.
+* [Issue #81](https://github.com/paulscherrerinstitute/wica-http/issues/81) Add experimental proxy server
+* [Issue #82](https://github.com/paulscherrerinstitute/wica-http/issues/82) Update to Java 17
