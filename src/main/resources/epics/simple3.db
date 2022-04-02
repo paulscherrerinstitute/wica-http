@@ -1,0 +1,6 @@
+record( calc, "MONITOR:A" ) {
+  field( SCAN,"5 second")
+  field( INPA,"MMAC3:STR:2 CP")
+  field( CALC,"A")
+}
+
