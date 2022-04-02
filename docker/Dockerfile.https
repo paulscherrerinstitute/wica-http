@@ -145,7 +145,6 @@ EXPOSE 5005
 ENV JAVA_DBG_OPTS "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
 
 # Add support for remote profiling with JMX technology (eg jvisualvm, jconsole etc)
-# This works on both OpenJDK 11 and Azul JDK 11
 # Note: this is hardcoded in the configuration to work on the development server
 # 'gfa-wica-dev.psi.ch'. For other servers this config will need adjusting.
 EXPOSE 9010

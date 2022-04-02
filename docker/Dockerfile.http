@@ -37,16 +37,15 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     apt-get install -y libreadline-dev &&  \
     rm -rf /var/lib/apt/lists/* /tmp/*
 
-RUN wget https://epics.anl.gov/download/base/baseR3.14.12.7.tar.gz && \
-    tar xvf baseR3.14.12.7.tar.gz
+RUN wget https://epics-controls.org/download/base/base-7.0.6.1.tar.gz && \
+    tar xvf base-7.0.6.1.tar.gz
 
-RUN cd base-3.14.12.7 ; make
+RUN cd base-7.0.6.1 ; make
 
 
 ###############################################################################
 # 3.0 Obtain a container with a JDK implementation
 ###############################################################################
-
 
 FROM eclipse-temurin:17-jdk-debian-slim
 
@@ -63,7 +62,7 @@ ARG JAR_FILE
 ## debugging purposes.
 ##
 ENV EPICS_HOME=/epics
-COPY --from=BUILD_EPICS /epics/base-3.14.12.7/ $EPICS_HOME
+COPY --from=BUILD_EPICS /epics/base-base-7.0.6.1/ $EPICS_HOME
 
 # This port must be open for TCP and UDP when the connection
 # is via a channel access gateway.
@@ -140,11 +139,10 @@ EXPOSE 5005
 ENV JAVA_DBG_OPTS "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
 
 # Add support for remote profiling with JMX technology (eg jvisualvm, jconsole etc)
-# This works on both OpenJDK 11 and Azul JDK 11
 # Note: this is hardcoded in the configuration to work on the development server
 # 'gfa-wica-dev.psi.ch'. For other servers this config will need adjusting.
-# EXPOSE 9010
-# ENV JAVA_JMX_OPTS  "-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=gfa-wica-dev.psi.ch -Dcom.sun.management.jmxremote.rmi.port=9010"
+EXPOSE 9010
+ENV JAVA_JMX_OPTS  "-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=gfa-wica-dev.psi.ch -Dcom.sun.management.jmxremote.rmi.port=9010"
 
 
 ###############################################################################
