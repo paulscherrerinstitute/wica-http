@@ -18,17 +18,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Enumeration;
 import java.util.List;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -73,79 +62,6 @@ class WicaAdminPageController
 /*- Class methods ------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
-
-   @RequestMapping("/ilkcs/**")
-   public ResponseEntity<?> mirrorRestIlkCs( @RequestBody(required = false) String body,
-                                             HttpMethod method, HttpServletRequest request, HttpServletResponse response)
-         throws URISyntaxException
-   {
-      String requestUrl = request.getRequestURI();
-
-      URI uri = new URI( "https", null, "hipa-ilk.psi.ch", 10443, null, null, null);
-      uri = UriComponentsBuilder.fromUri( uri)
-            .path( requestUrl.substring( 6 ) )
-            .query(request.getQueryString())
-            .build(true).toUri();
-
-      HttpHeaders headers = new HttpHeaders();
-      Enumeration<String> headerNames = request.getHeaderNames();
-      while (headerNames.hasMoreElements()) {
-         String headerName = headerNames.nextElement();
-         headers.set(headerName, request.getHeader(headerName));
-      }
-
-      HttpEntity<String> httpEntity = new HttpEntity<>( body, headers);
-      RestTemplate restTemplate = new RestTemplate();
-      try {
-         return restTemplate.exchange(uri, method, httpEntity, String.class);
-      } catch( HttpStatusCodeException e) {
-         logger.warn( e.getMessage() );
-         return ResponseEntity.status(e.getRawStatusCode())
-               .headers(e.getResponseHeaders())
-               .body(e.getResponseBodyAsString());
-      } catch( RuntimeException ex )
-      {
-         logger.warn( ex.getMessage() );
-         return ResponseEntity.badRequest().build();
-      }
-   }
-
-   @RequestMapping("/ilkdb/**")
-   public ResponseEntity<?> mirrorRestIlkDb( @RequestBody(required = false) String body,
-                                             HttpMethod method, HttpServletRequest request, HttpServletResponse response)
-         throws URISyntaxException
-   {
-      String requestUrl = request.getRequestURI();
-
-      URI uri = new URI( "https", null, "hipa-ilk.psi.ch", 9443, null, null, null);
-      uri = UriComponentsBuilder.fromUri( uri)
-            .path( requestUrl.substring( 6 ) )
-            .query(request.getQueryString())
-            .build(true).toUri();
-
-      HttpHeaders headers = new HttpHeaders();
-      Enumeration<String> headerNames = request.getHeaderNames();
-      while (headerNames.hasMoreElements()) {
-         String headerName = headerNames.nextElement();
-         headers.set(headerName, request.getHeader(headerName));
-      }
-
-      HttpEntity<String> httpEntity = new HttpEntity<>( body, headers);
-      RestTemplate restTemplate = new RestTemplate();
-      try {
-         return restTemplate.exchange(uri, method, httpEntity, String.class);
-      } catch( HttpStatusCodeException e) {
-         logger.warn( e.getMessage() );
-         return ResponseEntity.status(e.getRawStatusCode())
-               .headers(e.getResponseHeaders())
-               .body(e.getResponseBodyAsString());
-      } catch( RuntimeException ex )
-      {
-         logger.warn( ex.getMessage() );
-         return ResponseEntity.badRequest().build();
-      }
-   }
-
 
    // Leave the default MVC handling for this method. This means that the returned value will
    // be interpreted as a reference to a thymeleaf template.
