@@ -26,11 +26,20 @@ public class EpicsChannelMonitorRequest
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    *
+    * @param wicaChannel
+    */
    public EpicsChannelMonitorRequest( WicaChannel wicaChannel )
    {
       this( EpicsChannelName.of( Validate.notNull( wicaChannel ).getName().getControlSystemName() ), wicaChannel );
    }
 
+   /**
+    *
+    * @param epicsChannelName
+    * @param publicationChannel
+    */
    EpicsChannelMonitorRequest( EpicsChannelName epicsChannelName, WicaChannel publicationChannel )
    {
       this.epicsChannelName = Validate.notNull( epicsChannelName );
@@ -45,11 +54,19 @@ public class EpicsChannelMonitorRequest
       return new EpicsChannelMetadataRequest( this.epicsChannelName, this.publicationChannel );
    }
 
+   /**
+    *
+    * @return
+    */
    public EpicsChannelName getEpicsChannelName()
    {
       return epicsChannelName;
    }
 
+   /**
+    *
+    * @return
+    */
    public WicaChannel getPublicationChannel()
    {
       return publicationChannel;

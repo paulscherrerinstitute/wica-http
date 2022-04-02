@@ -57,6 +57,10 @@ public class EpicsChannelMonitorService
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    *
+    * @return
+    */
    public EpicsChannelMonitorStatistics getStatistics()
    {
       return epicsChannelMonitorPublisher.getStatistics();

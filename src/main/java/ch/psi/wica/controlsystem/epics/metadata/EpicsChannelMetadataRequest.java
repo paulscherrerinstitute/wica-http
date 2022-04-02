@@ -25,11 +25,20 @@ public class EpicsChannelMetadataRequest
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    *
+    * @param wicaChannel
+    */
    public EpicsChannelMetadataRequest( WicaChannel wicaChannel )
    {
       this( EpicsChannelName.of( Validate.notNull( wicaChannel.getName().getControlSystemName() ) ), wicaChannel );
    }
 
+   /**
+    *
+    * @param epicsChannelName
+    * @param publicationChannel
+    */
    public EpicsChannelMetadataRequest( EpicsChannelName epicsChannelName, WicaChannel publicationChannel )
    {
       this.epicsChannelName = Validate.notNull( epicsChannelName );

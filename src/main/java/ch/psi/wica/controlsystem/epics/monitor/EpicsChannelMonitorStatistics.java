@@ -33,6 +33,10 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    *
+    * @param requestList
+    */
    public EpicsChannelMonitorStatistics( List<EpicsChannelMonitorRequest> requestList )
    {
       this.requestList = Validate.notNull( requestList );
@@ -41,6 +45,10 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    *
+    * @return
+    */
    @Override
    public Statistics get()
    {
@@ -71,26 +79,55 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
             .collect( Collectors.toUnmodifiableList() );
    }
 
+   /**
+    *
+    * @return
+    */
    public String getStartRequests()
    {
       return String.valueOf( startRequests.get());
    }
+
+   /**
+    *
+    * @return
+    */
    public String getStopRequests()
    {
       return String.valueOf( stopRequests.get());
    }
+
+   /**
+    *
+    * @return
+    */
    public String getActiveRequests()
    {
       return String.valueOf( requestList.size() );
    }
+
+   /**
+    *
+    * @return
+    */
    public String getChannelConnectCount()
    {
       return String.valueOf( channelConnectCount.get() );
    }
+
+   /**
+    *
+    * @return
+    */
    public String getChannelDisconnectCount()
    {
       return String.valueOf( channelDisconnectCount.get() );
    }
+
+   /**
+    *
+    * @return
+    */
    public String getMonitorUpdateCount()
    {
       return String.valueOf( monitorUpdateCount.get() );
