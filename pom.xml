@@ -37,20 +37,9 @@
     <dependencies>
 
         <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.metrics</groupId>
             <artifactId>spring-metrics</artifactId>
             <version>0.5.1.RELEASE</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.prometheus</groupId>
-            <artifactId>simpleclient_common</artifactId>
-            <version>0.0.26</version>
         </dependency>
 
         <dependency>
@@ -62,7 +51,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.7</version>
+            <version>3.12.0</version>
         </dependency>
 
         <dependency>
@@ -120,7 +109,6 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
-            <version>3.3.3.RELEASE</version>
             <scope>test</scope>
         </dependency>
 
@@ -134,7 +122,7 @@
             <plugin>
                 <groupId>com.googlecode.maven-download-plugin</groupId>
                 <artifactId>download-maven-plugin</artifactId>
-                <version>1.6.0</version>
+                <version>1.6.8</version>
                 <executions>
                     <execution>
                     <!-- the wget goal actually binds itself into the 'process-resources' phase by   -->
@@ -184,7 +172,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.10.1</version>
                 <configuration>
                     <compilerArgs>
                         <arg>-Xlint:all,-options,-path</arg>
@@ -195,7 +183,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.3.2</version>
                 <configuration>
                     <additionalOptions>-html5</additionalOptions>
                     <show>package</show>
