@@ -39,6 +39,7 @@
         <dependency>
             <groupId>org.springframework.metrics</groupId>
             <artifactId>spring-metrics</artifactId>
+            <version>0.5.1.RELEASE</version>
         </dependency>
 
         <dependency>
