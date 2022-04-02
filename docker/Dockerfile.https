@@ -47,7 +47,7 @@ RUN cd base-7.0.6.1 ; make
 # 3.0 Obtain a container with a JDK implementation
 ###############################################################################
 
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17
 
 ################################################################################
 ## 4.0 Define the rest of our application
@@ -62,7 +62,7 @@ ARG JAR_FILE
 ## debugging purposes.
 ##
 ENV EPICS_HOME=/epics
-COPY --from=BUILD_EPICS /epics/base-7.0.6.1/ $EPICS_HOME
+COPY --from=BUILD_EPICS /epics/base-7.0.6.1/bin/linux-x86_64 $EPICS_HOME
 
 # This port must be open for TCP and UDP when the connection
 # is via a channel access gateway.
@@ -100,8 +100,8 @@ WORKDIR /root
 # 5.0 Install any additional applications
 ###############################################################################
 
-#RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-#    apt-get install -y libreadline-dev
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    apt-get install -y libreadline-dev
 
 ###############################################################################
 # 6.0 Set up the application project structure
