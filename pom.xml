@@ -21,7 +21,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <!-- Use this definition to control which version of the Wica-JS library gets bundled into the Wica-HTTP fatJar. -->
         <!-- This definition always gets the latest release -->
         <!-- <wica-js-release>https://github.com/paulscherrerinstitute/wica-js/releases/latest/download/wica-js.zip</wica-js-release> -->
@@ -189,7 +189,7 @@
                     <compilerArgs>
                         <arg>-Xlint:all,-options,-path</arg>
                     </compilerArgs>
-                    <release>11</release>
+                    <release>17</release>
                 </configuration>
             </plugin>
             <plugin>

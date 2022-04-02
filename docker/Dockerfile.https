@@ -9,7 +9,7 @@
 # 1.0 Build and package the Wica-HTTP jar file
 ###############################################################################
 
-FROM maven:3.6.1-jdk-11-slim AS MAVEN_TOOL_CHAIN
+FROM maven:3.8.4-openjdk-17-slim AS MAVEN_TOOL_CHAIN
 WORKDIR /tmp/
 
 COPY ./pom.xml /tmp/
@@ -47,7 +47,7 @@ RUN cd base-3.14.12.7 ; make
 # 3.0 Obtain a container with a JDK implementation
 ###############################################################################
 
-FROM adoptopenjdk/openjdk11:debian-slim
+FROM eclipse-temurin:17-jdk-debian-slim
 
 ################################################################################
 ## 4.0 Define the rest of our application
