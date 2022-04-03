@@ -257,7 +257,7 @@ and Java.  The release does not add any functional changes.
 
 Main changes are as follows:
 - Travis build system is retired and replaced with GitHub Actions.
-- Java updated to version 17.
+- Java docker build to Java version 17 but reained language support at Java 11 level.
 - Spring Boot updated to 2.6.6
 - Updated bundled EPICS in docker container to 7.0.6.1
 
@@ -265,13 +265,11 @@ Issues Addressed:
 
 * [Issue #80](https://github.com/paulscherrerinstitute/wica-http/issues/80) Add support for GitHub Actions.
 * [Issue #81](https://github.com/paulscherrerinstitute/wica-http/issues/81) Add experimental proxy server
-* [Issue #82](https://github.com/paulscherrerinstitute/wica-http/issues/82) Update to Java 17
+* [Issue #82](https://github.com/paulscherrerinstitute/wica-http/issues/82) Update Docker container to Java 17
 * [Issue #83](https://github.com/paulscherrerinstitute/wica-http/issues/83) Update to Spring Boot 2.6.6 and other dependencies to latest
 * [Issue #84](https://github.com/paulscherrerinstitute/wica-http/issues/84) Update javadoc.
-* [Issue #84](https://github.com/paulscherrerinstitute/wica-http/issues/84) Dockerfile: switch to eclipse-temurin:17-jre-alpine. Dockerfile: switch back to 
-                                                                            eclipse-temurin:17 and reduce image size by only copy EPICS binaries rather than 
-                                                                            complete installation tree. Dockerfile: now copies EPICS base libraries. Removed 
-                                                                            support for readline (that may only have been required in alpine containers).
+* [Issue #84](https://github.com/paulscherrerinstitute/wica-http/issues/84) Dockerfile: switch to eclipse-temurin:17 and reduce image size by only copying EPICS binaries 
+                                                                            and libs rather than complete installation tree.
 * [Issue #85](https://github.com/paulscherrerinstitute/wica-http/issues/85) Eliminate experimental proxy server ready for release.
 * [Issue #86](https://github.com/paulscherrerinstitute/wica-http/issues/86) Update README.
 * [Issue #87](https://github.com/paulscherrerinstitute/wica-http/issues/87) Create release 1.11.0
