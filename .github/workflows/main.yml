@@ -58,14 +58,19 @@ jobs:
           # The branch the action should deploy to.
           folder: target/site/apidocs
           # The folder the action should deploy.
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
+          tag_name: ${{ VERSION }}
+          release_name: ${{ VERSION }}
           body: |
             See the CHANGELOG.md file for the changes in this Release
           draft: false§
@@ -96,9 +101,7 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+
 
 #      - name: Docker Build and push to Docker Hub
 #        id: docker_build
