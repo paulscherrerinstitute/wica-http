@@ -31,13 +31,13 @@ created using a mixture of standard HTML, SVG, and in some cases an open-source 
      <td>Medical Cyclotron</td>
      <td>Vacuum Layout</td>
      <td>RF Status Page</td>
-     <td>Camera Image</td>
+     <td>Camera Real Time Image</td>
   </tr>
   <tr>
-    <td><img src="https://github.com/paulscherrerinstitute/wica-http/blob/master/docs/screenshots/medical_cyclotron_overview_status.png?raw=true" width=200></td>
-    <td><img src="https://github.com/paulscherrerinstitute/wica-http/blob/master/docs/screenshots/vacuum_layout_status.png?raw=true" width=200></td>
-    <td><img src="https://github.com/paulscherrerinstitute/wica-http/blob/master/docs/screenshots/proton_accelerator_rf_power_status.png?raw=true" width=200></td>
-    <td><img src="https://github.com/paulscherrerinstitute/wica-http/blob/master/docs/screenshots/camera_image.png?raw=true" width=200></td>
+    <td><img src="https://github.com/paulscherrerinstitute/wica-http/blob/master/docs/screenshots/medical_cyclotron_overview_status.png?raw=true" width=200 alt="medical cyclotron"></td>
+    <td><img src="https://github.com/paulscherrerinstitute/wica-http/blob/master/docs/screenshots/vacuum_layout_status.png?raw=true" width=200 alt="vacuum layourt"></td>
+    <td><img src="https://github.com/paulscherrerinstitute/wica-http/blob/master/docs/screenshots/proton_accelerator_rf_power_status.png?raw=true" width=200 alt="rf status page"></td>
+    <td><img src="https://github.com/paulscherrerinstitute/wica-http/blob/master/docs/screenshots/camera_image.png?raw=true" width=200 alt="camera real time image"></td>
   </tr>
  </table>
 
