@@ -275,5 +275,7 @@ Issues Addressed:
 * [Issue #85](https://github.com/paulscherrerinstitute/wica-http/issues/85) Eliminate experimental proxy server ready for release.
 * [Issue #86](https://github.com/paulscherrerinstitute/wica-http/issues/86) Update README.
 * [Issue #87](https://github.com/paulscherrerinstitute/wica-http/issues/87) Create release 1.11.0
+* [Issue #88](https://github.com/paulscherrerinstitute/wica-http/issues/88) Add Example Screenshots
+* [Issue #89](https://github.com/paulscherrerinstitute/wica-http/issues/89) Bundle Wica-JS 1.5.4
 
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
