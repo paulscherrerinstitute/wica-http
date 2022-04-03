@@ -5,7 +5,7 @@
 
     <groupId>ch.psi</groupId>
     <artifactId>wica-http</artifactId>
-    <version>1.10.2-SNAPSHOT</version>
+    <version>1.11.0</version>
     <packaging>jar</packaging>
 
     <name>wica-http</name>
@@ -57,6 +57,10 @@
         <dependency>
             <groupId>org.epics</groupId>
             <artifactId>ca</artifactId>
+            <!-- Note the suggestion (suppressed below) to upgrade the CA library version to a package with -->
+            <!-- many *999* in it is as a result of an erroneous release of CA in maven central that should -->
+            <!-- not be used. Unfortunately we have never managed to eliminate it. -->
+            <!--suppress MavenPackageUpdate -->
             <version>1.3.2</version>
         </dependency>
 

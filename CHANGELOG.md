@@ -242,21 +242,38 @@ IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
 Fixes the cross origin regression bug reported by Jose.
 At the same time reenabled Tomcat to work with the default version for the SpringBoot 2.4.0 platform.
 
+Issues Addressed:
+
 * [Issue #77](https://github.com/paulscherrerinstitute/wica-http/issues/77) Remove override of Tomcat version in pom file.
 * [Issue #78](https://github.com/paulscherrerinstitute/wica-http/issues/78) Create Wica-HTTP Release 1.10.1
 * [Issue #79](https://github.com/paulscherrerinstitute/wica-http/issues/79) Fix Cross-Origin Regression Bug following move to Spring Boot 2.4.0.
 
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
 
+* [1.11.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.10.2) Released 2022-04-03
 
-* [1.10.2](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.10.2) Released 2022-04-XX
+This release brings the wica-http server up-to-date to follow the latest evolutions in Spring Boot
+and Java.  The release does not add any functional changes.
 
-This release retires the Travis build and now builds using the GitHub Actions CI environment instead.
-The behaviour is intended to be the same as the Travis build. That's to say:
-- create docs and upload to GitHub Pages Area.
-- deploy release to GitHub releases area inlcuding additional assets.
-- build and create a tagged docker image on Docker Hub.
+Main changes are as follows:
+- Travis build system is retired and replaced with GitHub Actions.
+- Java updated to version 17.
+- Spring Boot updated to 2.6.6
+- Updated bundled EPICS in docker container to 7.0.6.1
+
+Issues Addressed:
 
 * [Issue #80](https://github.com/paulscherrerinstitute/wica-http/issues/80) Add support for GitHub Actions.
 * [Issue #81](https://github.com/paulscherrerinstitute/wica-http/issues/81) Add experimental proxy server
 * [Issue #82](https://github.com/paulscherrerinstitute/wica-http/issues/82) Update to Java 17
+* [Issue #83](https://github.com/paulscherrerinstitute/wica-http/issues/83) Update to Spring Boot 2.6.6 and other dependencies to latest
+* [Issue #84](https://github.com/paulscherrerinstitute/wica-http/issues/84) Update javadoc.
+* [Issue #84](https://github.com/paulscherrerinstitute/wica-http/issues/84) Dockerfile: switch to eclipse-temurin:17-jre-alpine. Dockerfile: switch back to 
+                                                                            eclipse-temurin:17 and reduce image size by only copy EPICS binaries rather than 
+                                                                            complete installation tree. Dockerfile: now copies EPICS base libraries. Removed 
+                                                                            support for readline (that may only have been required in alpine containers).
+* [Issue #85](https://github.com/paulscherrerinstitute/wica-http/issues/85) Eliminate experimental proxy server ready for release.
+* [Issue #86](https://github.com/paulscherrerinstitute/wica-http/issues/86) Update README.
+* [Issue #87](https://github.com/paulscherrerinstitute/wica-http/issues/87) Create release 1.11.0
+
+IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
