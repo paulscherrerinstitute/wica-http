@@ -21,6 +21,26 @@ Further details about how these components interoperate is provided in the
 
 Currently WICA interoperates with the EPICS Control Systems using its well established Channel Access (CA) protocol and by means of the [Java Channel Access Client Library](https://github.com/channelaccess/ca).
 
+# Examples
+
+The screenshots below show examples of the panels that can be created using WICA. The example HTML pages were
+produced using a mixture of standard HTML, SVG, and a plotting library (currently [Ploty](https://plotly.com/graphing-libraries)). 
+
+<table>
+  <tr>
+     <td>Camere Image</td>
+     <td>Medical Cyclotron</td>
+     <td>Vacuum Layout</td>
+     <td>Camera Image</td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/paulscherrerinstitute/wica-http/blob/master/docs/screenshots/medical_cyclotron_overview_status.png?raw=true" width=200></td>
+    <td><img src="https://github.com/paulscherrerinstitute/wica-http/blob/master/docs/screenshots/vacuum_layout_status.png?raw=true" width=200></td>
+    <td><img src="https://github.com/paulscherrerinstitute/wica-http/blob/master/docs/screenshots/proton_accelerator_rf_power_status.png?raw=true" width=200></td>
+    <td><img src="https://github.com/paulscherrerinstitute/wica-http/blob/master/docs/screenshots/camera_image.png?raw=true" width=200></td>
+  </tr>
+ </table>
+
 # Main Features
 
 * Provides a gateway to the backend control system (currently EPICS).
@@ -28,14 +48,14 @@ Currently WICA interoperates with the EPICS Control Systems using its well estab
 * Streams control system data using HTML5 Server-Sent-Event technology.
 * Supports basic control system Get and Set functionality.
 * Provides channel filtering (eg noise or rate limiting) and configurable numeric precision.
-* Implemented as Java 11, Spring Boot 2 application based on latest Spring reactive stack.
+* Implemented as a modern Java, Spring Boot 2 application based on latest Spring reactive stack.
 * Runs either standalone (via fat jar) or in docker container (available on Docker Hub).
 * Supports EPICS Channel Access communication using PSI's pure Java CA client library.
 * Monitors EPICS channels, or polls them at configurable rates.
 
 # Requirements
 
-The only requirement for running the Wica-HTTP server is a **Java 11 JRE**.
+The only requirement for running the Wica-HTTP server is a **Java 11 JRE** or later.
 
 # Getting Started
 
