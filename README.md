@@ -23,14 +23,14 @@ Currently WICA interoperates with the EPICS Control Systems using its well estab
 
 # Examples
 
-The screenshots below show examples of the panels that can be created using WICA. The example HTML pages were
-produced using a mixture of standard HTML, SVG, and a plotting library (currently [Ploty](https://plotly.com/graphing-libraries)). 
+The screenshots below show examples of the types of panels that can be created using WICA. The examples webpages were
+created using a mixture of standard HTML, SVG, and in some cases an open-source  plotting library (currently [Ploty](https://plotly.com/graphing-libraries)). 
 
 <table>
   <tr>
-     <td>Camere Image</td>
      <td>Medical Cyclotron</td>
      <td>Vacuum Layout</td>
+     <td>RF Status Page</td>
      <td>Camera Image</td>
   </tr>
   <tr>
