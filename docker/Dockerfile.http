@@ -96,8 +96,11 @@ WORKDIR /root
 # 5.0 Install any additional applications
 ###############################################################################
 
-#RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-#    apt-get install -y libreadline-dev
+# Note:
+# The following readline library is a dependency of EPICS so must be provided
+# if it is intended to use the tools in the bundled EPICS base.
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    apt-get install -y libreadline-dev
 
 ###############################################################################
 # 6.0 Set up the application project structure
