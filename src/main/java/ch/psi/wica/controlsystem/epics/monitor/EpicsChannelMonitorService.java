@@ -58,8 +58,9 @@ public class EpicsChannelMonitorService
 /*- Public methods -----------------------------------------------------------*/
 
    /**
+    * Returns the statistics associated with this service.
     *
-    * @return
+    * @return the statistics.
     */
    public EpicsChannelMonitorStatistics getStatistics()
    {

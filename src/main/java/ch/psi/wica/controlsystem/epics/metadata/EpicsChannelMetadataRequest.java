@@ -26,8 +26,9 @@ public class EpicsChannelMetadataRequest
 /*- Constructor --------------------------------------------------------------*/
 
    /**
+    * Creates a new instance to request the metadata for the specified Wica channel.
     *
-    * @param wicaChannel
+    * @param wicaChannel the channel.
     */
    public EpicsChannelMetadataRequest( WicaChannel wicaChannel )
    {
@@ -35,9 +36,11 @@ public class EpicsChannelMetadataRequest
    }
 
    /**
+    * Creates a new instance which requests the metadata for the specified EPICS
+    * channel name and publication on the specified Wica Channel.
     *
-    * @param epicsChannelName
-    * @param publicationChannel
+    * @param epicsChannelName the EPICS channel name.
+    * @param publicationChannel the channel
     */
    public EpicsChannelMetadataRequest( EpicsChannelName epicsChannelName, WicaChannel publicationChannel )
    {

@@ -27,8 +27,9 @@ public class EpicsChannelMonitorRequest
 /*- Constructor --------------------------------------------------------------*/
 
    /**
+    * Creates a new instance to request the monitoring of the specified Wica channel.
     *
-    * @param wicaChannel
+    * @param wicaChannel the channel.
     */
    public EpicsChannelMonitorRequest( WicaChannel wicaChannel )
    {
@@ -36,9 +37,11 @@ public class EpicsChannelMonitorRequest
    }
 
    /**
+    * Creates a new instance which requests the monitoring of the specified EPICS
+    * channel name and publication on the specified Wica Channel.
     *
-    * @param epicsChannelName
-    * @param publicationChannel
+    * @param epicsChannelName the EPICS channel name.
+    * @param publicationChannel the channel.
     */
    EpicsChannelMonitorRequest( EpicsChannelName epicsChannelName, WicaChannel publicationChannel )
    {
@@ -55,8 +58,9 @@ public class EpicsChannelMonitorRequest
    }
 
    /**
+    * Returns the EPICS channel name associated with this request.
     *
-    * @return
+    * @return the channel name.
     */
    public EpicsChannelName getEpicsChannelName()
    {
@@ -64,8 +68,9 @@ public class EpicsChannelMonitorRequest
    }
 
    /**
+    * Returns the Wica channel associated with this request.
     *
-    * @return
+    * @return the Wica channel.
     */
    public WicaChannel getPublicationChannel()
    {
@@ -120,7 +125,7 @@ public class EpicsChannelMonitorRequest
 
 
 
-   /*- Private methods ----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }

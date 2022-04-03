@@ -34,8 +34,9 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
 /*- Constructor --------------------------------------------------------------*/
 
    /**
+    * Creates a new EPICS channel monitoring statistics collector.
     *
-    * @param requestList
+    * @param requestList initial list of monitor requests.
     */
    public EpicsChannelMonitorStatistics( List<EpicsChannelMonitorRequest> requestList )
    {
@@ -46,8 +47,9 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
 /*- Public methods -----------------------------------------------------------*/
 
    /**
+    * Returns the statistics object associated with EPICS channel monitoring.
     *
-    * @return
+    * @return the result.
     */
    @Override
    public Statistics get()
@@ -61,6 +63,9 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
                                       new StatisticsItem( "- Monitors: Total Updates", getMonitorUpdateCount() ) ) );
    }
 
+   /*
+    * Resets the EPICS channel monitoring statistics.
+    */
    @Override
    public void reset()
    {
@@ -80,8 +85,9 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
    }
 
    /**
+    * Returns the count of received EPICS channel monitor start requests.
     *
-    * @return
+    * @return the result.
     */
    public String getStartRequests()
    {
@@ -89,8 +95,9 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
    }
 
    /**
+    * Returns the count of received EPICS channel monitor stop requests.
     *
-    * @return
+    * @return the result.
     */
    public String getStopRequests()
    {
@@ -98,8 +105,9 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
    }
 
    /**
+    * Returns the count of EPICS channel monitors that are currently active.
     *
-    * @return
+    * @return the result.
     */
    public String getActiveRequests()
    {
@@ -107,8 +115,9 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
    }
 
    /**
+    * Returns the count of connected EPICS channels.
     *
-    * @return
+    * @return the result.
     */
    public String getChannelConnectCount()
    {
@@ -116,8 +125,9 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
    }
 
    /**
+    * Returns the count of disconnected EPICS channels.
     *
-    * @return
+    * @return the result.
     */
    public String getChannelDisconnectCount()
    {
@@ -125,8 +135,8 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
    }
 
    /**
-    *
-    * @return
+    * Returns the count of received EPICS monitor updates.
+    * @return the result.
     */
    public String getMonitorUpdateCount()
    {

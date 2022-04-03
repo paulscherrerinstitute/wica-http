@@ -47,8 +47,8 @@ public class EpicsChannelMonitorRequesterService
 /*- Public methods -----------------------------------------------------------*/
 
    /**
-    *
-    * @param event
+    * Handles requests to start monitoring the specified Wica channel.
+    * @param event contains the channel to start monitoring.
     */
    @EventListener
    public void handleWicaChannelStartMonitoringEvent( WicaChannelStartMonitoringEvent event )
@@ -71,8 +71,8 @@ public class EpicsChannelMonitorRequesterService
    }
 
    /**
-    *
-    * @param event
+    * Handles requests to stop monitoring the specified Wica channel.
+    * @param event contains the channel to stop monitoring.
     */
    @EventListener
    public void handleWicaChannelStopMonitoringEvent( WicaChannelStopMonitoringEvent event )
