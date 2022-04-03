@@ -250,16 +250,21 @@ Issues Addressed:
 
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
 
-* [1.11.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.10.2) Released 2022-04-03
+* [1.11.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.11.0) Released 2022-04-03
 
-This release brings the wica-http server up-to-date to follow the latest evolutions in Spring Boot
-and Java.  The release does not add any functional changes.
+This release brings the wica-http server up-to-date to following evolutions in Spring Boot
+and Java. The release does not add any functional changes.
+
+Despite having wica built Wica for Java 17 it was eventually decided to retain Java 11
+support for a while longer since PSI's Java systems are still running by default on Java 8.
+However, the JVM bundled into the docker release has been updated to Java 17.
 
 Main changes are as follows:
 - Travis build system is retired and replaced with GitHub Actions.
-- Java docker build to Java version 17 but reained language support at Java 11 level.
+- The Java docker build was migrated to Java version 17 but the fatJar continues to be targeted for Java 11 JVM's.
 - Spring Boot updated to 2.6.6
 - Updated bundled EPICS in docker container to 7.0.6.1
+- Updated bundled Wica-JS to 1.5.4
 
 Issues Addressed:
 
@@ -276,4 +281,4 @@ Issues Addressed:
 * [Issue #88](https://github.com/paulscherrerinstitute/wica-http/issues/88) Add Example Screenshots
 * [Issue #89](https://github.com/paulscherrerinstitute/wica-http/issues/89) Bundle Wica-JS 1.5.4
 
-IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 14
+IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
