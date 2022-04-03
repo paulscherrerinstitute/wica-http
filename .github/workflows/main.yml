@@ -68,19 +68,18 @@ jobs:
           release_name: ${{ github.ref }}
           body: |
             See the CHANGELOG.md file for the changes in this Release
-          draft: false
+          draft: false§
           prerelease: false
 
-        # Doesn't yet work properly (tied to 1.10.2-SNAPSHOT release). Need to support wildcards.
-        - name: Upload Wica-Http ZIP File to Release Assets Area
-          id: upload-release-asset
-          uses: csexton/release-asset-action@v2
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          with:
-            pattern: "target/*.jar"
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            release-url: ${{ steps.create_release.outputs.upload_url }}
+      - name: Upload Wica-Http ZIP File to Release Assets Area
+        id: upload-release-asset
+        uses: csexton/release-asset-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          pattern: "target/*.jar"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          release-url: ${{ steps.create_release.outputs.upload_url }}
 #
 #            upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
 #            asset_path: target
