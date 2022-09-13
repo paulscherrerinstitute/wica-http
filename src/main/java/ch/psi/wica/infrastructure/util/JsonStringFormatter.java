@@ -15,6 +15,9 @@ import java.io.IOException;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Provides a utility class for nicely formatting a JSON string.
+ */
 @Immutable
 public class JsonStringFormatter
 {
@@ -24,8 +27,14 @@ public class JsonStringFormatter
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 /*- Class methods ------------------------------------------------------------*/
-/*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Formats the supplied input string in a pretty way.
+    *
+    * @param jsonInput the input string.
+    * @return the formatted result
+    * @throws RuntimeException if something goes wrong.
+    */
    public static String prettyFormat( String jsonInput ) throws RuntimeException
    {
       try
@@ -45,6 +54,7 @@ public class JsonStringFormatter
       }
    }
 
+/*- Public methods -----------------------------------------------------------*/
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
