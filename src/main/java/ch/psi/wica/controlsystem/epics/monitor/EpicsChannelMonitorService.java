@@ -70,11 +70,11 @@ public class EpicsChannelMonitorService
    /**
     * Starts monitoring the EPICS control system channel according to the
     * parameters in the supplied request object.
-    *
+    * <p>
     * The creation of the underlying EPICS monitor is performed asynchronously
     * so the invocation of this method does NOT incur the cost of a network
     * round trip.
-    *
+    * <p>
     * The EPICS channel may or may not be online when this method is invoked.
     * The connection-state-change event will be published when the connection to
     * the remote IOC is eventually established. Subsequently, the value-change
@@ -146,6 +146,9 @@ public class EpicsChannelMonitorService
       logger.info("'{}' - monitor stopped ok.", requestObject );
    }
 
+   /**
+    * Closes the service.
+    */
    public void close()
    {
       // Set a flag to prevent further usage

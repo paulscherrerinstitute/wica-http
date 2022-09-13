@@ -57,6 +57,11 @@ public class EpicsChannelPollerService
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Returns the statistics associated with this service.
+    *
+    * @return the statistics.
+    */
    public EpicsChannelPollerStatistics getStatistics()
    {
       return epicsChannelPollerPublisher.getStatistics();
@@ -65,11 +70,11 @@ public class EpicsChannelPollerService
    /**
     * Starts polling the EPICS control system channel according to the
     * parameters in the supplied request object.
-    *
+    * <p>
     * The creation of the underlying EPICS poller is performed asynchronously
     * so the invocation of this method does NOT incur the cost of a network
     * round trip.
-    *
+    * <p>
     * The EPICS channel may or may not be online when this method is invoked.
     * The connection-state-change event will be published when the connection to
     * the remote IOC is eventually established. Subsequently, the value-change
@@ -107,8 +112,7 @@ public class EpicsChannelPollerService
    }
 
    /**
-    * Stops polling the EPICS control system channel specified by the supplied request
-    * object.
+    * Stops polling the EPICS control system channel specified by the supplied request object.
     *
     * @param requestObject the request specification object.
     * @throws NullPointerException if the 'requestObject' argument was null.
@@ -142,6 +146,9 @@ public class EpicsChannelPollerService
       logger.info( "'{}' - poller stopped ok.", requestObject );
    }
 
+   /**
+    * Closes the service.
+    */
    public void close()
    {
       // Set a flag to prevent further usage

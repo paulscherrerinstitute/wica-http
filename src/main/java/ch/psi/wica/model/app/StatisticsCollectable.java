@@ -9,6 +9,9 @@ import java.util.List;
 
 /*- Interface Declaration ----------------------------------------------------*/
 
+/**
+ * Provides a mechanism for collecting the statistics associated with various aspects of the Wica server.
+ */
 public interface StatisticsCollectable
 {
 
