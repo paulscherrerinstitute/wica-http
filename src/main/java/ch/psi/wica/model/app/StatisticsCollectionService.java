@@ -6,9 +6,7 @@ package ch.psi.wica.model.app;
 
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -35,9 +33,7 @@ public class StatisticsCollectionService
 
    public List<StatisticsCollectable.Statistics> collect()
    {
-      return collectables.stream()
-                         .map( StatisticsCollectable::get )
-                         .collect( Collectors.toUnmodifiableList() );
+      return collectables.stream().map( StatisticsCollectable::get ).toList();
    }
 
    public void resetStatistics()
