@@ -37,10 +37,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     apt-get install -y libreadline-dev &&  \
     rm -rf /var/lib/apt/lists/* /tmp/*
 
-RUN wget https://epics-controls.org/download/base/base-7.0.6.1.tar.gz && \
-    tar xvf base-7.0.6.1.tar.gz
+RUN wget https://epics-controls.org/download/base/base-7.0.7.tar.gz && \
+    tar xvf base-7.0.7.tar.gz
 
-RUN cd base-7.0.6.1 ; make
+RUN cd base-7.0.7 ; make
 
 
 ###############################################################################
