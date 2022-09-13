@@ -181,7 +181,7 @@ public class EpicsChannelPollerPublisher
       final var epicsChannelName = event.getEpicsChannelName();
       logger.info( "'{}' - channel connected.", epicsChannelName );
       this.statisticsCollector.incrementChannelConnectCount();
-      final Channel<Object> caChannel = event.getCaChannel();
+      final Channel<Object> caChannel = event.caChannel();
       channelMap.put( epicsChannelName, caChannel );
       this.enableAllPollersForEpicsChannel( epicsChannelName, caChannel );
    }

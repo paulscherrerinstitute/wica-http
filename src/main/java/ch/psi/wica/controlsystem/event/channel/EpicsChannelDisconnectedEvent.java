@@ -9,17 +9,13 @@ import org.epics.ca.Channel;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
-/*- Class Declaration --------------------------------------------------------*/
+/*- Record Declaration -------------------------------------------------------*/
 
-public class EpicsChannelDisconnectedEvent
+public record EpicsChannelDisconnectedEvent( String scope, Channel<Object> caChannel )
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
-
-   private final String scope;
-   private final Channel<Object> caChannel;
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
@@ -32,19 +28,10 @@ public class EpicsChannelDisconnectedEvent
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   public String getScope()
-   {
-      return scope;
-   }
-
-   public Channel<Object> getCaChannel()
-   {
-      return caChannel;
-   }
-
    public EpicsChannelName getEpicsChannelName()
    {
-      return EpicsChannelName.of( getCaChannel().getName() );
+      //noinspection resource
+      return EpicsChannelName.of( caChannel().getName() );
    }
 
 /*- Private methods ----------------------------------------------------------*/

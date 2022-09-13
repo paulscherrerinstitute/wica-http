@@ -178,7 +178,7 @@ public class EpicsChannelMonitorPublisher
       this.statisticsCollector.incrementChannelConnectCount();
 
       logger.info( "'{}' - subscribing to channel...", epicsChannelName );
-      epicsChannelMonitorSubscriber.subscribe( event.getCaChannel(), ( wicaChannelValue) -> {
+      epicsChannelMonitorSubscriber.subscribe( event.caChannel(), (wicaChannelValue) -> {
          lastValueMap.put( epicsChannelName, wicaChannelValue );
          publishMonitorValueUpdate( epicsChannelName, wicaChannelValue );
       } );
@@ -191,7 +191,8 @@ public class EpicsChannelMonitorPublisher
    @EventListener( condition = "#event.scope == 'monitored'" )
    public void handleChannelDisconnectedEvent( EpicsChannelDisconnectedEvent event )
    {
-      final var epicsChannelName = EpicsChannelName.of( event.getCaChannel().getName() );
+      //noinspection resource
+      final var epicsChannelName = EpicsChannelName.of( event.caChannel().getName() );
       logger.info( "'{}' - channel disconnected.", epicsChannelName );
 
       this.statisticsCollector.incrementChannelDisconnectCount();

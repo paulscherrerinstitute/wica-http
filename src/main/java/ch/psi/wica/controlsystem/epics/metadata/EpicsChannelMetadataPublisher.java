@@ -132,7 +132,7 @@ public class EpicsChannelMetadataPublisher
       this.statisticsCollector.incrementChannelConnectCount();
 
       logger.info( "'{}' - getting channel metadata...", epicsChannelName );
-      final WicaChannelMetadata wicaChannelMetadata = epicsChannelMetadataGetter.get( event.getCaChannel() );
+      final WicaChannelMetadata wicaChannelMetadata = epicsChannelMetadataGetter.get( event.caChannel() );
       lastMetadataMap.put( epicsChannelName, wicaChannelMetadata );
       logger.info( "'{}' - channel metadata obtained ok.", epicsChannelName );
 
