@@ -116,7 +116,8 @@ RUN mkdir log config lib
 
 # Populate the application directories as appropriate
 COPY --from=MAVEN_TOOL_CHAIN /tmp/target/wica-http-*.jar lib/jarfile.jar
-COPY ./src/main/resources/config/keystore.jks config
+COPY ./src/main/resources/config/cert-file.pem config
+COPY ./src/main/resources/config/key-file.key config
 COPY ./src/main/resources/config/logback_config.xml config
 COPY ./docker/application-docker-https-run.properties config
 
