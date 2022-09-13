@@ -14,6 +14,10 @@ import java.util.Properties;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Supplies an EPICS Channel Access context based on the configured application
+ * properties.
+ */
 @Component
 public class EpicsChannelAccessContextSupplier
 {
