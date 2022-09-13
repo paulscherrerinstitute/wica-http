@@ -59,9 +59,12 @@ jobs:
           folder: target/site/apidocs
           # The folder the action should deploy.
 
-      - name: Get the version
+      - name: Get version from pom.xml
         id: get_version
-        uses: battila7/get-version-action@v2.2.1
+        uses: mavrosxristoforos/get-xml-info@1.0
+        with:
+          xml-file: 'pom.xml'
+          xpath: //*[local-name()='project']/*[local-name()='version']
 
       - name: Create Release
         id: create_release
@@ -69,8 +72,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: ${{ steps.get_version.outputs.version }}
+          tag_name: ${{ steps.get_version.outputs.info }}
+          release_name: ${{ steps.get_version.outputs.info }}
           body: |
             See the CHANGELOG.md file for the changes in this Release
           draft: false§
@@ -103,7 +106,7 @@ jobs:
           context: ./
           file: ./docker/Dockerfile.https
           push: true
-          tags: paulscherrerinstitute/wica-http:${{ steps.get_version.outputs.version }}
+          tags: paulscherrerinstitute/wica-http:${{ steps.get_version.outputs.info }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
