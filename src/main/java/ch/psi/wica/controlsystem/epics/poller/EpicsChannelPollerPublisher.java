@@ -151,7 +151,7 @@ public class EpicsChannelPollerPublisher
    }
 
    /**
-    * Closes this EPICS channel poller.
+    * Closes the service.
     */
    public void close()
    {
@@ -289,8 +289,8 @@ public class EpicsChannelPollerPublisher
       }
 
       /**
-       *
        * Starts polling the specified channel.
+       *
        * @param caChannel the channel.
        */
       void start( Channel<Object> caChannel )
