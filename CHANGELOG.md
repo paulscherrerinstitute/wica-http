@@ -282,3 +282,28 @@ Issues Addressed:
 * [Issue #89](https://github.com/paulscherrerinstitute/wica-http/issues/89) Bundle Wica-JS 1.5.4
 
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
+
+
+* [1.12.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.11.0) Released 2022-09-14
+This release brings the wica-http server up-to-date to following evolutions in Spring Boot and Java. 
+The release does not add any functional changes.
+The source code starts to make use of Java 17 features such as records and new switch.
+
+Main changes are as follows:
+- The fatJar has been updated to target the Java 17 JVM which has long term support.
+- Spring Boot updated to 2.7.3
+- Updated bundled EPICS in docker container to 7.0.7.
+
+Issues Addressed:
+* [Issue #90](https://github.com/paulscherrerinstitute/wica-http/issues/90) Add support for direct use of PEM-encoded web certificate and private key. Retire use of Java KeyStore.
+* [Issue #91](https://github.com/paulscherrerinstitute/wica-http/issues/91) Make miscellaneous small improvements.
+* [Issue #92](https://github.com/paulscherrerinstitute/wica-http/issues/92) Now bundles EPICS base 7.0.7.
+* [Issue #93](https://github.com/paulscherrerinstitute/wica-http/issues/93) Upgrade Spring Boot to latest 2.7.3
+* [Issue #94](https://github.com/paulscherrerinstitute/wica-http/issues/94) Update Java run time to version 17.
+* [Issue #95](https://github.com/paulscherrerinstitute/wica-http/issues/95) Improve Javadoc.
+* [Issue #96](https://github.com/paulscherrerinstitute/wica-http/issues/96) Leverage of Java 17 features (records and new switch construct).
+* [Issue #97](https://github.com/paulscherrerinstitute/wica-http/issues/97) Update project dependencies to later versions.
+* [Issue #98](https://github.com/paulscherrerinstitute/wica-http/issues/98) Update GitHub Action workflow.
+* [Issue #99](https://github.com/paulscherrerinstitute/wica-http/issues/99) Create release 1.12.0
+* 
+IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
