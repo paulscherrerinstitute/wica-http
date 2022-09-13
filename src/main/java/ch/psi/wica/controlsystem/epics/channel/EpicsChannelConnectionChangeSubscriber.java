@@ -52,13 +52,13 @@ public class EpicsChannelConnectionChangeSubscriber
 
    /**
     * Registers a handler which will publish connection changed events.
-    *
+    * <p>
     * This method operates synchronously but does NOT involve a network
     * round trip.
-    *
+    * <p>
     * The supplied will be called back from MULTIPLE threads derived
     * from an internal thread pool.
-    *
+    * <p>
     * Precondition: the supplied channel should never previously have
     *     been connected.
     * Postcondition: the state of the channel will remain unaffected.
@@ -68,8 +68,7 @@ public class EpicsChannelConnectionChangeSubscriber
     *
     * @throws NullPointerException if the channel argument was null.
     * @throws NullPointerException if the connectionChangeHandler argument was null.
-    * @throws IllegalStateException if the channel was in an unexpected state on
-    *    entry or exit.
+    * @throws IllegalStateException if the channel was in an unexpected state on entry or exit.
     */
    public void subscribe( Channel<Object> channel, Consumer<Boolean> connectionChangeHandler )
    {
@@ -110,6 +109,9 @@ public class EpicsChannelConnectionChangeSubscriber
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
+   /**
+    * Handles notification of EPICS channel connection state changes.
+    */
    @Component
    static class EpicsChannelConnectionStateChangeNotifier
    {
@@ -124,6 +126,9 @@ public class EpicsChannelConnectionChangeSubscriber
       }
    }
 
+   /**
+    * Provides a dedicated task executor for the EPICS channel connection change notifier.
+    */
    @Configuration
    @EnableAsync
    static class TaskExecutorConfigurer
