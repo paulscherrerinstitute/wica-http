@@ -58,10 +58,10 @@ class EpicsChannelMonitorSubscriber
     * Establishes a monitor on the supplied EPICS channel and registers a
     * handler which should subsequently be informed when the channel value
     * changes.
-    *
+    * <p>
     * This method operates synchronously and incurs the cost of a network
     * round trip to establish the monitor on the remote data source.
-    *
+    * <p>
     * Precondition: the channel should have been connected at least once.
     * Postcondition: the state of the channel will remain unaffected.
     *
