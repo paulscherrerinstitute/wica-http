@@ -59,7 +59,7 @@ public class EpicsChannelMetadataService
    /**
     * Starts acquiring metadata for the EPICS control system channel specified
     * by the supplied request object.
-    *
+    * <p>
     * The EPICS channel may or may not be online when this method is invoked.
     * The connection-state-change event will be published when the connection to
     * the remote IOC is eventually established. Subsequently, the value-change
@@ -125,6 +125,9 @@ public class EpicsChannelMetadataService
       logger.info("'{}' - monitor stopped ok.", requestObject );
    }
 
+   /**
+    * Closes the service.
+    */
    public void close()
    {
       // Set a flag to prevent further usage
