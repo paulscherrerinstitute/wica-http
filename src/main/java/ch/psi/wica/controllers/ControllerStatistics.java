@@ -12,12 +12,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+
+/**
+ * Provides statistics related to the Wica Controllers.
+ */
 @ThreadSafe
 public class ControllerStatistics implements StatisticsCollectable
 {
@@ -36,6 +38,11 @@ public class ControllerStatistics implements StatisticsCollectable
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Creates a new instance with the specified header.
+    *
+    * @param statisticsHeader the header.
+    */
    public ControllerStatistics( String statisticsHeader )
    {
       this.statisticsHeader = statisticsHeader;
@@ -66,18 +73,35 @@ public class ControllerStatistics implements StatisticsCollectable
 
 /*- Package-access methods ---------------------------------------------------*/
 
+   /**
+    * Increments the count of requests.
+    */
    void incrementRequests()
    {
       requests.incrementAndGet();
    }
+
+   /**
+    * Increments the count of replies.
+    */
    void incrementReplies()
    {
       replies.incrementAndGet();
    }
+
+   /**
+    * Increments the count of errors.
+    */
    void incrementErrors()
    {
       errors.incrementAndGet();
    }
+
+   /**
+    * Adds the supplied client IP to the list of collected IPs.
+    *
+    * @param clientIpAddr the IP to add.
+    */
    void addClientIpAddr( String clientIpAddr )
    {
       clientIpAddrList.add(clientIpAddr );
@@ -103,9 +127,8 @@ public class ControllerStatistics implements StatisticsCollectable
    private String getClientIpAddrList()
    {
       final List<String> clients = clientIpAddrList.stream()
-            .map( this::getFormattedHostNameFromIP )
-            .distinct()
-            .collect( Collectors.toList() );
+              .map( this::getFormattedHostNameFromIP)
+              .distinct().toList();
 
       return clients.toString();
    }

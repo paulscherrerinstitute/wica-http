@@ -16,6 +16,9 @@ import java.util.*;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Provides the statistics directly associated with the server.
+ */
 @ThreadSafe
 public class ServerStatistics implements StatisticsCollectable
 {
@@ -30,6 +33,9 @@ public class ServerStatistics implements StatisticsCollectable
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Creates a new instance.
+    */
    public ServerStatistics()
    {
       this.serverStartTime = LocalDateTime.now();
@@ -62,14 +68,31 @@ public class ServerStatistics implements StatisticsCollectable
 
 /*- Package-level methods ----------------------------------------------------*/
 
+   /**
+    * Returns a string representation of the current time and date.
+    *
+    * @return the result.
+    */
    String getTimeAndDateNow()
 {
    return LocalDateTime.now().format( FORMATTER );
 }
+
+   /**
+    * Returns a string representation of the server start time.
+    *
+    * @return the result.
+    */
    String getServerStartTime()
    {
       return serverStartTime.format( FORMATTER );
    }
+
+   /**
+    * Returns a string representation of the elapsed time since the server started.
+    *
+    * @return the result.
+    */
    long getUpTimeInSeconds()
    {
       return Duration.between( serverStartTime , LocalDateTime.now() ).getSeconds();
