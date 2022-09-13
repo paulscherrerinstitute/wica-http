@@ -49,25 +49,12 @@ public class EpicsChannelAccessContextSupplier
 
    public Context getContextForScope( String scope )
    {
-      final Context context;
-      switch ( scope )
-      {
-         case "monitored":
-            context = getContextForMonitoredChannelScope();
-            break;
-
-         case "polled":
-            context = getContextForPolledChannelScope();
-            break;
-
-         case "io":
-            context = getContextForIoChannelScope();
-            break;
-
-         default:
-            throw new UnsupportedOperationException( "The context scope was not recognised." );
-      }
-      return context;
+      return switch (scope) {
+         case "monitored" -> getContextForMonitoredChannelScope();
+         case "polled" -> getContextForPolledChannelScope();
+         case "io" -> getContextForIoChannelScope();
+         default -> throw new UnsupportedOperationException("The context scope was not recognised.");
+      };
    }
 
 /*- Private methods ----------------------------------------------------------*/
