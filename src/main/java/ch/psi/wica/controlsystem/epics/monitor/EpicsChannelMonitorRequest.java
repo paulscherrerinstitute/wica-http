@@ -12,6 +12,9 @@ import org.apache.commons.lang3.Validate;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Value object providing the specification for monitoring an EPICS channel.
+ */
 @Immutable
 public class EpicsChannelMonitorRequest
 {
@@ -52,6 +55,7 @@ public class EpicsChannelMonitorRequest
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   @SuppressWarnings( "unused")
    public EpicsChannelMetadataRequest getAsMetadataRequest()
    {
       return new EpicsChannelMetadataRequest( this.epicsChannelName, this.publicationChannel );

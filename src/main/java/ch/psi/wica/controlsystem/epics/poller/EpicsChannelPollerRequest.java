@@ -12,6 +12,9 @@ import org.apache.commons.lang3.Validate;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Value object providing the specification for polling an EPICS channel.
+ */
 @Immutable
 public class EpicsChannelPollerRequest
 {
@@ -27,36 +30,65 @@ public class EpicsChannelPollerRequest
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Creates a new instance which will poll the EPICS channel using the properties associated
+    * with the supplied Wica Channel.
+    *
+    * @param wicaChannel the channel to poll.
+    */
    public EpicsChannelPollerRequest( WicaChannel wicaChannel )
    {
       this( EpicsChannelName.of( Validate.notNull( wicaChannel.getName().getControlSystemName() ) ), wicaChannel.getProperties().getPollingIntervalInMillis(), wicaChannel );
    }
 
-   EpicsChannelPollerRequest( EpicsChannelName epicsChannelName, int pollingIntervalInMillis, WicaChannel publicationChannel )
+   /**
+    * Creates a new instance that will poll the specified EPICS channel at the specified rate and publish the
+    * obtained values on the specified Wica Channel.
+    *
+    * @param epicsChannelName the name of the EPICS channel to be polled.
+    * @param pollingIntervalInMillis the polling interval.
+    * @param wicaChannel the Wica channel on which publication will take place.
+    */
+   EpicsChannelPollerRequest( EpicsChannelName epicsChannelName, int pollingIntervalInMillis, WicaChannel wicaChannel )
    {
       this.epicsChannelName = Validate.notNull( epicsChannelName );
       this.pollingInterval = pollingIntervalInMillis;
-      this.publicationChannel = Validate.notNull( publicationChannel );
+      this.publicationChannel = Validate.notNull( wicaChannel );
    }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   @SuppressWarnings( "unused" )
    public EpicsChannelMetadataRequest getAsMetadataRequest()
    {
       return new EpicsChannelMetadataRequest( this.epicsChannelName, this.publicationChannel );
    }
 
+   /**
+    * Returns the channel name.
+    *
+    * @return the name.
+    */
    public EpicsChannelName getEpicsChannelName()
    {
       return epicsChannelName;
    }
 
+   /** Returns the polling interval.
+    *
+    * @return the polling interval
+    */
    public int getPollingInterval()
    {
       return pollingInterval;
    }
 
+   /**
+    * Returns the Wica publication channel.
+    *
+    * @return the publication channel.
+    */
    public WicaChannel getPublicationChannel()
    {
       return publicationChannel;
@@ -115,8 +147,7 @@ public class EpicsChannelPollerRequest
    }
 
 
-
-   /*- Private methods ----------------------------------------------------------*/
+/*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
 }
