@@ -26,8 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * A service which establishes EPICS CA channels on user-specified channels of
  * interest, subsequently publishing changes in the channel's connection state
  * to interested consumers within the application.
- *
- * @implNote.
+ * <p>
+ * {@code @implNote.}
  * The current implementation uses PSI's CA EPICS client library to create a
  * single shared EPICS CA Context per class instance. The EPICS CA context and
  * all associated resources are disposed of when the service instance is closed.
@@ -159,7 +159,7 @@ public abstract class EpicsChannelManager implements AutoCloseable
    /**
     * Creates a new EPICS channel and starts publishing events describing
     * the channel's evolving connection state.
-    *
+    * <p>
     * The EPICS channel may or may not be online when this method is invoked.
     * The connection-state-change event will be published when the connection to
     * the remote IOC is eventually established. Subsequently, the value-change
@@ -198,7 +198,7 @@ public abstract class EpicsChannelManager implements AutoCloseable
          caChannel.connectAsync().thenRunAsync( () -> {
             // Note the CA current (1.2.2) implementation of the CA library calls back
             // this code block using MULTIPLE threads taken from the so-called LeaderFollowersThreadPool.
-            // By default this pool is configured for FIVE threads but where necessary this can be
+            // By default, this pool is configured for FIVE threads but where necessary this can be
             // increased by setting the system property shown below:
             // System.setProperty( "LeaderFollowersThreadPool.thread_pool_size", "50" );
             logger.debug("'{}' - asynchronous connect completed. Waiting for channel to come online.", epicsChannelName );
