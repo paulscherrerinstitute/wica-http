@@ -10,11 +10,11 @@ import org.apache.commons.lang3.Validate;
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Represents the type of an EPICS Channel. This can potentially change every
+ * Represents the type of EPICS Channel. This can potentially change every
  * time new channel metadata is received.
- *
- * @implNote.
- * The support here is premised on the use of Wica with the PSI CA channel
+ * <p>
+ * {@code @implNote.}
+ * The support here is based on the use of Wica with the PSI CA channel
  * access client library.
  */
 public enum EpicsChannelType
@@ -22,17 +22,64 @@ public enum EpicsChannelType
 
 /*- Public attributes --------------------------------------------------------*/
 
-   STRING        ( WicaChannelType.STRING ),
-   BYTE          ( WicaChannelType.INTEGER ),
-   SHORT         ( WicaChannelType.INTEGER ),
-   INTEGER       ( WicaChannelType.INTEGER ),
-   FLOAT         ( WicaChannelType.REAL ),
-   DOUBLE        ( WicaChannelType.REAL ),
-   STRING_ARRAY  ( WicaChannelType.STRING_ARRAY),
-   BYTE_ARRAY    ( WicaChannelType.INTEGER_ARRAY ),
-   SHORT_ARRAY   ( WicaChannelType.INTEGER_ARRAY ),
+   /**
+    * Maps the EPICS STRING type to/from the Wica Channel Type STRING.
+    */
+   STRING ( WicaChannelType.STRING ),
+
+   /**
+    * Maps the EPICS BYTE type to/from the Wica Channel Type INTEGER.
+    */
+   BYTE ( WicaChannelType.INTEGER ),
+
+   /**
+    * Maps the EPICS SHORT type to/from the Wica Channel Type INTEGER.
+    */
+   SHORT ( WicaChannelType.INTEGER ),
+
+   /**
+    * Maps the EPICS INTEGER type to/from the Wica Channel Type INTEGER.
+    */
+   INTEGER ( WicaChannelType.INTEGER ),
+
+   /**
+    * Maps the EPICS FLOAT type to/from the Wica Channel Type REAL.
+    */
+   FLOAT ( WicaChannelType.REAL ),
+
+   /**
+    * Maps the EPICS DOUBLE type to/from the Wica Channel Type REAL.
+    */
+   DOUBLE ( WicaChannelType.REAL ),
+
+   /**
+    * Maps the EPICS STRING ARRAY type to/from the Wica Channel Type STRING_ARRAY.
+    */
+   STRING_ARRAY ( WicaChannelType.STRING_ARRAY),
+
+   /**
+    * Maps the EPICS BYTE ARRAY type to/from the Wica Channel Type INTEGER_ARRAY.
+    */
+   BYTE_ARRAY ( WicaChannelType.INTEGER_ARRAY ),
+
+   /**
+    * Maps the EPICS SHORT ARRAY type to/from the Wica Channel Type INTEGER_ARRAY.
+    */
+   SHORT_ARRAY ( WicaChannelType.INTEGER_ARRAY ),
+
+   /**
+    * Maps the EPICS INTEGER ARRAY type to/from the Wica Channel Type INTEGER_ARRAY.
+    */
    INTEGER_ARRAY ( WicaChannelType.INTEGER_ARRAY ),
-   FLOAT_ARRAY   ( WicaChannelType.REAL_ARRAY),
+
+   /**
+    * Maps the EPICS FLOAT ARRAY type to/from the Wica Channel Type REAL_ARRAY.
+    */
+   FLOAT_ARRAY ( WicaChannelType.REAL_ARRAY),
+
+   /**
+    * Maps the EPICS DOUBLE ARRAY type to/from the Wica Channel Type REAL_ARRAY.
+    */
    DOUBLE_ARRAY  ( WicaChannelType.REAL_ARRAY);
 
 /*- Private attributes -------------------------------------------------------*/
@@ -42,6 +89,11 @@ public enum EpicsChannelType
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Creates a new instance.
+    *
+    * @param wicaChannelType the wica channel type.
+    */
    EpicsChannelType( WicaChannelType wicaChannelType )
    {
       this.wicaChannelType = wicaChannelType;
@@ -71,9 +123,9 @@ public enum EpicsChannelType
    /**
     * Attempts to map the supplied Plain-Old-Java-Object (POJO) onto a
     * Epics Channel Type.
-    *
+    * <p>
     * Attempts to decode an unrecognised type will result in an exception.
-    *
+    * <p>
     * @param pojo the object (which should be recognised and not null)
     *
     * @return the Epics Channel Type.
@@ -141,6 +193,7 @@ public enum EpicsChannelType
 
 /*- Public methods -----------------------------------------------------------*/
 
+   @SuppressWarnings("unused")
    public WicaChannelType getWicaChannelType()
    {
       return this.wicaChannelType;
