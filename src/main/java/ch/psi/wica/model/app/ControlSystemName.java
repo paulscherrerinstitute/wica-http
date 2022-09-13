@@ -11,6 +11,9 @@ import java.util.Objects;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Models the name of a point of interest in a control system.
+ */
 @Immutable
 public class ControlSystemName
 {
@@ -23,22 +26,33 @@ public class ControlSystemName
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Creates a new instance.
+    *
+    * @param name the name.
+    */
    protected ControlSystemName( String name )
    {
       this.name = Validate.notBlank( name );
    }
 
 /*- Class methods ------------------------------------------------------------*/
-/*- Public methods -----------------------------------------------------------*/
-
-   public String asString()
-   {
-      return name;
-   }
 
    public static ControlSystemName of( String name )
    {
       return new ControlSystemName( name );
+   }
+
+/*- Public methods -----------------------------------------------------------*/
+
+   /**
+    * Returns a string representation of the name.
+    *
+    * @return the name.
+    */
+   public String asString()
+   {
+      return name;
    }
 
    @Override
