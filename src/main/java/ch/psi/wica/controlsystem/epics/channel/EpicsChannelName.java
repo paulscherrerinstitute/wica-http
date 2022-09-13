@@ -8,6 +8,9 @@ import ch.psi.wica.model.app.ControlSystemName;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Provides the EPICS-specific implementation of a control system name.
+ */
 public class EpicsChannelName extends ControlSystemName
 {
 
@@ -16,6 +19,11 @@ public class EpicsChannelName extends ControlSystemName
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Creates a new instance.
+    *
+    * @param channelName the name.
+    */
    EpicsChannelName( String channelName )
    {
       super( channelName );
