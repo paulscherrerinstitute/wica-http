@@ -39,6 +39,11 @@ public class EpicsChannelPollerRequestService
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Creates a new instance.
+    *
+    * @param epicsChannelPollerService the polling service.
+    */
    EpicsChannelPollerRequestService( @Autowired EpicsChannelPollerService epicsChannelPollerService )
    {
       this.epicsChannelPollerService = Validate.notNull( epicsChannelPollerService );
@@ -47,6 +52,11 @@ public class EpicsChannelPollerRequestService
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Handles requests to start polling the specified Wica Channel.
+    *
+    * @param event contains the channel to start polling.
+    */
    @EventListener
    public void handleWicaChannelStartPollingEvent( WicaChannelStartPollingEvent event )
    {
@@ -76,6 +86,11 @@ public class EpicsChannelPollerRequestService
       }
    }
 
+   /**
+    * Handles requests to stop polling the specified Wica Channel.
+    *
+    * @param event contains the channel to stop polling.
+    */
    @EventListener
    public void handleWicaChannelStopPollingEvent( WicaChannelStopPollingEvent event )
    {
@@ -109,7 +124,7 @@ public class EpicsChannelPollerRequestService
    /**
     * Returns a boolean, indicating whether the protocol associated with the
     * supplied WicaChannelName is supported.
-    *
+    * <p>
     * This service supports EPICS Channel-Access (CA) protocol. For channels
     * where the protocol is not explicitly stated CA is assumed to be the
     * default.
@@ -123,7 +138,7 @@ public class EpicsChannelPollerRequestService
    }
 
    /**
-    * Starts polling the specified wica channel.
+    * Starts polling the specified Wica Channel.
     *
     * @param wicaChannel the channel to poll.
     */
@@ -146,7 +161,7 @@ public class EpicsChannelPollerRequestService
    }
 
    /**
-    * Stops polling the specified wica channel.
+    * Stops polling the specified Wica Channel.
     *
     * @param wicaChannel the channel which should no longer be polled.
     */
