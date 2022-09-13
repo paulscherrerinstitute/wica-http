@@ -10,12 +10,13 @@ import org.apache.commons.lang3.Validate;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Provides statistics related to the EPICS channel monitoring.
+ */
 @ThreadSafe
 public class EpicsChannelMonitorStatistics implements StatisticsCollectable
 {
@@ -46,11 +47,6 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   /**
-    * Returns the statistics object associated with EPICS channel monitoring.
-    *
-    * @return the result.
-    */
    @Override
    public Statistics get()
    {
@@ -63,9 +59,6 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
                                       new StatisticsItem( "- Monitors: Total Updates", getMonitorUpdateCount() ) ) );
    }
 
-   /*
-    * Resets the EPICS channel monitoring statistics.
-    */
    @Override
    public void reset()
    {
@@ -76,12 +69,16 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
       monitorUpdateCount.set( 0 );
    }
 
+   /**
+    * Returns the names of the channels being monitored.
+    *
+    * @return the list.
+    */
    public List<String> getChannelNames()
    {
       return requestList
-            .stream()
-            .map( req -> req.getPublicationChannel().getName().asString() )
-            .collect( Collectors.toUnmodifiableList() );
+              .stream()
+              .map(req -> req.getPublicationChannel().getName().asString()).toList();
    }
 
    /**
@@ -136,6 +133,7 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
 
    /**
     * Returns the count of received EPICS monitor updates.
+    *
     * @return the result.
     */
    public String getMonitorUpdateCount()
@@ -145,22 +143,41 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
 
 /*- Package-access methods ---------------------------------------------------*/
 
+   /**
+    * Increments the count of start requests.
+    */
    void incrementStartRequests()
    {
       startRequests.incrementAndGet();
    }
+
+   /**
+    * Increments the count of stop requests.
+    */
    void incrementStopRequests()
    {
       stopRequests.incrementAndGet();
    }
+
+   /**
+    * Increments the count of connected channels.
+    */
    void incrementChannelConnectCount()
    {
       channelConnectCount.incrementAndGet();
    }
+
+   /**
+    * Increments the count of disconnected channels.
+    */
    void incrementChannelDisconnectCount()
    {
       channelDisconnectCount.incrementAndGet();
    }
+
+   /**
+    * Increments the count of monitor updates.
+    */
    void incrementMonitorUpdateCount()
    {
       monitorUpdateCount.incrementAndGet();
