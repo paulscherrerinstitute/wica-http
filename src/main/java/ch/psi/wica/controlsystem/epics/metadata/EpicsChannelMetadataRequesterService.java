@@ -39,6 +39,11 @@ public class EpicsChannelMetadataRequesterService
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Creates a new instance.
+    *
+    * @param epicsChannelMetadataService the metadata service.
+    */
    EpicsChannelMetadataRequesterService( @Autowired EpicsChannelMetadataService epicsChannelMetadataService )
    {
       this.epicsChannelMetadataService = Validate.notNull( epicsChannelMetadataService );
@@ -47,6 +52,11 @@ public class EpicsChannelMetadataRequesterService
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Handles a request to start acquiring the metadata associated with a Wica Channel.
+    *
+    * @param event contains the details of the Wica Channel to start monitoring.
+    */
    @EventListener
    public void handleWicaChannelStartMetadataDataAcquisitionEvent( WicaChannelStartMetadataDataAcquisitionEvent event )
    {
@@ -67,6 +77,12 @@ public class EpicsChannelMetadataRequesterService
       }
    }
 
+
+   /**
+    * Handles a request to stop acquiring the metadata associated with a Wica Channel.
+    *
+    * @param event contains the details of the Wica Channel to start monitoring.
+    */
    @EventListener
    public void handleWicaChannelStopMetadataDataAcquisitionEvent( WicaChannelStopMetadataDataAcquisitionEvent event )
    {
@@ -92,7 +108,7 @@ public class EpicsChannelMetadataRequesterService
    /**
     * Returns a boolean, indicating whether the protocol associated with the
     * supplied WicaChannelName is supported.
-    *
+    * <p>
     * This service supports EPICS Channel-Access (CA) protocol. For channels
     * where the protocol is not explicitly stated CA is assumed to be the
     * default.
