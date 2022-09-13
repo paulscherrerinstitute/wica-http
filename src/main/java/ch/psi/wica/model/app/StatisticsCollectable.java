@@ -19,13 +19,25 @@ public interface StatisticsCollectable
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Returns the statistics associated with the collectable.
+    *
+    * @return the statistics.
+    */
    Statistics get();
+
+   /**
+    * Resets the statistics.
+    */
    void reset();
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
-   class Statistics
+   /**
+    * Models some statistics that need to be collected.
+    */
+   record Statistics(String header, List<StatisticsItem> entries)
    {
       private final String header;
       private final List<StatisticsItem> entries;
@@ -47,26 +59,10 @@ public interface StatisticsCollectable
       }
    }
 
-   class StatisticsItem
-   {
-      private final String key;
-      private final String value;
-
-      public StatisticsItem( String key, String value )
-      {
-         this.key = key;
-         this.value = value;
-      }
-
-      public String getKey()
-      {
-         return key;
-      }
-
-      public String getValue()
-      {
-         return value;
-      }
+   /**
+    * Models a statistics item.
+    */
+      record StatisticsItem( String key, String value) {
 
       public String toString()
       {
