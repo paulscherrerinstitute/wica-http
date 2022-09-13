@@ -15,6 +15,9 @@ import java.util.List;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Provides statistics related to the configuration of this Wica Server.
+ */
 @Component
 @ThreadSafe
 public class ConfigurationStatistics implements StatisticsCollectable
@@ -46,6 +49,28 @@ public class ConfigurationStatistics implements StatisticsCollectable
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+    /**
+    * Creates a new instance based on the supplied configuration values.
+    *
+    * @param testLoggingOnStartup whether to perform logging test on startup.
+    * @param epicsCaLibraryMonitorNotifierImpl the CA library configuration for channel monitors.
+    * @param epicsCaLibraryDebugLevel the CA library debug level.
+    * @param channelResourceReleaseIntervalInSecs the period for releasing resources that are no longer in use.
+    * @param channelPublishMonitorRestarts policy for publishing monitor restarts.
+    * @param channelPublishPollerRestarts policy for publishin poller restarts.
+    * @param channelMonitoredValueBufferSize the number of values that can be held in the monitored value buffer.
+    * @param channelPublishChannelValueInitialState whether a channel's initial value will be published as DISCONNECTED when a channel is first created.
+    * @param channelPublishChannelMetadataInitialState whether a channel's initial metadata will be published as UNKNOWN when a channel is first created.
+    * @param channelPolledValueBufferSize the number of values that can be held in the control system polled value buffer before older values start getting thrown away.
+    * @param channelGetTimeoutIntervalInMs the default timeout in milliseconds to be applied when getting the current value of a wica channel.
+    * @param channelGetNumericScale the default number of digits after the decimal point when getting the current value of a wica channel.
+    * @param channelGetValueDefaultFieldsOfInterest semicolon separated list specifying the default names of the fields that will be returned when getting the current value of a wica channel.
+    * @param channelGetMetadataDefaultFieldsOfInterest semicolon separated list specifying the default names of the fields that will be returned when getting the metadata associated with a wica channel.
+    * @param channelPutTimeoutIntervalInMs the default timeout in milliseconds to be applied when putting a new value to a wica channel.
+    * @param streamQuoteNumericStrings whether strict JSON compliance should be used when serializing NaN and Infinity values (=true) or whether JSON5 serialization compliance is acceptable (=false).
+    * @param streamMetadataFieldsOfInterest the fields of interest that should be serialized when sending the channel metadata.
+    * @param corsAllowedOriginPatterns which origin patterns must be present in the http request header in order for a request to be accepted.
+    */
    public ConfigurationStatistics( @Value( "${wica.test-logging-on-startup}" ) Boolean testLoggingOnStartup,
                                    @Value( "${wica.epics-ca-library-monitor-notifier-impl}" ) String epicsCaLibraryMonitorNotifierImpl,
                                    @Value( "${wica.epics-ca-library-debug-level}" ) Integer epicsCaLibraryDebugLevel,
