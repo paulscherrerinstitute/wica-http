@@ -4,7 +4,6 @@ package ch.psi.wica.model.app;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import java.util.ArrayList;
 import java.util.List;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -42,21 +41,15 @@ public interface StatisticsCollectable
     */
    record Statistics(String header, List<StatisticsItem> entries)
    {
-      private final String header;
-      private final List<StatisticsItem> entries;
-
-      public Statistics( String header, List<StatisticsItem> entries )
+      public Statistics(String header, List<StatisticsItem> entries)
       {
          this.header = header;
          this.entries = List.copyOf( entries );
       }
 
-      public String getHeader()
-      {
-         return header;
-      }
-
-      public List<StatisticsItem> getEntries()
+      @Override
+      @SuppressWarnings("unused")
+      public List<StatisticsItem> entries()
       {
          return entries;
       }
@@ -65,11 +58,11 @@ public interface StatisticsCollectable
    /**
     * Models a statistics item.
     */
-      record StatisticsItem( String key, String value) {
-
+   record StatisticsItem( String key, String value)
+   {
       public String toString()
       {
-         return "- " + getKey() + ":" + getValue();
+            return "- " + key() + ":" + value();
       }
    }
 
