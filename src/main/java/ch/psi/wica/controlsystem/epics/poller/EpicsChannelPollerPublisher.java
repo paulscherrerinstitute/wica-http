@@ -29,6 +29,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Polls an EPICS channel of interest and publishes the result.
+ */
 @Component
 @ThreadSafe
 public class EpicsChannelPollerPublisher
@@ -49,6 +52,13 @@ public class EpicsChannelPollerPublisher
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Creates a new instance.
+    *
+    * @param epicsChannelValueGetter class which will get channel value changes.
+    * @param wicaChannelEventPublisher class which will publish monitor changes.
+    * @param statisticsCollectionService class which will collect statistics.
+    */
    public EpicsChannelPollerPublisher( @Autowired EpicsChannelValueGetter epicsChannelValueGetter,
                                        @Autowired WicaChannelEventPublisher wicaChannelEventPublisher,
                                        @Autowired StatisticsCollectionService statisticsCollectionService)
@@ -69,17 +79,34 @@ public class EpicsChannelPollerPublisher
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Returns the statistics for this publisher.
+    *
+    * @return the statistics.
+    */
    public EpicsChannelPollerStatistics getStatistics()
    {
       return statisticsCollector;
    }
 
+   /**
+    * Returns a boolean indicating whether the supplied request object has already
+    * been added to the internal list of channels being monitored.
+    *
+    * @param requestObject object providing the request details.
+    * @return the result.
+    */
    public boolean isRequestObjectRecognised( EpicsChannelPollerRequest requestObject )
    {
       Validate.notNull( requestObject );
       return this.requestMap.containsKey( requestObject );
    }
 
+   /**
+    * Adds a new channel to be polled.
+    *
+    * @param requestObject object providing the request details.
+    */
    public void addChannel( EpicsChannelPollerRequest requestObject )
    {
       Validate.notNull( requestObject );
@@ -98,6 +125,11 @@ public class EpicsChannelPollerPublisher
       }
    }
 
+   /**
+    * Removes a channel from polling.
+    *
+    * @param requestObject object providing the request details.
+    */
    public void removeChannel( EpicsChannelPollerRequest requestObject )
    {
       Validate.notNull( requestObject );
@@ -109,31 +141,43 @@ public class EpicsChannelPollerPublisher
       requestMap.remove( requestObject ).cancel();
    }
 
+   /**
+    * Removes all channel pollers.
+    */
    public void removeAllChannels()
    {
       final var toRemoveList = new ArrayList<>( requestMap.keySet() );
       toRemoveList.forEach( this::removeChannel );
    }
 
+   /**
+    * Closes this EPICS channel poller.
+    */
    public void close()
    {
       removeAllChannels();
       this.executor.shutdownNow();
    }
 
-   // The processing below will be scheduled every time a channel comes online.
-   // This could be for any of the following reasons:
-   //
-   // a) this EPICS channel service has been requested to create a new EPICS channel
-   //    and the channel has just connected for the very first time.
-   // b) the IOC hosting the channel has just come online following a loss of network
-   //    connectivity. In this case monitors that were already established on the
-   //    IOC will be intact.
-   // c) the IOC hosting the channel has just come online following a reboot. In
-   //    this case monitors that were already established on the IOC will be lost.
+   /**
+    * Handles the response to an EPICS channel poller becoming connected.
+    *
+    * @param event the event.
+    */
    @EventListener(condition = "#event.scope == 'polled'" )
    public void handleChannelConnectedEvent( EpicsChannelConnectedEvent event )
    {
+      // The processing below will be scheduled every time a channel comes online.
+      // This could be for any of the following reasons:
+      //
+      // a) this EPICS channel service has been requested to create a new EPICS channel
+      //    and the channel has just connected for the very first time.
+      // b) the IOC hosting the channel has just come online following a loss of network
+      //    connectivity. In this case monitors that were already established on the
+      //    IOC will be intact.
+      // c) the IOC hosting the channel has just come online following a reboot. In
+      //    this case monitors that were already established on the IOC will be lost.
+
       final var epicsChannelName = event.getEpicsChannelName();
       logger.info( "'{}' - channel connected.", epicsChannelName );
       this.statisticsCollector.incrementChannelConnectCount();
@@ -142,11 +186,18 @@ public class EpicsChannelPollerPublisher
       this.enableAllPollersForEpicsChannel( epicsChannelName, caChannel );
    }
 
+   /**
+    * Handles the response to an EPICS channel poller becoming disconnected.
+    *
+    * @param event the event.
+    */
    @EventListener(condition = "#event.scope == 'polled'" )
    public void handleChannelDisconnectedEvent( EpicsChannelDisconnectedEvent event )
    {
       final var epicsChannelName = event.getEpicsChannelName();
       logger.info( "'{}' - channel disconnected.", epicsChannelName );
+
+      //noinspection resource
       channelMap.remove( epicsChannelName );
       this.statisticsCollector.incrementChannelDisconnectCount();
       this.disableAllPollersForEpicsChannel( epicsChannelName );
@@ -189,6 +240,9 @@ public class EpicsChannelPollerPublisher
 
 /*- Nested Classes -----------------------------------------------------------*/
 
+   /**
+    * Polls an EPICS channel.
+    */
    @ThreadSafe
    public static class Poller
    {
@@ -204,6 +258,15 @@ public class EpicsChannelPollerPublisher
 
       private ScheduledFuture<?> scheduledFuture;
 
+      /**
+       * Creates a new instance.
+       *
+       * @param executor reference to an executor that will carry out the polling.
+       * @param requestObject object providing the polling request specification.
+       * @param epicsChannelValueGetter object which will get new channel values.
+       * @param wicaChannelEventPublisher reference to an object which will publish the result of each poll attempt.
+       * @param statisticCollector reference to an object which will collect poll statistics.
+       */
       public Poller( ScheduledExecutorService executor,
                      EpicsChannelPollerRequest requestObject,
                      EpicsChannelValueGetter epicsChannelValueGetter,
@@ -225,6 +288,11 @@ public class EpicsChannelPollerPublisher
          return scheduledFuture != null;
       }
 
+      /**
+       *
+       * Starts polling the specified channel.
+       * @param caChannel the channel.
+       */
       void start( Channel<Object> caChannel )
       {
          logger.trace( "'{}' - starting to poll...", epicsChannelName );
@@ -269,6 +337,9 @@ public class EpicsChannelPollerPublisher
          }, 0, pollingIntervalInMillis, TimeUnit.MILLISECONDS );
       }
 
+      /**
+       * Cancels polling.
+       */
       void cancel()
       {
          if ( isStarted() )
@@ -277,12 +348,18 @@ public class EpicsChannelPollerPublisher
          }
       }
 
+      /**
+       * Pauses polling.
+       */
       void pause()
       {
          pause.set( true );
          this.publishChannelDisconnect();
       }
 
+      /**
+       * Resumes polling.
+       */
       void resume()
       {
          pause.set( false );

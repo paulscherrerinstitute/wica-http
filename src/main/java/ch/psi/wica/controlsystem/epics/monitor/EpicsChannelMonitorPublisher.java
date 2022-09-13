@@ -27,6 +27,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Monitors an EPICS channel of interest and publishes value changes as they are notified.
+ */
 @Component
 @ThreadSafe
 public class EpicsChannelMonitorPublisher
@@ -46,6 +49,13 @@ public class EpicsChannelMonitorPublisher
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Creates a new instance.
+    *
+    * @param epicsChannelMonitorSubscriber class which will inform of monitor changes.
+    * @param wicaChannelEventPublisher class which will publish monitor changes.
+    * @param statisticsCollectionService class which will collect statistics.
+    */
    EpicsChannelMonitorPublisher( @Autowired EpicsChannelMonitorSubscriber epicsChannelMonitorSubscriber,
                                  @Autowired WicaChannelEventPublisher wicaChannelEventPublisher,
                                  @Autowired StatisticsCollectionService statisticsCollectionService )
@@ -63,21 +73,37 @@ public class EpicsChannelMonitorPublisher
       logger.debug( "'{}' - service instance constructed ok.", this );
    }
 
-
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Returns the statistics for this publisher.
+    *
+    * @return the statistics.
+    */
    public EpicsChannelMonitorStatistics getStatistics()
    {
       return statisticsCollector;
    }
 
+   /**
+    * Returns a boolean indicating whether the supplied request object has already
+    * been added to the internal list of channels being monitored.
+    *
+    * @param requestObject object providing the request details.
+    * @return the result.
+    */
    public boolean isRequestObjectRecognised( EpicsChannelMonitorRequest requestObject )
    {
       Validate.notNull( requestObject );
       return this.requestList.contains( requestObject );
    }
 
+   /**
+    * Adds a new channel to be monitored.
+    *
+    * @param requestObject object providing the request details.
+    */
    public void addChannel( EpicsChannelMonitorRequest requestObject )
    {
       Validate.notNull( requestObject );
@@ -96,6 +122,11 @@ public class EpicsChannelMonitorPublisher
       }
    }
 
+   /**
+    * Removes a channel from monitoring.
+    *
+    * @param requestObject object providing the request details.
+    */
    public void removeChannel( EpicsChannelMonitorRequest requestObject )
    {
       Validate.notNull( requestObject );
@@ -107,34 +138,41 @@ public class EpicsChannelMonitorPublisher
       requestList.remove( requestObject );
    }
 
+   /**
+    * Removes all channel monitors.
+    */
    public void removeAllChannels()
    {
       final var toRemoveList = new ArrayList<>( requestList );
       toRemoveList.forEach( this::removeChannel );
    }
 
-   // The processing below will be scheduled every time a channel comes online.
-   // This could be for any of the following reasons:
-   //
-   // a) this EPICS channel service has been requested to create a new EPICS channel
-   //    and the channel has just connected for the very first time.
-   // b) the IOC hosting the channel has just come online following a loss of network
-   //    connectivity. In this case monitors that were already established on the
-   //    IOC will be intact.
-   // c) the IOC hosting the channel has just come online following a reboot. In
-   //    this case monitors that were already established on the IOC will be lost.
-
-   // TODO: the current behaviour resubscribes the monitor on every connection event, but it's not
-   // TODO: currently clear whether this is strictly necessary or whether it would be done automatically
-   // TODO: by the CA library when (re)establishing the Virtual Circuit. Furthermore the EPICS CA protocol
-   // TODO: specification says the following:
-   // TODO: "Clients SHOULD NOT create two monitors on the same channel with the same Event Mask.
-   // TODO: Further testing should be performed to verify the validity of the current implementation.
-   // TODO: Consider attaching to EpicsChannelFirstConnectedEvent
-
+   /**
+    * Handles the response to an EPICS channel monitor becoming connected.
+    * @param event the event.
+    */
    @EventListener(condition = "#event.scope == 'monitored'" )
    public void handleChannelConnectedEvent( EpicsChannelConnectedEvent event )
    {
+      // The processing below will be scheduled every time a channel comes online.
+      // This could be for any of the following reasons:
+      //
+      // a) this EPICS channel service has been requested to create a new EPICS channel
+      //    and the channel has just connected for the very first time.
+      // b) the IOC hosting the channel has just come online following a loss of network
+      //    connectivity. In this case monitors that were already established on the
+      //    IOC will be intact.
+      // c) the IOC hosting the channel has just come online following a reboot. In
+      //    this case monitors that were already established on the IOC will be lost.
+
+      // TODO: the current behaviour resubscribes the monitor on every connection event, but it's not
+      // TODO: currently clear whether this is strictly necessary or whether it would be done automatically
+      // TODO: by the CA library when (re)establishing the Virtual Circuit. Furthermore the EPICS CA protocol
+      // TODO: specification says the following:
+      // TODO: "Clients SHOULD NOT create two monitors on the same channel with the same Event Mask.
+      // TODO: Further testing should be performed to verify the validity of the current implementation.
+      // TODO: Consider attaching to EpicsChannelFirstConnectedEvent
+
       final var epicsChannelName = event.getEpicsChannelName();
       logger.info( "'{}' - channel connected.", epicsChannelName );
       this.statisticsCollector.incrementChannelConnectCount();
@@ -146,6 +184,10 @@ public class EpicsChannelMonitorPublisher
       } );
    }
 
+   /**
+    * Handles the response to an EPICS channel monitor becoming disconnected.
+    * @param event the event.
+    */
    @EventListener( condition = "#event.scope == 'monitored'" )
    public void handleChannelDisconnectedEvent( EpicsChannelDisconnectedEvent event )
    {
