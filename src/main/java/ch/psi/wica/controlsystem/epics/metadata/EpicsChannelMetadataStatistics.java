@@ -10,12 +10,14 @@ import org.apache.commons.lang3.Validate;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Provides the statistics associated with EPICS channel's metadata.
+ */
 @ThreadSafe
 public class EpicsChannelMetadataStatistics implements StatisticsCollectable
 {
@@ -26,14 +28,19 @@ public class EpicsChannelMetadataStatistics implements StatisticsCollectable
    private final AtomicInteger startRequests = new AtomicInteger(0);
    private final AtomicInteger stopRequests = new AtomicInteger(0);
    private final AtomicInteger channelConnectCount = new AtomicInteger(0);
-   private final List<EpicsChannelMetadataRequest> requestMap;
+   private final List<EpicsChannelMetadataRequest> requestList;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public EpicsChannelMetadataStatistics( List<EpicsChannelMetadataRequest> requestMap )
+   /**
+    * Creates a new instance based on the supplied channel metadata list.
+    *
+    * @param requestList the list.
+    */
+   public EpicsChannelMetadataStatistics( List<EpicsChannelMetadataRequest> requestList )
    {
-      this.requestMap = Validate.notNull( requestMap );
+      this.requestList = Validate.notNull( requestList );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -57,26 +64,54 @@ public class EpicsChannelMetadataStatistics implements StatisticsCollectable
       channelConnectCount.set( 0 );
    }
 
+   /**
+    * Returns the channel names.
+    *
+    * @return the channel names.
+    */
+   @SuppressWarnings("unused")
    public List<String> getChannelNames()
    {
-      return requestMap
-            .stream()
-            .map( req -> req.getPublicationChannel().toString() )
-            .collect(Collectors.toUnmodifiableList() );
+      return requestList
+              .stream()
+              .map(req -> req.getPublicationChannel().toString()).toList();
    }
 
+   /**
+    * Returns a string representation of the number of start requests.
+    *
+    * @return the result.
+    */
    public String getStartRequests()
    {
       return String.valueOf( startRequests.get());
    }
+
+   /**
+    * Returns a string representation of the number of stop requests.
+    *
+    * @return the result.
+    */
    public String getStopRequests()
    {
       return String.valueOf( stopRequests.get());
    }
+
+   /**
+    * Returns a string representation of the number of active channels.
+    *
+    * @return the result.
+    */
    public String getActiveChannels()
    {
-      return String.valueOf( requestMap.size() );
+      return String.valueOf( requestList.size() );
    }
+
+   /**
+    * Returns a string representation of the number of connected channels.
+    *
+    * @return the result.
+    */
    public String getChannelConnectCount()
    {
       return String.valueOf( channelConnectCount.get() );
@@ -85,14 +120,22 @@ public class EpicsChannelMetadataStatistics implements StatisticsCollectable
 
 /*- Package-access methods ---------------------------------------------------*/
 
+   /**
+    * Increments the count of start requests.
+    */
    void incrementStartRequests()
    {
       startRequests.incrementAndGet();
    }
-   void incrementStopRequests()
+   /**
+    * Increments the count of stop requests.
+    */void incrementStopRequests()
    {
       stopRequests.incrementAndGet();
    }
+   /**
+    * Increments the count of connected channels.
+    */
    void incrementChannelConnectCount()
    {
       channelConnectCount.incrementAndGet();
