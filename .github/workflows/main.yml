@@ -7,7 +7,7 @@
 # are pushed to the Wica-HTTP repository in the PSI Organisational Area on the
 # GitHub Server.
 #
-# Currently the build recipe supports the following actions:
+# Currently, the build recipe supports the following actions:
 #
 # - Builds Wica-HTTP API documentation and transfers asset to GitHub Pages Area.
 # - Builds Wica-HTTP Release Bundle and transfers asset to GitHub Releases Area.
@@ -52,7 +52,7 @@ jobs:
         # Note: maven CLI options: -B means run in batch mode, -V means display version information.
         run: mvn -B package  -DskipTests=true --file pom.xml
       - name: Deploy GitHub Javadoc to GitHub Pages Area 🚀
-        uses: JamesIves/github-pages-deploy-action@4.4.0
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           # The branch the action should deploy to.
