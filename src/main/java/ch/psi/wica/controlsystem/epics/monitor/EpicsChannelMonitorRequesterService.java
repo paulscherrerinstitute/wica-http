@@ -38,6 +38,11 @@ public class EpicsChannelMonitorRequesterService
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Creates a new instance.
+    *
+    * @param epicsChannelMonitorService the monitoring service.
+    */
    EpicsChannelMonitorRequesterService( @Autowired EpicsChannelMonitorService epicsChannelMonitorService )
    {
       this.epicsChannelMonitorService = Validate.notNull( epicsChannelMonitorService );
@@ -99,7 +104,7 @@ public class EpicsChannelMonitorRequesterService
    /**
     * Returns a boolean, indicating whether the protocol associated with the
     * supplied WicaChannelName is supported.
-    *
+    * <p>
     * This service supports EPICS Channel-Access (CA) protocol. For channels
     * where the protocol is not explicitly stated CA is assumed to be the
     * default.
