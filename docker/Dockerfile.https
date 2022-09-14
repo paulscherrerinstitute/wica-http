@@ -61,9 +61,9 @@ ARG JAR_FILE
 ## Enable the following block when EPICS is needed in the container for eg
 ## debugging purposes.
 ##
-ENV EPICS_HOME=/epics
-COPY --from=BUILD_EPICS /epics/base-7.0.7/bin/linux-x86_64 $EPICS_HOME/bin
-COPY --from=BUILD_EPICS /epics/base-7.0.7/lib/linux-x86_64 $EPICS_HOME/lib
+#ENV EPICS_HOME=/epics
+#COPY --from=BUILD_EPICS /epics/base-7.0.7/bin/linux-x86_64 $EPICS_HOME/bin
+#COPY --from=BUILD_EPICS /epics/base-7.0.7/lib/linux-x86_64 $EPICS_HOME/lib
 
 # This port must be open for TCP and UDP when the connection
 # is via a channel access gateway.
