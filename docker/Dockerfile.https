@@ -169,6 +169,4 @@ ENTRYPOINT exec java $JAVA_DBG_OPTS $JAVA_JMX_OPTS \
            -p lib/jmuxutils.jar \
            -p lib/jarfile.jar \
            --add-modules ALL-DEFAULT \
-           -m jarfile \
-           --server.ssl.certificate="$CERT_FILE" \
-           --server.ssl.certificate-private-key="CERT_PRIVATE_KEY_FILE"
+           -m jarfile
