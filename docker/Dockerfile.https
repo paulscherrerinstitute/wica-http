@@ -25,29 +25,29 @@ RUN mvn clean package -Dmaven.test.skip=true -Dmaven.javadoc.skip=false
 ## Enable the following block when EPICS is needed in the container for eg
 ## debugging purposes.
 ##
-FROM debian:stable-slim as BUILD_EPICS
-WORKDIR /epics
+#FROM debian:stable-slim as BUILD_EPICS
+#WORKDIR /epics
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-    apt-get install -y wget &&  \
-    apt-get install -y perl &&  \
-    apt-get install -y gcc &&  \
-    apt-get install -y make &&  \
-    apt-get install -y g++ &&  \
-    apt-get install -y libreadline-dev &&  \
-    rm -rf /var/lib/apt/lists/* /tmp/*
+#RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+#    apt-get install -y wget &&  \
+#    apt-get install -y perl &&  \
+#    apt-get install -y gcc &&  \
+#    apt-get install -y make &&  \
+#    apt-get install -y g++ &&  \
+#    apt-get install -y libreadline-dev &&  \
+#    rm -rf /var/lib/apt/lists/* /tmp/*
 
-RUN wget https://epics-controls.org/download/base/base-7.0.7.tar.gz && \
-    tar xvf base-7.0.7.tar.gz
+#RUN wget https://epics-controls.org/download/base/base-7.0.7.tar.gz && \
+#    tar xvf base-7.0.7.tar.gz
 
-RUN cd base-7.0.7 ; make
+#RUN cd base-7.0.7 ; make
 
 
 ###############################################################################
 # 3.0 Obtain a container with a JDK implementation
 ###############################################################################
 
-FROM eclipse-temurin:17
+FROM eclipse-temurin:17-jre-alpine
 
 ################################################################################
 ## 4.0 Define the rest of our application
@@ -78,11 +78,6 @@ EXPOSE 5064
 # CA repeater.
 EXPOSE 5065
 
-# The keystore password must be supplied as an argument to the Docker
-# run command. The keystore itself must be provided in the config
-# directory via an external mount.
-ENV KEYSTORE_PASS "XXXXXX"
-
 # Document the ports that will be exposed by the Spring Boot Application
 EXPOSE 443
 
@@ -104,8 +99,8 @@ WORKDIR /root
 # Note:
 # The following readline library is a dependency of EPICS so must be provided
 # if it is intended to use the tools in the bundled EPICS base.
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-    apt-get install -y libreadline-dev
+#RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+#    apt-get install -y libreadline-dev
 
 ###############################################################################
 # 6.0 Set up the application project structure
