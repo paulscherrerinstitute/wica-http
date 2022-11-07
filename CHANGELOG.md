@@ -307,3 +307,16 @@ Issues Addressed:
 * [Issue #99](https://github.com/paulscherrerinstitute/wica-http/issues/99) Create release 1.12.0
 * 
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
+
+
+* [1.12.1](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.11.0) Released 2022-11-07
+This is a bug fix release to address the issue of the disappearing admin page. At the same time the Spring Bbot has been upgraded to 2.7.5.
+
+Issues Addressed:
+* [Issue #100](https://github.com/paulscherrerinstitute/wica-http/issues/100) BUG FIX: fix regression bug - disappearance of admin page.
+* [Issue #101](https://github.com/paulscherrerinstitute/wica-http/issues/101) CHORE: Update to Spring Boot 2.7.5
+* [Issue #102](https://github.com/paulscherrerinstitute/wica-http/issues/102) CHORE: Create release 1.12.1
+* [Issue #103](https://github.com/paulscherrerinstitute/wica-http/issues/103) DOC: Add talk from CERN GUI Workshop Autumn 2022
+
+
+IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
