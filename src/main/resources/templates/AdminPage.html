@@ -52,9 +52,9 @@
     <h2>System Information</h2>
 
     <div th:each="statisticsCategory: ${statisticsList}">
-        <h3 th:text="${statisticsCategory.header()()}"></h3>
+        <h3 th:text="${statisticsCategory.header()}"></h3>
         <table>
-            <tr th:each="statisticsItem: ${statisticsCategory.entries()()}">
+            <tr th:each="statisticsItem: ${statisticsCategory.entries()}">
                 <td class="key" th:text="${statisticsItem.key}"></td>
                 <td class="value" th:text="${statisticsItem.value}"></td>
             </tr>
