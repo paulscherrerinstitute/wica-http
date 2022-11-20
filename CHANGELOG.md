@@ -328,5 +328,6 @@ IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
 Issues Addressed:
 * [Issue #104](https://github.com/paulscherrerinstitute/wica-http/issues/104) CHORE: Create release 1.12.2
 * [Issue #105](https://github.com/paulscherrerinstitute/wica-http/issues/105) BUG FIX: the default docker build now builds the http version not the https version
-
+* [Issue #106](https://github.com/paulscherrerinstitute/wica-http/issues/106) CHORE: update properties to reflect the fact that Spring Boot 2.7 and later can read the certificate and key files directly.
+* 
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
