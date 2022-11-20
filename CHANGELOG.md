@@ -284,7 +284,7 @@ Issues Addressed:
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
 
 
-* [1.12.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.11.0) Released 2022-09-14
+* [1.12.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.12.0) Released 2022-09-14
 This release brings the wica-http server up-to-date to following evolutions in Spring Boot and Java. 
 The release does not add any functional changes.
 The source code starts to make use of Java 17 features such as records and new switch.
@@ -309,8 +309,8 @@ Issues Addressed:
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
 
 
-* [1.12.1](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.11.0) Released 2022-11-07
-This is a bug fix release to address the issue of the disappearing admin page. At the same time the Spring Bbot has been upgraded to 2.7.5.
+* [1.12.1](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.12.1) Released 2022-11-07
+This is a bug fix release to address the issue of the disappearing admin page. At the same time the Spring Boot has been upgraded to 2.7.5.
 
 Issues Addressed:
 * [Issue #100](https://github.com/paulscherrerinstitute/wica-http/issues/100) BUG FIX: fix regression bug - disappearance of admin page.
@@ -318,5 +318,15 @@ Issues Addressed:
 * [Issue #102](https://github.com/paulscherrerinstitute/wica-http/issues/102) CHORE: Create release 1.12.1
 * [Issue #103](https://github.com/paulscherrerinstitute/wica-http/issues/103) DOC: Add talk from CERN GUI Workshop Autumn 2022
 
+IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
+
+
+* [1.12.2](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.12.1) Released 2022-11-20
+  This is a bug fix release to deal with the fact that the Docker build uses the https configuration which will not start without a
+  certificate file. This new release uses the http configuration.
+
+Issues Addressed:
+* [Issue #104](https://github.com/paulscherrerinstitute/wica-http/issues/104) CHORE: Create release 1.12.2
+* [Issue #105](https://github.com/paulscherrerinstitute/wica-http/issues/105) BUG FIX: the default docker build now builds the http version not the https version
 
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
