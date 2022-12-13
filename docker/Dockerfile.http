@@ -113,7 +113,7 @@ RUN mkdir log config lib
 # Populate the application directories as appropriate
 COPY --from=MAVEN_TOOL_CHAIN /tmp/target/wica-http-*.jar lib/jarfile.jar
 COPY ./src/main/resources/config/logback_config.xml config
-COPY ./docker/application-docker-http-run.properties config
+COPY ./docker/application-docker-http-run.properties config/application-docker-run.properties
 
 ###############################################################################
 # 7.0 Define the exposed volumes

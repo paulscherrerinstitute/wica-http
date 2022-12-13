@@ -114,7 +114,7 @@ COPY --from=MAVEN_TOOL_CHAIN /tmp/target/wica-http-*.jar lib/jarfile.jar
 COPY ./src/main/resources/config/cert-file.pem config
 COPY ./src/main/resources/config/key-file.key config
 COPY ./src/main/resources/config/logback_config.xml config
-COPY ./docker/application-docker-https-run.properties config
+COPY ./docker/application-docker-https-run.properties config/application-docker-run.properties
 
 ###############################################################################
 # 7.0 Define the exposed volumes
