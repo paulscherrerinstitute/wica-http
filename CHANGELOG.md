@@ -329,5 +329,20 @@ Issues Addressed:
 * [Issue #104](https://github.com/paulscherrerinstitute/wica-http/issues/104) CHORE: Create release 1.12.2
 * [Issue #105](https://github.com/paulscherrerinstitute/wica-http/issues/105) BUG FIX: the default docker build now builds the http version not the https version
 * [Issue #106](https://github.com/paulscherrerinstitute/wica-http/issues/106) CHORE: update properties to reflect the fact that Spring Boot 2.7 and later can read the certificate and key files directly.
-* 
+* [Issue #107](https://github.com/paulscherrerinstitute/wica-http/issues/107) BUG FIX: remove EPICS build from docker image and switch back to alpine container.
+* [Issue #108](https://github.com/paulscherrerinstitute/wica-http/issues/108) ENHANCEMENT: switch to mulistage builds which includes images for Mac M1.
+
+IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
+
+
+* [1.13.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.12.1) Released 2022-12-13
+  Switch to Java 18 in an attempt to resolve issue with last release which would not run properly in Docker container.
+  See this issue: https://github.com/adoptium/temurin-build/issues/2976
+
+Issues Addressed:
+* [Issue #109](https://github.com/paulscherrerinstitute/wica-http/issues/109) Add wica lightning talk presentation.
+* [Issue #110](https://github.com/paulscherrerinstitute/wica-http/issues/110) Update default config location to use application-docker-run.properties
+* [Issue #111](https://github.com/paulscherrerinstitute/wica-http/issues/111) Update build and runtime to Java 18.
+* [Issue #112](https://github.com/paulscherrerinstitute/wica-http/issues/112) Create release 1.13.0
+
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
