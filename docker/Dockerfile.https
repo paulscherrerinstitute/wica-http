@@ -9,7 +9,7 @@
 # 1.0 Build and package the Wica-HTTP jar file
 ###############################################################################
 
-FROM maven:3.8.4-openjdk-17-slim AS MAVEN_TOOL_CHAIN
+FROM maven:3.8.4-openjdk-18-slim AS MAVEN_TOOL_CHAIN
 WORKDIR /tmp/
 
 COPY ./pom.xml /tmp/
@@ -47,7 +47,7 @@ RUN mvn clean package -Dmaven.test.skip=true -Dmaven.javadoc.skip=false
 # 3.0 Obtain a container with a JDK implementation
 ###############################################################################
 
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:18-jre-alpine
 
 ################################################################################
 ## 4.0 Define the rest of our application
@@ -154,7 +154,7 @@ ENV JAVA_JMX_OPTS  "-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmx
 # 9.0 Define the ENTRYPOINT
 ###############################################################################
 
-# Run the application on the Java 17 module path invoking the docker-run configuration profile
+# Run the application on the Java 18 module path invoking the docker-run configuration profile
 # and passing the certificate and private key
 
 # Note the 'file.encoding' setting determines how the application reconstitutes
