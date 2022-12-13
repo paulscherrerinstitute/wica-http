@@ -104,7 +104,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: ./
-#           platforms: linux/amd64,linux/arm64
           file: ./docker/Dockerfile.http
           push: true
           tags: paulscherrerinstitute/wica-http:${{ steps.get_version.outputs.info }}
