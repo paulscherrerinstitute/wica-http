@@ -330,7 +330,7 @@ Issues Addressed:
 * [Issue #105](https://github.com/paulscherrerinstitute/wica-http/issues/105) BUG FIX: the default docker build now builds the http version not the https version
 * [Issue #106](https://github.com/paulscherrerinstitute/wica-http/issues/106) CHORE: update properties to reflect the fact that Spring Boot 2.7 and later can read the certificate and key files directly.
 * [Issue #107](https://github.com/paulscherrerinstitute/wica-http/issues/107) BUG FIX: remove EPICS build from docker image and switch back to alpine container.
-* [Issue #108](https://github.com/paulscherrerinstitute/wica-http/issues/108) ENHANCEMENT: switch to mulistage builds which includes images for Mac M1.
+* [Issue #108](https://github.com/paulscherrerinstitute/wica-http/issues/108) ENHANCEMENT: switch to multistage builds which includes images for Mac M1.
 
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
 
