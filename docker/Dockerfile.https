@@ -9,7 +9,7 @@
 # 1.0 Build and package the Wica-HTTP jar file
 ###############################################################################
 
-FROM maven:3.8.4-openjdk-18-slim AS MAVEN_TOOL_CHAIN
+FROM maven:3.8.6-openjdk-18-slim AS MAVEN_TOOL_CHAIN
 WORKDIR /tmp/
 
 COPY ./pom.xml /tmp/
