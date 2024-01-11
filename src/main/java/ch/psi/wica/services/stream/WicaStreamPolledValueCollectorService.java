@@ -56,7 +56,7 @@ public class WicaStreamPolledValueCollectorService
       return inputMap.entrySet()
                      .stream()
                      .filter( e -> e.getKey().getProperties().getDataAcquisitionMode().doesPolling() )
-                     .filter( e -> e.getValue().size() > 0 )
+                     .filter( e -> !e.getValue( ).isEmpty( ) )
                      .collect( Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue ) );
    }
 
@@ -67,7 +67,7 @@ public class WicaStreamPolledValueCollectorService
             .stream()
             .filter( e -> e.getKey().getProperties().getDataAcquisitionMode().doesPolling() )
             .map( e -> new AbstractMap.SimpleEntry<>(e.getKey(), wicaChannelValueFilteringService.filterLastValues( e.getValue() ) ) )
-            .filter( e -> e.getValue().size() > 0 )
+            .filter( e -> !e.getValue( ).isEmpty( ) )
             .collect( Collectors.toUnmodifiableMap( Map.Entry::getKey, Map.Entry::getValue ) );
 
    }
