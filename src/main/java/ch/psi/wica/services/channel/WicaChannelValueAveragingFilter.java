@@ -17,22 +17,22 @@ import java.util.List;
 /**
  * A filter that writes a new value to the output list based on the
  * average of the previous X samples provided.
- *
+ * <p>
  * The filter only operates on values for types WicaChannelType.REAL and
  * WicaChannelType.INTEGER. All other value types in the input list
  * will be ignored and will not contribute to the averaging result.
- *
+ * <p>
  * The output of the filter will be of the same numeric type as the
  * input values passed into it. In the unusual situation where both
  * WicaChannelType.REAL and WicaChannelType.INTEGER values are supplied
  * the output will be of the widest type (WicaChannelType.REAL).
- *
+ * <p>
  * If the input list contains an insufficient number of numeric samples
  * to calculate an average then the output result will be empty. Any
  * supplied values will be accumulated internally and will be used
  * to contribute to the averaging result the next time the filter's
  * apply method is invoked.
- *
+ * <p>
  * If any of the values in the input list indicate that the data
  * source is
  * offline then the averaging result will be a single offline value.
