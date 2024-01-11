@@ -175,7 +175,7 @@ public class WicaStreamMetadataRequesterService
     * Stops metadata data acquisition for the Wica channel with the specified
     * name (which should previously have been started) and/or reduces the interest
     * count for this channel.
-    *
+    * <p>
     * When/if the interest in the channel is reduced to zero then any
     * attempts to subsequently observe it's state will result in an
     * exception.
