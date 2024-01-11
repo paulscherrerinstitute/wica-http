@@ -46,9 +46,6 @@ class WicaStreamMonitoredValueRequesterServiceTest
    private final Logger logger = LoggerFactory.getLogger( WicaStreamMonitoredValueRequesterServiceTest.class );
 
    @Autowired
-   private WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService;
-
-   @Autowired
    private WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService;
 
    @Autowired
