@@ -179,7 +179,7 @@ class WicaStreamGetControllerTest
    void testSendInvalidRequestEmptyPathVariable_ShouldBeRejected() throws Exception
    {
       // Send the request with a null string as the content.
-      final RequestBuilder rb = MockMvcRequestBuilders.get("/ca/streams/" + "" ).accept( MediaType.TEXT_EVENT_STREAM_VALUE );
+      final RequestBuilder rb = MockMvcRequestBuilders.get( "/ca/streams/" ).accept( MediaType.TEXT_EVENT_STREAM_VALUE );
       final MvcResult result = mockMvc.perform( rb ).andDo( print()).andExpect( status().isBadRequest() ).andReturn();
 
       // Now check all the expectations were satisfied.
