@@ -305,9 +305,8 @@ public class WicaStreamSerializer
       public boolean equals( Object other )
       {
          final boolean suppressOutput;
-         if ( other instanceof WicaChannelProperties )
+         if ( other instanceof WicaChannelProperties props )
          {
-            final WicaChannelProperties props = (WicaChannelProperties) other;
             suppressOutput =
                optEqualsDefaultValue( props.getOptionalPollingIntervalInMillis(),        WicaChannelPropertiesDefaults.DEFAULT_POLLING_INTERVAL_IN_MILLIS              ) &&
                optEqualsDefaultValue( props.getOptionalDataAcquisitionMode(),            WicaChannelPropertiesDefaults.DEFAULT_DATA_ACQUISITION_MODE                   ) &&
