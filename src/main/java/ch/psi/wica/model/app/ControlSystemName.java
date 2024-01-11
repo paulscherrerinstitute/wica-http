@@ -59,8 +59,7 @@ public class ControlSystemName
    public boolean equals( Object o )
    {
       if ( this == o ) return true;
-      if ( !(o instanceof ControlSystemName) ) return false;
-      ControlSystemName that = (ControlSystemName) o;
+      if ( !( o instanceof ControlSystemName that ) ) return false;
       return Objects.equals(name, that.name);
    }
 
