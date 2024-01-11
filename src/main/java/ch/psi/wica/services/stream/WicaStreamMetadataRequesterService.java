@@ -24,8 +24,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -99,7 +97,7 @@ public class WicaStreamMetadataRequesterService
             .stream()
             .filter( key -> channelInterestMap.get( key ) == 0 )
             .filter( key -> timeNow.isAfter( channelEventMap.get( key ).plusSeconds( wicaChannelResourceReleaseIntervalInSecs ) ) )
-            .collect( Collectors.toList() )
+            .toList()
             .forEach( this::discardChannel );
    }
 
