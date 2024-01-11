@@ -20,7 +20,7 @@ import java.util.Optional;
  * the various fluxes (heartbeat, metadata, monitored and polled values)
  * are sent down the wire to the end consumer.
  * <p>
- * Additionally the stream properties specify the default values that
+ * Additionally, the stream properties specify the default values that
  * will be applied to the configuration of the individual wica channels
  * that make up the stream, when they are not explicitly specified on
  * the channels themselves.
