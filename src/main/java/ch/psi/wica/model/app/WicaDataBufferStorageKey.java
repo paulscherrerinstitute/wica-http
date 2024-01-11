@@ -48,7 +48,7 @@ public class WicaDataBufferStorageKey
 
    public static WicaDataBufferStorageKey getMonitoredValueStorageKey( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
 
       // Optimisation Note:
       // The storage key for saving data obtained by channel monitoring is based on ALL the properties

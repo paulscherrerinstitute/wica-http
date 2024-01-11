@@ -20,8 +20,8 @@ public record EpicsChannelConnectedEvent( String scope, Channel<Object> caChanne
 
    public EpicsChannelConnectedEvent( String scope, Channel<Object> caChannel )
    {
-      this.scope = Validate.notNull( scope );
-      this.caChannel = Validate.notNull( caChannel );
+      this.scope = Validate.notNull( scope, "The 'scope' argument is null." );
+      this.caChannel = Validate.notNull( caChannel, "The 'caChannel' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/

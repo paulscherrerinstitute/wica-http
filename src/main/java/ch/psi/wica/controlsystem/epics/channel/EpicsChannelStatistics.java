@@ -46,7 +46,7 @@ public class EpicsChannelStatistics implements StatisticsCollectable
    public EpicsChannelStatistics( String contextSpecifier, Map<EpicsChannelName, Channel<Object>> channels )
    {
       this.contextSpecifier = Validate.notEmpty( contextSpecifier );
-      this.channels = Validate.notNull( channels );
+      this.channels = Validate.notNull( channels, "The 'channels' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/

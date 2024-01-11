@@ -90,7 +90,7 @@ public class WicaStreamMonitoredValueCollectorService
    @EventListener
    public void handleWicaChannelMonitoredValueUpdateEvent( WicaChannelMonitoredValueUpdateEvent event )
    {
-      Validate.notNull( event );
+      Validate.notNull( event, "The 'event' argument was null." );
       final WicaChannel wicaChannel = event.getWicaChannel();
       final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
       final WicaChannelValue wicaChannelValue = event.getWicaChannelValue();
@@ -100,7 +100,7 @@ public class WicaStreamMonitoredValueCollectorService
    @EventListener
    public void handleWicaChannelPolledMonitorValueUpdateEvent( WicaChannelPolledMonitorValueUpdateEvent event)
    {
-      Validate.notNull( event );
+      Validate.notNull( event, "The 'event' argument was null." );
       final WicaChannel wicaChannel = event.getWicaChannel();
       final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey(wicaChannel );
       final WicaChannelValue wicaChannelValue = wicaStreamMonitoredValueDataBuffer.getLatest( wicaDataBufferStorageKey );
@@ -112,7 +112,7 @@ public class WicaStreamMonitoredValueCollectorService
    @EventListener
    public void handleUpdateEvent( WicaChannelPolledValueUpdateEvent event )
    {
-      Validate.notNull( event );
+      Validate.notNull( event, "The 'event' argument was null." );
 
       final WicaChannel wicaChannel = event.getWicaChannel();
       final WicaChannelValue latestPolledValue = event.getWicaChannelValue();

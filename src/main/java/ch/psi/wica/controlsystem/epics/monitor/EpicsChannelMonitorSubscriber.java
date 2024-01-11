@@ -48,7 +48,7 @@ class EpicsChannelMonitorSubscriber
     */
    public EpicsChannelMonitorSubscriber( @Autowired WicaChannelValueBuilder wicaChannelValueBuilder )
    {
-      this.wicaChannelValueBuilder = Validate.notNull( wicaChannelValueBuilder );
+      this.wicaChannelValueBuilder = Validate.notNull( wicaChannelValueBuilder, "The 'wicaChannelValueBuilder' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/

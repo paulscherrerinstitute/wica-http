@@ -60,8 +60,8 @@ public class WicaChannelValueBuilder
     */
    public WicaChannelValue build( ControlSystemName controlSystemName, Timestamped<Object> epicsValueObject )
    {
-      Validate.notNull( controlSystemName );
-      Validate.notNull( epicsValueObject );
+      Validate.notNull( controlSystemName, "The 'controlSystemName' argument is null." );
+      Validate.notNull( epicsValueObject, "The 'epicsValueObject' argument is null." );
 
       // Decode the channel type.
       final EpicsChannelType epicsChannelType;

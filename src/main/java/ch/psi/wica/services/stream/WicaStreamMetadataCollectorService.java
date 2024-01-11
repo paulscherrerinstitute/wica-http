@@ -86,7 +86,7 @@ public class WicaStreamMetadataCollectorService
       @EventListener
       public void handleWicaChannelMetadataUpdateEvent( WicaChannelMetadataUpdateEvent wicaChannelMetadataUpdateEvent )
       {
-         Validate.notNull( wicaChannelMetadataUpdateEvent );
+         Validate.notNull( wicaChannelMetadataUpdateEvent, "The 'wicaChannelMetadataUpdateEvent' argument was null." );
 
          logger.trace( "Received METADATA update event: {} ", wicaChannelMetadataUpdateEvent);
 

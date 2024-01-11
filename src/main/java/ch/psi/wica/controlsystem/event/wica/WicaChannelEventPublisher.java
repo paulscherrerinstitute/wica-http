@@ -31,7 +31,7 @@ public class WicaChannelEventPublisher
 
    public WicaChannelEventPublisher( @Autowired ApplicationEventPublisher applicationEventPublisher )
    {
-      this.applicationEventPublisher = Validate.notNull( applicationEventPublisher );
+      this.applicationEventPublisher = Validate.notNull( applicationEventPublisher, "The 'applicationEventPublisher' argument is null." );
    }
 
 /*- Public methods -----------------------------------------------------------*/

@@ -110,7 +110,7 @@ public enum EpicsChannelType
     */
    public static boolean isRecognisedType( Object obj )
    {
-      Validate.notNull( obj );
+      Validate.notNull( obj, "The 'obj' argument is null." );
 
       return ( obj instanceof String  ) || ( obj instanceof String[] ) ||
              ( obj instanceof Byte    ) || ( obj instanceof byte[]   ) ||
@@ -135,7 +135,7 @@ public enum EpicsChannelType
     */
    public static EpicsChannelType getTypeFromPojo( Object pojo )
    {
-      Validate.notNull( pojo );
+      Validate.notNull( pojo, "The 'pojo' argument is null." );
       Validate.isTrue( isRecognisedType( pojo ) );
 
       if ( pojo instanceof Byte )
