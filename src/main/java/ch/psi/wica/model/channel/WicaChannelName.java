@@ -129,8 +129,7 @@ public class WicaChannelName
    public boolean equals( Object o )
    {
       if ( this == o ) return true;
-      if ( !(o instanceof WicaChannelName) ) return false;
-      WicaChannelName that = (WicaChannelName) o;
+      if ( !( o instanceof WicaChannelName that ) ) return false;
       return protocol == that.protocol &&
             Objects.equals(controlSystemName, that.controlSystemName) &&
             Objects.equals(instance, that.instance);

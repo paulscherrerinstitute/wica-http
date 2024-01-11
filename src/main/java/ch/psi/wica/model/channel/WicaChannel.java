@@ -82,8 +82,7 @@ public class WicaChannel
    public boolean equals( Object o )
    {
       if ( this == o ) return true;
-      if ( !(o instanceof WicaChannel) ) return false;
-      WicaChannel that = (WicaChannel) o;
+      if ( !( o instanceof WicaChannel that ) ) return false;
       return Objects.equals(wicaChannelName, that.wicaChannelName) &&
             Objects.equals(wicaChannelProperties, that.wicaChannelProperties);
    }
