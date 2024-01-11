@@ -32,13 +32,13 @@ import static org.junit.jupiter.api.Assertions.*;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-class WicaChannelDataSerializerTestWithChannelValues
+class WicaChannelDataSerializerChannelValuesTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaChannelDataSerializerTest.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaChannelDataSerializerChannelValuesTest.class );
 
    private WicaChannelValue unconnValue;
    private WicaChannelValue intValue;

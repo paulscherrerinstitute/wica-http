@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.*;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-class WicaChannelDataSerializerTestWithMetadata
+class WicaChannelDataSerializerMetadataTest
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger( WicaChannelDataSerializerTest.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaChannelDataSerializerMetadataTest.class );
 
    private WicaChannelMetadata unkMetadata;
    private WicaChannelMetadata strMetadata ;
