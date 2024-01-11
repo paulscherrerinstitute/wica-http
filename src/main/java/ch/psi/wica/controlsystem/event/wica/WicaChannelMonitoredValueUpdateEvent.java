@@ -28,8 +28,8 @@ public class WicaChannelMonitoredValueUpdateEvent
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelMonitoredValueUpdateEvent.class);
 
-      Validate.notNull( wicaChannel );
-      Validate.notNull( wicaChannelValue );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
+      Validate.notNull( wicaChannelValue, "The 'wicaChannelValue' argument is null." );
       Validate.isTrue( wicaChannel.getProperties().getDataAcquisitionMode().doesMonitoring(), "The data acquisition mode of this channel does not support monitoring." );
 
       this.wicaChannel = wicaChannel;

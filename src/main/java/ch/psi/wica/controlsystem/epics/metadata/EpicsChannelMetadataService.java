@@ -43,7 +43,7 @@ public class EpicsChannelMetadataService
    public EpicsChannelMetadataService( @Autowired EpicsChannelMetadataPublisher epicsChannelMetadataPublisher )
    {
       logger.debug( "'{}' - constructing new EpicsChannelMetadataService instance...", this );
-      this.epicsChannelMetadataPublisher = Validate.notNull( epicsChannelMetadataPublisher );
+      this.epicsChannelMetadataPublisher = Validate.notNull( epicsChannelMetadataPublisher, "The 'epicsChannelMetadataPublisher' argument is null." );
 
       logger.debug( "'{}' - service instance constructed ok.", this );
    }
@@ -72,7 +72,7 @@ public class EpicsChannelMetadataService
     */
    public void startDataAcquisition( EpicsChannelMetadataRequest requestObject )
    {
-      Validate.notNull( requestObject );
+      Validate.notNull( requestObject, "The 'requestObject' argument is null." );
       Validate.validState( ! closed, "The metadata service was previously closed." );
       Validate.validState( ! epicsChannelMetadataPublisher.isRequestObjectRecognised( requestObject ), "The metadata request object is already active." );
 
@@ -103,7 +103,7 @@ public class EpicsChannelMetadataService
     */
    public void stopDataAcquisition( EpicsChannelMetadataRequest requestObject )
    {
-      Validate.notNull( requestObject );
+      Validate.notNull( requestObject, "The 'requestObject' argument is null." );
       Validate.validState( ! closed, "The monitoring service was previously closed." );
       Validate.validState( epicsChannelMetadataPublisher.isRequestObjectRecognised( requestObject ), "The metadata request object was not recognised." );
 

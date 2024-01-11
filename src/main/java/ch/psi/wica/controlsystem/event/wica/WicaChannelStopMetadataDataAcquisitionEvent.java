@@ -26,7 +26,7 @@ public class WicaChannelStopMetadataDataAcquisitionEvent
    public WicaChannelStopMetadataDataAcquisitionEvent( WicaChannel wicaChannel )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelStopMetadataDataAcquisitionEvent.class);
-      this.wicaChannel = Validate.notNull( wicaChannel );
+      this.wicaChannel = Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       logger.trace("Event created: '{}'.", this );
    }
 

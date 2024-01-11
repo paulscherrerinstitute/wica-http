@@ -78,7 +78,7 @@ public class WicaChannelDataSerializer
     */
    WicaChannelDataSerializer( Set<String> fieldsOfInterest, int numericScale, boolean quoteNumericStrings )
    {
-      Validate.notNull( fieldsOfInterest );
+      Validate.notNull( fieldsOfInterest, "The 'fieldsOfInterest' argument is null." );
       Validate.isTrue(numericScale >= 0, String.format( "numericScale ('%d') cannot be negative", numericScale ) );
       jsonObjectMapper = getMapper( fieldsOfInterest, numericScale, quoteNumericStrings );
    }

@@ -46,7 +46,7 @@ public class EpicsChannelPollerRequestService
     */
    EpicsChannelPollerRequestService( @Autowired EpicsChannelPollerService epicsChannelPollerService )
    {
-      this.epicsChannelPollerService = Validate.notNull( epicsChannelPollerService );
+      this.epicsChannelPollerService = Validate.notNull( epicsChannelPollerService, "The 'epicsChannelPollerService' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -60,7 +60,7 @@ public class EpicsChannelPollerRequestService
    @EventListener
    public void handleWicaChannelStartPollingEvent( WicaChannelStartPollingEvent event )
    {
-      Validate.notNull( event );
+      Validate.notNull( event, "The 'event' argument is null." );
       final WicaChannel wicaChannel = event.get();
 
       // Note: this service only handles direct, network-based polling of a remote IOC
@@ -94,7 +94,7 @@ public class EpicsChannelPollerRequestService
    @EventListener
    public void handleWicaChannelStopPollingEvent( WicaChannelStopPollingEvent event )
    {
-      Validate.notNull( event);
+      Validate.notNull( event, "The 'event' argument is null.");
       final WicaChannel wicaChannel = event.get();
 
       // Note: this service only handles direct, network-based polling of a remote IOC
@@ -144,7 +144,7 @@ public class EpicsChannelPollerRequestService
     */
    private void startPolling( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
 
       // Now start polling
       final var requestObject = new EpicsChannelPollerRequest( wicaChannel );
@@ -167,7 +167,7 @@ public class EpicsChannelPollerRequestService
     */
    private void stopPolling( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
 
       // Now stop polling
       final var requestObject = new EpicsChannelPollerRequest( wicaChannel );

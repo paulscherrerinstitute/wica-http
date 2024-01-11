@@ -31,7 +31,7 @@ class WicaChannelValuePassEverythingFilter implements WicaChannelValueFilter
    @Override
    public List<WicaChannelValue> apply( List<WicaChannelValue> inputList )
    {
-      Validate.notNull( inputList );
+      Validate.notNull( inputList, "The 'inputList' argument is null." );
       return inputList;
    }
 

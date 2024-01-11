@@ -53,8 +53,8 @@ public class EpicsChannelMetadataPublisher
    {
       logger.debug( "'{}' - constructing new EpicsChannelMetadataPublisher instance...", this );
 
-      this.epicsChannelMetadataGetter = Validate.notNull( epicsChannelMetadataGetter );
-      this.wicaChannelEventPublisher = Validate.notNull( wicaChannelEventPublisher );
+      this.epicsChannelMetadataGetter = Validate.notNull( epicsChannelMetadataGetter, "The 'epicsChannelMetadataGetter' argument is null." );
+      this.wicaChannelEventPublisher = Validate.notNull( wicaChannelEventPublisher, "The 'wicaChannelEventPublisher' argument is null." );
       this.requestList = Collections.synchronizedList( new ArrayList<>() );
       this.statisticsCollector = new EpicsChannelMetadataStatistics( requestList );
       statisticsCollectionService.addCollectable( statisticsCollector );
@@ -80,7 +80,7 @@ public class EpicsChannelMetadataPublisher
 
    public void addChannel( EpicsChannelMetadataRequest requestObject )
    {
-      Validate.notNull( requestObject );
+      Validate.notNull( requestObject, "The 'requestObject' argument is null." );
       Validate.validState( ! requestList.contains( requestObject ) );
 
       logger.info( "'{}' - adding metadata publication channel.", requestObject.getPublicationChannel() );
@@ -98,7 +98,7 @@ public class EpicsChannelMetadataPublisher
 
    public void removeChannel( EpicsChannelMetadataRequest requestObject )
    {
-      Validate.notNull( requestObject );
+      Validate.notNull( requestObject, "The 'requestObject' argument is null." );
       Validate.validState( requestList.contains( requestObject ) );
 
       logger.info( "'{}' - removing metadata publication channel.", requestObject.getPublicationChannel() );
