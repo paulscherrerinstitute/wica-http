@@ -185,7 +185,7 @@ class WicaStreamConfigurationDecoderPerformanceTest
          assertNotNull( wicaStream.getWicaChannels() );
       }
       final long decodeTimeInMicros = stopWatch.getTime(TimeUnit.MICROSECONDS );
-      logger.info( "Decode time for {} iterations was {} ms. Throughput = {} requests per second.", iterations, decodeTimeInMicros, ( 1_000_000 * iterations ) / decodeTimeInMicros  );
+      logger.info( "Decode time for {} iterations was {} ms. Throughput = {} requests per second.", iterations, decodeTimeInMicros, ( 1_000_000L * iterations ) / decodeTimeInMicros  );
    }
 
 
