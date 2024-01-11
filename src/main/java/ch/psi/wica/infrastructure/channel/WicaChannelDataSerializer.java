@@ -50,15 +50,15 @@ public class WicaChannelDataSerializer
    /**
     * Returns an instance that will serialize SELECTED @JsonProperty
     * annotated fields in a ChannelData object, or any of its children.
-    *
+    * <p>
     * In cases where the underlying type of the annotated field is double
     * then the value will be serialized with the specified numeric scale
     * (= number of digits after the decimal point).
-    *
+    * <p>
     * Special double values such a Nan and Infinity will be written as
     * either numbers or strings depending on the quoteNumericStrings
     * setting.
-    *
+    * <p>
     * For strict JSON compliance string format should be selected, although
     * this may imply extra work on the decoding end to reconstruct the
     * original types. For JSON5 compliance number format can be selected.

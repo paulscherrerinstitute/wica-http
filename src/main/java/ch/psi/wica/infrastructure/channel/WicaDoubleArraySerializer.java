@@ -18,7 +18,7 @@ import java.io.IOException;
 /**
  * Provides a means of serializing objects of type double[] in such a way that
  * a configurable number of digits appear after the decimal point.
- *
+ * <p>
  * This class works in conjunction with Jackson library module class with whom
  * it must be registered.
  */
@@ -36,14 +36,14 @@ class WicaDoubleArraySerializer extends JsonSerializer<double[]>
 
    /**
     * Constructs a new custom serializer for double arrays.
-    *
+    * <p>
     * The serializer generates a string representation with the specified
     * numeric scale (that's to say with the specified number of digits after
     * the decimal point).
-    *
+    * <p>
     * Where the numeric scale forces rounding, then a RoundingMode.HALF_UP
     * strategy is implemented.
-    *
+    * <p>
     * The JSON generator associated with this serializer can be configured to
     * determine whether this serializer writes special values NaN and Infinity
     * as numbers or strings.
