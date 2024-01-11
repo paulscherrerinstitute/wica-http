@@ -142,7 +142,7 @@ public class WicaStreamLifecycleService
             throw new IllegalArgumentException( "The JSON configuration string '" + truncateString( jsonStreamConfiguration ) + "' was invalid.", ex );
          }
 
-         if ( wicaStream.getWicaChannels().size() == 0 )
+         if ( wicaStream.getWicaChannels( ).isEmpty( ) )
          {
             logger.warn( "The JSON configuration string '{}' did not define any channels.", jsonStreamConfiguration );
             throw new IllegalArgumentException( "The JSON configuration string did not define any channels." );

@@ -115,7 +115,7 @@ abstract class WicaStreamDataBuffer<T extends WicaChannelData>
 
       final List<T> outputList = new ArrayList<>();
       inputQueue.forEach( c -> {
-         if ( c.getWicaServerTimestamp().compareTo( since ) > 0 )
+         if ( c.getWicaServerTimestamp( ).isAfter( since ) )
          {
             outputList.add( c );
          }

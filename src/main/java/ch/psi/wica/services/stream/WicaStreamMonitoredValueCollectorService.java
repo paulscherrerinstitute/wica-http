@@ -72,7 +72,7 @@ public class WicaStreamMonitoredValueCollectorService
                      .stream()
                      .filter( e -> e.getKey().getProperties().getDataAcquisitionMode().doesMonitorPublication() )
                      .map( e -> new AbstractMap.SimpleEntry<>( e.getKey(), wicaChannelValueFilteringService.filterValues( e.getKey(), e.getValue() ) ) )
-                     .filter( e -> e.getValue().size() > 0 )
+                     .filter( e -> !e.getValue( ).isEmpty( ) )
                      .collect( Collectors.toUnmodifiableMap( Map.Entry::getKey, Map.Entry::getValue ) );
    }
 
@@ -83,7 +83,7 @@ public class WicaStreamMonitoredValueCollectorService
                      .stream()
                      .filter( e -> e.getKey().getProperties().getDataAcquisitionMode().doesMonitorPublication() )
                      .map( e -> new AbstractMap.SimpleEntry<>( e.getKey(), wicaChannelValueFilteringService.filterLastValues( e.getValue() ) ) )
-                     .filter( e -> e.getValue().size() > 0 )
+                     .filter( e -> !e.getValue( ).isEmpty( ) )
                      .collect( Collectors.toUnmodifiableMap( Map.Entry::getKey, Map.Entry::getValue ) );
    }
 
