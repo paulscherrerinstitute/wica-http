@@ -249,8 +249,8 @@ class WicaStreamGetControllerTest
 
    static boolean sseCommentContains( ServerSentEvent<String> sse, String str )
    {
-      Validate.notNull(sse );
-      Validate.notNull( sse.comment() );
+      Validate.notNull( sse, "The 'SSE' argument was null." );
+      Validate.notNull( sse.comment(), "The 'SSE.comment()' argument was null." );
       final boolean result = sse.comment().contains( str );
       logger.info( "Checking whether SSE comment: '{}' contains: '{}'. Result: {} ", sse.comment(),  str, result );
       return result;
