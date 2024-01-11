@@ -48,8 +48,8 @@ abstract class WicaStreamDataBuffer<T extends WicaChannelData>
 
    public Map<WicaChannel, List<T>> getLaterThan( Set<WicaChannel> wicaChannels, LocalDateTime since )
    {
-      Validate.notNull( wicaChannels );
-      Validate.notNull( since );
+      Validate.notNull( wicaChannels, "The 'wicaChannels' argument is null." );
+      Validate.notNull( since, "The 'since' argument is null." );
 
       return wicaChannels.stream().collect( Collectors.toUnmodifiableMap( c -> c , c-> {
          final WicaDataBufferStorageKey wicaDataBufferStorageKey = getStorageKey( c );
@@ -59,8 +59,8 @@ abstract class WicaStreamDataBuffer<T extends WicaChannelData>
 
    public void saveDataPoint( WicaDataBufferStorageKey key, T t )
    {
-      Validate.notNull( key );
-      Validate.notNull( t );
+      Validate.notNull( key, "The 'key' argument is null." );
+      Validate.notNull( t, "The 't' argument is null." );
 
       synchronized ( this )
       {
@@ -86,7 +86,7 @@ abstract class WicaStreamDataBuffer<T extends WicaChannelData>
 
    public T getLatest( WicaDataBufferStorageKey key )
    {
-      Validate.notNull( key );
+      Validate.notNull( key, "The 'key' argument is null." );
       Validate.isTrue( stash.containsKey( key ) );
 
       synchronized ( this )
@@ -104,8 +104,8 @@ abstract class WicaStreamDataBuffer<T extends WicaChannelData>
 
    private List<T> getLaterThan( WicaDataBufferStorageKey key, LocalDateTime since )
    {
-      Validate.notNull( key );
-      Validate.notNull( since );
+      Validate.notNull( key, "The 'key' argument is null." );
+      Validate.notNull( since, "The 'since' argument is null." );
 
       final Queue<T> inputQueue = stash.get( key );
       if ( inputQueue == null )

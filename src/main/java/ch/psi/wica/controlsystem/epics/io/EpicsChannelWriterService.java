@@ -76,9 +76,9 @@ public class EpicsChannelWriterService implements AutoCloseable
     */
    public boolean writeStringValue( EpicsChannelName epicsChannelName, String channelValue, long timeout, TimeUnit timeUnit )
    {
-      Validate.notNull( epicsChannelName );
-      Validate.notNull( channelValue );
-      Validate.notNull( timeUnit );
+      Validate.notNull( epicsChannelName, "The 'epicsChannelName' argument is null." );
+      Validate.notNull( channelValue, "The 'channelValue' argument is null." );
+      Validate.notNull( timeUnit, "The 'timeUnit' argument is null." );
       Validate.isTrue( timeout > 0 );
       Validate.validState( ! closed, "The service was previously closed and can no longer be used." );
 

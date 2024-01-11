@@ -65,8 +65,8 @@ public class EpicsChannelPollerPublisher
    {
       logger.debug( "'{}' - constructing new EpicsChannelPollerPublisher instance...", this );
 
-      this.epicsChannelValueGetter = Validate.notNull( epicsChannelValueGetter );
-      this.wicaChannelEventPublisher = Validate.notNull( wicaChannelEventPublisher );
+      this.epicsChannelValueGetter = Validate.notNull( epicsChannelValueGetter, "The 'epicsChannelValueGetter' argument is null." );
+      this.wicaChannelEventPublisher = Validate.notNull( wicaChannelEventPublisher, "The 'wicaChannelEventPublisher' argument is null." );
       this.executor = Executors.newScheduledThreadPool( 4 );
       this.requestMap = new ConcurrentHashMap<>();
       this.channelMap = new ConcurrentHashMap<>();
@@ -98,7 +98,7 @@ public class EpicsChannelPollerPublisher
     */
    public boolean isRequestObjectRecognised( EpicsChannelPollerRequest requestObject )
    {
-      Validate.notNull( requestObject );
+      Validate.notNull( requestObject, "The 'requestObject' argument is null." );
       return this.requestMap.containsKey( requestObject );
    }
 
@@ -109,7 +109,7 @@ public class EpicsChannelPollerPublisher
     */
    public void addChannel( EpicsChannelPollerRequest requestObject )
    {
-      Validate.notNull( requestObject );
+      Validate.notNull( requestObject, "The 'requestObject' argument is null." );
       Validate.validState( !requestMap.containsKey( requestObject ) );
 
       logger.info( "'{}' - adding poller publication channel.", requestObject.getPublicationChannel() );
@@ -132,7 +132,7 @@ public class EpicsChannelPollerPublisher
     */
    public void removeChannel( EpicsChannelPollerRequest requestObject )
    {
-      Validate.notNull( requestObject );
+      Validate.notNull( requestObject, "The 'requestObject' argument is null." );
       Validate.validState( requestMap.containsKey( requestObject ) );
 
       logger.info( "'{}' - removing poller publication channel.", requestObject.getPublicationChannel() );

@@ -49,7 +49,7 @@ public class EpicsChannelValueGetter
     */
    public EpicsChannelValueGetter( @Autowired WicaChannelValueBuilder wicaChannelValueBuilder )
    {
-      this.wicaChannelValueBuilder = Validate.notNull( wicaChannelValueBuilder );
+      this.wicaChannelValueBuilder = Validate.notNull( wicaChannelValueBuilder, "The 'wicaChannelValueBuilder' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -94,8 +94,8 @@ public class EpicsChannelValueGetter
     */
    public WicaChannelValue get( Channel<Object> channel, long timeout, TimeUnit timeUnit ) throws InterruptedException, TimeoutException, ExecutionException
    {
-      Validate.notNull( channel );
-      Validate.notNull( timeUnit );
+      Validate.notNull( channel, "The 'channel' argument is null." );
+      Validate.notNull( timeUnit, "The 'timeUnit' argument is null." );
       Validate.validState( channel.getConnectionState() != ConnectionState.NEVER_CONNECTED, "Programming Error: the channel was never connected" );
 
       // Obtain the control system name for logging purposes.

@@ -46,7 +46,7 @@ public class EpicsChannelPollerStatistics implements StatisticsCollectable
     */
    public EpicsChannelPollerStatistics( Map<EpicsChannelPollerRequest, EpicsChannelPollerPublisher.Poller> requestMap )
    {
-      this.requestMap = Validate.notNull( requestMap );
+      this.requestMap = Validate.notNull( requestMap, "The 'requestMap' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/

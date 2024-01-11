@@ -41,7 +41,7 @@ public class EpicsChannelMonitorStatistics implements StatisticsCollectable
     */
    public EpicsChannelMonitorStatistics( List<EpicsChannelMonitorRequest> requestList )
    {
-      this.requestList = Validate.notNull( requestList );
+      this.requestList = Validate.notNull( requestList, "The 'requestList' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/

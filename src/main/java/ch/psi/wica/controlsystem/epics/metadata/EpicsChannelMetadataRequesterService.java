@@ -46,7 +46,7 @@ public class EpicsChannelMetadataRequesterService
     */
    EpicsChannelMetadataRequesterService( @Autowired EpicsChannelMetadataService epicsChannelMetadataService )
    {
-      this.epicsChannelMetadataService = Validate.notNull( epicsChannelMetadataService );
+      this.epicsChannelMetadataService = Validate.notNull( epicsChannelMetadataService, "The 'epicsChannelMetadataService' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -60,7 +60,7 @@ public class EpicsChannelMetadataRequesterService
    @EventListener
    public void handleWicaChannelStartMetadataDataAcquisitionEvent( WicaChannelStartMetadataDataAcquisitionEvent event )
    {
-      Validate.notNull( event );
+      Validate.notNull( event, "The 'event' argument is null." );
       final WicaChannel wicaChannel = event.get();
 
       // This service will start data acquisition for the Wica channels where the
@@ -86,7 +86,7 @@ public class EpicsChannelMetadataRequesterService
    @EventListener
    public void handleWicaChannelStopMetadataDataAcquisitionEvent( WicaChannelStopMetadataDataAcquisitionEvent event )
    {
-      Validate.notNull( event);
+      Validate.notNull( event, "The 'event' argument is null.");
       final WicaChannel wicaChannel = event.get();
 
       // This service will stop data acquisition for the Wica channels where the
@@ -128,7 +128,7 @@ public class EpicsChannelMetadataRequesterService
     */
    private void startMetadataDataAcquisition( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
 
       // Now start polling
       final var requestObject = new EpicsChannelMetadataRequest( wicaChannel );
@@ -151,7 +151,7 @@ public class EpicsChannelMetadataRequesterService
     */
    private void stopMetadataDataAcquisition( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
 
       // Now stop polling
       final var requestObject = new EpicsChannelMetadataRequest( wicaChannel );

@@ -45,7 +45,7 @@ public class EpicsChannelMonitorRequesterService
     */
    EpicsChannelMonitorRequesterService( @Autowired EpicsChannelMonitorService epicsChannelMonitorService )
    {
-      this.epicsChannelMonitorService = Validate.notNull( epicsChannelMonitorService );
+      this.epicsChannelMonitorService = Validate.notNull( epicsChannelMonitorService, "The 'epicsChannelMonitorService' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -58,7 +58,7 @@ public class EpicsChannelMonitorRequesterService
    @EventListener
    public void handleWicaChannelStartMonitoringEvent( WicaChannelStartMonitoringEvent event )
    {
-      Validate.notNull( event);
+      Validate.notNull( event, "The 'event' argument is null.");
       final WicaChannel wicaChannel = event.get();
 
       // This service will start monitoring Wica channels where the protocol is
@@ -82,7 +82,7 @@ public class EpicsChannelMonitorRequesterService
    @EventListener
    public void handleWicaChannelStopMonitoringEvent( WicaChannelStopMonitoringEvent event )
    {
-      Validate.notNull( event );
+      Validate.notNull( event, "The 'event' argument is null.");
       final WicaChannel wicaChannel = event.get();
 
       // This service will stop monitoring Wica channels where the protocol is
@@ -124,7 +124,7 @@ public class EpicsChannelMonitorRequesterService
     */
    private void startMonitoring( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
 
       // Now start monitoring
       final var requestObject = new EpicsChannelMonitorRequest( wicaChannel );
@@ -147,7 +147,7 @@ public class EpicsChannelMonitorRequesterService
     */
    private void stopMonitoring( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
 
       // Now stop monitoring
       final var requestObject = new EpicsChannelMonitorRequest( wicaChannel );

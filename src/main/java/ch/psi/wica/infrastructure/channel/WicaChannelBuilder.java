@@ -57,7 +57,7 @@ public class WicaChannelBuilder
    {
       Validate.notNull( wicaChannelName,"The 'wicaChannelName' argument was null." );
       this.wicaChannelName = WicaChannelName.of( wicaChannelName );
-      this.wicaChannelProperties = Validate.notNull( wicaChannelProperties );
+      this.wicaChannelProperties = Validate.notNull( wicaChannelProperties,"The 'wicaChannelProperties' argument was null." );
       return this;
    }
 

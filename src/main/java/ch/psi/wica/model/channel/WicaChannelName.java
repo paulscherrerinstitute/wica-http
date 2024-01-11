@@ -58,7 +58,7 @@ public class WicaChannelName
    private WicaChannelName( Protocol protocol, ControlSystemName controlSystemName, Integer instance, String strSpecifier )
    {
       this.protocol = protocol;
-      this.controlSystemName = Validate.notNull( controlSystemName );
+      this.controlSystemName = Validate.notNull( controlSystemName, "The 'controlSystemName' argument is null." );
       this.instance = instance;
       this.stringRepresentation = strSpecifier;
    }

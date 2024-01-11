@@ -61,10 +61,10 @@ class WicaChannelPutController
                                      @Autowired StatisticsCollectionService statisticsCollectionService )
    {
       Validate.isTrue( defaultTimeoutInMillis > 0 );
-      Validate.notNull( epicsChannelWriterService );
+      Validate.notNull( epicsChannelWriterService, "The 'epicsChannelWriterService' argument is null." );
 
       this.defaultTimeoutInMillis = defaultTimeoutInMillis;
-      this.epicsChannelWriterService = Validate.notNull( epicsChannelWriterService );
+      this.epicsChannelWriterService = Validate.notNull( epicsChannelWriterService, "The 'epicsChannelWriterService' argument is null." );
 
       this.statisticsCollector = new ControllerStatistics("WICA CHANNEL PUT CONTROLLER" );
       statisticsCollectionService.addCollectable( statisticsCollector );

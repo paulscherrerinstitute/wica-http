@@ -44,7 +44,7 @@ public class WicaChannelPollMonitorService
 
    public WicaChannelPollMonitorService( @Autowired ApplicationEventPublisher applicationEventPublisher )
    {
-      this.applicationEventPublisher = Validate.notNull( applicationEventPublisher );
+      this.applicationEventPublisher = Validate.notNull( applicationEventPublisher, "The 'applicationEventPublisher' argument is null." );
       this.executor = Executors.newSingleThreadScheduledExecutor();
    }
 
@@ -54,7 +54,7 @@ public class WicaChannelPollMonitorService
    @EventListener
    public void handleWicaChannelStartPollingEvent( WicaChannelStartPollingEvent wicaChannelStartPollingEvent )
    {
-      Validate.notNull( wicaChannelStartPollingEvent );
+      Validate.notNull( wicaChannelStartPollingEvent, "The 'wicaChannelStartPollingEvent' argument is null." );
 
       // Note:
       // This service only handles the indirect, local, polling of a monitor which should
@@ -74,7 +74,7 @@ public class WicaChannelPollMonitorService
    @EventListener
    public void handleWicaChannelStopPollingEvent( WicaChannelStopPollingEvent wicaChannelStopPollingEvent )
    {
-      Validate.notNull( wicaChannelStopPollingEvent );
+      Validate.notNull( wicaChannelStopPollingEvent, "The 'wicaChannelStopPollingEvent' argument is null." );
 
       // Note: this service only handles the indirect, local, polling of a monitor which should
       // already have been established on the remote IOC. All other requests will be  silently ignored.

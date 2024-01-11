@@ -73,7 +73,7 @@ class WicaChannelGetController
    {
       Validate.isTrue( defaultTimeoutInMillis > 0 );
       Validate.isTrue( defaultNumericScale > 0 );
-      Validate.notNull( epicsChannelReaderService );
+      Validate.notNull( epicsChannelReaderService, "The 'epicsChannelReaderService' argument is null." );
 
       this.defaultTimeoutInMillis = defaultTimeoutInMillis;
       this.defaultNumericScale = defaultNumericScale;

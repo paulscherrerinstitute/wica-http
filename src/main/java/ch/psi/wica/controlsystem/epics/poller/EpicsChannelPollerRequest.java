@@ -51,9 +51,9 @@ public class EpicsChannelPollerRequest
     */
    EpicsChannelPollerRequest( EpicsChannelName epicsChannelName, int pollingIntervalInMillis, WicaChannel wicaChannel )
    {
-      this.epicsChannelName = Validate.notNull( epicsChannelName );
+      this.epicsChannelName = Validate.notNull( epicsChannelName, "The 'epicsChannelName' argument is null." );
       this.pollingInterval = pollingIntervalInMillis;
-      this.publicationChannel = Validate.notNull( wicaChannel );
+      this.publicationChannel = Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/

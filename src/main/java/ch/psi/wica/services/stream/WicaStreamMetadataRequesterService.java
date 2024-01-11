@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -53,7 +54,7 @@ public class WicaStreamMetadataRequesterService
    private final Map<WicaDataBufferStorageKey,Integer> channelInterestMap;
    private final Map<WicaDataBufferStorageKey,LocalDateTime> channelEventMap;
 
-/*- Main ---------------------------------------------------------------------*/
+   /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
    /**
@@ -78,7 +79,7 @@ public class WicaStreamMetadataRequesterService
    {
       this.wicaChannelResourceReleaseIntervalInSecs = wicaChannelResourceReleaseIntervalInSecs;
       this.wicaChannelPublishChannelMetadataInitialState = wicaChannelPublishChannelMetadataInitialState;
-      this.applicationEventPublisher = Validate.notNull( applicationEventPublisher );
+      this.applicationEventPublisher = Validate.notNull( applicationEventPublisher, "The 'applicationEventPublisher' argument is null." );
       this.channelInterestMap = Collections.synchronizedMap( new HashMap<>() );
       this.channelEventMap = Collections.synchronizedMap( new HashMap<>() );
    }
@@ -111,7 +112,7 @@ public class WicaStreamMetadataRequesterService
     */
    void startDataAcquisition( WicaStream wicaStream )
    {
-      Validate.notNull( wicaStream );
+      Validate.notNull( wicaStream, "The 'wicaStream' argument is null." );
       wicaStream.getWicaChannels().forEach( this::startDataAcquisitionChannel );
    }
 
@@ -122,7 +123,7 @@ public class WicaStreamMetadataRequesterService
     */
    void stopDataAcquisition( WicaStream wicaStream )
    {
-      Validate.notNull( wicaStream );
+      Validate.notNull( wicaStream, "The 'wicaStream' argument is null." );
       wicaStream.getWicaChannels().forEach( this::stopDataAcquisitionChannel );
    }
 
@@ -137,7 +138,7 @@ public class WicaStreamMetadataRequesterService
     */
    private void startDataAcquisitionChannel( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       logger.debug( "Request to start acquiring metadata for wica channel: '{}'", wicaChannel );
 
       final var storageKey = WicaDataBufferStorageKey.getMetadataStorageKey( wicaChannel );
@@ -185,7 +186,7 @@ public class WicaStreamMetadataRequesterService
     */
    private void stopDataAcquisitionChannel( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       logger.debug( "Request to stop acquiring metadata for wica channel: '{}'", wicaChannel );
 
       final var storageKey = WicaDataBufferStorageKey.getMetadataStorageKey( wicaChannel );

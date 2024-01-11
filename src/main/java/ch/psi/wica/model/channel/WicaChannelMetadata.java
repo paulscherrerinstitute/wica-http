@@ -174,7 +174,7 @@ public abstract class WicaChannelMetadata extends WicaChannelData
                                   int upperWarning, int lowerWarning )
       {
          super( subType );
-         this.units = Validate.notNull( units );
+         this.units = Validate.notNull( units, "The 'units' argument was null." );
          this.upperDisplay = upperDisplay;
          this.lowerDisplay = lowerDisplay;
          this.upperControl = upperControl;
@@ -300,7 +300,7 @@ public abstract class WicaChannelMetadata extends WicaChannelData
                                double upperWarning, double lowerWarning )
       {
          super( subType );
-         this.units = Validate.notNull( units );
+         this.units = Validate.notNull( units, "The 'units' argument was null." );
          this.precision = precision;
          this.upperDisplay = upperDisplay;
          this.lowerDisplay = lowerDisplay;

@@ -71,10 +71,10 @@ public abstract class EpicsChannelManager implements AutoCloseable
    {
       logger.debug( "'{}' - constructing new EpicsChannel instance...", this );
 
-      Validate.notNull( epicsChannelAccessContextSupplier );
-      this.scope = Validate.notNull( scope );
-      this.epicsChannelConnectionChangeSubscriber = Validate.notNull( epicsChannelConnectionChangeSubscriber );
-      this.epicsChannelEventPublisher = Validate.notNull( epicsChannelEventPublisher );
+      Validate.notNull( epicsChannelAccessContextSupplier, "The 'epicsChannelAccessContextSupplier' argument was null." );
+      this.scope = Validate.notNull( scope, "The 'scope' argument was null." );
+      this.epicsChannelConnectionChangeSubscriber = Validate.notNull( epicsChannelConnectionChangeSubscriber, "The 'epicsChannelConnectionChangeSubscriber' argument was null." );
+      this.epicsChannelEventPublisher = Validate.notNull( epicsChannelEventPublisher, "The 'epicsChannelEventPublisher' argument was null." );
 
 
       this.channels = new ConcurrentHashMap<>();
@@ -97,7 +97,7 @@ public abstract class EpicsChannelManager implements AutoCloseable
 
    public void createChannel( EpicsChannelName epicsChannelName )
    {
-      Validate.notNull( epicsChannelName );
+      Validate.notNull( epicsChannelName, "The 'epicsChannelName' argument is null." );
       statisticsCollector.incrementCreateMonitoredChannelRequests();
 
       if ( channelInterestMap.containsKey( epicsChannelName ) )
@@ -117,7 +117,7 @@ public abstract class EpicsChannelManager implements AutoCloseable
 
    public void removeChannel( EpicsChannelName epicsChannelName )
    {
-      Validate.notNull( epicsChannelName );
+      Validate.notNull( epicsChannelName, "The 'epicsChannelName' argument is null." );
       Validate.validState( channels.containsKey( epicsChannelName ) );
       Validate.validState( channelInterestMap.containsKey( epicsChannelName ) );
       Validate.validState(channelInterestMap.get( epicsChannelName ) > 0 );
@@ -170,7 +170,7 @@ public abstract class EpicsChannelManager implements AutoCloseable
     */
    private Channel<Object> createChannel_( EpicsChannelName epicsChannelName )
    {
-      Validate.notNull( epicsChannelName );
+      Validate.notNull( epicsChannelName, "The 'epicsChannelName' argument is null." );
 
       logger.debug("'{}' - creating channel... ", epicsChannelName );
       final Channel<Object> caChannel;

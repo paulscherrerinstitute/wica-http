@@ -85,7 +85,7 @@ public class WicaStreamPolledValueRequesterService
       this.wicaChannelResourceReleaseIntervalInSecs = wicaChannelResourceReleaseIntervalInSecs;
       this.wicaChannelPublishPollerRestarts = wicaChannelPublishPollerRestarts;
       this.wicaChannelPublishChannelValueInitialState = wicaChannelPublishChannelValueInitialState;
-      this.applicationEventPublisher = Validate.notNull( applicationEventPublisher );
+      this.applicationEventPublisher = Validate.notNull( applicationEventPublisher, "The 'applicationEventPublisher' argument is null." );
       this.polledChannelInterestMap = Collections.synchronizedMap( new HashMap<>() );
       this.polledChannelEventMap = Collections.synchronizedMap( new HashMap<>() );
    }
@@ -133,7 +133,7 @@ public class WicaStreamPolledValueRequesterService
     */
    void startPolling( WicaStream wicaStream )
    {
-      Validate.notNull( wicaStream );
+      Validate.notNull( wicaStream, "The 'wicaStream' argument is null." );
       wicaStream.getWicaChannels()
             .stream()
             .filter( c -> c.getProperties().getDataAcquisitionMode().doesPolling() )
@@ -147,7 +147,7 @@ public class WicaStreamPolledValueRequesterService
     */
    void stopPolling( WicaStream wicaStream )
    {
-      Validate.notNull( wicaStream );
+      Validate.notNull( wicaStream, "The 'wicaStream' argument is null." );
       wicaStream.getWicaChannels()
             .stream()
             .filter( c -> c.getProperties().getDataAcquisitionMode().doesPolling() )
@@ -187,7 +187,7 @@ public class WicaStreamPolledValueRequesterService
     */
    private void restartPollingChannel( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       logger.info( "Request to restart polling on wica channel: '{}'", wicaChannel);
 
       // Tell the underlying control system to STOP polling this channel.
@@ -211,7 +211,7 @@ public class WicaStreamPolledValueRequesterService
     */
    private void startPollingChannel( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       logger.debug( "Request to start polling wica channel: '{}' with polling interval '{}' ms.", wicaChannel, wicaChannel.getProperties().getPollingIntervalInMillis() );
 
       final var storageKey = WicaDataBufferStorageKey.getPolledValueStorageKey( wicaChannel );
@@ -262,7 +262,7 @@ public class WicaStreamPolledValueRequesterService
     */
    private void stopPollingChannel( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       logger.debug( "Request to stop polling wica channel: '{}'", wicaChannel );
 
       final var storageKey = WicaDataBufferStorageKey.getPolledValueStorageKey( wicaChannel );

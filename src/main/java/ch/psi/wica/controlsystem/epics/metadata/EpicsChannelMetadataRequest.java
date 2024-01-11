@@ -44,8 +44,8 @@ public class EpicsChannelMetadataRequest
     */
    public EpicsChannelMetadataRequest( EpicsChannelName epicsChannelName, WicaChannel publicationChannel )
    {
-      this.epicsChannelName = Validate.notNull( epicsChannelName );
-      this.publicationChannel = Validate.notNull( publicationChannel );
+      this.epicsChannelName = Validate.notNull( epicsChannelName, "The 'epicsChannelName' argument is null." );
+      this.publicationChannel = Validate.notNull( publicationChannel, "The 'publicationChannel' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/
