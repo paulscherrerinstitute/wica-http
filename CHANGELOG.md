@@ -335,7 +335,7 @@ Issues Addressed:
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
 
 
-* [1.13.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.12.1) Released 2022-12-13
+* [1.13.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.13.0) Released 2022-12-13
   Switch to Java 18 in an attempt to resolve issue with last release which would not run properly in Docker container.
   See this issue: https://github.com/adoptium/temurin-build/issues/2976
 
@@ -344,5 +344,17 @@ Issues Addressed:
 * [Issue #110](https://github.com/paulscherrerinstitute/wica-http/issues/110) Update default config location to use application-docker-run.properties
 * [Issue #111](https://github.com/paulscherrerinstitute/wica-http/issues/111) Update build and runtime to Java 18.
 * [Issue #112](https://github.com/paulscherrerinstitute/wica-http/issues/112) Create release 1.13.0
+
+IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
+
+
+* [1.14.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.14.0) Released 2024-01-11
+  Update to Java 21 and latest Spring Boot
+
+Issues Addressed:
+* [Issue #113](https://github.com/paulscherrerinstitute/wica-http/issues/113) Update build and runtime to Java 21.
+* [Issue #114](https://github.com/paulscherrerinstitute/wica-http/issues/114) Create release 1.14.0
+* [Issue #115](https://github.com/paulscherrerinstitute/wica-http/issues/115) Update dependencies to latest.
+* [Issue #116](https://github.com/paulscherrerinstitute/wica-http/issues/116) Eliminate Validate.notNull deprecation warnings.
 
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
