@@ -184,7 +184,7 @@ class WicaStreamMonitoredValueRequesterServiceTest
       service.startMonitoring( wicaStream );
       final long elapsedTimeInMicroseconds = stopWatch.getTime(TimeUnit.MICROSECONDS);
 
-      logger.info( "Started monitoring stream with {} channels in {} us.  Throughput = {} requests/second.", numberOfChannelsInStream, elapsedTimeInMicroseconds, (1_000_000 * numberOfChannelsInStream ) / elapsedTimeInMicroseconds  );
+      logger.info( "Started monitoring stream with {} channels in {} us.  Throughput = {} requests/second.", numberOfChannelsInStream, elapsedTimeInMicroseconds, (1_000_000L * numberOfChannelsInStream ) / elapsedTimeInMicroseconds  );
    }
 
 
