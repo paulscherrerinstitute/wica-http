@@ -36,7 +36,7 @@ public class WicaDataBufferStorageKey
 
    public static WicaDataBufferStorageKey getPolledValueStorageKey( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
 
       // Optimisation Note:
       // The storage key for saving data obtained by channel polling is based on ALL the properties
@@ -60,7 +60,7 @@ public class WicaDataBufferStorageKey
 
    public static WicaDataBufferStorageKey getMetadataStorageKey( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
 
       // Optimisation Note:
       // The storage key for saving metadata is based on ALL the properties of the Wica Channel.

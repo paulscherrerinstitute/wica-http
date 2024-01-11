@@ -59,9 +59,9 @@ public class WicaStream
    public WicaStream( WicaStreamId wicaStreamId, WicaStreamProperties wicaStreamProperties, Set<WicaChannel> wicaChannels )
    {
       // Capture and Validate all parameters
-      this.wicaStreamId = Validate.notNull( wicaStreamId );
-      this.wicaStreamProperties = Validate.notNull( wicaStreamProperties );
-      this.wicaChannels = Validate.notNull( wicaChannels );
+      this.wicaStreamId = Validate.notNull( wicaStreamId, "The 'wicaStreamId' argument is null." );
+      this.wicaStreamProperties = Validate.notNull( wicaStreamProperties, "The 'wicaStreamProperties' argument is null." );
+      this.wicaChannels = Validate.notNull( wicaChannels, "The 'wicaChannels' argument is null." );
 
       // Output some diagnostic information to the log.
       final Logger logger = LoggerFactory.getLogger(WicaStream.class);

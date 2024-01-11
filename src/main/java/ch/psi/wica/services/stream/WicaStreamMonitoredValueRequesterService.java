@@ -86,7 +86,7 @@ public class WicaStreamMonitoredValueRequesterService
       this.wicaChannelResourceReleaseIntervalInSecs = wicaChannelResourceReleaseIntervalInSecs;
       this.wicaChannelPublishMonitorRestarts = wicaChannelPublishMonitorRestarts;
       this.wicaChannelPublishChannelValueInitialState = wicaChannelPublishChannelValueInitialState;
-      this.applicationEventPublisher = Validate.notNull( applicationEventPublisher );
+      this.applicationEventPublisher = Validate.notNull( applicationEventPublisher, "The 'applicationEventPublisher' argument was null." );
       this.monitoredChannelInterestMap = Collections.synchronizedMap( new HashMap<>() );
       this.monitoredChannelEventMap = Collections.synchronizedMap( new HashMap<>() );
    }
@@ -119,7 +119,7 @@ public class WicaStreamMonitoredValueRequesterService
     */
    void restartMonitoring( WicaStream wicaStream )
    {
-      Validate.notNull( wicaStream );
+      Validate.notNull( wicaStream, "The 'wicaStream' argument is null." );
 
       wicaStream.getWicaChannels()
             .stream()
@@ -134,7 +134,7 @@ public class WicaStreamMonitoredValueRequesterService
     */
    void startMonitoring( WicaStream wicaStream )
    {
-      Validate.notNull( wicaStream );
+      Validate.notNull( wicaStream, "The 'wicaStream' argument is null." );
       wicaStream.getWicaChannels()
             .stream()
             .filter( c -> c.getProperties().getDataAcquisitionMode().doesMonitoring() )
@@ -148,7 +148,7 @@ public class WicaStreamMonitoredValueRequesterService
     */
    void stopMonitoring( WicaStream wicaStream )
    {
-      Validate.notNull( wicaStream );
+      Validate.notNull( wicaStream, "The 'wicaStream' argument is null." );
       wicaStream.getWicaChannels()
             .stream()
             .filter( c -> c.getProperties().getDataAcquisitionMode().doesMonitoring() )
@@ -203,7 +203,7 @@ public class WicaStreamMonitoredValueRequesterService
     */
    private void restartMonitoringChannel( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       logger.info( "Request to restart monitoring on wica channel: '{}'", wicaChannel);
 
       // Tell the underlying control system to STOP monitoring this channel.
@@ -228,7 +228,7 @@ public class WicaStreamMonitoredValueRequesterService
     */
    private void startMonitoringChannel( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       logger.info( "Request to start monitoring on wica channel: '{}'", wicaChannel);
 
       final var storageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
@@ -280,7 +280,7 @@ public class WicaStreamMonitoredValueRequesterService
     */
    private void stopMonitoringChannel( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       logger.debug( "Request to stop monitoring on wica channel: '{}'", wicaChannel );
 
       final var storageKey = WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );

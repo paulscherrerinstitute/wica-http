@@ -44,7 +44,7 @@ public class WicaChannelMetadataMapSerializerService
    public WicaChannelMetadataMapSerializerService( @Value( "${wica.stream-metadata-fields-of-interest}" ) String fieldsOfInterest,
                                                    @Value( "${wica.stream-quote-numeric-strings}" ) boolean quoteNumericStrings )
    {
-      Validate.notNull( fieldsOfInterest );
+      Validate.notNull( fieldsOfInterest, "The 'fieldsOfInterest' argument is null." );
       final Set<String> fieldsOfInterestSet = Set.of( fieldsOfInterest.split( ";" ) );
 
       mapper = Jackson2ObjectMapperBuilder.json().build();

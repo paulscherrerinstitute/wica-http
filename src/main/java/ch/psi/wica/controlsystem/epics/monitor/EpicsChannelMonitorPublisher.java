@@ -62,8 +62,8 @@ public class EpicsChannelMonitorPublisher
    {
       logger.debug( "'{}' - constructing new EpicsChannelMonitorPublisher instance...", this );
 
-      this.epicsChannelMonitorSubscriber = Validate.notNull( epicsChannelMonitorSubscriber );
-      this.wicaChannelEventPublisher = Validate.notNull( wicaChannelEventPublisher );
+      this.epicsChannelMonitorSubscriber = Validate.notNull( epicsChannelMonitorSubscriber, "The 'epicsChannelMonitorSubscriber' argument was null." );
+      this.wicaChannelEventPublisher = Validate.notNull( wicaChannelEventPublisher, "The 'wicaChannelEventPublisher' argument was null." );
       this.requestList = Collections.synchronizedList( new ArrayList<>() );
       this.statisticsCollector = new EpicsChannelMonitorStatistics( requestList );
       statisticsCollectionService.addCollectable( statisticsCollector );
@@ -95,7 +95,7 @@ public class EpicsChannelMonitorPublisher
     */
    public boolean isRequestObjectRecognised( EpicsChannelMonitorRequest requestObject )
    {
-      Validate.notNull( requestObject );
+      Validate.notNull( requestObject, "The 'requestObject' argument is null." );
       return this.requestList.contains( requestObject );
    }
 
@@ -106,7 +106,7 @@ public class EpicsChannelMonitorPublisher
     */
    public void addChannel( EpicsChannelMonitorRequest requestObject )
    {
-      Validate.notNull( requestObject );
+      Validate.notNull( requestObject, "The 'requestObject' argument is null." );
       Validate.validState( ! requestList.contains( requestObject ) );
 
       logger.info( "'{}' - adding monitor publication channel.", requestObject.getPublicationChannel() );
@@ -129,7 +129,7 @@ public class EpicsChannelMonitorPublisher
     */
    public void removeChannel( EpicsChannelMonitorRequest requestObject )
    {
-      Validate.notNull( requestObject );
+      Validate.notNull( requestObject, "The 'requestObject' argument is null." );
       Validate.validState( requestList.contains( requestObject ) );
 
       logger.info( "'{}' - removing monitor publication channel.", requestObject.getPublicationChannel() );

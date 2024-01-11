@@ -48,8 +48,8 @@ public class EpicsChannelMonitorService
    {
       logger.debug( "'{}' - constructing new EpicsChannelMonitorService instance...", this );
 
-      this.epicsChannelManager = Validate.notNull( epicsChannelManager );
-      this.epicsChannelMonitorPublisher = Validate.notNull( epicsChannelMonitorPublisher );
+      this.epicsChannelManager = Validate.notNull( epicsChannelManager, "The 'epicsChannelManager' argument was null." );
+      this.epicsChannelMonitorPublisher = Validate.notNull( epicsChannelMonitorPublisher, "The 'epicsChannelMonitorPublisher' argument was null." );
 
       logger.debug( "'{}' - service instance constructed ok.", this );
    }
@@ -87,7 +87,7 @@ public class EpicsChannelMonitorService
     */
    public void startMonitoring( EpicsChannelMonitorRequest requestObject )
    {
-      Validate.notNull( requestObject );
+      Validate.notNull( requestObject, "The 'requestObject' argument was null." );
       Validate.validState( ! closed, "The monitoring service was previously closed." );
       Validate.validState( ! epicsChannelMonitorPublisher.isRequestObjectRecognised( requestObject ), "The request object is already active." );
 
@@ -121,7 +121,7 @@ public class EpicsChannelMonitorService
     */
    public void stopMonitoring( EpicsChannelMonitorRequest requestObject )
    {
-      Validate.notNull( requestObject );
+      Validate.notNull( requestObject, "The 'requestObject' argument was null." );
       Validate.validState( ! closed, "The monitoring service was previously closed." );
       Validate.validState( epicsChannelMonitorPublisher.isRequestObjectRecognised( requestObject ), "The request object was not recognised." );
 

@@ -53,15 +53,15 @@ public class WicaStreamServerSentEventPublisher
                                        WicaChannelMetadataMapSerializerService wicaChannelMetadataMapSerializerService,
                                        WicaChannelValueMapSerializerService wicaChannelValueMapSerializerService )
    {
-      this.wicaStream = Validate.notNull( wicaStream );
-      this.wicaStreamMetadataCollectorService = Validate.notNull( wicaStreamMetadataCollectorService );
-      this.wicaStreamMonitoredValueCollectorService = Validate.notNull( wicaStreamMonitoredValueCollectorService );
-      this.wicaStreamPolledValueCollectorService = Validate.notNull( wicaStreamPolledValueCollectorService );
-      this.wicaChannelMetadataMapSerializerService = Validate.notNull(wicaChannelMetadataMapSerializerService);
-      this.wicaChannelValueMapSerializerService = Validate.notNull(wicaChannelValueMapSerializerService);
+      this.wicaStream = Validate.notNull( wicaStream, "The 'wicaStream' argument is null." );
+      this.wicaStreamMetadataCollectorService = Validate.notNull( wicaStreamMetadataCollectorService, "The 'wicaStreamMetadataCollectorService' argument is null." );
+      this.wicaStreamMonitoredValueCollectorService = Validate.notNull( wicaStreamMonitoredValueCollectorService, "The 'wicaStreamMonitoredValueCollectorService' argument is null." );
+      this.wicaStreamPolledValueCollectorService = Validate.notNull( wicaStreamPolledValueCollectorService, "The 'wicaStreamPolledValueCollectorService' argument is null." );
+      this.wicaChannelMetadataMapSerializerService = Validate.notNull(wicaChannelMetadataMapSerializerService, "The 'wicaChannelMetadataMapSerializerService' argument is null.");
+      this.wicaChannelValueMapSerializerService = Validate.notNull(wicaChannelValueMapSerializerService, "The 'wicaChannelValueMapSerializerService' argument is null.");
 
-      this.wicaStreamId = Validate.notNull( wicaStream.getWicaStreamId() );
-      this.wicaStreamProperties = Validate.notNull( wicaStream.getWicaStreamProperties() );
+      this.wicaStreamId = Validate.notNull( wicaStream.getWicaStreamId(), "The 'wicaStreamId' argument is null." );
+      this.wicaStreamProperties = Validate.notNull( wicaStream.getWicaStreamProperties(), "The 'wicaStreamProperties' argument is null." );
 
       shutdown.set( false );
    }

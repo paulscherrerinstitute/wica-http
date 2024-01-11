@@ -30,7 +30,7 @@ public class WicaChannelStopMonitoringEvent
 
       Validate.isTrue( wicaChannel.getProperties().getDataAcquisitionMode().doesMonitoring() );
 
-      this.wicaChannel = Validate.notNull( wicaChannel );
+      this.wicaChannel = Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       logger.trace("Event created: '{}'.", this );
    }
 

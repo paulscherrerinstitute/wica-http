@@ -27,7 +27,7 @@ public class WicaChannelStartMonitoringEvent
    public WicaChannelStartMonitoringEvent( WicaChannel wicaChannel )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelStartMonitoringEvent.class);
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       Validate.isTrue( wicaChannel.getProperties().getDataAcquisitionMode().doesMonitoring() );
 
       this.wicaChannel = wicaChannel;
