@@ -264,8 +264,7 @@ public class WicaStreamProperties
    public boolean equals( Object o )
    {
       if ( this == o ) return true;
-      if ( !(o instanceof WicaStreamProperties) ) return false;
-      WicaStreamProperties that = (WicaStreamProperties) o;
+      if ( !( o instanceof WicaStreamProperties that ) ) return false;
       return dataAcquisitionMode == that.dataAcquisitionMode &&
             filterType == that.filterType &&
             Objects.equals( quietMode, that.quietMode) &&
