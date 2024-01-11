@@ -27,7 +27,7 @@ public class WicaChannelStopPollingEvent
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelStopPollingEvent.class);
 
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       Validate.isTrue( wicaChannel.getProperties().getDataAcquisitionMode().doesPolling() );
       this.wicaChannel = wicaChannel;
 

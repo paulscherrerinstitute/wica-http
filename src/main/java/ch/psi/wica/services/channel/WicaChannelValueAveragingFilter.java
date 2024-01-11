@@ -78,7 +78,7 @@ class WicaChannelValueAveragingFilter implements WicaChannelValueFilter
    @Override
    public List<WicaChannelValue> apply( List<WicaChannelValue> inputList )
    {
-      Validate.notNull( inputList );
+      Validate.notNull( inputList, "The 'inputList' argument is null." );
 
       final List<WicaChannelValue> outputList = new LinkedList<>();
       for ( WicaChannelValue currentValue : inputList )

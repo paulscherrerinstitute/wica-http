@@ -40,7 +40,7 @@ public class EpicsChannelMetadataStatistics implements StatisticsCollectable
     */
    public EpicsChannelMetadataStatistics( List<EpicsChannelMetadataRequest> requestList )
    {
-      this.requestList = Validate.notNull( requestList );
+      this.requestList = Validate.notNull( requestList, "The 'requestList' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/

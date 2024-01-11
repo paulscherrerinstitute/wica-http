@@ -47,7 +47,7 @@ public class EpicsChannelMetadataGetter
     */
    public EpicsChannelMetadataGetter( @Autowired WicaChannelMetadataBuilder wicaChannelMetadataBuilder )
    {
-      this.wicaChannelMetadataBuilder = Validate.notNull( wicaChannelMetadataBuilder );
+      this.wicaChannelMetadataBuilder = Validate.notNull( wicaChannelMetadataBuilder, "The 'wicaChannelMetadataBuilder' argument is null." );
    }
 
 
