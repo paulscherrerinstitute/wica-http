@@ -28,8 +28,8 @@ public class WicaChannelMetadataUpdateEvent
    public WicaChannelMetadataUpdateEvent( WicaChannel wicaChannel, WicaChannelMetadata wicaChannelMetadata )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelMetadataUpdateEvent.class);
-      this.wicaChannel = Validate.notNull( wicaChannel );
-      this.wicaChannelMetadata = Validate.notNull( wicaChannelMetadata );
+      this.wicaChannel = Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
+      this.wicaChannelMetadata = Validate.notNull( wicaChannelMetadata, "The 'wicaChannelMetadata' argument is null." );
       logger.trace("Event created: '{}'.", this );
    }
 

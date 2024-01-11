@@ -40,7 +40,7 @@ public class EpicsChannelAccessContextSupplier
    public EpicsChannelAccessContextSupplier( @Value( "${wica.epics-ca-library-monitor-notifier-impl}") String epicsCaLibraryMonitorNotifierImpl,
                                              @Value( "${wica.epics-ca-library-debug-level}") int epicsCaLibraryDebugLevel )
    {
-      this.epicsCaLibraryMonitorNotifierImpl = Validate.notNull( epicsCaLibraryMonitorNotifierImpl );
+      this.epicsCaLibraryMonitorNotifierImpl = Validate.notNull( epicsCaLibraryMonitorNotifierImpl, "The 'epicsCaLibraryMonitorNotifierImpl' argument is null." );
       this.epicsCaLibraryDebugLevel = epicsCaLibraryDebugLevel;
    }
 

@@ -95,7 +95,7 @@ public class WicaChannelDataSerializer
     */
    public String writeToJson( WicaChannelData wicaChannelData )
    {
-      Validate.notNull( wicaChannelData );
+      Validate.notNull( wicaChannelData, "The 'wicaChannelData' argument is null." );
 
       try
       {

@@ -33,7 +33,7 @@ public class WicaStreamMonitoredValueDataBuffer extends WicaStreamDataBuffer<Wic
    @Override
    protected WicaDataBufferStorageKey getStorageKey( WicaChannel wicaChannel )
    {
-      Validate.notNull(wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       return WicaDataBufferStorageKey.getMonitoredValueStorageKey( wicaChannel );
    }
 

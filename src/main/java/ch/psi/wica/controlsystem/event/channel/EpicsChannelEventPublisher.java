@@ -5,7 +5,6 @@ package ch.psi.wica.controlsystem.event.channel;
 
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +25,7 @@ public class EpicsChannelEventPublisher
 
    public EpicsChannelEventPublisher( ApplicationEventPublisher applicationEventPublisher )
    {
-      this.applicationEventPublisher = Validate.notNull( applicationEventPublisher );
+      this.applicationEventPublisher = Validate.notNull( applicationEventPublisher, "The 'applicationEventPublisher' argument is null." );
    }
 
 /*- Public methods -----------------------------------------------------------*/

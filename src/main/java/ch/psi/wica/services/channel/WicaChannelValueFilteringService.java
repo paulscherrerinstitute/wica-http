@@ -54,8 +54,8 @@ public class WicaChannelValueFilteringService
     */
    public List<WicaChannelValue> filterValues( WicaChannel wicaChannel, List<WicaChannelValue> wicaChannelValues )
    {
-      Validate.notNull( wicaChannel );
-      Validate.notNull( wicaChannelValues );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
+      Validate.notNull( wicaChannelValues, "The 'wicaChannelValues' argument is null." );
 
       final WicaChannelValueFilter filter;
       if ( wicaChannelValueFilterMap.containsKey( wicaChannel ) )

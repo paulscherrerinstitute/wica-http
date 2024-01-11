@@ -32,7 +32,7 @@ public class EpicsChannelMetadataRequest
     */
    public EpicsChannelMetadataRequest( WicaChannel wicaChannel )
    {
-      this( EpicsChannelName.of( Validate.notNull( wicaChannel.getName().getControlSystemName() ) ), wicaChannel );
+      this( EpicsChannelName.of( Validate.notNull( wicaChannel.getName().getControlSystemName(),"The 'controlSystemName' argument is null." ) ), wicaChannel );
    }
 
    /**

@@ -29,8 +29,8 @@ public class WicaChannelPolledValueUpdateEvent
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelPolledValueUpdateEvent.class);
 
-      Validate.notNull( wicaChannel );
-      Validate.notNull( wicaChannelValue );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
+      Validate.notNull( wicaChannelValue, "The 'wicaChannelValue' argument is null." );
       Validate.isTrue( wicaChannel.getProperties().getDataAcquisitionMode().doesPolling(), "The data acquisition mode of this channel does not support polling." );
 
       this.wicaChannel = wicaChannel;

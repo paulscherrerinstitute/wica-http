@@ -36,7 +36,7 @@ public class EpicsChannelMonitorRequest
     */
    public EpicsChannelMonitorRequest( WicaChannel wicaChannel )
    {
-      this( EpicsChannelName.of( Validate.notNull( wicaChannel ).getName().getControlSystemName() ), wicaChannel );
+      this( EpicsChannelName.of( Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." ).getName().getControlSystemName() ), wicaChannel );
    }
 
    /**

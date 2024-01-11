@@ -38,7 +38,7 @@ public class EpicsChannelPollerRequest
     */
    public EpicsChannelPollerRequest( WicaChannel wicaChannel )
    {
-      this( EpicsChannelName.of( Validate.notNull( wicaChannel.getName().getControlSystemName() ) ), wicaChannel.getProperties().getPollingIntervalInMillis(), wicaChannel );
+      this( EpicsChannelName.of( Validate.notNull( wicaChannel.getName().getControlSystemName(),"The 'controlSystemName' argument is null."  ) ), wicaChannel.getProperties().getPollingIntervalInMillis(), wicaChannel );
    }
 
    /**

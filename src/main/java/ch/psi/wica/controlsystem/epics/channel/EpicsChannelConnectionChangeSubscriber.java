@@ -73,8 +73,8 @@ public class EpicsChannelConnectionChangeSubscriber
    public void subscribe( Channel<Object> channel, Consumer<Boolean> connectionChangeHandler )
    {
       // Validate preconditions
-      Validate.notNull( channel );
-      Validate.notNull( connectionChangeHandler );
+      Validate.notNull( channel, "The 'channel' argument is null." );
+      Validate.notNull( connectionChangeHandler, "The 'connectionChangeHandler' argument is null." );
       Validate.isTrue( channel.getConnectionState() == ConnectionState.NEVER_CONNECTED, "Programming Error: The channel was not in the expected state (NEVER_CONNECTED)" );
 
       // Obtain the control system name for logging purposes.

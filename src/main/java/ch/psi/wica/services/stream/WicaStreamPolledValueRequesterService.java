@@ -118,7 +118,7 @@ public class WicaStreamPolledValueRequesterService
     */
    void restartPolling( WicaStream wicaStream )
    {
-      Validate.notNull( wicaStream );
+      Validate.notNull( wicaStream, "The 'wicaStream' argument is null." );
 
       wicaStream.getWicaChannels()
             .stream()

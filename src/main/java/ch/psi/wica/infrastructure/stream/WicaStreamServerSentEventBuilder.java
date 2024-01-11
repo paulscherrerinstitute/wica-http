@@ -56,7 +56,7 @@ public enum WicaStreamServerSentEventBuilder
     */
    public ServerSentEvent<String> build( WicaStreamId id, String dataString )
    {
-      Validate.notNull( id );
+      Validate.notNull( id, "The id field was null" );
       Validate.notNull( dataString,"The valueMap field was null ");
 
       final DateTimeFormatter formatter = DateTimeFormatter.ofPattern( DATETIME_FORMAT_PATTERN );

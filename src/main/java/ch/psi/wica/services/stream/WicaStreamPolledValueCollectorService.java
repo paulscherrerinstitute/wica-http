@@ -77,7 +77,7 @@ public class WicaStreamPolledValueCollectorService
    @EventListener
    public void handleUpdateEvent( WicaChannelPolledValueUpdateEvent event)
    {
-      Validate.notNull( event );
+      Validate.notNull( event, "The 'event' argument is null." );
       final WicaChannel wicaChannel = event.getWicaChannel();
       final WicaDataBufferStorageKey wicaDataBufferStorageKey = WicaDataBufferStorageKey.getPolledValueStorageKey( wicaChannel );
       final WicaChannelValue wicaChannelValue = event.getWicaChannelValue();
