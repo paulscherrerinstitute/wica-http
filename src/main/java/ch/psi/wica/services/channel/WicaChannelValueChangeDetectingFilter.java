@@ -19,16 +19,16 @@ import java.util.List;
 /**
  * A filter that writes a new value to the output list every time the input
  * signal makes a change whose absolute value exceeds the configured deadband.
- *
+ * <p>
  * The filter only operates on values for types WicaChannelType.REAL and
  * WicaChannelType.INTEGER. All other value types in the input list
  * will be passed through unaffected.
- *
+ * <p>
  * Where the values in the input list indicate that the data source is offline
  * then this will result in the transfer of the offline values to the output list.
  * When the data source eventually comes back online then the first online value
  * is also transferred.
- *
+ * <p>
  * In the unlikely situation where successive values from the input list are of
  * different types the first value of the changed type is always transferred
  * to the output list.
