@@ -33,12 +33,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.springframework.metrics</groupId>
-            <artifactId>spring-metrics</artifactId>
-            <version>0.5.1.RELEASE</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.github.stephenc.jcip</groupId>
             <artifactId>jcip-annotations</artifactId>
             <version>1.0-1</version>
