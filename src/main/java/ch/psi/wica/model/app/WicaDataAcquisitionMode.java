@@ -21,15 +21,15 @@ public enum WicaDataAcquisitionMode
     * information on the dynamically-changing properties of the control point. The information that is
     * obtained is configurable but will usually include the current value of the control point. Additionally
     * it is possible to request the control point's timestamp and alarm state.
-    *
+    * <p>
     * The received information is internally buffered by the Wica Server and sent out in batches as individual
     * Server-Sent-Event (SSE) messages within the overall Wica Stream. The size of the polled-value buffer is
     * configurable on the server by the system administrator. The rate at which the polled values are sent out
     * in batches is configurable by the user as a property of each stream.
-    *
+    * <p>
     * Unlike values obtained by monitoring, values obtained by polling are NOT filterable. That's to say each
     * polled value will be directly represented in the Wica Stream's SSE update messages.
-    *
+    * <p>
     * This mode allows the user to acquire information with the required update latency by configuration
     * of the appropriate polling interval (but with consequential increase in the network demand).
     * @see ch.psi.wica.model.stream.WicaStreamPropertiesDefaults#DEFAULT_POLLED_VALUE_FLUX_INTERVAL_IN_MILLIS
@@ -39,18 +39,18 @@ public enum WicaDataAcquisitionMode
    /**
     * Sends a single network request to the underlying control system asking it to provide notification
     * of interesting changes to the dynamically-changing information associated with the control point.
-    *
+    * <p>
     * Interesting changes will usually include changes to the control point's current value (possibly
     * outside certain defined limits) and additionally changes to the control point's alarm state.
-    *
+    * <p>
     * Notified values are internally buffered on the Wica Server, optionally FILTERED (if an appropriate
     * rule has been defined), and published in batches as individual Server-Sent-Event (SSE) messages on
     * the Wica Stream.
-    *
+    * <p>
     * The size of the internal monitored-value buffer is configured on the server by the system administrator.
     * The rate at which the monitored values are sent out in batches is configurable by the user as a
     * property of the stream.
-    *
+    * <p>
     * This mode is economical with network usage whilst optimising the latency with which updated
     * information is posted to the Wica Stream.
     * @see ch.psi.wica.model.stream.WicaStreamPropertiesDefaults#DEFAULT_MONITORED_VALUE_FLUX_INTERVAL_IN_MILLIS
@@ -61,7 +61,7 @@ public enum WicaDataAcquisitionMode
     * Samples the dynamically-changing properties of the control point using a combination of POLL and MONITOR
     * modes. By selection of an appropriate polling interval this mode can guarantee that the Wica Stream
     * publishes a new value at least as often as every X milliseconds, seconds, minutes etc.
-    *
+    * <p>
     * This mode can be useful for updating a graphical plot of control point values at a periodic rate
     * even when the value is not changing in the control system (that's to say when no monitor notifications
     * are being posted). Another use case is to periodically verify that the control system monitoring is
