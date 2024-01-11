@@ -264,9 +264,8 @@ public class WicaStreamSerializer
       public boolean equals( Object other )
       {
          final boolean suppressOutput;
-         if ( other instanceof WicaStreamProperties )
+         if ( other instanceof WicaStreamProperties props )
          {
-            final WicaStreamProperties props = (WicaStreamProperties) other;
             suppressOutput =
                optEqualsDefaultValue( props.getOptionalHeartbeatFluxIntervalInMillis(),      WicaStreamPropertiesDefaults.DEFAULT_HEARTBEAT_FLUX_INTERVAL_IN_MILLIS       ) &&
                optEqualsDefaultValue( props.getOptionalMetadataFluxIntervalInMillis(),       WicaStreamPropertiesDefaults.DEFAULT_METADATA_FLUX_INTERVAL_IN_MILLIS        ) &&
