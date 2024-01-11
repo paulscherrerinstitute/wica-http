@@ -27,7 +27,7 @@ public class WicaChannelStartPollingEvent
    public WicaChannelStartPollingEvent( WicaChannel wicaChannel )
    {
       final Logger logger = LoggerFactory.getLogger( WicaChannelStartPollingEvent.class);
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       Validate.isTrue( wicaChannel.getProperties().getDataAcquisitionMode().doesPolling() );
       Validate.isTrue(  wicaChannel.getProperties().getPollingIntervalInMillis() > 0 );
 

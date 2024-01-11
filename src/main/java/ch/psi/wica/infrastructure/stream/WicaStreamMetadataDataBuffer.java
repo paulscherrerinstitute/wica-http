@@ -33,7 +33,7 @@ public class WicaStreamMetadataDataBuffer extends WicaStreamDataBuffer<WicaChann
    @Override
    protected WicaDataBufferStorageKey getStorageKey( WicaChannel wicaChannel )
    {
-      Validate.notNull( wicaChannel );
+      Validate.notNull( wicaChannel, "The 'wicaChannel' argument is null." );
       return  WicaDataBufferStorageKey.getMetadataStorageKey( wicaChannel );
    }
 

@@ -50,8 +50,8 @@ public class WicaChannelMetadataBuilder
     */
    public WicaChannelMetadata build( ControlSystemName controlSystemName, EpicsChannelType epicsChannelType, Control<?,?>  epicsMetadataObject )
    {
-      Validate.notNull( controlSystemName );
-      Validate.notNull( epicsChannelType );
+      Validate.notNull( controlSystemName, "The 'controlSystemName' argument is null." );
+      Validate.notNull( epicsChannelType, "The 'epicsChannelType' argument is null." );
 
       logger.trace( "'{}' - type is {}", controlSystemName, epicsChannelType );
 

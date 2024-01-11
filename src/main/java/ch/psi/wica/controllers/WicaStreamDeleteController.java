@@ -54,7 +54,7 @@ class WicaStreamDeleteController
    public WicaStreamDeleteController( @Autowired WicaStreamLifecycleService wicaStreamLifecycleService,
                                       @Autowired StatisticsCollectionService statisticsCollectionService)
    {
-      this.wicaStreamLifecycleService = Validate.notNull(wicaStreamLifecycleService);
+      this.wicaStreamLifecycleService = Validate.notNull(wicaStreamLifecycleService, "The 'wicaStreamLifecycleService' argument is null." );
 
       this.statisticsCollector = new ControllerStatistics("WICA STREAM DELETE CONTROLLER" );
       statisticsCollectionService.addCollectable( statisticsCollector );

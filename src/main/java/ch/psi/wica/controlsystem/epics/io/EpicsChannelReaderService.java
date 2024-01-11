@@ -62,8 +62,8 @@ public class EpicsChannelReaderService implements AutoCloseable
    {
       logger.debug( "'{}' - constructing new EpicsChannelReaderService instance...", this );
 
-      this.epicsChannelMetadataGetter = Validate.notNull( epicsChannelMetadataGetter );
-      this.epicsChannelValueGetter = Validate.notNull( epicsChannelValueGetter );
+      this.epicsChannelMetadataGetter = Validate.notNull( epicsChannelMetadataGetter, "The 'epicsChannelMetadataGetter' argument is null." );
+      this.epicsChannelValueGetter = Validate.notNull( epicsChannelValueGetter, "The 'epicsChannelValueGetter' argument is null." );
 
       logger.info( "Getting CA context for EpicsChannelReaderService..." );
       this.caContext = epicsChannelAccessContextSupplier.getContextForScope( "io" );
@@ -92,8 +92,8 @@ public class EpicsChannelReaderService implements AutoCloseable
     */
    public WicaChannelMetadata readChannelMetadata( EpicsChannelName epicsChannelName, long timeout, TimeUnit timeUnit )
    {
-      Validate.notNull( epicsChannelName );
-      Validate.notNull( timeUnit );
+      Validate.notNull( epicsChannelName, "The 'epicsChannelName' argument is null." );
+      Validate.notNull( timeUnit, "The 'timeUnit' argument is null." );
       Validate.isTrue( timeout > 0 );
       Validate.validState( ! closed, "The service was previously closed and can no longer be used." );
 
@@ -133,8 +133,8 @@ public class EpicsChannelReaderService implements AutoCloseable
     */
    public WicaChannelValue readChannelValue( EpicsChannelName epicsChannelName, long timeout, TimeUnit timeUnit )
    {
-      Validate.notNull( epicsChannelName );
-      Validate.notNull( timeUnit );
+      Validate.notNull( epicsChannelName, "The 'epicsChannelName' argument is null." );
+      Validate.notNull( timeUnit, "The 'timeUnit' argument is null." );
       Validate.isTrue( timeout > 0 );
       Validate.validState( ! closed, "The service was previously closed and can no longer be used." );
 

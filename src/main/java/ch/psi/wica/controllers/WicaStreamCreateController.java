@@ -55,7 +55,7 @@ class WicaStreamCreateController
    public WicaStreamCreateController( @Autowired WicaStreamLifecycleService wicaStreamLifecycleService,
                                       @Autowired StatisticsCollectionService statisticsCollectionService )
    {
-      this.wicaStreamLifecycleService = Validate.notNull(wicaStreamLifecycleService);
+      this.wicaStreamLifecycleService = Validate.notNull( wicaStreamLifecycleService, "The 'wicaStreamLifecycleService' argument is null.");
       this.statisticsCollector = new ControllerStatistics("WICA STREAM CREATE CONTROLLER" );
       statisticsCollectionService.addCollectable( statisticsCollector );
    }

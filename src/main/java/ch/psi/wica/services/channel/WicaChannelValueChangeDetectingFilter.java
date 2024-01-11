@@ -69,7 +69,7 @@ class WicaChannelValueChangeDetectingFilter implements WicaChannelValueFilter
    @Override
    public List<WicaChannelValue> apply( List<WicaChannelValue> inputList )
    {
-      Validate.notNull( inputList );
+      Validate.notNull( inputList, "The 'inputList' argument is null." );
       final List<WicaChannelValue> outputList = new LinkedList<>();
 
       for ( WicaChannelValue currentValue : inputList )
@@ -116,8 +116,8 @@ class WicaChannelValueChangeDetectingFilter implements WicaChannelValueFilter
    private boolean isChangeDetected( WicaChannelValue.WicaChannelValueConnected currentValue,
                                      WicaChannelValue.WicaChannelValueConnected previousValue )
    {
-      Validate.notNull( currentValue );
-      Validate.notNull( previousValue );
+      Validate.notNull( currentValue, "The 'currentValue' argument is null." );
+      Validate.notNull( previousValue, "The 'previousValue' argument is null." );
 
       // Handle the unusual situation where successive values in the input list are of
       // different types. In this case transfer the new value.

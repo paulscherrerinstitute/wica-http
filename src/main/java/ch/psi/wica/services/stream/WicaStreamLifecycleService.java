@@ -91,9 +91,9 @@ public class WicaStreamLifecycleService
    )
    {
       this.wicaStreamConfigurationDecoder = wicaStreamConfigurationDecoder;
-      this.wicaStreamMetadataRequesterService = Validate.notNull( wicaStreamMetadataRequesterService);
-      this.wicaStreamMonitoredValueRequesterService = Validate.notNull( wicaStreamMonitoredValueRequesterService);
-      this.wicaStreamPolledValueRequesterService = Validate.notNull(wicaStreamPolledValueRequesterService);
+      this.wicaStreamMetadataRequesterService = Validate.notNull( wicaStreamMetadataRequesterService, "The 'wicaStreamMetadataRequesterService' argument was null." );
+      this.wicaStreamMonitoredValueRequesterService = Validate.notNull( wicaStreamMonitoredValueRequesterService, "The 'wicaStreamMonitoredValueRequesterService' argument was null.");
+      this.wicaStreamPolledValueRequesterService = Validate.notNull(wicaStreamPolledValueRequesterService, "The 'wicaStreamPolledValueRequesterService' argument was null."  );
       this.wicaStreamMetadataCollectorService = wicaStreamMetadataCollectorService;
       this.wicaStreamMonitoredValueCollectorService = wicaStreamMonitoredValueCollectorService;
       this.wicaStreamPolledValueCollectorService = wicaStreamPolledValueCollectorService;
