@@ -2,9 +2,6 @@
 package ch.psi.wica.model.channel;
 
 /*- Imported packages --------------------------------------------------------*/
-
-import org.apache.commons.lang3.Validate;
-
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
@@ -17,7 +14,7 @@ public enum WicaChannelType
 
 /*- Public attributes --------------------------------------------------------*/
 
-   UNKNOWN, // Initial state: used to represent the type of a channel which has
+   UNKNOWN, // Initial state: used to represent the type of channel which has
             // not yet received any information from the underlying data source.
    INTEGER,
    REAL,
