@@ -46,7 +46,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
-          java-version: '18'
+          java-version: '21'
           cache: 'maven'
       - name: Build with Maven
         # Note: maven CLI options: -B means run in batch mode, -V means display version information.
