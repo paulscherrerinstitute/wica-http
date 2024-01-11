@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
@@ -105,7 +104,7 @@ public class WicaStreamPolledValueRequesterService
             .stream()
             .filter( key -> polledChannelInterestMap.get( key ) == 0 )
             .filter( key -> timeNow.isAfter( polledChannelEventMap.get( key ).plusSeconds( wicaChannelResourceReleaseIntervalInSecs ) ) )
-            .collect( Collectors.toList() )
+            .toList()
             .forEach( this::discardPolledChannel );
    }
 
@@ -177,7 +176,7 @@ public class WicaStreamPolledValueRequesterService
     * @implNote
     * Restart is achieved by publishing STOP/START polling events
     * which will be acted on by the underlying control system.
-    *
+    * <p>
     * When the feature is enabled each restart event results in the
     * publication of a new value to indicate that the channel has
     * become temporarily disconnected.
@@ -251,7 +250,7 @@ public class WicaStreamPolledValueRequesterService
     * Stops polling the Wica channel with the specified name (which
     * should previously have been polled) and/or reduces the interest
     * count for this channel.
-    *
+    * <p>
     * When/if the interest in the channel is reduced to zero then any
     * attempts to subsequently observe it's state will result in an
     * exception.
