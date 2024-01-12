@@ -348,8 +348,8 @@ Issues Addressed:
 IntelliJ Test Report: Tests run: 371, Failures: 0, Errors: 0, Skipped: 12
 
 
-* [1.14.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.14.0) Released 2024-01-11
-  Update to Java 21 and latest Spring Boot
+* [1.14.0](https://github.com/paulscherrerinstitute/wica-http/releases/tag/1.14.0) Released 2024-01-12
+  Update to Java 21 and latest Spring Boot.
 
 Issues Addressed:
 * [Issue #113](https://github.com/paulscherrerinstitute/wica-http/issues/113) Update build and runtime to Java 21.
