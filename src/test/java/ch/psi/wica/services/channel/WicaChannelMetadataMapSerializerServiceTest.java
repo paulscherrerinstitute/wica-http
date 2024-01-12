@@ -6,7 +6,8 @@ package ch.psi.wica.services.channel;
 import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.infrastructure.util.JsonStringFormatter;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadata;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadataBuilder;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,15 +50,15 @@ class WicaChannelMetadataMapSerializerServiceTest
    void setup()
    {
       // Setup values shared across many tests
-      unkMetadata = WicaChannelMetadata.createUnknownInstance();
-      strMetadata = WicaChannelMetadata.createStringInstance();
-      strArrMetadata = WicaChannelMetadata.createStringArrayInstance();
-      intMetadata = WicaChannelMetadata.createIntegerInstance( "units", 100, 0, 90, 10, 98, 2, 95, 5 );
-      intArrMetadata = WicaChannelMetadata.createIntegerArrayInstance( "units", 100, 0, 90, 10, 98, 2, 95, 5 );
-      realMetadata = WicaChannelMetadata.createRealInstance( "units", 3, 90.12345678, 0.0000123, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
-      realArrMetadata= WicaChannelMetadata.createRealArrayInstance( "units", 3, 100.123117, 0.0, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
-      realNanMetadata = WicaChannelMetadata.createRealInstance( "units", 3, Double.NaN, 0.0, 4.5, 10.6, 97.6, 2.2, 95.3, 5.1 );
-      realInfMetadata = WicaChannelMetadata.createRealInstance( "units", 3, Double.POSITIVE_INFINITY, 0.0, 9.7, 10.6123, 97.61234, 2.2, 95.3, 5.1 );
+      unkMetadata = WicaChannelMetadataBuilder.createUnknownInstance();
+      strMetadata = WicaChannelMetadataBuilder.createStringInstance();
+      strArrMetadata = WicaChannelMetadataBuilder.createStringArrayInstance();
+      intMetadata = WicaChannelMetadataBuilder.createIntegerInstance( "units", 100, 0, 90, 10, 98, 2, 95, 5 );
+      intArrMetadata = WicaChannelMetadataBuilder.createIntegerArrayInstance( "units", 100, 0, 90, 10, 98, 2, 95, 5 );
+      realMetadata = WicaChannelMetadataBuilder.createRealInstance( "units", 3, 90.12345678, 0.0000123, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
+      realArrMetadata= WicaChannelMetadataBuilder.createRealArrayInstance( "units", 3, 100.123117, 0.0, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
+      realNanMetadata = WicaChannelMetadataBuilder.createRealInstance( "units", 3, Double.NaN, 0.0, 4.5, 10.6, 97.6, 2.2, 95.3, 5.1 );
+      realInfMetadata = WicaChannelMetadataBuilder.createRealInstance( "units", 3, Double.POSITIVE_INFINITY, 0.0, 9.7, 10.6123, 97.61234, 2.2, 95.3, 5.1 );
    }
 
    @Test

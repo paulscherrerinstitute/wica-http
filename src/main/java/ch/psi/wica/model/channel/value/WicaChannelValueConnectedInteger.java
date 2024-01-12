@@ -1,35 +1,49 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.model.channel;
+
+package ch.psi.wica.model.channel.value;
 
 /*- Imported packages --------------------------------------------------------*/
+
+import ch.psi.wica.model.channel.WicaChannelType;
+import java.time.LocalDateTime;
+
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Represents the <i>alarm severity</i> of a wica channel, an abstraction
- * which specifies whether a wica channel is operating normally or is in
- * an alarm or warning state.
+ * Represents the value of a connected channel whose underlying type is INTEGER.
  */
-public enum WicaChannelAlarmSeverity
+public class WicaChannelValueConnectedInteger extends WicaChannelValueConnected
 {
 
 /*- Public attributes --------------------------------------------------------*/
-
-   NO_ALARM,      // 0
-   MINOR_ALARM,   // 1
-   MAJOR_ALARM,   // 2
-   INVALID_ALARM;  // 3
-
 /*- Private attributes -------------------------------------------------------*/
+
+    private final int value;
+
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
+
+    public WicaChannelValueConnectedInteger( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, int value )
+    {
+        super( WicaChannelType.INTEGER, alarmSeverity, alarmStatus, dataSourceTimestamp );
+        this.value = value;
+    }
+
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
+
+   public int getValue()
+   {
+      return value;
+   }
 
    @Override
    public String toString()
    {
-      return String.valueOf( this.ordinal() );
+      return "WicaChannelValueConnectedInteger{" +
+               "value=" + value +
+               '}';
    }
 
 /*- Private methods ----------------------------------------------------------*/

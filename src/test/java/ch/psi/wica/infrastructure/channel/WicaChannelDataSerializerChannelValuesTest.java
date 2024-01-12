@@ -4,7 +4,8 @@ package ch.psi.wica.infrastructure.channel;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.infrastructure.util.JsonStringFormatter;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,15 +62,15 @@ class WicaChannelDataSerializerChannelValuesTest
    void setup()
    {
       // Setup values shared across many tests
-      unconnValue = WicaChannelValue.createChannelValueDisconnected();
-      intValue = WicaChannelValue.createChannelValueConnectedInteger( 27 );
-      strValue = WicaChannelValue.createChannelValueConnectedString( "abcdef" );
-      realValue = WicaChannelValue.createChannelValueConnectedReal( 123456.6543212345 );
-      realNanValue = WicaChannelValue.createChannelValueConnectedReal( NaN );
-      realInfValue = WicaChannelValue.createChannelValueConnectedReal( POSITIVE_INFINITY );
-      intArrValue = WicaChannelValue.createChannelValueConnectedIntegerArray( new int[] { 25, 12 } );
-      strArrValue = WicaChannelValue.createChannelValueConnectedStringArray( new String[] { "abcdef", "ghijkl" } );
-      realArrValue = WicaChannelValue.createChannelValueConnectedRealArray( new double[] { 1.23456789012345, 9.87654321012345, Double.NaN }  );
+      unconnValue = WicaChannelValueBuilder.createChannelValueDisconnected();
+      intValue = WicaChannelValueBuilder.createChannelValueConnectedInteger( 27 );
+      strValue = WicaChannelValueBuilder.createChannelValueConnectedString( "abcdef" );
+      realValue = WicaChannelValueBuilder.createChannelValueConnectedReal( 123456.6543212345 );
+      realNanValue = WicaChannelValueBuilder.createChannelValueConnectedReal( NaN );
+      realInfValue = WicaChannelValueBuilder.createChannelValueConnectedReal( POSITIVE_INFINITY );
+      intArrValue = WicaChannelValueBuilder.createChannelValueConnectedIntegerArray( new int[] { 25, 12 } );
+      strArrValue = WicaChannelValueBuilder.createChannelValueConnectedStringArray( new String[] { "abcdef", "ghijkl" } );
+      realArrValue = WicaChannelValueBuilder.createChannelValueConnectedRealArray( new double[] { 1.23456789012345, 9.87654321012345, Double.NaN }  );
 
       // Set up decoder
       jsonDecoder = JsonMapper.builder().configure( JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS, true ).build();
@@ -249,7 +250,7 @@ class WicaChannelDataSerializerChannelValuesTest
    @Test
    void test_serializeValueRealPrecisionTestsWithDifferentPrecisions() throws IOException
    {
-      final var real = WicaChannelValue.createChannelValueConnectedReal( 123456.654321 );
+      final var real = WicaChannelValueBuilder.createChannelValueConnectedReal( 123456.654321 );
 
       final var num4Serializer = new WicaChannelDataSerializer( Set.of( "val" ), 4,false );
       final var jsonStr1 =  num4Serializer.writeToJson( real );
@@ -275,7 +276,7 @@ class WicaChannelDataSerializerChannelValuesTest
    @ParameterizedTest
    void testPerformance( int times )
    {
-      final var val = WicaChannelValue.createChannelValueConnectedReal( 25.12345678 );
+      final var val = WicaChannelValueBuilder.createChannelValueConnectedReal( 25.12345678 );
       final StopWatch stopwatch = StopWatch.createStarted();
       for ( int i = 0 ; i < times; i++ )
       {

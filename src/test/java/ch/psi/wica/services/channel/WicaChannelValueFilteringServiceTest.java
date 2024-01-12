@@ -7,7 +7,10 @@ package ch.psi.wica.services.channel;
 import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.infrastructure.channel.WicaChannelPropertiesBuilder;
 import ch.psi.wica.model.app.WicaFilterType;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
+import ch.psi.wica.model.channel.value.WicaChannelValueConnectedInteger;
+import ch.psi.wica.model.channel.value.WicaChannelValueConnectedReal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,10 +42,10 @@ class WicaChannelValueFilteringServiceTest
    @Test
    void testFilterValues_LatestValueFilter()
    {
-      final var dblValue1 = WicaChannelValue.createChannelValueConnectedReal( 129.123456 );
-      final var dblValue2 = WicaChannelValue.createChannelValueConnectedReal(  14.123456 );
-      final var dblValue3 = WicaChannelValue.createChannelValueConnectedReal(  15.123456 );
-      final var dblValue4 = WicaChannelValue.createChannelValueConnectedReal( 111.123456 );
+      final var dblValue1 = WicaChannelValueBuilder.createChannelValueConnectedReal( 129.123456 );
+      final var dblValue2 = WicaChannelValueBuilder.createChannelValueConnectedReal(  14.123456 );
+      final var dblValue3 = WicaChannelValueBuilder.createChannelValueConnectedReal(  15.123456 );
+      final var dblValue4 = WicaChannelValueBuilder.createChannelValueConnectedReal( 111.123456 );
 
       final var props =  WicaChannelPropertiesBuilder.create()
             .withFilterType(WicaFilterType.LAST_N )
@@ -55,17 +58,17 @@ class WicaChannelValueFilteringServiceTest
                                                                                  .build(), inputList );
 
       assertThat(outputList.size(), is( 2 ) );
-      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedReal) outputList.get( 0 ) ).getValue(), is(15.123456 ) );
-      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedReal) outputList.get( 1 ) ).getValue(), is(111.123456 ) );
+      assertThat( ( (WicaChannelValueConnectedReal) outputList.get( 0 ) ).getValue(), is(15.123456 ) );
+      assertThat( ( (WicaChannelValueConnectedReal) outputList.get( 1 ) ).getValue(), is(111.123456 ) );
    }
 
    @Test
    void testFilterValues_FixedSamplingCycleFilter()
    {
-      final var intValue1 = WicaChannelValue.createChannelValueConnectedInteger( 129 );
-      final var intValue2 = WicaChannelValue.createChannelValueConnectedInteger( 14 );
-      final var intValue3 = WicaChannelValue.createChannelValueConnectedInteger( 15 );
-      final var intValue4 = WicaChannelValue.createChannelValueConnectedInteger( 111 );
+      final var intValue1 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 129 );
+      final var intValue2 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 14 );
+      final var intValue3 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 15 );
+      final var intValue4 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 111 );
 
       final var props =  WicaChannelPropertiesBuilder.create()
             .withFilterType(WicaFilterType.ONE_IN_M )
@@ -78,22 +81,22 @@ class WicaChannelValueFilteringServiceTest
                                                                                  .build(), inputList );
 
       assertThat( outputList.size(), is( 2 ) );
-      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue(), is(129 ) );
-      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue(), is(15 ) );
+      assertThat( ( (WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue(), is(129 ) );
+      assertThat( ( (WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue(), is(15 ) );
    }
 
    @Test
    void testFilterValues_RateLimitingFilter() throws InterruptedException
    {
-      final var intValue1 = WicaChannelValue.createChannelValueConnectedInteger( 1 );
-      final var intValue2 = WicaChannelValue.createChannelValueConnectedInteger( 2 );
-      final var intValue3 = WicaChannelValue.createChannelValueConnectedInteger( 3 );
-      final var intValue4 = WicaChannelValue.createChannelValueConnectedInteger( 4 );
+      final var intValue1 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 1 );
+      final var intValue2 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 2 );
+      final var intValue3 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 3 );
+      final var intValue4 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 4 );
       Thread.sleep( 600 );
-      final var intValue5 = WicaChannelValue.createChannelValueConnectedInteger( 5 );
-      final var intValue6 = WicaChannelValue.createChannelValueConnectedInteger( 6 );
-      final var intValue7 = WicaChannelValue.createChannelValueConnectedInteger( 7 );
-      final var intValue8 = WicaChannelValue.createChannelValueConnectedInteger( 8 );
+      final var intValue5 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 5 );
+      final var intValue6 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 6 );
+      final var intValue7 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 7 );
+      final var intValue8 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 8 );
 
       final var props =  WicaChannelPropertiesBuilder.create()
             .withFilterType( WicaFilterType.RATE_LIMITER )
@@ -105,17 +108,17 @@ class WicaChannelValueFilteringServiceTest
                                                                                .withChannelNameAndProperties( "abc", props )
                                                                                .build(), inputList );
       assertThat( outputList.size(), is( 2 ) );
-      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue(), is(1 ) );
-      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue(), is(5 ) );
+      assertThat( ( (WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue(), is(1 ) );
+      assertThat( ( (WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue(), is(5 ) );
    }
 
    @Test
    void testFilterValues_PassEverythingFilter()
    {
-      final var intValue1 = WicaChannelValue.createChannelValueConnectedInteger( 129 );
-      final var intValue2 = WicaChannelValue.createChannelValueConnectedInteger( 14 );
-      final var intValue3 = WicaChannelValue.createChannelValueConnectedInteger( 15 );
-      final var intValue4 = WicaChannelValue.createChannelValueConnectedInteger( 111 );
+      final var intValue1 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 129 );
+      final var intValue2 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 14 );
+      final var intValue3 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 15 );
+      final var intValue4 = WicaChannelValueBuilder.createChannelValueConnectedInteger( 111 );
 
       final var props =  WicaChannelPropertiesBuilder.create()
             .withFilterType(WicaFilterType.ALL_VALUE )
@@ -128,19 +131,19 @@ class WicaChannelValueFilteringServiceTest
                                                                                      .build(), inputList );
 
       assertThat( outputList.size(), is( 4 ) );
-      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue(), is(129 ) );
-      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue(), is(14 ) );
-      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 2 ) ).getValue(), is(15 ) );
-      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedInteger) outputList.get( 3 ) ).getValue(), is(111 ) );
+      assertThat( ( (WicaChannelValueConnectedInteger) outputList.get( 0 ) ).getValue(), is(129 ) );
+      assertThat( ( (WicaChannelValueConnectedInteger) outputList.get( 1 ) ).getValue(), is(14 ) );
+      assertThat( ( (WicaChannelValueConnectedInteger) outputList.get( 2 ) ).getValue(), is(15 ) );
+      assertThat( ( (WicaChannelValueConnectedInteger) outputList.get( 3 ) ).getValue(), is(111 ) );
    }
 
    @Test
    void testFilterValues_AveragingFilter()
    {
-      final var realValue1 = WicaChannelValue.createChannelValueConnectedReal( 1.0 );
-      final var realValue2 = WicaChannelValue.createChannelValueConnectedReal( 2.0 );
-      final var realValue3 = WicaChannelValue.createChannelValueConnectedReal( 3.0 );
-      final var realValue4 = WicaChannelValue.createChannelValueConnectedReal( 4.0 );
+      final var realValue1 = WicaChannelValueBuilder.createChannelValueConnectedReal( 1.0 );
+      final var realValue2 = WicaChannelValueBuilder.createChannelValueConnectedReal( 2.0 );
+      final var realValue3 = WicaChannelValueBuilder.createChannelValueConnectedReal( 3.0 );
+      final var realValue4 = WicaChannelValueBuilder.createChannelValueConnectedReal( 4.0 );
 
       final var props =  WicaChannelPropertiesBuilder.create()
               .withFilterType(WicaFilterType.AVERAGER )
@@ -153,8 +156,8 @@ class WicaChannelValueFilteringServiceTest
               .build(), inputList );
 
       assertThat( outputList.size(), is( 2 ) );
-      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedReal) outputList.get( 0 ) ).getValue(), is(1.5 ) );
-      assertThat( ( (WicaChannelValue.WicaChannelValueConnectedReal) outputList.get( 1 ) ).getValue(), is(3.5 ) );
+      assertThat( ( (WicaChannelValueConnectedReal) outputList.get( 0 ) ).getValue(), is(1.5 ) );
+      assertThat( ( (WicaChannelValueConnectedReal) outputList.get( 1 ) ).getValue(), is(3.5 ) );
    }
 
 

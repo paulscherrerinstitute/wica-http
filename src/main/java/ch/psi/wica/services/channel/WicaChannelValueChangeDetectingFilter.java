@@ -3,7 +3,7 @@ package ch.psi.wica.services.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.*;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ class WicaChannelValueChangeDetectingFilter implements WicaChannelValueFilter
    {
       Validate.isTrue( deadband > 0 );
       this.deadband = deadband;
-      this.previousValue = WicaChannelValue.createChannelValueDisconnected();
+      this.previousValue = WicaChannelValueBuilder.createChannelValueDisconnected();
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -92,8 +92,8 @@ class WicaChannelValueChangeDetectingFilter implements WicaChannelValueFilter
             continue;
          }
 
-         final WicaChannelValue.WicaChannelValueConnected currentValueConnected = (WicaChannelValue.WicaChannelValueConnected) currentValue;
-         final WicaChannelValue.WicaChannelValueConnected previousValueConnected = (WicaChannelValue.WicaChannelValueConnected) previousValue;
+         final WicaChannelValueConnected currentValueConnected = (WicaChannelValueConnected) currentValue;
+         final WicaChannelValueConnected previousValueConnected = (WicaChannelValueConnected) previousValue;
          if ( isChangeDetected( currentValueConnected, previousValueConnected ) )
          {
             outputList.add( currentValue );
@@ -113,8 +113,8 @@ class WicaChannelValueChangeDetectingFilter implements WicaChannelValueFilter
 
 /*- Private methods ----------------------------------------------------------*/
 
-   private boolean isChangeDetected( WicaChannelValue.WicaChannelValueConnected currentValue,
-                                     WicaChannelValue.WicaChannelValueConnected previousValue )
+   private boolean isChangeDetected( WicaChannelValueConnected currentValue,
+                                     WicaChannelValueConnected previousValue )
    {
       Validate.notNull( currentValue, "The 'currentValue' argument is null." );
       Validate.notNull( previousValue, "The 'previousValue' argument is null." );
@@ -129,8 +129,8 @@ class WicaChannelValueChangeDetectingFilter implements WicaChannelValueFilter
       switch ( currentValue.getWicaChannelType() )
       {
          case REAL:
-            final double currentValueAsDouble = ((WicaChannelValue.WicaChannelValueConnectedReal) currentValue).getValue();
-            final double previousValueAsDouble = ((WicaChannelValue.WicaChannelValueConnectedReal) previousValue).getValue();
+            final double currentValueAsDouble = ((WicaChannelValueConnectedReal) currentValue).getValue();
+            final double previousValueAsDouble = ((WicaChannelValueConnectedReal) previousValue).getValue();
             final double changeAsDouble = currentValueAsDouble - previousValueAsDouble;
             if ( Math.abs( changeAsDouble ) > deadband )
             {
@@ -140,8 +140,8 @@ class WicaChannelValueChangeDetectingFilter implements WicaChannelValueFilter
             break;
 
          case INTEGER:
-           final int currentValueAsInteger = ((WicaChannelValue.WicaChannelValueConnectedInteger) currentValue).getValue();
-           final int previousValueAsInteger = ((WicaChannelValue.WicaChannelValueConnectedInteger) previousValue).getValue();
+           final int currentValueAsInteger = ((WicaChannelValueConnectedInteger) currentValue).getValue();
+           final int previousValueAsInteger = ((WicaChannelValueConnectedInteger) previousValue).getValue();
            final int changeAsInteger = currentValueAsInteger - previousValueAsInteger;
             if ( Math.abs( changeAsInteger) > deadband )
             {

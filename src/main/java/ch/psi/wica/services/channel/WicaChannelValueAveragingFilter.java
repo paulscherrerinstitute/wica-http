@@ -3,7 +3,7 @@ package ch.psi.wica.services.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.*;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 
@@ -123,21 +123,21 @@ class WicaChannelValueAveragingFilter implements WicaChannelValueFilter
          return;
       }
 
-      final WicaChannelValue.WicaChannelValueConnected connectedValue = (WicaChannelValue.WicaChannelValueConnected) currentValue;
-      switch ( connectedValue.getWicaChannelType() )
-      {
-         case REAL:
-            final double currentValueAsDouble = ((WicaChannelValue.WicaChannelValueConnectedReal) connectedValue).getValue();
-            sum += currentValueAsDouble;
-            numberOfReceivedDoubleSamples++;
-            break;
+      final WicaChannelValueConnected connectedValue = (WicaChannelValueConnected) currentValue;
 
-         case INTEGER:
-            final int currentValueAsInteger = ((WicaChannelValue.WicaChannelValueConnectedInteger) currentValue).getValue();
-            sum += currentValueAsInteger;
-            numberOfReceivedIntegerSamples++;
-            break;
-      }
+       switch ( connectedValue.getWicaChannelType( ) )
+       {
+           case REAL -> {
+               final double currentValueAsDouble = ( (WicaChannelValueConnectedReal) connectedValue ).getValue( );
+               sum += currentValueAsDouble;
+               numberOfReceivedDoubleSamples++;
+           }
+           case INTEGER -> {
+               final int currentValueAsInteger = ( (WicaChannelValueConnectedInteger) currentValue ).getValue( );
+               sum += currentValueAsInteger;
+               numberOfReceivedIntegerSamples++;
+           }
+       }
    }
 
    private void saveAverageInOutputList( List<WicaChannelValue> outputList )
@@ -146,7 +146,7 @@ class WicaChannelValueAveragingFilter implements WicaChannelValueFilter
       // averaging result as an offline value.
       if ( numberOfReceivedOfflineSamples > 0 )
       {
-         outputList.add( WicaChannelValue.createChannelValueDisconnected() );
+         outputList.add( WicaChannelValueBuilder.createChannelValueDisconnected() );
       }
 
       // If there is at least one double sample then present the averaging result
@@ -154,7 +154,7 @@ class WicaChannelValueAveragingFilter implements WicaChannelValueFilter
       else if ( numberOfReceivedDoubleSamples > 0 )
       {
          final double average = sum / getNumberOfReceivedSamples();
-         outputList.add( WicaChannelValue.createChannelValueConnectedReal( average ) );
+         outputList.add( WicaChannelValueBuilder.createChannelValueConnectedReal( average ) );
       }
 
       // If all the input samples are integers then present the averaging result
@@ -162,7 +162,7 @@ class WicaChannelValueAveragingFilter implements WicaChannelValueFilter
       else
       {
          final int average = (int) Math.round( sum / getNumberOfReceivedSamples() );
-         outputList.add( WicaChannelValue.createChannelValueConnectedInteger( average ) );
+         outputList.add( WicaChannelValueBuilder.createChannelValueConnectedInteger( average ) );
       }
    }
 

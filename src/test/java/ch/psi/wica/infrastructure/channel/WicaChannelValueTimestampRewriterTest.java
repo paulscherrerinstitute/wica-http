@@ -3,7 +3,9 @@ package ch.psi.wica.infrastructure.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
+import ch.psi.wica.model.channel.value.WicaChannelValueConnectedString;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,9 +40,9 @@ class WicaChannelValueTimestampRewriterTest
    @Test
    void test()
    {
-      final var strValue = WicaChannelValue.createChannelValueConnectedString( "abc" );
+      final var strValue = WicaChannelValueBuilder.createChannelValueConnectedString( "abc" );
       final LocalDateTime newTimestamp = LocalDateTime.now();
-      final WicaChannelValue.WicaChannelValueConnectedString newValue = ( WicaChannelValue.WicaChannelValueConnectedString) rewriter.rewrite( strValue, newTimestamp );
+      final WicaChannelValueConnectedString newValue = (WicaChannelValueConnectedString) rewriter.rewrite( strValue, newTimestamp );
       assertEquals( newTimestamp, newValue.getDataSourceTimestamp() );
    }
 

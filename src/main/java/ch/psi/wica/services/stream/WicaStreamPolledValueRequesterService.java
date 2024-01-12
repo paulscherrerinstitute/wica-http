@@ -6,7 +6,8 @@ package ch.psi.wica.services.stream;
 import ch.psi.wica.controlsystem.event.wica.*;
 import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import ch.psi.wica.model.stream.WicaStream;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
@@ -195,7 +196,7 @@ public class WicaStreamPolledValueRequesterService
       // Publish a channel disconnect value
       if ( wicaChannelPublishPollerRestarts )
       {
-         applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannel, WicaChannelValue.createChannelValueDisconnected() ) );
+         applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent( wicaChannel, WicaChannelValueBuilder.createChannelValueDisconnected() ) );
       }
 
       // Tell the underlying control system to START polling this channel.
@@ -237,7 +238,7 @@ public class WicaStreamPolledValueRequesterService
       // When the initial state publication feature is enabled publish the initial channel's state as being DISCONNECTED.
       if ( this.wicaChannelPublishChannelValueInitialState )
       {
-         applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent(wicaChannel, WicaChannelValue.createChannelValueDisconnected() ) );
+         applicationEventPublisher.publishEvent( new WicaChannelPolledValueUpdateEvent(wicaChannel, WicaChannelValueBuilder.createChannelValueDisconnected() ) );
       }
 
       // Publish an event instructing the underlying control system to start polling.

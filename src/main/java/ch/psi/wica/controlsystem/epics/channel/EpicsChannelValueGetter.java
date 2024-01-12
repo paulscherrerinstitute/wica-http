@@ -4,7 +4,8 @@ package ch.psi.wica.controlsystem.epics.channel;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.app.ControlSystemName;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
@@ -35,7 +36,7 @@ public class EpicsChannelValueGetter
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger(EpicsChannelValueGetter.class );
-   private final WicaChannelValueBuilder wicaChannelValueBuilder;
+   private final WicaChannelValueCreator wicaChannelValueCreator;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -45,11 +46,11 @@ public class EpicsChannelValueGetter
     * Returns a new instance that will work with the specified value
     * builder object.
     *
-    * @param wicaChannelValueBuilder the builder.
+    * @param wicaChannelValueCreator the builder.
     */
-   public EpicsChannelValueGetter( @Autowired WicaChannelValueBuilder wicaChannelValueBuilder )
+   public EpicsChannelValueGetter( @Autowired WicaChannelValueCreator wicaChannelValueCreator )
    {
-      this.wicaChannelValueBuilder = Validate.notNull( wicaChannelValueBuilder, "The 'wicaChannelValueBuilder' argument is null." );
+      this.wicaChannelValueCreator = Validate.notNull( wicaChannelValueCreator, "The 'wicaChannelValueBuilder' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -60,18 +61,18 @@ public class EpicsChannelValueGetter
     * and returns a WicaChannelValue object which encapsulates the properties
     * of the channel which may change quickly (eg online/offline state,
     * instantaneous value, timestamp, alarm severity etc).
-    *
+    * <p>
     * This method operates synchronously and potentially incurs the cost of
     * a network round trip to obtain the information from the remote data
     * source.
-    *
+    * <p>
     * If the channel is already offline when this method is invoked then
     * the returned value will be returned immediately to indicate that the
     * channel is disconnected. However, if the channel goes offline
     * just at the moment it is queried then in the worst case this method
     * will incur the cost of the channel-access GET operation timeout,
     * which may be several seconds.
-    *
+    * <p>
     * Precondition: the channel should have been connected at least once.
     * Postcondition: the state of the channel will remain unaffected.
     *
@@ -106,7 +107,7 @@ public class EpicsChannelValueGetter
       if ( channel.getConnectionState() != ConnectionState.CONNECTED )
       {
          logger.trace( "'{}' - channel is offline, returning disconnected value.", controlSystemName );
-         return WicaChannelValue.createChannelValueDisconnected();
+         return WicaChannelValueBuilder.createChannelValueDisconnected();
       }
 
       // Perform a channel GET request to obtain the properties of the channel which
@@ -119,7 +120,7 @@ public class EpicsChannelValueGetter
       logger.trace( "'{}' - EPICS TIMESTAMPED data received.", controlSystemName );
 
       // Now construct and return a wica value object using the timestamped object information.
-      return wicaChannelValueBuilder.build( controlSystemName, timestampedObj );
+      return wicaChannelValueCreator.build( controlSystemName, timestampedObj );
    }
 
 /*- Private methods ----------------------------------------------------------*/

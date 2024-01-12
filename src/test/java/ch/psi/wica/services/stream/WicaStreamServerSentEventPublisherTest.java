@@ -7,8 +7,10 @@ import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
 import ch.psi.wica.infrastructure.stream.WicaStreamPropertiesBuilder;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadata;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadataBuilder;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.model.stream.WicaStreamId;
 import ch.psi.wica.model.stream.WicaStreamProperties;
@@ -75,26 +77,26 @@ class WicaStreamServerSentEventPublisherTest
    private final WicaChannel wicaTestChannel1 =  WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CHAN_1").build();
    private final WicaChannel wicaTestChannel2 =  WicaChannelBuilder.create().withChannelNameAndDefaultProperties("CHAN_2").build();
 
-   private final Map<WicaChannel,WicaChannelMetadata> req1MetadataMap = Map.of( wicaTestChannel1, WicaChannelMetadata.createUnknownInstance(),
-                                                                                wicaTestChannel2, WicaChannelMetadata.createUnknownInstance() );
+   private final Map<WicaChannel,WicaChannelMetadata> req1MetadataMap = Map.of( wicaTestChannel1, WicaChannelMetadataBuilder.createUnknownInstance(),
+                                                                                wicaTestChannel2, WicaChannelMetadataBuilder.createUnknownInstance() );
 
    private final Map<WicaChannel,WicaChannelMetadata> req2MetadataMap = Map.of();
 
-   private final Map<WicaChannel,List<WicaChannelValue>> req1PolledValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnectedString( "PollMap_CHAN_1_Request_1_Value_Initial" ) ),
-                                                                                      wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnectedString( "PollMap_CHAN_2_Request_1_Value_Initial" ) ) );
+   private final Map<WicaChannel,List<WicaChannelValue>> req1PolledValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValueBuilder.createChannelValueConnectedString( "PollMap_CHAN_1_Request_1_Value_Initial" ) ),
+                                                                                      wicaTestChannel2, List.of( WicaChannelValueBuilder.createChannelValueConnectedString( "PollMap_CHAN_2_Request_1_Value_Initial" ) ) );
 
-   private final Map<WicaChannel,List<WicaChannelValue>> req2PolledValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnectedString( "PollMap_CHAN_1_Request_2_Value_1" ),
-                                                                                                                 WicaChannelValue.createChannelValueConnectedString( "PollMap_CHAN_1_Request_2_Value_2" ) ),
-                                                                                      wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnectedString( "PollMap_CHAN_2_Request_2_Value_1" ),
-                                                                                                                 WicaChannelValue.createChannelValueConnectedString( "PollMap_CHAN_2_Request_2_Value_2" ) ) );
+   private final Map<WicaChannel,List<WicaChannelValue>> req2PolledValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValueBuilder.createChannelValueConnectedString( "PollMap_CHAN_1_Request_2_Value_1" ),
+                                                                                      WicaChannelValueBuilder.createChannelValueConnectedString( "PollMap_CHAN_1_Request_2_Value_2" ) ),
+                                                                                      wicaTestChannel2, List.of( WicaChannelValueBuilder.createChannelValueConnectedString( "PollMap_CHAN_2_Request_2_Value_1" ),
+                                                                                      WicaChannelValueBuilder.createChannelValueConnectedString( "PollMap_CHAN_2_Request_2_Value_2" ) ) );
 
-   private final Map<WicaChannel,List<WicaChannelValue>> req1MonitoredValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnectedString( "MonMap_CHAN_1_Request_1_Value_Initial" ) ),
-                                                                                         wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnectedString( "MonMap_CHAN_2_Request_1_Value_Initial" ) ) );
+   private final Map<WicaChannel,List<WicaChannelValue>> req1MonitoredValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValueBuilder.createChannelValueConnectedString( "MonMap_CHAN_1_Request_1_Value_Initial" ) ),
+                                                                                         wicaTestChannel2, List.of( WicaChannelValueBuilder.createChannelValueConnectedString( "MonMap_CHAN_2_Request_1_Value_Initial" ) ) );
 
-   private final Map<WicaChannel,List<WicaChannelValue>> req2MonitoredValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValue.createChannelValueConnectedString( "MonMap_CHAN_1_Request_2_Value_1" ),
-                                                                                                                    WicaChannelValue.createChannelValueConnectedString( "MonMap_CHAN_1_Request_2_Value_2" ) ),
-                                                                                         wicaTestChannel2, List.of( WicaChannelValue.createChannelValueConnectedString( "MonMap_CHAN_2_Request_2_Value_1" ),
-                                                                                                                    WicaChannelValue.createChannelValueConnectedString( "MonMap_CHAN_2_Request_1_Value_2" )) );
+   private final Map<WicaChannel,List<WicaChannelValue>> req2MonitoredValueMap = Map.of( wicaTestChannel1, List.of( WicaChannelValueBuilder.createChannelValueConnectedString( "MonMap_CHAN_1_Request_2_Value_1" ),
+                                                                                         WicaChannelValueBuilder.createChannelValueConnectedString( "MonMap_CHAN_1_Request_2_Value_2" ) ),
+                                                                                         wicaTestChannel2, List.of( WicaChannelValueBuilder.createChannelValueConnectedString( "MonMap_CHAN_2_Request_2_Value_1" ),
+                                                                                         WicaChannelValueBuilder.createChannelValueConnectedString( "MonMap_CHAN_2_Request_1_Value_2" )) );
 
    private final AtomicReference<Map<WicaChannel,WicaChannelMetadata>> atomicMetadataMap = new AtomicReference<>();
 

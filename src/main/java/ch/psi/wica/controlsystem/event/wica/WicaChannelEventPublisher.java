@@ -4,8 +4,8 @@ package ch.psi.wica.controlsystem.event.wica;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadata;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

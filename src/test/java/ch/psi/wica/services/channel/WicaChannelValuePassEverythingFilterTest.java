@@ -3,7 +3,8 @@ package ch.psi.wica.services.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -30,10 +31,10 @@ class WicaChannelValuePassEverythingFilterTest
    @Test
    void testMap()
    {
-      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnectedString( "abc" );
-      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnectedString( "def" );
-      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnectedString( "ghi" );
-      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnectedString( "jkl" );
+      final WicaChannelValue strValue1 = WicaChannelValueBuilder.createChannelValueConnectedString( "abc" );
+      final WicaChannelValue strValue2 = WicaChannelValueBuilder.createChannelValueConnectedString( "def" );
+      final WicaChannelValue strValue3 = WicaChannelValueBuilder.createChannelValueConnectedString( "ghi" );
+      final WicaChannelValue strValue4 = WicaChannelValueBuilder.createChannelValueConnectedString( "jkl" );
 
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4 );
 

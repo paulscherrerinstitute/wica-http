@@ -3,9 +3,9 @@ package ch.psi.wica.controlsystem.epics.monitor;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.controlsystem.epics.channel.WicaChannelValueBuilder;
+import ch.psi.wica.controlsystem.epics.channel.WicaChannelValueCreator;
 import ch.psi.wica.model.app.ControlSystemName;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
@@ -35,7 +35,7 @@ class EpicsChannelMonitorSubscriber
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger( EpicsChannelMonitorSubscriber.class );
-   private final WicaChannelValueBuilder wicaChannelValueBuilder;
+   private final WicaChannelValueCreator wicaChannelValueCreator;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
@@ -44,11 +44,11 @@ class EpicsChannelMonitorSubscriber
     * Returns a new instance that will work with the specified value
     * builder object.
     *
-    * @param wicaChannelValueBuilder the builder.
+    * @param wicaChannelValueCreator the builder.
     */
-   public EpicsChannelMonitorSubscriber( @Autowired WicaChannelValueBuilder wicaChannelValueBuilder )
+   public EpicsChannelMonitorSubscriber( @Autowired WicaChannelValueCreator wicaChannelValueCreator )
    {
-      this.wicaChannelValueBuilder = Validate.notNull( wicaChannelValueBuilder, "The 'wicaChannelValueBuilder' argument is null." );
+      this.wicaChannelValueCreator = Validate.notNull( wicaChannelValueCreator, "The 'wicaChannelValueCreator' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/
@@ -89,7 +89,7 @@ class EpicsChannelMonitorSubscriber
       @SuppressWarnings( "unused" )
       final Monitor<Timestamped<Object>> monitor = channel.addMonitor( Timestamped.class, epicsTimestampedObject -> {
          logger.trace("'{}' - publishing new value...", controlSystemName );
-         final var wicaChannelValue = wicaChannelValueBuilder.build( controlSystemName, epicsTimestampedObject );
+         final var wicaChannelValue = wicaChannelValueCreator.build( controlSystemName, epicsTimestampedObject );
          valueChangeHandler.accept( wicaChannelValue );
          logger.trace("'{}' - new value published.", controlSystemName );
       } );

@@ -6,7 +6,8 @@ package ch.psi.wica.services.stream;
 import ch.psi.wica.controlsystem.event.wica.*;
 import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadata;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadataBuilder;
 import ch.psi.wica.model.stream.WicaStream;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
@@ -161,7 +162,7 @@ public class WicaStreamMetadataRequesterService
       // as being UNKNOWN.
       if ( this.wicaChannelPublishChannelMetadataInitialState )
       {
-         applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent( wicaChannel, WicaChannelMetadata.createUnknownInstance() ) );
+         applicationEventPublisher.publishEvent( new WicaChannelMetadataUpdateEvent( wicaChannel, WicaChannelMetadataBuilder.createUnknownInstance() ) );
       }
 
       // Publish an event instructing the underlying control system to start data acquisition.

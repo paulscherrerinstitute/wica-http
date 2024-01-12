@@ -5,7 +5,7 @@ package ch.psi.wica.services.channel;
 
 import ch.psi.wica.infrastructure.channel.WicaChannelDataSerializerBuilder;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;

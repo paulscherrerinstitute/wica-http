@@ -3,10 +3,10 @@ package ch.psi.wica.infrastructure.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelAlarmSeverity;
-import ch.psi.wica.model.channel.WicaChannelAlarmStatus;
+import ch.psi.wica.model.channel.value.WicaChannelAlarmSeverity;
+import ch.psi.wica.model.channel.value.WicaChannelAlarmStatus;
 import ch.psi.wica.model.channel.WicaChannelType;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -39,23 +39,26 @@ class WicaChannelValueMixins
 
 /*- Nested Class: WicaChannelValueConnectedSerializerMixin --------------------*/
 
-   public static abstract class WicaChannelValueConnectedSerializerMixin extends WicaChannelValue.WicaChannelValueConnected
+   public static abstract class WicaChannelValueConnectedSerializerMixin extends WicaChannelValueConnected
    {
       // Dummy: only required to detect signature override errors.
       private WicaChannelValueConnectedSerializerMixin() { super( null, null, null, null); }
 
       @Override public abstract @JsonProperty( "type" )
       WicaChannelType getWicaChannelType();
+
       @Override public abstract @JsonProperty( "sevr" )
       WicaChannelAlarmSeverity getWicaAlarmSeverity();
+
       @Override public abstract @JsonProperty( "stat" )
       WicaChannelAlarmStatus getWicaChannelAlarmStatus();
+
       @Override public abstract @JsonProperty( "ts"   ) LocalDateTime getDataSourceTimestamp();
    }
 
 /*- Nested Class: WicaChannelValueDisconnectedSerializerMixin -----------------*/
 
-   public static abstract class WicaChannelValueDisconnectedSerializerMixin extends WicaChannelValue.WicaChannelValueDisconnected
+   public static abstract class WicaChannelValueDisconnectedSerializerMixin extends WicaChannelValueDisconnected
    {
       // Dummy: only required to detect signature override errors.
       private WicaChannelValueDisconnectedSerializerMixin() { super(); }
@@ -67,7 +70,7 @@ class WicaChannelValueMixins
 
 /*- Nested Class: WicaChannelValueConnectedStringSerializerMixin --------------*/
 
-   public static abstract class WicaChannelValueConnectedStringSerializerMixin extends WicaChannelValue.WicaChannelValueConnectedString
+   public static abstract class WicaChannelValueConnectedStringSerializerMixin extends WicaChannelValueConnectedString
    {
       // Dummy: only required to detect signature override errors.
       private  WicaChannelValueConnectedStringSerializerMixin() { super(null, null, null, null ); }
@@ -79,7 +82,7 @@ class WicaChannelValueMixins
 
 /*- Nested Class: WicaChannelValueConnectedStringArraySerializerMixin ----------*/
 
-   public static abstract class WicaChannelValueConnectedStringArraySerializerMixin extends WicaChannelValue.WicaChannelValueConnectedStringArray
+   public static abstract class WicaChannelValueConnectedStringArraySerializerMixin extends WicaChannelValueConnectedStringArray
    {
       // Dummy: only required to detect signature override errors.
       private  WicaChannelValueConnectedStringArraySerializerMixin() { super(null, null, null, null ); }
@@ -90,7 +93,7 @@ class WicaChannelValueMixins
 
 /*- Nested Class: WicaChannelValueConnectedIntegerSerializerMixin --------------*/
 
-   public static abstract class WicaChannelValueConnectedIntegerSerializerMixin extends WicaChannelValue.WicaChannelValueConnectedInteger
+   public static abstract class WicaChannelValueConnectedIntegerSerializerMixin extends WicaChannelValueConnectedInteger
    {
       // Dummy: only required to detect signature override errors.
       private  WicaChannelValueConnectedIntegerSerializerMixin() { super(null, null, null, 0 ); }
@@ -101,7 +104,7 @@ class WicaChannelValueMixins
 
 /*- Nested Class: WicaChannelValueConnectedIntegerArraySerializerMixin ---------*/
 
-   public static abstract class WicaChannelValueConnectedIntegerArraySerializerMixin extends WicaChannelValue.WicaChannelValueConnectedIntegerArray
+   public static abstract class WicaChannelValueConnectedIntegerArraySerializerMixin extends WicaChannelValueConnectedIntegerArray
    {
       // Dummy: only required to detect signature override errors.
       private  WicaChannelValueConnectedIntegerArraySerializerMixin() { super(null, null, null, null ); }
@@ -112,7 +115,7 @@ class WicaChannelValueMixins
 
 /*- Nested Class: WicaChannelValueConnectedRealSerializerMixin -----------------*/
 
-   public static abstract class WicaChannelValueConnectedRealSerializerMixin extends WicaChannelValue.WicaChannelValueConnectedReal
+   public static abstract class WicaChannelValueConnectedRealSerializerMixin extends WicaChannelValueConnectedReal
    {
       // Dummy: only required to detect signature override errors.
       private  WicaChannelValueConnectedRealSerializerMixin() { super( null, null, null, 0.0 ); }
@@ -124,7 +127,7 @@ class WicaChannelValueMixins
 
 /*- Nested Class: WicaChannelValueConnectedRealArraySerializerMixin ------------*/
 
-   public static abstract class WicaChannelValueConnectedRealArraySerializerMixin extends WicaChannelValue.WicaChannelValueConnectedRealArray
+   public static abstract class WicaChannelValueConnectedRealArraySerializerMixin extends WicaChannelValueConnectedRealArray
    {
       // Dummy: only required to detect signature override errors.
       private  WicaChannelValueConnectedRealArraySerializerMixin() { super( null, null, null, null ); }

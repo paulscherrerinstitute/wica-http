@@ -4,9 +4,10 @@ package ch.psi.wica.controlsystem.epics.metadata;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.controlsystem.epics.channel.EpicsChannelType;
-import ch.psi.wica.controlsystem.epics.channel.WicaChannelMetadataBuilder;
+import ch.psi.wica.controlsystem.epics.channel.WicaChannelMetadataCreator;
 import ch.psi.wica.model.app.ControlSystemName;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadata;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadataBuilder;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
@@ -33,7 +34,7 @@ public class EpicsChannelMetadataGetter
 /*- Private attributes -------------------------------------------------------*/
 
    private final Logger logger = LoggerFactory.getLogger( EpicsChannelMetadataGetter.class );
-   private final WicaChannelMetadataBuilder wicaChannelMetadataBuilder;
+   private final WicaChannelMetadataCreator wicaChannelMetadataCreator;
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -43,11 +44,11 @@ public class EpicsChannelMetadataGetter
     * Returns a new instance that will work with the specified metadata
     * builder object.
     *
-    * @param wicaChannelMetadataBuilder the builder.
+    * @param wicaChannelMetadataCreator the builder.
     */
-   public EpicsChannelMetadataGetter( @Autowired WicaChannelMetadataBuilder wicaChannelMetadataBuilder )
+   public EpicsChannelMetadataGetter( @Autowired WicaChannelMetadataCreator wicaChannelMetadataCreator )
    {
-      this.wicaChannelMetadataBuilder = Validate.notNull( wicaChannelMetadataBuilder, "The 'wicaChannelMetadataBuilder' argument is null." );
+      this.wicaChannelMetadataCreator = Validate.notNull( wicaChannelMetadataCreator, "The 'wicaChannelMetadataBuilder' argument is null." );
    }
 
 
@@ -102,14 +103,14 @@ public class EpicsChannelMetadataGetter
       catch( IllegalArgumentException ex)
       {
          logger.error( "'{}' - EPICS type was UNKNOWN (Programming Error). The concrete exception message was: '{}' ", controlSystemName, ex );
-         return WicaChannelMetadata.createUnknownInstance();
+         return WicaChannelMetadataBuilder.createUnknownInstance();
       }
 
       // For string types there is no further information to be obtained
       // so construct and return a metadata object immediately.
       if  ( ( epicsChannelType == EpicsChannelType.STRING ) || (epicsChannelType == EpicsChannelType.STRING_ARRAY ) )
       {
-         return wicaChannelMetadataBuilder.build( controlSystemName, epicsChannelType, null );
+         return wicaChannelMetadataCreator.build( controlSystemName, epicsChannelType, null );
       }
 
       // STEP 2:
@@ -122,7 +123,7 @@ public class EpicsChannelMetadataGetter
       logger.trace( "'{}' - EPICS CTRL metadata received.", controlSystemName) ;
 
       // Now construct and return a wica metadata object using the control object information.
-      return wicaChannelMetadataBuilder.build( controlSystemName, epicsChannelType, epicsControlObject );
+      return wicaChannelMetadataCreator.build( controlSystemName, epicsChannelType, epicsControlObject );
    }
 
 /*- Private methods ----------------------------------------------------------*/

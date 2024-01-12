@@ -6,7 +6,7 @@ package ch.psi.wica.services.channel;
 import ch.psi.wica.model.app.WicaFilterType;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelProperties;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;

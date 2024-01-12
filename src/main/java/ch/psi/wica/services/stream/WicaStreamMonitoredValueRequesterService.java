@@ -6,7 +6,7 @@ package ch.psi.wica.services.stream;
 import ch.psi.wica.controlsystem.event.wica.*;
 import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import ch.psi.wica.model.stream.WicaStream;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
@@ -211,7 +211,7 @@ public class WicaStreamMonitoredValueRequesterService
       // Publish a channel disconnect value
       if ( wicaChannelPublishMonitorRestarts )
       {
-         applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( wicaChannel, WicaChannelValue.createChannelValueDisconnected() ) );
+         applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent( wicaChannel, WicaChannelValueBuilder.createChannelValueDisconnected() ) );
       }
 
       // Tell the underlying control system to START monitoring this channel.
@@ -254,7 +254,7 @@ public class WicaStreamMonitoredValueRequesterService
       // When the initial state publication feature is enabled publish the initial channel's state as being DISCONNECTED.
       if ( this.wicaChannelPublishChannelValueInitialState )
       {
-         applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent(wicaChannel, WicaChannelValue.createChannelValueDisconnected() ) );
+         applicationEventPublisher.publishEvent( new WicaChannelMonitoredValueUpdateEvent(wicaChannel, WicaChannelValueBuilder.createChannelValueDisconnected() ) );
       }
 
       // Publish an event instructing the underlying control system to start monitoring.

@@ -4,9 +4,10 @@ package ch.psi.wica.controlsystem.epics.channel;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.app.ControlSystemName;
-import ch.psi.wica.model.channel.WicaChannelAlarmSeverity;
-import ch.psi.wica.model.channel.WicaChannelAlarmStatus;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelAlarmSeverity;
+import ch.psi.wica.model.channel.value.WicaChannelAlarmStatus;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import net.jcip.annotations.Immutable;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.data.AlarmSeverity;
@@ -30,13 +31,13 @@ import java.time.ZonedDateTime;
  */
 @Immutable
 @Component
-public class WicaChannelValueBuilder
+public class WicaChannelValueCreator
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
 
-   private final Logger logger = LoggerFactory.getLogger(WicaChannelValueBuilder.class );
+   private final Logger logger = LoggerFactory.getLogger( WicaChannelValueCreator.class );
 
 
 /*- Main ---------------------------------------------------------------------*/
@@ -73,7 +74,7 @@ public class WicaChannelValueBuilder
       catch( IllegalArgumentException ex)
       {
          logger.error( "'{}' - type was UNKNOWN (Programming Error)", controlSystemName );
-         return WicaChannelValue.createChannelValueDisconnected();
+         return WicaChannelValueBuilder.createChannelValueDisconnected();
       }
       return build( controlSystemName, epicsChannelType, epicsValueObject );
    }
@@ -100,58 +101,59 @@ public class WicaChannelValueBuilder
 
       logger.trace("'{}' - type is {}}.", controlSystemName, epicsChannelType );
 
-      switch (epicsChannelType) {
+      switch (epicsChannelType)
+      {
          case STRING -> {
             final String strValue = (String) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnectedString(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, strValue);
+            return WicaChannelValueBuilder.createChannelValueConnectedString(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, strValue);
          }
          case STRING_ARRAY -> {
             final String[] strArrayValue = (String[]) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnectedStringArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, strArrayValue);
+            return WicaChannelValueBuilder.createChannelValueConnectedStringArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, strArrayValue);
          }
          case BYTE -> {
             final byte byteValue = (Byte) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnectedInteger(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, byteValue);
+            return WicaChannelValueBuilder.createChannelValueConnectedInteger(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, byteValue);
          }
          case BYTE_ARRAY -> {
             final byte[] byteArrayValue = (byte[]) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnectedIntegerArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, getIntArrayFromByteArray(byteArrayValue));
+            return WicaChannelValueBuilder.createChannelValueConnectedIntegerArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, getIntArrayFromByteArray(byteArrayValue));
          }
          case SHORT -> {
             final short shortValue = (Short) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnectedInteger(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, shortValue);
+            return WicaChannelValueBuilder.createChannelValueConnectedInteger(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, shortValue);
          }
          case SHORT_ARRAY -> {
             final short[] shortArrayValue = (short[]) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnectedIntegerArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, getIntArrayFromShortArray(shortArrayValue));
+            return WicaChannelValueBuilder.createChannelValueConnectedIntegerArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, getIntArrayFromShortArray(shortArrayValue));
          }
          case INTEGER -> {
             final int intValue = (Integer) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnectedInteger(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, intValue);
+            return WicaChannelValueBuilder.createChannelValueConnectedInteger(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, intValue);
          }
          case INTEGER_ARRAY -> {
             final int[] intArrayValue = (int[]) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnectedIntegerArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, intArrayValue);
+            return WicaChannelValueBuilder.createChannelValueConnectedIntegerArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, intArrayValue);
          }
          case FLOAT -> {
             final float floatValue = (Float) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnectedReal(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, floatValue);
+            return WicaChannelValueBuilder.createChannelValueConnectedReal(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, floatValue);
          }
          case FLOAT_ARRAY -> {
             final float[] floatArrayValue = (float[]) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnectedRealArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, getDoubleArrayFromFloatArray(floatArrayValue));
+            return WicaChannelValueBuilder.createChannelValueConnectedRealArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, getDoubleArrayFromFloatArray(floatArrayValue));
          }
          case DOUBLE -> {
             final double dblValue = (Double) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnectedReal(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, dblValue);
+            return WicaChannelValueBuilder.createChannelValueConnectedReal(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, dblValue);
          }
          case DOUBLE_ARRAY -> {
             final double[] dblArrayValue = (double[]) epicsValueObject.getValue();
-            return WicaChannelValue.createChannelValueConnectedRealArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, dblArrayValue);
+            return WicaChannelValueBuilder.createChannelValueConnectedRealArray(wicaChannelAlarmSeverity, wicaChannelAlarmStatus, wicaDataSourceTimestamp, dblArrayValue);
          }
          default -> {
             logger.error("'{}' - type is NOT SUPPORTED (Programming Error)", controlSystemName);
-            return WicaChannelValue.createChannelValueDisconnected();
+            return WicaChannelValueBuilder.createChannelValueDisconnected();
          }
       }
    }

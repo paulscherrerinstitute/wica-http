@@ -11,7 +11,6 @@ import org.apache.commons.lang3.Validate;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
-@SuppressWarnings( "WeakerAccess" )
 public class WicaChannelBuilder
 {
 
@@ -29,6 +28,9 @@ public class WicaChannelBuilder
 
 /*- Class methods ------------------------------------------------------------*/
 
+   /**
+    * Creates a new WicaChannelBuilder instance ready for further customisations.
+    */
    public static WicaChannelBuilder create()
    {
       return new WicaChannelBuilder();
@@ -37,6 +39,11 @@ public class WicaChannelBuilder
 
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Creates a new WicaChannelBuilder instance with the specified channel name and empty properties.
+    *
+    * @param wicaChannelName the channel name.
+    */
    public WicaChannelBuilder withChannelNameAndEmptyProperties( String wicaChannelName )
    {
       Validate.notNull( wicaChannelName,"The 'wicaChannelName' argument was null." );
@@ -45,6 +52,11 @@ public class WicaChannelBuilder
       return this;
    }
 
+   /**
+    * Creates a new WicaChannelBuilder instance with the specified channel name and default properties.
+    *
+    * @param wicaChannelName the channel name.
+    */
    public WicaChannelBuilder withChannelNameAndDefaultProperties( String wicaChannelName )
    {
       Validate.notNull( wicaChannelName,"The 'wicaChannelName' argument was null." );
@@ -53,6 +65,13 @@ public class WicaChannelBuilder
       return this;
    }
 
+   /**
+    * Creates a new WicaChannelBuilder instance with the specified channel name and properties.
+    *
+    * @param wicaChannelName the channel name.
+    * @param wicaChannelProperties the channel properties.
+    * @return the instance.
+    */
    public WicaChannelBuilder withChannelNameAndProperties( String wicaChannelName, WicaChannelProperties wicaChannelProperties  )
    {
       Validate.notNull( wicaChannelName,"The 'wicaChannelName' argument was null." );
@@ -61,6 +80,11 @@ public class WicaChannelBuilder
       return this;
    }
 
+   /**
+    * Builds the Wica Channel instance.
+    *.
+    * @return the constructed WicaChannel.
+    */
    public WicaChannel build()
    {
       return new WicaChannel( wicaChannelName, wicaChannelProperties );

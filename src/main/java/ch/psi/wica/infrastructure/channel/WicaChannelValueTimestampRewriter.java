@@ -3,9 +3,7 @@ package ch.psi.wica.infrastructure.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelAlarmSeverity;
-import ch.psi.wica.model.channel.WicaChannelAlarmStatus;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.*;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -26,14 +24,14 @@ public class WicaChannelValueTimestampRewriter
 
    public WicaChannelValue rewrite( WicaChannelValue valueObj, LocalDateTime newTimeStamp )
    {
-      final WicaChannelValue.WicaChannelValueConnected connectedValue;
+      final WicaChannelValueConnected connectedValue;
       if ( valueObj.isConnected() )
       {
-         connectedValue = ((WicaChannelValue.WicaChannelValueConnected) valueObj);
+         connectedValue = ((WicaChannelValueConnected) valueObj);
       }
       else
       {
-         return WicaChannelValue.createChannelValueDisconnected();
+         return WicaChannelValueBuilder.createChannelValueDisconnected();
       }
 
       final WicaChannelAlarmStatus alarmStatus = connectedValue.getWicaChannelAlarmStatus();
@@ -42,28 +40,28 @@ public class WicaChannelValueTimestampRewriter
        return switch ( connectedValue.getWicaChannelType( ) )
        {
            case REAL -> {
-               final double dblValue = ( (WicaChannelValue.WicaChannelValueConnectedReal) connectedValue ).getValue( );
-               yield WicaChannelValue.createChannelValueConnectedReal( alarmSeverity, alarmStatus, newTimeStamp, dblValue );
+               final double dblValue = ( (WicaChannelValueConnectedReal) connectedValue ).getValue( );
+               yield WicaChannelValueBuilder.createChannelValueConnectedReal( alarmSeverity, alarmStatus, newTimeStamp, dblValue );
            }
            case REAL_ARRAY -> {
-               final double[] dblArrayValue = ( (WicaChannelValue.WicaChannelValueConnectedRealArray) connectedValue ).getValue( );
-               yield WicaChannelValue.createChannelValueConnectedRealArray( alarmSeverity, alarmStatus, newTimeStamp, dblArrayValue );
+               final double[] dblArrayValue = ( (WicaChannelValueConnectedRealArray) connectedValue ).getValue( );
+               yield WicaChannelValueBuilder.createChannelValueConnectedRealArray( alarmSeverity, alarmStatus, newTimeStamp, dblArrayValue );
            }
            case INTEGER -> {
-               final int intValue = ( (WicaChannelValue.WicaChannelValueConnectedInteger) connectedValue ).getValue( );
-               yield WicaChannelValue.createChannelValueConnectedInteger( alarmSeverity, alarmStatus, newTimeStamp, intValue );
+               final int intValue = ( (WicaChannelValueConnectedInteger) connectedValue ).getValue( );
+               yield WicaChannelValueBuilder.createChannelValueConnectedInteger( alarmSeverity, alarmStatus, newTimeStamp, intValue );
            }
            case INTEGER_ARRAY -> {
-               final int[] intArrayValue = ( (WicaChannelValue.WicaChannelValueConnectedIntegerArray) connectedValue ).getValue( );
-               yield WicaChannelValue.createChannelValueConnectedIntegerArray( alarmSeverity, alarmStatus, newTimeStamp, intArrayValue );
+               final int[] intArrayValue = ( (WicaChannelValueConnectedIntegerArray) connectedValue ).getValue( );
+               yield WicaChannelValueBuilder.createChannelValueConnectedIntegerArray( alarmSeverity, alarmStatus, newTimeStamp, intArrayValue );
            }
            case STRING -> {
-               final String strValue = ( (WicaChannelValue.WicaChannelValueConnectedString) connectedValue ).getValue( );
-               yield WicaChannelValue.createChannelValueConnectedString( alarmSeverity, alarmStatus, newTimeStamp, strValue );
+               final String strValue = ( (WicaChannelValueConnectedString) connectedValue ).getValue( );
+               yield WicaChannelValueBuilder.createChannelValueConnectedString( alarmSeverity, alarmStatus, newTimeStamp, strValue );
            }
            case STRING_ARRAY -> {
-               final String[] strArrayValue = ( (WicaChannelValue.WicaChannelValueConnectedStringArray) connectedValue ).getValue( );
-               yield WicaChannelValue.createChannelValueConnectedStringArray( alarmSeverity, alarmStatus, newTimeStamp, strArrayValue );
+               final String[] strArrayValue = ( (WicaChannelValueConnectedStringArray) connectedValue ).getValue( );
+               yield WicaChannelValueBuilder.createChannelValueConnectedStringArray( alarmSeverity, alarmStatus, newTimeStamp, strArrayValue );
            }
            default -> throw new IllegalArgumentException( "The supplied object was of an unexpected type " );
        };

@@ -4,6 +4,8 @@ package ch.psi.wica.controlsystem.epics.channel;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.channel.*;
+import ch.psi.wica.model.channel.value.WicaChannelValueConnectedInteger;
+import ch.psi.wica.model.channel.value.WicaChannelValueDisconnected;
 import org.epics.ca.Channel;
 import org.epics.ca.ConnectionState;
 import org.epics.ca.data.AlarmSeverity;
@@ -70,7 +72,7 @@ class EpicsChannelValueGetterTest
       when( caChannel.getAsync( any() ) ).thenReturn( completedFuture );
 
       // Finally invoke the method-under-test and verify that it returns the test value.
-      final var wicaChannelValue = (WicaChannelValue.WicaChannelValueConnectedInteger) assertDoesNotThrow ( () -> epicsChannelValueGetter.get( caChannel, 1, TimeUnit.SECONDS ) );
+      final var wicaChannelValue = (WicaChannelValueConnectedInteger) assertDoesNotThrow ( () -> epicsChannelValueGetter.get( caChannel, 1, TimeUnit.SECONDS ) );
       assertThat( wicaChannelValue.getValue(), is( testValue ) );
    }
 
@@ -85,7 +87,7 @@ class EpicsChannelValueGetterTest
       when( caChannel.getConnectionState() ).thenReturn( ConnectionState.DISCONNECTED );
 
       // Finally invoke the method-under-test and verify that it returns a value indication the channel is disconnected.
-      final var wicaChannelValue = (WicaChannelValue.WicaChannelValueDisconnected) assertDoesNotThrow ( () -> epicsChannelValueGetter.get( caChannel, 1, TimeUnit.SECONDS ) );
+      final var wicaChannelValue = (WicaChannelValueDisconnected) assertDoesNotThrow ( () -> epicsChannelValueGetter.get( caChannel, 1, TimeUnit.SECONDS ) );
       assertThat( wicaChannelValue.isConnected(), is( false ) );
    }
 

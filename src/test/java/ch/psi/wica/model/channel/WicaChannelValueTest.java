@@ -3,6 +3,9 @@ package ch.psi.wica.model.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
+import ch.psi.wica.model.channel.value.WicaChannelAlarmSeverity;
+import ch.psi.wica.model.channel.value.WicaChannelAlarmStatus;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -19,7 +22,7 @@ class WicaChannelValueTest
    @Test
    void testChannelValueDisconnected()
    {
-      var wicaChannelValue = WicaChannelValue.createChannelValueDisconnected();
+      var wicaChannelValue = WicaChannelValueBuilder.createChannelValueDisconnected();
       assertThat( wicaChannelValue.isConnected(), is( false ) );
       assertThat( wicaChannelValue.getWicaServerTimestamp().isBefore( LocalDateTime.now() ), is( true ) );
    }
@@ -27,7 +30,7 @@ class WicaChannelValueTest
    @Test
    void testChannelValueConnectedString()
    {
-      var wicaChannelValue = WicaChannelValue.createChannelValueConnectedString( "abc" );
+      var wicaChannelValue = WicaChannelValueBuilder.createChannelValueConnectedString( "abc" );
       assertThat( wicaChannelValue.isConnected(), is( true ) );
       assertThat( wicaChannelValue.getWicaServerTimestamp().isBefore( LocalDateTime.now() ), is( true ) );
       assertThat( wicaChannelValue.getWicaChannelType(), is( WicaChannelType.STRING ) );
@@ -40,7 +43,7 @@ class WicaChannelValueTest
    @Test
    void testChannelValueConnectedStringArray()
    {
-      var wicaChannelValue = WicaChannelValue.createChannelValueConnectedStringArray( new String[] { "abc", "def"} );
+      var wicaChannelValue = WicaChannelValueBuilder.createChannelValueConnectedStringArray( new String[] { "abc", "def"} );
       assertThat( wicaChannelValue.isConnected(), is( true ) );
       assertThat( wicaChannelValue.getWicaServerTimestamp().isBefore( LocalDateTime.now() ), is( true ) );
       assertThat( wicaChannelValue.getWicaChannelType(), is( WicaChannelType.STRING_ARRAY ) );
@@ -53,7 +56,7 @@ class WicaChannelValueTest
    @Test
    void testChannelValueConnectedInteger()
    {
-      var wicaChannelValue = WicaChannelValue.createChannelValueConnectedInteger( 123 );
+      var wicaChannelValue = WicaChannelValueBuilder.createChannelValueConnectedInteger( 123 );
       assertThat( wicaChannelValue.isConnected(), is( true ) );
       assertThat( wicaChannelValue.getWicaServerTimestamp().isBefore( LocalDateTime.now() ), is( true ) );
       assertThat( wicaChannelValue.getWicaChannelType(), is( WicaChannelType.INTEGER ) );
@@ -66,7 +69,7 @@ class WicaChannelValueTest
    @Test
    void testChannelValueConnectedIntegerArray()
    {
-      var wicaChannelValue = WicaChannelValue.createChannelValueConnectedIntegerArray( new int[] { 123, 456 } );
+      var wicaChannelValue = WicaChannelValueBuilder.createChannelValueConnectedIntegerArray( new int[] { 123, 456 } );
       assertThat( wicaChannelValue.isConnected(), is( true ) );
       assertThat( wicaChannelValue.getWicaServerTimestamp().isBefore( LocalDateTime.now() ), is( true ) );
       assertThat( wicaChannelValue.getWicaChannelType(), is( WicaChannelType.INTEGER_ARRAY ) );
@@ -79,7 +82,7 @@ class WicaChannelValueTest
    @Test
    void testChannelValueConnectedReal()
    {
-      var wicaChannelValue = WicaChannelValue.createChannelValueConnectedReal( 123.2 );
+      var wicaChannelValue = WicaChannelValueBuilder.createChannelValueConnectedReal( 123.2 );
       assertThat( wicaChannelValue.isConnected(), is( true ) );
       assertThat( wicaChannelValue.getWicaServerTimestamp().isBefore( LocalDateTime.now() ), is( true ) );
       assertThat( wicaChannelValue.getWicaChannelType(), is( WicaChannelType.REAL ) );
@@ -92,7 +95,7 @@ class WicaChannelValueTest
    @Test
    void testChannelValueConnectedRealArray()
    {
-      var wicaChannelValue = WicaChannelValue.createChannelValueConnectedRealArray( new double[] { 123.56, 456.78 } );
+      var wicaChannelValue = WicaChannelValueBuilder.createChannelValueConnectedRealArray( new double[] { 123.56, 456.78 } );
       assertThat( wicaChannelValue.isConnected(), is( true ) );
       assertThat( wicaChannelValue.getWicaServerTimestamp().isBefore( LocalDateTime.now() ), is( true ) );
       assertThat( wicaChannelValue.getWicaChannelType(), is( WicaChannelType.REAL_ARRAY ) );

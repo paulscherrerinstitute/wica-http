@@ -9,7 +9,8 @@ import ch.psi.wica.controlsystem.event.channel.EpicsChannelDisconnectedEvent;
 import ch.psi.wica.controlsystem.event.wica.WicaChannelEventPublisher;
 import ch.psi.wica.controlsystem.event.channel.EpicsChannelConnectedEvent;
 import ch.psi.wica.model.app.StatisticsCollectionService;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -199,7 +200,7 @@ public class EpicsChannelMonitorPublisher
 
       logger.info( "'{}' - publishing channel disconnect event to all monitor listeners...", epicsChannelName );
 
-      final WicaChannelValue disconnectedValue = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue disconnectedValue = WicaChannelValueBuilder.createChannelValueDisconnected();
       requestList.stream()
          .filter( req -> req.getEpicsChannelName().equals( epicsChannelName ) )
          .forEach( req -> wicaChannelEventPublisher.publishMonitoredValueUpdated( req.getPublicationChannel(), disconnectedValue ) );

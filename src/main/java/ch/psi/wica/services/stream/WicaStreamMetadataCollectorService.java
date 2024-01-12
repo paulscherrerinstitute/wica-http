@@ -7,7 +7,7 @@ import ch.psi.wica.controlsystem.event.wica.WicaChannelMetadataUpdateEvent;
 import ch.psi.wica.infrastructure.stream.WicaStreamMetadataDataBuffer;
 import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadata;
 import ch.psi.wica.model.stream.WicaStream;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;

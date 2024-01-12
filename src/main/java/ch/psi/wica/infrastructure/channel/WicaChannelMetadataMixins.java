@@ -3,7 +3,7 @@ package ch.psi.wica.infrastructure.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.*;
+import ch.psi.wica.model.channel.metadata.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /*- Interface Declaration ----------------------------------------------------*/
@@ -36,7 +36,7 @@ class WicaChannelMetadataMixins
 
 /*- Nested Class: WicaChannelMetadataUnknownSerializerMixin ------------------*/
 
-   static abstract class WicaChannelMetadataUnknownSerializerMixin extends WicaChannelMetadata.WicaChannelMetadataUnknown
+   static abstract class WicaChannelMetadataUnknownSerializerMixin extends WicaChannelMetadataUnknown
    {
       // Dummy: only required to detect signature override errors.
       private WicaChannelMetadataUnknownSerializerMixin() { super(); }
@@ -46,7 +46,7 @@ class WicaChannelMetadataMixins
 
 /*- Nested Class: WicaChannelMetadataStringSerializerMixin -------------------*/
 
-   static abstract class WicaChannelMetadataStringSerializerMixin extends WicaChannelMetadata.WicaChannelMetadataString
+   static abstract class WicaChannelMetadataStringSerializerMixin extends WicaChannelMetadataString
    {
       // Dummy: only required to detect signature override errors.
       private WicaChannelMetadataStringSerializerMixin()
@@ -59,7 +59,7 @@ class WicaChannelMetadataMixins
 
 /*- Nested Class: WicaChannelMetadataStringArraySerializerMixin --------------*/
 
-   static abstract class WicaChannelMetadataStringArraySerializerMixin extends WicaChannelMetadata.WicaChannelMetadataStringArray
+   static abstract class WicaChannelMetadataStringArraySerializerMixin extends WicaChannelMetadataStringArray
    {
       // Dummy: only required to detect signature override errors.
       private WicaChannelMetadataStringArraySerializerMixin()
@@ -71,7 +71,7 @@ class WicaChannelMetadataMixins
    }
 
 /*- Nested Class: WicaChannelMetadataIntegerSerializerMixin ------------------*/
-   public static abstract class WicaChannelMetadataIntegerSerializerMixin extends WicaChannelMetadata.WicaChannelMetadataInteger
+   public static abstract class WicaChannelMetadataIntegerSerializerMixin extends WicaChannelMetadataInteger
    {
       // Dummy: only required to detect signature override errors.
       private WicaChannelMetadataIntegerSerializerMixin()
@@ -137,7 +137,7 @@ class WicaChannelMetadataMixins
 
 /*- Nested Class: WicaChannelMetadataRealSerializerMixin ---------------------*/
 
-   static abstract class WicaChannelMetadataRealSerializerMixin extends WicaChannelMetadata.WicaChannelMetadataReal
+   static abstract class WicaChannelMetadataRealSerializerMixin extends WicaChannelMetadataReal
    {
       // Dummy: only required to detect signature override errors.
       private WicaChannelMetadataRealSerializerMixin()

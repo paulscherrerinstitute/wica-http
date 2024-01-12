@@ -11,7 +11,8 @@ import ch.psi.wica.controlsystem.event.channel.EpicsChannelDisconnectedEvent;
 import ch.psi.wica.controlsystem.event.wica.WicaChannelEventPublisher;
 import ch.psi.wica.model.app.StatisticsCollectionService;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
@@ -372,7 +373,7 @@ public class EpicsChannelPollerPublisher
 
       private void publishChannelDisconnect()
       {
-         wicaChannelEventPublisher.publishPolledValueUpdated( publicationChannel, WicaChannelValue.createChannelValueDisconnected() );
+         wicaChannelEventPublisher.publishPolledValueUpdated( publicationChannel, WicaChannelValueBuilder.createChannelValueDisconnected() );
 
       }
    }

@@ -7,8 +7,8 @@ package ch.psi.wica.controlsystem.epics;
 import ch.psi.wica.controlsystem.event.wica.WicaChannelMetadataUpdateEvent;
 import ch.psi.wica.controlsystem.event.wica.WicaChannelMonitoredValueUpdateEvent;
 import ch.psi.wica.controlsystem.event.wica.WicaChannelPolledValueUpdateEvent;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadata;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 

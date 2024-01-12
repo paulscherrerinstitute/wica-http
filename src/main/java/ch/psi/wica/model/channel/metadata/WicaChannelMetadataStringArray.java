@@ -1,56 +1,30 @@
 /*- Package Declaration ------------------------------------------------------*/
-package ch.psi.wica.model.channel;
+package ch.psi.wica.model.channel.metadata;
 
 /*- Imported packages --------------------------------------------------------*/
+
+import ch.psi.wica.model.channel.WicaChannelType;
 
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
 /**
- * Represents the <i>alarm status</i> of a wica channel, an abstraction whose
- * value and meaning depends on the underlying control system which hosts it.
+ * Represents the metadata for a channel whose type is STRING_ARRAY.
  */
-public class WicaChannelAlarmStatus
+public class WicaChannelMetadataStringArray extends WicaChannelMetadata
 {
 
 /*- Public attributes --------------------------------------------------------*/
 /*- Private attributes -------------------------------------------------------*/
-
-   private final int wicaAlarmStatusCode;
-
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelAlarmStatus( int wicaAlarmStatusCode )
+   public WicaChannelMetadataStringArray()
    {
-      this.wicaAlarmStatusCode = wicaAlarmStatusCode;
-   }
-
-/*- Class methods ------------------------------------------------------------*/
-
-   public static WicaChannelAlarmStatus of( int statusCode )
-   {
-      return new WicaChannelAlarmStatus( statusCode );
-   }
-
-   static WicaChannelAlarmStatus ofNoError()
-   {
-      return new WicaChannelAlarmStatus( 0 );
+      super( WicaChannelType.STRING_ARRAY );
    }
 
 /*- Public methods -----------------------------------------------------------*/
-
-   public int getStatusCode()
-   {
-      return wicaAlarmStatusCode;
-   }
-
-   @Override
-   public String toString()
-   {
-      return String.valueOf( getStatusCode() );
-   }
-
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 

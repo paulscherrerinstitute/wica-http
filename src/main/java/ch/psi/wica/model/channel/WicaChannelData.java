@@ -29,12 +29,21 @@ public abstract class WicaChannelData
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Constructs a new instance of unknown type based on the current server timestamp.
+    */
    public WicaChannelData()
    {
       this.wicaChannelType = WicaChannelType.UNKNOWN;
       this.wicaServerTimestamp = LocalDateTime.now();
    }
 
+   /**
+    * Constructs a new instance of the specified type and with the specified timestamp.
+    *
+    * @param wicaChannelType the channel type.
+    * @param wicaServerTimestamp the server timestamp.
+    */
    public WicaChannelData( WicaChannelType wicaChannelType, LocalDateTime wicaServerTimestamp )
    {
       this.wicaChannelType = wicaChannelType;
@@ -44,14 +53,25 @@ public abstract class WicaChannelData
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Returns the channel type.
+    *
+    * @return the channel type.
+    */
    public WicaChannelType getType()
    {
       return wicaChannelType;
    }
+
+   /**
+    * Returns the server timestamp.
+    *
+    * @return the server timestamp.
+    */
    public LocalDateTime getWicaServerTimestamp()
-{
-   return this.wicaServerTimestamp;
-}
+   {
+      return this.wicaServerTimestamp;
+   }
 
 /*- Private methods ----------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/

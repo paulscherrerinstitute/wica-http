@@ -3,7 +3,8 @@ package ch.psi.wica.services.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -36,9 +37,9 @@ class WicaChannelValueFixedSamplingCycleFilterTest
    @Test
    void testMapSampleAllValues()
    {
-      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnectedString( "abc" );
-      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnectedString( "def" );
-      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnectedString( "ghi" );
+      final WicaChannelValue strValue1 = WicaChannelValueBuilder.createChannelValueConnectedString( "abc" );
+      final WicaChannelValue strValue2 = WicaChannelValueBuilder.createChannelValueConnectedString( "def" );
+      final WicaChannelValue strValue3 = WicaChannelValueBuilder.createChannelValueConnectedString( "ghi" );
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3 );
       final WicaChannelValueFilter mapper = new WicaChannelValueFixedSamplingCycleFilter(1 );
       final List<WicaChannelValue> outputList  = mapper.apply(inputList );
@@ -51,12 +52,12 @@ class WicaChannelValueFixedSamplingCycleFilterTest
    @Test
    void testMapSampleEveryOtherValue()
    {
-      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnectedString( "abc" );
-      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnectedString( "def" );
-      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnectedString( "ghi" );
-      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnectedString( "jkl" );
-      final WicaChannelValue strValue5 = WicaChannelValue.createChannelValueConnectedString( "mno" );
-      final WicaChannelValue strValue6 = WicaChannelValue.createChannelValueConnectedString( "pqr" );
+      final WicaChannelValue strValue1 = WicaChannelValueBuilder.createChannelValueConnectedString( "abc" );
+      final WicaChannelValue strValue2 = WicaChannelValueBuilder.createChannelValueConnectedString( "def" );
+      final WicaChannelValue strValue3 = WicaChannelValueBuilder.createChannelValueConnectedString( "ghi" );
+      final WicaChannelValue strValue4 = WicaChannelValueBuilder.createChannelValueConnectedString( "jkl" );
+      final WicaChannelValue strValue5 = WicaChannelValueBuilder.createChannelValueConnectedString( "mno" );
+      final WicaChannelValue strValue6 = WicaChannelValueBuilder.createChannelValueConnectedString( "pqr" );
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4, strValue5, strValue6 );
       final WicaChannelValueFilter mapper = new WicaChannelValueFixedSamplingCycleFilter(2 );
       final List<WicaChannelValue> outputList  = mapper.apply(inputList );
@@ -69,12 +70,12 @@ class WicaChannelValueFixedSamplingCycleFilterTest
    @Test
    void testSampleOneInNine()
    {
-      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnectedString("abc");
-      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnectedString("def");
-      final WicaChannelValue strValue3 = WicaChannelValue.createChannelValueConnectedString("ghi");
-      final WicaChannelValue strValue4 = WicaChannelValue.createChannelValueConnectedString("jkl");
-      final WicaChannelValue strValue5 = WicaChannelValue.createChannelValueConnectedString("mno");
-      final WicaChannelValue strValue6 = WicaChannelValue.createChannelValueConnectedString("pqr");
+      final WicaChannelValue strValue1 = WicaChannelValueBuilder.createChannelValueConnectedString("abc");
+      final WicaChannelValue strValue2 = WicaChannelValueBuilder.createChannelValueConnectedString("def");
+      final WicaChannelValue strValue3 = WicaChannelValueBuilder.createChannelValueConnectedString("ghi");
+      final WicaChannelValue strValue4 = WicaChannelValueBuilder.createChannelValueConnectedString("jkl");
+      final WicaChannelValue strValue5 = WicaChannelValueBuilder.createChannelValueConnectedString("mno");
+      final WicaChannelValue strValue6 = WicaChannelValueBuilder.createChannelValueConnectedString("pqr");
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2, strValue3, strValue4, strValue5, strValue6 );
       final WicaChannelValueFilter filter = new WicaChannelValueFixedSamplingCycleFilter(9 );
       final List<WicaChannelValue> outputList1 = filter.apply(inputList );
@@ -89,8 +90,8 @@ class WicaChannelValueFixedSamplingCycleFilterTest
    @Test
    void testSampleOneInEight()
    {
-      final WicaChannelValue strValue1 = WicaChannelValue.createChannelValueConnectedString("abc");
-      final WicaChannelValue strValue2 = WicaChannelValue.createChannelValueConnectedString("def");
+      final WicaChannelValue strValue1 = WicaChannelValueBuilder.createChannelValueConnectedString("abc");
+      final WicaChannelValue strValue2 = WicaChannelValueBuilder.createChannelValueConnectedString("def");
       final List<WicaChannelValue> inputList = List.of( strValue1, strValue2 );
       final WicaChannelValueFilter filter = new WicaChannelValueFixedSamplingCycleFilter(8 );
       final List<WicaChannelValue> outputList1 = filter.apply( inputList );

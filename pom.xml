@@ -179,6 +179,24 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <!-- THis option, required for Mockito, overrides the change of -->
+                    <!-- the default behaviour that will occur in later JVMs and the -->
+                    <!-- deprecation warnings that occur since JDK 21 -->
+                    <argLine>-XX:+EnableDynamicAgentLoading</argLine>
+                    <systemPropertyVariables>
+                        <!-- The following is required to run the integrations tests which -->
+                        <!-- use the EPICS CA protocol driven from the local machine -->
+                        <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+                        <java.net.preferIPv6Stack>false</java.net.preferIPv6Stack>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.5.0</version>
                 <configuration>
@@ -253,6 +271,11 @@
 
     <reporting>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>3.1.2</version>
+            </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>

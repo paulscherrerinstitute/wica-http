@@ -9,6 +9,7 @@ import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.app.WicaFilterType;
 import ch.psi.wica.model.channel.*;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.BeforeEach;

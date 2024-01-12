@@ -4,6 +4,8 @@ package ch.psi.wica.infrastructure.channel;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.model.channel.*;
+import ch.psi.wica.model.channel.metadata.*;
+import ch.psi.wica.model.channel.value.*;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -161,25 +163,25 @@ public class WicaChannelDataSerializer
       // It is "special" because (d) it uses WicaChannelData and WicaChannelValue Mixin types.
       mapper.addMixIn( WicaChannelData.class, WicaChannelDataSerializerMixin.class );
       mapper.addMixIn( WicaChannelValue.class, WicaChannelValueMixins.WicaChannelValueSerializerMixin.class );
-      mapper.addMixIn( WicaChannelValue.WicaChannelValueConnected.class, WicaChannelValueMixins.WicaChannelValueConnectedSerializerMixin.class );
-      mapper.addMixIn( WicaChannelValue.WicaChannelValueDisconnected.class, WicaChannelValueMixins.WicaChannelValueDisconnectedSerializerMixin.class );
-      mapper.addMixIn( WicaChannelValue.WicaChannelValueConnectedInteger.class, WicaChannelValueMixins.WicaChannelValueConnectedIntegerSerializerMixin.class  );
-      mapper.addMixIn( WicaChannelValue.WicaChannelValueConnectedIntegerArray.class, WicaChannelValueMixins.WicaChannelValueConnectedIntegerArraySerializerMixin.class  );
-      mapper.addMixIn( WicaChannelValue.WicaChannelValueConnectedReal.class, WicaChannelValueMixins.WicaChannelValueConnectedRealSerializerMixin.class  );
-      mapper.addMixIn( WicaChannelValue.WicaChannelValueConnectedRealArray.class, WicaChannelValueMixins.WicaChannelValueConnectedRealArraySerializerMixin.class  );
-      mapper.addMixIn( WicaChannelValue.WicaChannelValueConnectedString.class, WicaChannelValueMixins.WicaChannelValueConnectedStringSerializerMixin.class  );
-      mapper.addMixIn( WicaChannelValue.WicaChannelValueConnectedStringArray.class, WicaChannelValueMixins.WicaChannelValueConnectedStringArraySerializerMixin.class  );
+      mapper.addMixIn( WicaChannelValueConnected.class, WicaChannelValueMixins.WicaChannelValueConnectedSerializerMixin.class );
+      mapper.addMixIn( WicaChannelValueDisconnected.class, WicaChannelValueMixins.WicaChannelValueDisconnectedSerializerMixin.class );
+      mapper.addMixIn( WicaChannelValueConnectedInteger.class, WicaChannelValueMixins.WicaChannelValueConnectedIntegerSerializerMixin.class  );
+      mapper.addMixIn( WicaChannelValueConnectedIntegerArray.class, WicaChannelValueMixins.WicaChannelValueConnectedIntegerArraySerializerMixin.class  );
+      mapper.addMixIn( WicaChannelValueConnectedReal.class, WicaChannelValueMixins.WicaChannelValueConnectedRealSerializerMixin.class  );
+      mapper.addMixIn( WicaChannelValueConnectedRealArray.class, WicaChannelValueMixins.WicaChannelValueConnectedRealArraySerializerMixin.class  );
+      mapper.addMixIn( WicaChannelValueConnectedString.class, WicaChannelValueMixins.WicaChannelValueConnectedStringSerializerMixin.class  );
+      mapper.addMixIn( WicaChannelValueConnectedStringArray.class, WicaChannelValueMixins.WicaChannelValueConnectedStringArraySerializerMixin.class  );
       mapper.addMixIn( WicaChannelAlarmStatus.class, WicaChannelValueMixins.WicaChannelAlarmStatusMixin.class  );
 
       // It is "special" because (e) it uses WicaChannelMetadata Mixin types.
       mapper.addMixIn( WicaChannelMetadata.class, WicaChannelMetadataMixins.WicaChannelMetadataSerializerMixin.class );
-      mapper.addMixIn( WicaChannelMetadata.WicaChannelMetadataUnknown.class, WicaChannelMetadataMixins.WicaChannelMetadataUnknownSerializerMixin.class );
-      mapper.addMixIn( WicaChannelMetadata.WicaChannelMetadataString.class, WicaChannelMetadataMixins.WicaChannelMetadataStringSerializerMixin.class );
-      mapper.addMixIn( WicaChannelMetadata.WicaChannelMetadataStringArray.class, WicaChannelMetadataMixins.WicaChannelMetadataStringArraySerializerMixin.class );
-      mapper.addMixIn( WicaChannelMetadata.WicaChannelMetadataInteger.class, WicaChannelMetadataMixins.WicaChannelMetadataIntegerSerializerMixin.class );
-      mapper.addMixIn( WicaChannelMetadata.WicaChannelMetadataIntegerArray.class, WicaChannelMetadataMixins.WicaChannelMetadataIntegerArraySerializerMixin.class );
-      mapper.addMixIn( WicaChannelMetadata.WicaChannelMetadataReal.class, WicaChannelMetadataMixins.WicaChannelMetadataRealSerializerMixin.class );
-      mapper.addMixIn( WicaChannelMetadata.WicaChannelMetadataRealArray.class, WicaChannelMetadataMixins.WicaChannelMetadataRealArraySerializerMixin.class );
+      mapper.addMixIn( WicaChannelMetadataUnknown.class, WicaChannelMetadataMixins.WicaChannelMetadataUnknownSerializerMixin.class );
+      mapper.addMixIn( WicaChannelMetadataString.class, WicaChannelMetadataMixins.WicaChannelMetadataStringSerializerMixin.class );
+      mapper.addMixIn( WicaChannelMetadataStringArray.class, WicaChannelMetadataMixins.WicaChannelMetadataStringArraySerializerMixin.class );
+      mapper.addMixIn( WicaChannelMetadataInteger.class, WicaChannelMetadataMixins.WicaChannelMetadataIntegerSerializerMixin.class );
+      mapper.addMixIn( WicaChannelMetadataIntegerArray.class, WicaChannelMetadataMixins.WicaChannelMetadataIntegerArraySerializerMixin.class );
+      mapper.addMixIn( WicaChannelMetadataReal.class, WicaChannelMetadataMixins.WicaChannelMetadataRealSerializerMixin.class );
+      mapper.addMixIn( WicaChannelMetadataRealArray.class, WicaChannelMetadataMixins.WicaChannelMetadataRealArraySerializerMixin.class );
 
       mapper.setVisibility( mapper.getSerializationConfig()
                                   .getDefaultVisibilityChecker()

@@ -4,7 +4,8 @@ package ch.psi.wica.infrastructure.channel;
 /*- Imported packages --------------------------------------------------------*/
 
 import ch.psi.wica.infrastructure.util.JsonStringFormatter;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadata;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadataBuilder;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,15 +60,15 @@ class WicaChannelDataSerializerMetadataTest
    void setup()
    {
       // Setup values shared across many tests
-      unkMetadata = WicaChannelMetadata.createUnknownInstance();
-      strMetadata = WicaChannelMetadata.createStringInstance();
-      strArrMetadata = WicaChannelMetadata.createStringArrayInstance();
-      intMetadata = WicaChannelMetadata.createIntegerInstance( "units", 100, 0, 90, 10, 98, 2, 95, 5 );
-      intArrMetadata = WicaChannelMetadata.createIntegerArrayInstance( "units", 100, 0, 90, 10, 98, 2, 95, 5 );
-      realMetadata = WicaChannelMetadata.createRealInstance( "units", 3, 90.12345678, 0.0000123, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
-      realArrMetadata= WicaChannelMetadata.createRealArrayInstance( "units", 3, 100.123117, 0.0, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
-      realNanMetadata = WicaChannelMetadata.createRealInstance( "units", 3, Double.NaN, 0.0, 4.5, 10.6, 97.6, 2.2, 95.3, 5.1 );
-      realInfMetadata = WicaChannelMetadata.createRealInstance( "units", 3, Double.POSITIVE_INFINITY, 0.0, 9.7, 10.6123, 97.61234, 2.2, 95.3, 5.1 );
+      unkMetadata = WicaChannelMetadataBuilder.createUnknownInstance();
+      strMetadata = WicaChannelMetadataBuilder.createStringInstance();
+      strArrMetadata = WicaChannelMetadataBuilder.createStringArrayInstance();
+      intMetadata = WicaChannelMetadataBuilder.createIntegerInstance( "units", 100, 0, 90, 10, 98, 2, 95, 5 );
+      intArrMetadata = WicaChannelMetadataBuilder.createIntegerArrayInstance( "units", 100, 0, 90, 10, 98, 2, 95, 5 );
+      realMetadata = WicaChannelMetadataBuilder.createRealInstance( "units", 3, 90.12345678, 0.0000123, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
+      realArrMetadata= WicaChannelMetadataBuilder.createRealArrayInstance( "units", 3, 100.123117, 0.0, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
+      realNanMetadata = WicaChannelMetadataBuilder.createRealInstance( "units", 3, Double.NaN, 0.0, 4.5, 10.6, 97.6, 2.2, 95.3, 5.1 );
+      realInfMetadata = WicaChannelMetadataBuilder.createRealInstance( "units", 3, Double.POSITIVE_INFINITY, 0.0, 9.7, 10.6123, 97.61234, 2.2, 95.3, 5.1 );
 
       // Set up decoder
       jsonDecoder = new ObjectMapper();
@@ -234,7 +235,7 @@ class WicaChannelDataSerializerMetadataTest
    @Test
    void test_serializeMetadataRealPrecisionTestsWithLargeIntegerPart()
    {
-      final var real = WicaChannelMetadata.createRealArrayInstance( "units", 3, 123456789.123456, 0.0, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
+      final var real = WicaChannelMetadataBuilder.createRealArrayInstance( "units", 3, 123456789.123456, 0.0, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
       logger.info("JSON Metadata REAL serialisation of '123456789.123456789' with 'numericScale=1' looks like this: \n'{}'", JsonStringFormatter.prettyFormat( new WicaChannelDataSerializer( Set.of( "hopr" ),1, false ).writeToJson( real) ) );
       logger.info("JSON Metadata REAL serialisation of '123456789.123456789' with 'numericScale=2' looks like this: \n'{}'", JsonStringFormatter.prettyFormat( new WicaChannelDataSerializer( Set.of( "hopr" ),2, false ).writeToJson( real) ) );
       logger.info("JSON Metadata REAL serialisation of '123456789.123456789' with 'numericScale=3' looks like this: \n'{}'", JsonStringFormatter.prettyFormat( new WicaChannelDataSerializer( Set.of( "hopr" ),3, false ).writeToJson( real) ) );
@@ -248,14 +249,14 @@ class WicaChannelDataSerializerMetadataTest
    @Test
    void test_serializeMetadataRealPrecisionTestsWithLargeNumericScale()
    {
-      final var real = WicaChannelMetadata.createRealArrayInstance( "units", 30, 0.000000000012345678901234567890123456789, 0.0, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
+      final var real = WicaChannelMetadataBuilder.createRealArrayInstance( "units", 30, 0.000000000012345678901234567890123456789, 0.0, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
       logger.info("JSON Metadata REAL serialisation of '0.012345678901234567890123456789' with 'numericScale=30' looks like this: \n'{}'", new WicaChannelDataSerializer( Set.of( "hopr" ),30, false ).writeToJson( real) );
    }
 
    @Test
    void test_serializeMetadataRealPrecisionTestsWithZeroIntegerPart()
    {
-      final var real = WicaChannelMetadata.createRealArrayInstance( "units", 3, 0.000123456789, 0.0, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
+      final var real = WicaChannelMetadataBuilder.createRealArrayInstance( "units", 3, 0.000123456789, 0.0, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
       logger.info("JSON Metadata REAL serialisation of '0.000123456789' with 'numericScale=1' looks like this: \n'{}'", JsonStringFormatter.prettyFormat( new WicaChannelDataSerializer( Set.of( "hopr" ),1, false ).writeToJson( real) ) );
       logger.info("JSON Metadata REAL serialisation of '0.000123456789' with 'numericScale=2' looks like this: \n'{}'", JsonStringFormatter.prettyFormat( new WicaChannelDataSerializer( Set.of( "hopr" ),2, false).writeToJson( real) ) );
       logger.info("JSON Metadata REAL serialisation of '0.000123456789' with 'numericScale=3' looks like this: \n'{}'", JsonStringFormatter.prettyFormat( new WicaChannelDataSerializer( Set.of( "hopr" ),3, false ).writeToJson( real) ) );
@@ -270,7 +271,7 @@ class WicaChannelDataSerializerMetadataTest
    @Test
    void test_serializeMetadataRealPrecisionTestsWithDifferentPrecisions() throws IOException
    {
-      final var real = WicaChannelMetadata.createRealInstance( "units", 3, 0.123456, 0.0, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
+      final var real = WicaChannelMetadataBuilder.createRealInstance( "units", 3, 0.123456, 0.0, 90.4, 10.6, 97.6, 2.2, 95.3, 5.1 );
 
       final var num4Serializer = new WicaChannelDataSerializer( Set.of( "hopr" ),4, false );
       final var jsonStr1 =  num4Serializer.writeToJson( real );
@@ -296,7 +297,7 @@ class WicaChannelDataSerializerMetadataTest
    @ParameterizedTest
    void testPerformance( int times )
    {
-      final var val = WicaChannelMetadata.createIntegerInstance( "egu", 10,0,10,0,10,0, 10, 0  );
+      final var val = WicaChannelMetadataBuilder.createIntegerInstance( "egu", 10,0,10,0,10,0, 10, 0  );
       final StopWatch stopwatch = StopWatch.createStarted();
       for ( int i = 0 ; i < times; i++ )
       {

@@ -75,7 +75,7 @@ class WicaStreamGetController
     *
     * @return an HTTP response whose status code will be set to 'OK' (= 200)
     *     if the operation completes successfully or 'Bad Request' (= 400) if
-    *     some error occurs.  When successful the the HTTP response remains
+    *     some error occurs.  When successful the HTTP response remains
     *     open and the evolving state of the stream's channels are written
     *     to the response body as a sequence of Server Sent Events (SSE's).
     *     When unsuccessful the response header 'X-WICA-ERROR' is written

@@ -10,7 +10,8 @@ import ch.psi.wica.infrastructure.channel.WicaChannelValueTimestampRewriter;
 import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.services.channel.WicaChannelValueFilteringService;
 import org.junit.jupiter.api.BeforeEach;
@@ -129,10 +130,10 @@ class WicaStreamMonitoredValueCollectorTest
    @Test
    void test_getLatest()
    {
-      final WicaChannelValue someValue1A = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue someValue1B = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue someValue2A = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue someValue2B = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue someValue1A = WicaChannelValueBuilder.createChannelValueDisconnected();
+      final WicaChannelValue someValue1B = WicaChannelValueBuilder.createChannelValueDisconnected();
+      final WicaChannelValue someValue2A = WicaChannelValueBuilder.createChannelValueDisconnected();
+      final WicaChannelValue someValue2B = WicaChannelValueBuilder.createChannelValueDisconnected();
 
       serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel1, someValue1A ) );
       serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel1, someValue1B ) );
@@ -151,15 +152,15 @@ class WicaStreamMonitoredValueCollectorTest
    @Test
    void test_get()
    {
-      final WicaChannelValue someValue1A = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue someValue1B = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue someValue1A = WicaChannelValueBuilder.createChannelValueDisconnected();
+      final WicaChannelValue someValue1B = WicaChannelValueBuilder.createChannelValueDisconnected();
       serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel1, someValue1A ) );
       serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel1, someValue1B ) );
 
       final LocalDateTime middleTime = LocalDateTime.now();
 
-      final WicaChannelValue someValue2A = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue someValue2B = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue someValue2A = WicaChannelValueBuilder.createChannelValueDisconnected();
+      final WicaChannelValue someValue2B = WicaChannelValueBuilder.createChannelValueDisconnected();
       serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel3, someValue2A ) );
       serviceUnderTest.handleWicaChannelMonitoredValueUpdateEvent( new WicaChannelMonitoredValueUpdateEvent( testChannel3, someValue2B ) );
 

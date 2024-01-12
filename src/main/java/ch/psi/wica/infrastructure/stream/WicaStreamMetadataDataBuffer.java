@@ -5,7 +5,7 @@ package ch.psi.wica.infrastructure.stream;
 
 import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadata;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 

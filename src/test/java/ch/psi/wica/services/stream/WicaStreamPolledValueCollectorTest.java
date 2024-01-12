@@ -9,7 +9,8 @@ import ch.psi.wica.infrastructure.channel.WicaChannelPropertiesBuilder;
 import ch.psi.wica.infrastructure.stream.WicaStreamBuilder;
 import ch.psi.wica.model.app.WicaDataAcquisitionMode;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.services.channel.WicaChannelValueFilteringService;
 import org.junit.jupiter.api.BeforeEach;
@@ -125,12 +126,12 @@ class WicaStreamPolledValueCollectorTest
    @Test
    void test_getLatest()
    {
-      final WicaChannelValue someValue1A = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue someValue1B = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue someValue3A = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue someValue3B = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue someValue4A = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue someValue4B = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue someValue1A = WicaChannelValueBuilder.createChannelValueDisconnected();
+      final WicaChannelValue someValue1B = WicaChannelValueBuilder.createChannelValueDisconnected();
+      final WicaChannelValue someValue3A = WicaChannelValueBuilder.createChannelValueDisconnected();
+      final WicaChannelValue someValue3B = WicaChannelValueBuilder.createChannelValueDisconnected();
+      final WicaChannelValue someValue4A = WicaChannelValueBuilder.createChannelValueDisconnected();
+      final WicaChannelValue someValue4B = WicaChannelValueBuilder.createChannelValueDisconnected();
 
       serviceUnderTest.handleUpdateEvent( new WicaChannelPolledValueUpdateEvent( testChannel1, someValue1A ) );
       serviceUnderTest.handleUpdateEvent( new WicaChannelPolledValueUpdateEvent( testChannel1, someValue1B ) );
@@ -153,21 +154,21 @@ class WicaStreamPolledValueCollectorTest
    void test_get()
    {
       final LocalDateTime beginTime = LocalDateTime.now();
-      final WicaChannelValue someValue1A = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue someValue1B = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue someValue1A = WicaChannelValueBuilder.createChannelValueDisconnected();
+      final WicaChannelValue someValue1B = WicaChannelValueBuilder.createChannelValueDisconnected();
       serviceUnderTest.handleUpdateEvent( new WicaChannelPolledValueUpdateEvent( testChannel1, someValue1A ) );
       serviceUnderTest.handleUpdateEvent( new WicaChannelPolledValueUpdateEvent( testChannel1, someValue1B ) );
 
       final LocalDateTime middleTime = LocalDateTime.now();
 
-      final WicaChannelValue someValue3A = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue someValue3B = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue someValue3A = WicaChannelValueBuilder.createChannelValueDisconnected();
+      final WicaChannelValue someValue3B = WicaChannelValueBuilder.createChannelValueDisconnected();
       serviceUnderTest.handleUpdateEvent( new WicaChannelPolledValueUpdateEvent( testChannel3, someValue3A ) );
       serviceUnderTest.handleUpdateEvent( new WicaChannelPolledValueUpdateEvent( testChannel3, someValue3B ) );
 
       final LocalDateTime endTime = LocalDateTime.now();
-      final WicaChannelValue someValue4A = WicaChannelValue.createChannelValueDisconnected();
-      final WicaChannelValue someValue4B = WicaChannelValue.createChannelValueDisconnected();
+      final WicaChannelValue someValue4A = WicaChannelValueBuilder.createChannelValueDisconnected();
+      final WicaChannelValue someValue4B = WicaChannelValueBuilder.createChannelValueDisconnected();
       serviceUnderTest.handleUpdateEvent( new WicaChannelPolledValueUpdateEvent( testChannel4, someValue4A ) );
       serviceUnderTest.handleUpdateEvent( new WicaChannelPolledValueUpdateEvent( testChannel4, someValue4B ) );
 

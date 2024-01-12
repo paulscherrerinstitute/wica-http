@@ -7,7 +7,7 @@ import ch.psi.wica.controlsystem.event.wica.WicaChannelPolledValueUpdateEvent;
 import ch.psi.wica.infrastructure.stream.WicaStreamPolledValueDataBuffer;
 import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.services.channel.WicaChannelValueFilteringService;
 import net.jcip.annotations.ThreadSafe;

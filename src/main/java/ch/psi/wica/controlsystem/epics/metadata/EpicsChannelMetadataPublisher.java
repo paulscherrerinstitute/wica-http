@@ -8,7 +8,7 @@ import ch.psi.wica.controlsystem.epics.channel.EpicsChannelName;
 import ch.psi.wica.controlsystem.event.wica.WicaChannelEventPublisher;
 import ch.psi.wica.controlsystem.event.channel.EpicsChannelConnectedEvent;
 import ch.psi.wica.model.app.StatisticsCollectionService;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadata;
 
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;

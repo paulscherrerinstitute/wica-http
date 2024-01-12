@@ -9,8 +9,10 @@ import ch.psi.wica.controlsystem.epics.channel.EpicsChannelAccessContextSupplier
 import ch.psi.wica.controlsystem.epics.metadata.EpicsChannelMetadataGetter;
 import ch.psi.wica.controlsystem.epics.channel.EpicsChannelName;
 import ch.psi.wica.controlsystem.epics.channel.EpicsChannelValueGetter;
-import ch.psi.wica.model.channel.WicaChannelMetadata;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadata;
+import ch.psi.wica.model.channel.metadata.WicaChannelMetadataBuilder;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.lang3.Validate;
 import org.epics.ca.Channel;
@@ -76,7 +78,7 @@ public class EpicsChannelReaderService implements AutoCloseable
 
    /**
     * Returns the metadata associated with a channel.
-    *
+    * <p>
     * This method incurs the network cost of establishing a channel to the remote
     * data source and performing a synchronous GET operation.
     *
@@ -111,13 +113,13 @@ public class EpicsChannelReaderService implements AutoCloseable
       catch ( Throwable th )
       {
          logger.info( "'{}' - ERROR: Exception whilst getting channel metadata. Details: '{}'.", channelName, th.getMessage() );
-         return WicaChannelMetadata.createUnknownInstance();
+         return WicaChannelMetadataBuilder.createUnknownInstance();
       }
    }
 
    /**
     * Returns the value of a channel.
-    *
+    * <p>
     * This method incurs the network cost of establishing a channel to the remote
     * data source and performing a synchronous GET operation.
     *
@@ -154,7 +156,7 @@ public class EpicsChannelReaderService implements AutoCloseable
       catch ( Throwable th )
       {
          logger.info( "'{}' - ERROR: Exception whilst getting channel value. Details: '{}'.", channelName, th.getMessage() );
-         return WicaChannelValue.createChannelValueDisconnected();
+         return WicaChannelValueBuilder.createChannelValueDisconnected();
       }
    }
 

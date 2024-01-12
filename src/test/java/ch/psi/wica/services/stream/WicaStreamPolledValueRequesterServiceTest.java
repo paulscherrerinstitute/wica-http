@@ -11,7 +11,7 @@ import ch.psi.wica.model.app.WicaFilterType;
 import ch.psi.wica.model.channel.WicaChannel;
 import ch.psi.wica.model.channel.WicaChannelProperties;
 import ch.psi.wica.model.channel.WicaChannelType;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
 import ch.psi.wica.model.stream.WicaStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

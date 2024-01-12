@@ -10,7 +10,8 @@ import ch.psi.wica.infrastructure.channel.WicaChannelValueTimestampRewriter;
 import ch.psi.wica.infrastructure.stream.WicaStreamMonitoredValueDataBuffer;
 import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueConnected;
 import ch.psi.wica.model.stream.WicaStream;
 import ch.psi.wica.services.channel.WicaChannelValueFilteringService;
 import net.jcip.annotations.ThreadSafe;
@@ -140,12 +141,12 @@ public class WicaStreamMonitoredValueCollectorService
          return;
       }
 
-      final LocalDateTime ts1 = ( (WicaChannelValue.WicaChannelValueConnected) latestMonitoredValue).getDataSourceTimestamp();
+      final LocalDateTime ts1 = ( (WicaChannelValueConnected) latestMonitoredValue).getDataSourceTimestamp();
       final String name1 =  wicaChannel.getNameAsString();
       final String val1 =  latestMonitoredValue.toString();
       logger.trace( "Latest monitored value for channel: '{}' has the value '{}' and timestamp '{}'.", name1, val1, ts1 );
 
-      final LocalDateTime ts2 = ( (WicaChannelValue.WicaChannelValueConnected) latestPolledValue).getDataSourceTimestamp();
+      final LocalDateTime ts2 = ( (WicaChannelValueConnected) latestPolledValue).getDataSourceTimestamp();
       final String name2 =  wicaChannel.getNameAsString();
       final String val2 =  latestPolledValue.toString();
       logger.trace( "Latest polled value for channel: '{}' has the value '{}' and timestamp '{}'.", name2, val2, ts2 );

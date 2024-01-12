@@ -6,7 +6,8 @@ package ch.psi.wica.services.channel;
 import ch.psi.wica.infrastructure.channel.WicaChannelBuilder;
 import ch.psi.wica.infrastructure.util.JsonStringFormatter;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValue;
+import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,15 +55,15 @@ class WicaChannelValueMapSerializerServiceTest
    void setup()
    {
       // Setup values shared across many tests
-      unconnValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueDisconnected();
-      intValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedInteger( 27 );
-      strValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedString( "abcdef" );
-      realValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedReal( 123456.654321 );
-      realNanValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedReal( NaN );
-      realInfValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedReal( POSITIVE_INFINITY );
-      intArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedIntegerArray( new int[] { 25, 12 } );
-      strArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedStringArray( new String[] { "abcdef", "ghijkl" } );
-      realArrValue = WicaChannelValue.WicaChannelValueConnected.createChannelValueConnectedRealArray( new double[] { 2.5000, 1.20000 }  );
+      unconnValue = WicaChannelValueBuilder.createChannelValueDisconnected();
+      intValue = WicaChannelValueBuilder.createChannelValueConnectedInteger( 27 );
+      strValue = WicaChannelValueBuilder.createChannelValueConnectedString( "abcdef" );
+      realValue = WicaChannelValueBuilder.createChannelValueConnectedReal( 123456.654321 );
+      realNanValue = WicaChannelValueBuilder.createChannelValueConnectedReal( NaN );
+      realInfValue = WicaChannelValueBuilder.createChannelValueConnectedReal( POSITIVE_INFINITY );
+      intArrValue = WicaChannelValueBuilder.createChannelValueConnectedIntegerArray( new int[] { 25, 12 } );
+      strArrValue = WicaChannelValueBuilder.createChannelValueConnectedStringArray( new String[] { "abcdef", "ghijkl" } );
+      realArrValue = WicaChannelValueBuilder.createChannelValueConnectedRealArray( new double[] { 2.5000, 1.20000 }  );
    }
 
    @Test
