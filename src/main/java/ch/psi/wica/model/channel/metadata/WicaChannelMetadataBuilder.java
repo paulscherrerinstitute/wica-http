@@ -115,7 +115,7 @@ public class WicaChannelMetadataBuilder
                                                              double upperWarning, double lowerWarning )
    {
       return new WicaChannelMetadataReal( units, precision, upperDisplay, lowerDisplay, upperControl, lowerControl,
-                                         upperAlarm, lowerAlarm, upperWarning, lowerWarning );
+                                          upperAlarm, lowerAlarm, upperWarning, lowerWarning );
    }
 
    /**

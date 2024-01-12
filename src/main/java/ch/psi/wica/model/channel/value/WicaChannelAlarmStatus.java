@@ -20,6 +20,11 @@ public class WicaChannelAlarmStatus
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Constructs a new instance of a WicaChannelAlarmStatus.
+    *
+    * @param wicaAlarmStatusCode the status code.
+    */
    public WicaChannelAlarmStatus( int wicaAlarmStatusCode )
    {
       this.wicaAlarmStatusCode = wicaAlarmStatusCode;
@@ -27,11 +32,22 @@ public class WicaChannelAlarmStatus
 
 /*- Class methods ------------------------------------------------------------*/
 
+   /**
+    * Returns a new instance of a WicaChannelAlarmStatus.
+    *
+    * @param statusCode the status code.
+    * @return the new instance.
+    */
    public static WicaChannelAlarmStatus of( int statusCode )
    {
       return new WicaChannelAlarmStatus( statusCode );
    }
 
+   /**
+    * Returns a new instance of a WicaChannelAlarmStatus with a status code of zero.
+    *
+    * @return the new instance.
+    */
    public static WicaChannelAlarmStatus ofNoError()
    {
       return new WicaChannelAlarmStatus( 0 );
@@ -39,6 +55,11 @@ public class WicaChannelAlarmStatus
 
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Returns the status code.
+    *
+    * @return the status code.
+    */
    public int getStatusCode()
    {
       return wicaAlarmStatusCode;

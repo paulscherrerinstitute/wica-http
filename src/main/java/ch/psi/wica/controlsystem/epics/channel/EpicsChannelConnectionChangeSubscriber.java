@@ -42,6 +42,11 @@ public class EpicsChannelConnectionChangeSubscriber
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Constructs a new instance.
+    *
+    * @param myExecutor the executor.
+    */
    public EpicsChannelConnectionChangeSubscriber( @Autowired EpicsChannelConnectionStateChangeNotifier myExecutor )
    {
       this.epicsChannelConnectionStateChangeNotifier = myExecutor;
@@ -113,7 +118,7 @@ public class EpicsChannelConnectionChangeSubscriber
     * Handles notification of EPICS channel connection state changes.
     */
    @Component
-   static class EpicsChannelConnectionStateChangeNotifier
+   public static class EpicsChannelConnectionStateChangeNotifier
    {
       private final Logger logger = LoggerFactory.getLogger( EpicsChannelConnectionChangeSubscriber.EpicsChannelConnectionStateChangeNotifier.class );
 

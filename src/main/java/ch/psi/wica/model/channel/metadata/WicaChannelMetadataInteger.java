@@ -31,13 +31,26 @@ public class WicaChannelMetadataInteger extends WicaChannelMetadata
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   WicaChannelMetadataInteger( WicaChannelType subType,
-                               String units,
-                               int upperDisplay, int lowerDisplay,
-                               int upperControl, int lowerControl,
-                               int upperAlarm, int lowerAlarm,
-                               int upperWarning, int lowerWarning ) {
-      super( subType );
+   /**
+    * Constructs a new instance of the metadata for a channel whose type is INTEGER.
+    *
+    * @param units the units associated with the channel.
+    * @param upperDisplay the upper display limit of the channel.
+    * @param lowerDisplay the lower display limit of the channel.
+    * @param upperControl the upper control limit of the channel.
+    * @param lowerControl the lower control limit of the channel.
+    * @param upperAlarm the upper alarm limit of the channel.
+    * @param lowerAlarm the lower alarm limit of the channel.
+    * @param upperWarning the upper warning limit of the channel.
+    * @param lowerWarning the lower warning limit of the channel.
+    */
+   public WicaChannelMetadataInteger( String units,
+                                      int upperDisplay, int lowerDisplay,
+                                      int upperControl, int lowerControl,
+                                      int upperAlarm, int lowerAlarm,
+                                      int upperWarning, int lowerWarning )
+   {
+      super( WicaChannelType.INTEGER );
       this.units = Validate.notNull( units, "The 'units' argument was null." );
       this.upperDisplay = upperDisplay;
       this.lowerDisplay = lowerDisplay;
@@ -47,20 +60,6 @@ public class WicaChannelMetadataInteger extends WicaChannelMetadata
       this.lowerAlarm = lowerAlarm;
       this.upperWarning = upperWarning;
       this.lowerWarning = lowerWarning;
-   }
-
-   public WicaChannelMetadataInteger( String units,
-                                      int upperDisplay, int lowerDisplay,
-                                      int upperControl, int lowerControl,
-                                      int upperAlarm, int lowerAlarm,
-                                      int upperWarning, int lowerWarning )
-   {
-      this( WicaChannelType.INTEGER,
-            units,
-            upperDisplay, lowerDisplay,
-            upperControl, lowerControl,
-            upperAlarm, lowerAlarm,
-            upperWarning, lowerWarning );
    }
 
 /*- Public methods -----------------------------------------------------------*/

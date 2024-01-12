@@ -47,6 +47,12 @@ public class EpicsChannelAccessContextSupplier
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Returns a context for the specified scope.
+    *
+    * @param scope the scope.
+    * @return the context.
+    */
    public Context getContextForScope( String scope )
    {
       return switch (scope) {

@@ -38,6 +38,12 @@ public class ControlSystemName
 
 /*- Class methods ------------------------------------------------------------*/
 
+   /**
+    * Creates a new instance.
+    *
+    * @param name the name.
+    * @return the new instance.
+    */
    public static ControlSystemName of( String name )
    {
       return new ControlSystemName( name );

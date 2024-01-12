@@ -68,8 +68,7 @@ class WicaChannelGetController
                                      @Value( "${wica.channel-get-value-default-fields-of-interest}") String channelValueDefaultFieldsOfInterest,
                                      @Value( "${wica.channel-get-metadata-default-fields-of-interest}") String channelMetadataDefaultFieldsOfInterest,
                                      @Autowired EpicsChannelReaderService epicsChannelReaderService,
-                                     @Autowired StatisticsCollectionService statisticsCollectionService
-   )
+                                     @Autowired StatisticsCollectionService statisticsCollectionService )
    {
       Validate.isTrue( defaultTimeoutInMillis > 0 );
       Validate.isTrue( defaultNumericScale > 0 );

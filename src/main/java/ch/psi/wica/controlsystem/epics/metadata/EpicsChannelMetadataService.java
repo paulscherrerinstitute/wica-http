@@ -51,6 +51,11 @@ public class EpicsChannelMetadataService
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Returns the statistics associated with this service.
+    *
+    * @return the statistics.
+    */
    public EpicsChannelMetadataStatistics getStatistics()
    {
       return epicsChannelMetadataPublisher.getStatistics();

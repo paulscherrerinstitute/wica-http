@@ -46,6 +46,15 @@ class WicaAdminPageController
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Constructs a new instance.
+    *
+    * @param statisticsCollectionService the statistics collection service.
+    * @param epicsChannelMonitorPublisher the EPICS channel monitor publisher.
+    * @param epicsChannelPollerPublisher the EPICS channel poller publisher.
+    * @param epicsMonitoredChannelManager the EPICS monitored channel manager.
+    * @param epicsPolledChannelManager the EPICS polled channel manager.
+    */
    public WicaAdminPageController( @Autowired StatisticsCollectionService statisticsCollectionService,
                                    @Autowired EpicsChannelMonitorPublisher epicsChannelMonitorPublisher,
                                    @Autowired EpicsChannelPollerPublisher epicsChannelPollerPublisher,
@@ -63,8 +72,15 @@ class WicaAdminPageController
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
-   // Leave the default MVC handling for this method. This means that the returned value will
-   // be interpreted as a reference to a thymeleaf template.
+   /**
+    * Returns the admin page as HTML.
+    * <p>
+    * Leaves the default MVC handling for this method. This means that the returned value will
+    * be interpreted as a reference to a thymeleaf template.
+    *
+    * @param viewModel the view model.
+    * @return the HTML page.
+    */
    @GetMapping( value="/admin", produces = MediaType.TEXT_HTML_VALUE )
    public String getAdminPageAsHtml( Model viewModel )
    {
@@ -80,6 +96,11 @@ class WicaAdminPageController
       return templateFileName;
    }
 
+   /**
+    * Returns a list of all channel monitors.
+    *
+    * @return the list.
+    */
    @GetMapping( value="/channel-monitors/all", produces = MediaType.APPLICATION_JSON_VALUE )
    public ResponseEntity<List<String>> getAllMonitoredChannels()
    {
@@ -87,6 +108,11 @@ class WicaAdminPageController
       return new ResponseEntity<>( channelNames, HttpStatus.OK );
    }
 
+   /**
+    * Returns a list of unconnected channel monitors.
+    *
+    * @return the list.
+    */
    @GetMapping( value="/channel-monitors/unconn" )
    public ResponseEntity<List<String>> getUnconnectedChannelMonitors()
    {
@@ -94,6 +120,11 @@ class WicaAdminPageController
       return new ResponseEntity<>( unconnectedChannelNames, HttpStatus.OK );
    }
 
+   /**
+    * Returns a list of all channel pollers.
+    *
+    * @return the list.
+    */
    @GetMapping( value="/channel-pollers/all", produces = MediaType.APPLICATION_JSON_VALUE )
    public ResponseEntity<List<String>> getAllPolledChannels()
    {
@@ -101,6 +132,11 @@ class WicaAdminPageController
       return new ResponseEntity<>( channelNames, HttpStatus.OK );
    }
 
+   /**
+    * Returns a list of unconnected channel pollers.
+    *
+    * @return the list.
+    */
    @GetMapping( value="/channel-pollers/unconn" )
    public ResponseEntity<List<String>> getUnconnectedChannelPollers()
    {
@@ -108,6 +144,9 @@ class WicaAdminPageController
       return new ResponseEntity<>( unconnectedChannelNames, HttpStatus.OK );
    }
 
+   /**
+    * Resets the statistics.
+    */
    @PutMapping( value="/statistics" )
    public void resetStatistics()
    {

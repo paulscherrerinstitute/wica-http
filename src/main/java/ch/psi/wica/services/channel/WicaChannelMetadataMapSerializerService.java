@@ -73,6 +73,7 @@ public class WicaChannelMetadataMapSerializerService
 /*- Nested Interfaces --------------------------------------------------------*/
 /*- Nested Classes -----------------------------------------------------------*/
 
+   @SuppressWarnings("rawtypes")
    private static class MyCustomWicaChannelMetadataMapSerializer extends StdSerializer<Map>
    {
       final Set<String> fieldsOfInterest;

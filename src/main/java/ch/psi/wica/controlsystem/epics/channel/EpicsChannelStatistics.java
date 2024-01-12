@@ -52,6 +52,9 @@ public class EpicsChannelStatistics implements StatisticsCollectable
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public Statistics get()
    {
@@ -65,6 +68,9 @@ public class EpicsChannelStatistics implements StatisticsCollectable
                                       new StatisticsItem("- Channels: Closed", getClosedChannelCount() ) ) );
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public void reset()
    {
@@ -85,6 +91,11 @@ public class EpicsChannelStatistics implements StatisticsCollectable
               .map(EpicsChannelName::toString).toList();
    }
 
+   /**
+    * Returns the channel names that are currently unconnected.
+    *
+    * @return the channel names.
+    */
    public List<String> getUnconnectedChannels()
    {
       return channels

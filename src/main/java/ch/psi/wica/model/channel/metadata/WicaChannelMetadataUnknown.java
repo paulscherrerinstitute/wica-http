@@ -19,6 +19,9 @@ public class WicaChannelMetadataUnknown extends WicaChannelMetadata
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Constructs a new instance of the metadata for a channel whose type is unknown.
+    */
    public WicaChannelMetadataUnknown()
    {
       super( WicaChannelType.UNKNOWN );

@@ -38,8 +38,11 @@ public interface StatisticsCollectable
 
    /**
     * Models some statistics that need to be collected.
+    *
+    * @param header the header.
+    * @param entries the entries.
     */
-   record Statistics(String header, List<StatisticsItem> entries)
+   record Statistics( String header, List<StatisticsItem> entries )
    {
       public Statistics(String header, List<StatisticsItem> entries)
       {
@@ -57,6 +60,9 @@ public interface StatisticsCollectable
 
    /**
     * Models a statistics item.
+    *
+    * @param key the key.
+    * @param value the value.
     */
    record StatisticsItem( String key, String value)
    {

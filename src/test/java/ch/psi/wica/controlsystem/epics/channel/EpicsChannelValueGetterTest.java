@@ -3,7 +3,6 @@ package ch.psi.wica.controlsystem.epics.channel;
 
 /*- Imported packages --------------------------------------------------------*/
 
-import ch.psi.wica.model.channel.*;
 import ch.psi.wica.model.channel.value.WicaChannelValueConnectedInteger;
 import ch.psi.wica.model.channel.value.WicaChannelValueDisconnected;
 import org.epics.ca.Channel;

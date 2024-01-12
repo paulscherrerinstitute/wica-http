@@ -10,6 +10,12 @@ import org.epics.ca.Channel;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Models an event that is fired when an EPICS channel is connected.
+ *
+ * @param scope the scope.
+*  @param caChannel the channel.
+ */
 public record EpicsChannelConnectedEvent( String scope, Channel<Object> caChannel )
 {
 
@@ -17,16 +23,27 @@ public record EpicsChannelConnectedEvent( String scope, Channel<Object> caChanne
 /*- Private attributes -------------------------------------------------------*/
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
-
-   public EpicsChannelConnectedEvent( String scope, Channel<Object> caChannel )
+   
+   /**
+    * Models an event that is fired when an EPICS channel is connected.
+    *
+    * @param scope the scope.
+    * @param caChannel the channel.
+    */
+   public EpicsChannelConnectedEvent
    {
-      this.scope = Validate.notNull( scope, "The 'scope' argument is null." );
-      this.caChannel = Validate.notNull( caChannel, "The 'caChannel' argument is null." );
+      Validate.notNull( scope, "The 'scope' argument is null." );
+      Validate.notNull( caChannel, "The 'caChannel' argument is null." );
    }
 
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Returns the name of the channel.
+    *
+    * @return the name.
+    */
    public EpicsChannelName getEpicsChannelName()
    {
       //noinspection resource

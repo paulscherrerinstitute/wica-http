@@ -30,6 +30,8 @@ public class WicaChannelBuilder
 
    /**
     * Creates a new WicaChannelBuilder instance ready for further customisations.
+    *
+    * @return the instance.
     */
    public static WicaChannelBuilder create()
    {

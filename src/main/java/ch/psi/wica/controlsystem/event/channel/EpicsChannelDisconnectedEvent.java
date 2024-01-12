@@ -11,6 +11,12 @@ import org.epics.ca.Channel;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Record Declaration -------------------------------------------------------*/
 
+/**
+ * Models an event that is fired when an EPICS channel is disconnected.
+ *
+ * @param scope the scope.
+ * @param caChannel the channel.
+ */
 public record EpicsChannelDisconnectedEvent( String scope, Channel<Object> caChannel )
 {
 
@@ -19,6 +25,12 @@ public record EpicsChannelDisconnectedEvent( String scope, Channel<Object> caCha
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Models an event that is fired when an EPICS channel is disconnected.
+    *
+    * @param scope the scope.
+    * @param caChannel the channel.
+    */
    public EpicsChannelDisconnectedEvent( String scope, Channel<Object> caChannel )
    {
       this.scope = Validate.notNull( scope, "The 'scope' argument is null." );
@@ -28,6 +40,11 @@ public record EpicsChannelDisconnectedEvent( String scope, Channel<Object> caCha
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Returns the name of the channel.
+    *
+    * @return the name.
+    */
    public EpicsChannelName getEpicsChannelName()
    {
       //noinspection resource

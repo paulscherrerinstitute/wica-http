@@ -32,15 +32,28 @@ public class WicaChannelMetadataReal extends WicaChannelMetadata
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   WicaChannelMetadataReal( WicaChannelType subType,
-                            String units,
-                            int precision,
-                            double upperDisplay, double lowerDisplay,
-                            double upperControl, double lowerControl,
-                            double upperAlarm, double lowerAlarm,
-                            double upperWarning, double lowerWarning )
+   /**
+    * Constructs a new instance of the metadata for a channel whose type is REAL.
+    *
+    * @param units the units associated with the channel.
+    * @param precision the precision of the channel.
+    * @param upperDisplay the upper display limit of the channel.
+    * @param lowerDisplay the lower display limit of the channel.
+    * @param upperControl the upper control limit of the channel.
+    * @param lowerControl the lower control limit of the channel.
+    * @param upperAlarm the upper alarm limit of the channel.
+    * @param lowerAlarm the lower alarm limit of the channel.
+    * @param upperWarning the upper warning limit of the channel.
+    * @param lowerWarning the lower warning limit of the channel.
+    */
+   public WicaChannelMetadataReal( String units,
+                                   int precision,
+                                   double upperDisplay, double lowerDisplay,
+                                   double upperControl, double lowerControl,
+                                   double upperAlarm, double lowerAlarm,
+                                   double upperWarning, double lowerWarning )
    {
-      super( subType );
+      super( WicaChannelType.REAL );
       this.units = Validate.notNull( units, "The 'units' argument was null." );
       this.precision = precision;
       this.upperDisplay = upperDisplay;
@@ -51,22 +64,6 @@ public class WicaChannelMetadataReal extends WicaChannelMetadata
       this.lowerAlarm = lowerAlarm;
       this.upperWarning = upperWarning;
       this.lowerWarning = lowerWarning;
-   }
-
-   public WicaChannelMetadataReal( String units,
-                                   int precision,
-                                   double upperDisplay, double lowerDisplay,
-                                   double upperControl, double lowerControl,
-                                   double upperAlarm, double lowerAlarm,
-                                   double upperWarning, double lowerWarning )
-   {
-       this( WicaChannelType.REAL,
-             units,
-             precision,
-             upperDisplay, lowerDisplay,
-             upperControl, lowerControl,
-             upperAlarm, lowerAlarm,
-             upperWarning, lowerWarning );
    }
 
 /*- Public methods -----------------------------------------------------------*/
