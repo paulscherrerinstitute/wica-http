@@ -154,10 +154,6 @@ public class WicaChannelMetadataCreator
                    (double) epicsMetadataObject.getLowerAlarm( ),
                    (double) epicsMetadataObject.getUpperWarning( ),
                    (double) epicsMetadataObject.getLowerWarning( ) );
-           default -> {
-               logger.error( "'{}' - type is NOT SUPPORTED (Programming Error)", controlSystemName );
-               yield WicaChannelMetadataBuilder.createUnknownInstance( );
-           }
        };
    }
 

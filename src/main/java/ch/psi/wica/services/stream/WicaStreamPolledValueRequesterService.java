@@ -6,7 +6,6 @@ package ch.psi.wica.services.stream;
 import ch.psi.wica.controlsystem.event.wica.*;
 import ch.psi.wica.model.app.WicaDataBufferStorageKey;
 import ch.psi.wica.model.channel.WicaChannel;
-import ch.psi.wica.model.channel.value.WicaChannelValue;
 import ch.psi.wica.model.channel.value.WicaChannelValueBuilder;
 import ch.psi.wica.model.stream.WicaStream;
 import net.jcip.annotations.ThreadSafe;

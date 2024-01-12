@@ -59,10 +59,10 @@ public class EpicsChannelMetadataGetter
     * Queries the supplied EPICS channel to return a WicaChannelMetadata object
     * which encapsulates the properties of the channel which remain relatively
     * fixed (eg alarm limits, control limits, precision, engineering units... etc).
-    *
+    * <p>
     * This method operates synchronously and incurs the cost of a network
     * round trip to obtain the information fom the remote data source.
-    *
+    * <p>
     * Precondition: the channel should have been connected at least once.
     * Postcondition: the state of the channel will remain unaffected.
     *
@@ -102,7 +102,7 @@ public class EpicsChannelMetadataGetter
       }
       catch( IllegalArgumentException ex)
       {
-         logger.error( "'{}' - EPICS type was UNKNOWN (Programming Error). The concrete exception message was: '{}' ", controlSystemName, ex );
+         logger.error( "'{}' - EPICS type was UNKNOWN (Programming Error). The concrete exception message was: '{}' ", controlSystemName, ex.getMessage() );
          return WicaChannelMetadataBuilder.createUnknownInstance();
       }
 
