@@ -201,6 +201,10 @@
                 <version>3.5.0</version>
                 <configuration>
                     <additionalOptions>-html5</additionalOptions>
+                    <additionalJOptions>
+                        <additionalJOption>-Xmaxwarns</additionalJOption>
+                        <additionalJOption>65535</additionalJOption>
+                    </additionalJOptions>
                     <show>package</show>
                     <!-- required in some build environments -->
                     <!-- <javadocExecutable>javadoc</javadocExecutable> -->
