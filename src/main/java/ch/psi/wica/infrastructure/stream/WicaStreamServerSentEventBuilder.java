@@ -15,12 +15,32 @@ import java.time.format.DateTimeFormatter;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Provides the functionality to build Server-Sent-Events (SSE) for the WICA
+ * streaming service.
+ */
 @Immutable
 public enum WicaStreamServerSentEventBuilder
 {
+
+   /**
+    * Defines the event type and comment associated with HEARTBEAT Server-Sent-Events.
+    */
    EV_WICA_SERVER_HEARTBEAT         ("ev-wica-server-heartbeat", "server heartbeat"         ),
+
+   /**
+    * Defines the event type and comment associated with CHANNEL METADATA Server-Sent-Events.
+    */
    EV_WICA_CHANNEL_METADATA         ("ev-wica-channel-metadata", "channel metadata"         ),
+
+   /**
+    * Defines the event type and comment associated with CHANNEL POLLED VALUE Server-Sent-Events.
+    */
    EV_WICA_CHANNEL_POLLED_VALUES    ("ev-wica-channel-value",    "channel polled values"    ),
+
+   /**
+    * Defines the event type and comment associated with CHANNEL MONITORED VALUE Server-Sent-Events.
+    */
    EV_WICA_CHANNEL_MONITORED_VALUES ("ev-wica-channel-value",    "channel monitored values" );
 
 /*- Public attributes --------------------------------------------------------*/
@@ -37,6 +57,13 @@ public enum WicaStreamServerSentEventBuilder
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Create a new WicaStreamServerSentEventBuilder with the specified event
+    * type and comment.
+    *
+    * @param event the event type.
+    * @param comment the comment.
+    */
    WicaStreamServerSentEventBuilder( String event, String comment )
    {
       this.event = Validate.notBlank( event );

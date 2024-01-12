@@ -113,15 +113,15 @@ class WicaStreamMonitoredValueDataBufferTest
       final WicaChannel abc = WicaChannelBuilder.create().withChannelNameAndDefaultProperties( "abc" ).build();
       final LocalDateTime beginTime = LocalDateTime.MIN;
       final WicaChannelValue testValue1 = WicaChannelValueBuilder.createChannelValueDisconnected();
-      final ExecutorService executorService = Executors.newFixedThreadPool(100);
+      try ( ExecutorService executorService = Executors.newFixedThreadPool( 100 ) ) {
 
-      for ( int i = 0; i < 200; i++ )
-      {
-         Runnable r = () -> injectValueUpdate(  abc, testValue1 );
-         executorService.submit( r  );
+         for ( int i = 0; i < 200; i++ ) {
+            Runnable r = () -> injectValueUpdate( abc, testValue1 );
+            executorService.submit( r );
+         }
+         //noinspection ResultOfMethodCallIgnored
+         executorService.awaitTermination( 1, TimeUnit.SECONDS );
       }
-      //noinspection ResultOfMethodCallIgnored
-      executorService.awaitTermination(1, TimeUnit.SECONDS );
 
       final var laterThanBeginTimeMap = testObject.getLaterThan( Set.of( abc ), beginTime );
       assertThat( laterThanBeginTimeMap.size(), is (1) );

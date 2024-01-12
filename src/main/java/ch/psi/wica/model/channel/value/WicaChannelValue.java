@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  * <p>
  * The value information typically changes often and is obtained by
  * continuous communication with the control system hosting the
- * control point. Subsequently the information is captured and
+ * control point. Subsequently, the information is captured and
  * made available for JSON string serialisation and for inclusion
  * as part of a <i>wica stream</i>.
  * <p>
@@ -41,6 +41,12 @@ public abstract class WicaChannelValue extends WicaChannelData
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Constructs a new instance of a value for a channel.
+    *
+    * @param wicaChannelType the channel type.
+    * @param wicaServerTimestamp the data source timestamp.
+    */
    public WicaChannelValue( WicaChannelType wicaChannelType, LocalDateTime wicaServerTimestamp, boolean connected )
    {
       super( wicaChannelType, wicaServerTimestamp);

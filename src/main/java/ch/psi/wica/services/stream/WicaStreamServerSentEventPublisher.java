@@ -22,6 +22,10 @@ import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Provides the functionality to publish a stream of Server-Sent-Events (SSE)
+ * to remote web clients.
+ */
 @ThreadSafe
 public class WicaStreamServerSentEventPublisher
 {
@@ -46,6 +50,18 @@ public class WicaStreamServerSentEventPublisher
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Create a new publisher with the capability to create a flux with the
+    * specified SSE ID and which uses the specified SSE Builder to transform
+    * information dynamically retrieved from the message payload supplied.
+    *
+    * @param wicaStream the stream associated with this publisher.
+    * @param wicaStreamMetadataCollectorService the service which will be used to collect metadata.
+    * @param wicaStreamMonitoredValueCollectorService the service which will be used to collect monitored values.
+    * @param wicaStreamPolledValueCollectorService the service which will be used to collect polled values.
+    * @param wicaChannelMetadataMapSerializerService the service which will be used to serialize channel metadata.
+    * @param wicaChannelValueMapSerializerService the service which will be used to serialize channel values.
+    */
    WicaStreamServerSentEventPublisher( WicaStream wicaStream,
                                        WicaStreamMetadataCollectorService wicaStreamMetadataCollectorService,
                                        WicaStreamMonitoredValueCollectorService wicaStreamMonitoredValueCollectorService,
@@ -98,7 +114,7 @@ public class WicaStreamServerSentEventPublisher
 
    /**
     * Shuts down this publisher instance.
-    *
+    * <p>
     * This method should only be called once, subsequent attempts to shutdown
     * the flux will result in an IllegalStateException.
     *
@@ -117,13 +133,13 @@ public class WicaStreamServerSentEventPublisher
 
    /**
     * Creates the HEARTBEAT FLUX.
-    *
+    * <p>
     * The purpose of this flux is to periodically tell remote clients that the stream is
     * still alive. If remote clients do not receive heartbeat events within the expected
     * time intervals then they may typically conclude that the event stream is no longer
     * active. This may then lead them to close the event stream and to send new requests
     * to the server to recreate the stream.
-    *
+    * <p>
     * This flux runs periodically at a rate determined by the properties of the stream.
     *
     * @return the flux.
@@ -145,14 +161,14 @@ public class WicaStreamServerSentEventPublisher
 
    /**
     * Creates the CHANNEL METADATA FLUX.
-    *
+    * <p>
     * The purpose of this flux is to publish extra information (typically slow
     * changing or fixed) about the nature of the  underlying Wica Channel. This
     * may include the channel's type and where relevant the channel's display,
     * alarm and operator limits.
-    *
+    * <p>
     * This flux runs periodically at a rate determined by the properties of the stream.
-    *
+    * <p>
     * New subscribers to the flux receive firstly a Server-Sent-Event (SSE) message
     * containing the latest received metadata for all channels, then subsequent SSE messages
     * will be sent out periodically and will contain only only information for those channels
@@ -169,7 +185,7 @@ public class WicaStreamServerSentEventPublisher
             logger.trace("channel-metadata flux with id: '{}' is publishing new SSE...", wicaStreamId);
             return wicaStreamMetadataCollectorService.get( wicaStream, lastUpdateTime.getAndSet( LocalDateTime.now()) );
          } )
-         .filter( m -> m.keySet().size() > 0 )
+         .filter( m -> !m.keySet( ).isEmpty( ) )
          .map( map -> {
                final String jsonMetadataString = wicaChannelMetadataMapSerializerService.serialize ( map );
                return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_METADATA.build( wicaStreamId, jsonMetadataString );
@@ -182,13 +198,13 @@ public class WicaStreamServerSentEventPublisher
 
    /**
     * Create the WICA CHANNEL MONITORED VALUES FLUX.
-    *
+    * <p>
     * The purpose of this flux is to publish the latest received values for channels
     * in the stream which are configured with a data acquisition mode that supports
     * MONITORING.
-    *
+    * <p>
     * This flux runs periodically at a rate determined by the properties of the stream.
-    *
+    * <p>
     * New subscribers to the flux receive first a Server-Sent-Event (SSE) message
     * containing the latest received information for all monitored channels, then subsequent
     * SSE messages will be sent out periodically and will contain only only information
@@ -207,7 +223,7 @@ public class WicaStreamServerSentEventPublisher
             return timeOfLastUpdate.equals( LocalDateTime.MIN ) ? wicaStreamMonitoredValueCollectorService.getLatest( wicaStream ) :
                wicaStreamMonitoredValueCollectorService.get( wicaStream, timeOfLastUpdate );
          } )
-         .filter( (map) -> ( !wicaStreamProperties.getQuietMode() ) || ( map.keySet().size() > 0 ) )
+         .filter( (map) -> ( !wicaStreamProperties.getQuietMode() ) || ( !map.keySet( ).isEmpty( ) ) )
          .map( (map) -> {
             final var jsonServerSentEventString = wicaChannelValueMapSerializerService.serialize( map );
             return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_MONITORED_VALUES.build(wicaStreamId, jsonServerSentEventString );
@@ -220,13 +236,13 @@ public class WicaStreamServerSentEventPublisher
 
    /**
     * Create the WICA CHANNEL POLLED VALUES FLUX.
-    *
+    * <p>
     * The purpose of this flux is to publish the latest received values for channels
     * in the stream which are configured with a data acquisition mode that supports
     * POLLING.
-    *
+    * <p>
     * This flux runs periodically at a rate determined by the properties of the stream.
-    *
+    * <p>
     * New subscribers to the flux receive first a Server-Sent-Event (SSE) message
     * containing the latest received information for all polled channels, then subsequent
     * SSE messages will be sent out periodically and will contain only only information
@@ -245,7 +261,7 @@ public class WicaStreamServerSentEventPublisher
             return timeOfLastUpdate.equals( LocalDateTime.MIN  ) ? wicaStreamPolledValueCollectorService.getLatest( wicaStream ) :
                wicaStreamPolledValueCollectorService.get( wicaStream, timeOfLastUpdate );
          } )
-            .filter( (map) -> ( !wicaStreamProperties.getQuietMode() ) || ( map.keySet().size() > 0 ) )
+            .filter( (map) -> ( !wicaStreamProperties.getQuietMode() ) || ( !map.keySet( ).isEmpty( ) ) )
          .map( (map) -> {
             final var jsonServerSentEventString = wicaChannelValueMapSerializerService.serialize( map );
             return WicaStreamServerSentEventBuilder.EV_WICA_CHANNEL_POLLED_VALUES.build(wicaStreamId, jsonServerSentEventString );
@@ -258,7 +274,7 @@ public class WicaStreamServerSentEventPublisher
 
    /**
     * Creates the COMBINED FLUX.
-    *
+    * <p>
     * The purpose of this flux is to merge together all the individual fluxes in
     * this publisher, returning a reference to a flux which can be cancelled
     * by a call to the shutdown method.
@@ -282,7 +298,7 @@ public class WicaStreamServerSentEventPublisher
          .mergeWith( polledValueFlux )
          .doOnComplete( () -> logger.warn( "combined flux with id: '{}' flux completed.", wicaStreamId ))
          .doOnCancel( () -> logger.warn("combined flux with id: '{}' was cancelled.", wicaStreamId ))
-         .doOnError( (e) -> logger.warn( "combined flux with id: '{}' had error: '{}'", wicaStreamId, e ) )
+         .doOnError( (e) -> logger.warn( "combined flux with id: '{}' had error: '{}'", wicaStreamId, e.getMessage() ) )
          .takeUntil( (sse) -> {
             final boolean shutdownRequest = shutdown.get();
             if ( shutdownRequest)

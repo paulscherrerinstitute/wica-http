@@ -15,6 +15,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /*- Interface Declaration ----------------------------------------------------*/
 /*- Class Declaration --------------------------------------------------------*/
 
+/**
+ * Provides the functionality to configure MVC.
+ */
 @Configuration
 class WicaMvcConfigurer implements WebMvcConfigurer
 {
@@ -29,6 +32,11 @@ class WicaMvcConfigurer implements WebMvcConfigurer
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Configures the MVC task executor.
+    *
+    * @param configurer the async support configurer.
+    */
    @Override
    public void configureAsyncSupport( AsyncSupportConfigurer configurer )
    {

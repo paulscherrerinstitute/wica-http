@@ -136,6 +136,7 @@ public enum WicaDataAcquisitionMode
       return doesMonitorPolling;
    }
 
+   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
    public boolean doesNetworkPolling()
    {
       return doesNetworkPolling;

@@ -24,6 +24,14 @@ public class WicaChannelValueConnectedReal extends WicaChannelValueConnected
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Constructs a new instance of a value for a channel whose type is REAL.
+    *
+    * @param alarmSeverity the alarm severity.
+    * @param alarmStatus the alarm status.
+    * @param dataSourceTimestamp the data source timestamp.
+    * @param value the value.
+    */
    public WicaChannelValueConnectedReal( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, double value )
    {
       super( WicaChannelType.REAL, alarmSeverity, alarmStatus, dataSourceTimestamp );
@@ -33,6 +41,11 @@ public class WicaChannelValueConnectedReal extends WicaChannelValueConnected
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Returns the value of the channel.
+    *
+    * @return the value.
+    */
    public double getValue()
    {
       return value;

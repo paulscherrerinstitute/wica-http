@@ -26,6 +26,14 @@ public class WicaChannelValueConnectedIntegerArray extends WicaChannelValueConne
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Constructs a new instance of a value for a channel whose type is INTEGER_ARRAY.
+    *
+    * @param alarmSeverity the alarm severity.
+    * @param alarmStatus the alarm status.
+    * @param dataSourceTimestamp the data source timestamp.
+    * @param value the value.
+    */
    public WicaChannelValueConnectedIntegerArray( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, int[] value )
    {
       super( WicaChannelType.INTEGER_ARRAY, alarmSeverity, alarmStatus, dataSourceTimestamp );
@@ -35,6 +43,11 @@ public class WicaChannelValueConnectedIntegerArray extends WicaChannelValueConne
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Returns the value of the channel.
+    *
+    * @return the value.
+    */
    public int[] getValue()
    {
       return value;

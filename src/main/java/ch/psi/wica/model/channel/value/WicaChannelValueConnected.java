@@ -21,19 +21,27 @@ public abstract class WicaChannelValueConnected extends WicaChannelValue
 /*- Private attributes -------------------------------------------------------*/
 
     private final WicaChannelType wicaChannelType;
-    private final WicaChannelAlarmSeverity wicaChannelAlarmSeverity;
-    private final WicaChannelAlarmStatus wicaChannelAlarmStatus;
+    private final WicaChannelAlarmSeverity alarmSeverity;
+    private final WicaChannelAlarmStatus alarmStatus;
     private final LocalDateTime dataSourceTimestamp;
 
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
-   public WicaChannelValueConnected( WicaChannelType wicaChannelType, WicaChannelAlarmSeverity wicaChannelAlarmSeverity, WicaChannelAlarmStatus wicaChannelAlarmStatus, LocalDateTime dataSourceTimestamp )
+   /**
+    * Constructs a new instance of a value for a channel in the connected state.
+    *
+    * @param wicaChannelType the channel type.
+    * @param alarmSeverity the alarm severity.
+    * @param alarmStatus the alarm status.
+    * @param dataSourceTimestamp the data source timestamp.
+    */
+   public WicaChannelValueConnected( WicaChannelType wicaChannelType, WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp )
    {
       super( wicaChannelType, LocalDateTime.now( ), true );
       this.wicaChannelType = Validate.notNull( wicaChannelType, "wicaChannelType cannot be null " );
-      this.wicaChannelAlarmSeverity = Validate.notNull( wicaChannelAlarmSeverity, "wicaAlarmSeverity cannot be null " );
-      this.wicaChannelAlarmStatus = Validate.notNull( wicaChannelAlarmStatus, "wicaAlarmStatus cannot be null " );
+      this.alarmSeverity = Validate.notNull( alarmSeverity, "alarmSeverity cannot be null " );
+      this.alarmStatus = Validate.notNull( alarmStatus, "alarmStatus cannot be null " );
       this.dataSourceTimestamp = Validate.notNull( dataSourceTimestamp, "dataSourceTimestamp cannot be null " );
    }
 
@@ -44,12 +52,12 @@ public abstract class WicaChannelValueConnected extends WicaChannelValue
 
    public WicaChannelAlarmSeverity getWicaAlarmSeverity()
    {
-      return wicaChannelAlarmSeverity;
+      return alarmSeverity;
    }
 
    public WicaChannelAlarmStatus getWicaChannelAlarmStatus()
    {
-      return wicaChannelAlarmStatus;
+      return alarmStatus;
    }
 
    public LocalDateTime getDataSourceTimestamp()
@@ -62,8 +70,8 @@ public abstract class WicaChannelValueConnected extends WicaChannelValue
    {
        return "WicaChannelValueConnected{" +
                "wicaChannelType=" + wicaChannelType +
-               ", wicaChannelAlarmSeverity=" + wicaChannelAlarmSeverity +
-               ", wicaChannelAlarmStatus=" + wicaChannelAlarmStatus +
+               ", wicaChannelAlarmSeverity=" + alarmSeverity +
+               ", wicaChannelAlarmStatus=" + alarmStatus +
                ", dataSourceTimestamp=" + dataSourceTimestamp +
                '}';
    }

@@ -25,6 +25,14 @@ public class WicaChannelValueConnectedStringArray extends WicaChannelValueConnec
 /*- Main ---------------------------------------------------------------------*/
 /*- Constructor --------------------------------------------------------------*/
 
+   /**
+    * Constructs a new instance of a value for a channel whose type is STRING_ARRAY.
+    *
+    * @param alarmSeverity the alarm severity.
+    * @param alarmStatus the alarm status.
+    * @param dataSourceTimestamp the data source timestamp.
+    * @param value the value.
+    */
    public WicaChannelValueConnectedStringArray( WicaChannelAlarmSeverity alarmSeverity, WicaChannelAlarmStatus alarmStatus, LocalDateTime dataSourceTimestamp, String[] value )
    {
       super( WicaChannelType.STRING_ARRAY, alarmSeverity, alarmStatus, dataSourceTimestamp );
@@ -34,6 +42,11 @@ public class WicaChannelValueConnectedStringArray extends WicaChannelValueConnec
 /*- Class methods ------------------------------------------------------------*/
 /*- Public methods -----------------------------------------------------------*/
 
+   /**
+    * Returns the value of the channel.
+    *
+    * @return the value.
+    */
    public String[] getValue()
    {
       return value;
