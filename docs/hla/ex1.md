@@ -18,14 +18,14 @@ curl -L https://github.com/paulscherrerinstitute/wica-http/releases/download/1.1
 
 ### Run the Wica-HTTP Server Jar file on some unique port number
 
-A convenient way to create a unique port number is to use your PSI telphone number. In my case it's ext 5825
+A convenient way to create a unique port number is to use your PSI telephone number. In my case it's ext 5825
 
 Example (change ext 5825 to your PSI telephone number)
 ```
 java -jar wica-http.jar --server.port=5825 --server.address=sls20-bd-testsrv.psi.ch
 ```
 
-### Using the browser on your laptop navigate to the Wica-Http admin page at the following URL
+### Using the browser on your laptop navigate to the Wica-Http Admin page at the following URL
 
 Note: since the demo uses HTTP not HTTPS you may need to configure your browser to accept insecure connections.
 
