@@ -4,7 +4,7 @@
 
 The format is as follows:
 ```
-GET /ca/channels/<channelName>
+GET /ca/channel/<channelName>
 ```
 
 Example: (change 5825 to the port your local server is running on)
@@ -22,7 +22,7 @@ The get value operation supports various options including:
 
 The format is as follows:  
 ```  
-GET /ca/channels/<channelName>[?timeout=XXX][&fieldsOfInterest=YYY;ZZZ][&numericScale=N]
+GET /ca/channel/<channelName>[?timeout=XXX][&fieldsOfInterest=YYY;ZZZ][&numericScale=N]
 ```
 
 Example:
