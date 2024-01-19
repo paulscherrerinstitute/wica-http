@@ -1,7 +1,7 @@
 # Install and Test the Wica-HTTP Server
 
 
-### Login to our development machine and and enter a fresh directory for our tests
+### Login to our development machine and and create and enter a new directory for our tests
 
 Example (change for your PSI LDAP user id)
 ```
@@ -16,12 +16,13 @@ cd hla_wica
 curl -L https://github.com/paulscherrerinstitute/wica-http/releases/download/1.14.0/wica-http-1.14.0.jar -o wica-http.jar
 ```
 
-### Run the Wica-HTTP Server Jar file on some unique port number
+### Run the Wica-HTTP Server Jar file in the PSI office network on some unique port number
 
 A convenient way to create a unique port number is to use your PSI telephone number. In my case it's ext 5825
 
 Example (change ext 5825 to your PSI telephone number)
 ```
+ca office network
 java -jar wica-http.jar --server.port=5825 --server.address=sls20-bd-testsrv.psi.ch
 ```
 
